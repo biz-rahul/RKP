@@ -1,5 +1,5 @@
 // ================================
-// 🎉 Simplified Birthday Message Logic
+// 🎉 RKP Birthday Message
 // ================================
 
 function updateBirthdayMessage(months, days, hours, minutes, seconds) {
