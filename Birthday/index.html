@@ -9,7 +9,6 @@
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        /* ... your existing CSS ... */
         :root {
             --primary: #8e2de2;
             --secondary: #4a00e0;
@@ -146,7 +145,6 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
-        /* Stylish fixed button */
         #countdown-btn {
             position: fixed;
             right: 20px;
@@ -182,7 +180,6 @@
             font-size: 1.2em;
             animation: bounce 1.2s infinite alternate;
         }
-        /* Responsive */
         @media (max-width: 600px) {
             .container { padding: 20px 15px; }
             .card { padding: 20px 15px; }
@@ -243,19 +240,103 @@
     <a href="Check" id="countdown-btn">
         <i class="fa-solid fa-cake-candles"></i> Check Your Birthday
     </a>
-    <!-- Make sure this script comes FIRST -->
-    <script src="birthday-messages.js"></script>
+
     <script>
+        // ================================
+        // 🎉 Birthday Message Logic
+        // ================================
+        function updateBirthdayMessage(months, days, hours, minutes, seconds) {
+            // Get today's date info
+            const today = new Date();
+            const month = today.getMonth() + 1; // 1-12
+            const day = today.getDate();
+
+            let message = "";
+
+            // Check specific date ranges for messages
+            if ((month === 7 && day >= 26) || (month === 8 && day <= 25)) {
+                message = "sirf 11 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 8 && day >= 26) || (month === 9 && day <= 25)) {
+                message = "sirf 10 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 9 && day >= 26) || (month === 10 && day <= 25)) {
+                message = "sirf 9 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 10 && day >= 26) || (month === 11 && day <= 25)) {
+                message = "sirf 8 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 11 && day >= 26) || (month === 12 && day <= 25)) {
+                message = "sirf 7 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 12 && day >= 26) || (month === 1 && day <= 23)) {
+                message = "sirf 6 machine bache hai mera birthday aane me";
+            }
+            else if (month === 1 && day === 24) {
+                message = "kal mera half birthday hai";
+            }
+            else if (month === 1 && day === 25) {
+                message = "aaj mera half birthday hai";
+            }
+            else if ((month === 1 && day >= 26) || (month === 2 && day <= 25)) {
+                message = "sirf 5 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 2 && day >= 26) || (month === 3 && day <= 25)) {
+                message = "sirf 4 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 3 && day >= 26) || (month === 4 && day <= 25)) {
+                message = "sirf 3 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 4 && day >= 26) || (month === 5 && day <= 25)) {
+                message = "sirf 2 machine bache hai mera birthday aane me";
+            }
+            else if ((month === 5 && day >= 26) || (month === 6 && day <= 22)) {
+                message = "sirf 1 machine bache hai mera birthday aane me";
+            }
+            else if (month === 6 && day >= 23 && day <= 30) {
+                message = "bas 4 hafte aur....<br>fir mera Birthday aa jayega";
+            }
+            else if (month === 7 && day >= 1 && day <= 6) {
+                message = "bas 3 hafte aur....<br>fir mera Birthday aa jayega";
+            }
+            else if (month === 7 && day >= 7 && day <= 13) {
+                message = "bas 2 hafte aur....<br>fir mera Birthday aa jayega";
+            }
+            else if (month === 7 && day >= 14 && day <= 20) {
+                message = "bas 1 hafte aur....<br>fir mera Birthday aa jayega";
+            }
+            else if (month === 7 && day === 21) {
+                message = "bas 4 din aur....<br>fir mera Birthday aa jayega";
+            }
+            else if (month === 7 && day === 22) {
+                message = "bas 3 din aur....<br>fir mera Birthday aa jayega";
+            }
+            else if (month === 7 && day === 23) {
+                message = "bas 2 din aur....<br>fir mera Birthday aa jayega";
+            }
+            else if (month === 7 && day === 24) {
+                message = "Finally, kal mera Birthday hai, taiyar ho jao 🤣";
+            }
+            else if (month === 7 && day === 25) {
+                message = "aaj mera Birthday hai";
+            }
+
+            // Show the message
+            document.getElementById("messageBox").innerHTML = message;
+        }
+
+        // ================================
+        // 🎉 Countdown Logic
+        // ================================
         function updateCountdown() {
             const now = new Date();
             let currentYear = now.getFullYear();
             let birthday = new Date(currentYear, 6, 25, 0, 0, 0); // July is month 6 (0-indexed)
+            
             // If birthday has passed this year, use next year
             if (now > birthday) {
                 birthday = new Date(currentYear + 1, 6, 25, 0, 0, 0);
             }
-            // Get total diff in ms
-            let diff = birthday - now;
 
             // Calculate months, days, hours, minutes, seconds
             let months = birthday.getMonth() - now.getMonth() + (birthday.getFullYear() - now.getFullYear()) * 12;
@@ -283,23 +364,25 @@
                 months--;
                 days = Math.floor((birthday - new Date(now.getFullYear(), now.getMonth() + months, now.getDate(), 0, 0, 0)) / (1000 * 60 * 60 * 24));
             }
+            
             months = Math.max(0, months);
             days = Math.max(0, days);
             hours = Math.max(0, hours);
             minutes = Math.max(0, minutes);
             seconds = Math.max(0, seconds);
 
+            // Update countdown display
             document.getElementById("months").textContent = months;
             document.getElementById("days").textContent = days;
             document.getElementById("hours").textContent = hours;
             document.getElementById("minutes").textContent = minutes;
             document.getElementById("seconds").textContent = seconds;
 
-            // Call the external message logic function!
-            if (typeof updateBirthdayMessage === "function") {
-                updateBirthdayMessage(months, days, hours, minutes, seconds);
-            }
+            // Update birthday message
+            updateBirthdayMessage(months, days, hours, minutes, seconds);
         }
+
+        // Start the countdown
         setInterval(updateCountdown, 1000);
         updateCountdown();
     </script>
