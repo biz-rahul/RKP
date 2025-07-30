@@ -283,7 +283,7 @@ document.getElementById("emailForm").addEventListener("submit", function(event) 
 
     const subjectText = subjectDropdown === "Other" && customSubject ? customSubject : document.querySelector(`#email-subject option[value="${subjectDropdown}"]`).textContent;
 
-    const mailtoLink = `mailto:thelamp2910@gmail.com?subject=${encodeURIComponent(subjectText)}&body=${finalBody}`;
+    const mailtoLink = `mailto:rahulpuribiz@gmail.com?subject=${encodeURIComponent(subjectText)}&body=${finalBody}`;
 
     window.location.href = mailtoLink;
 });
