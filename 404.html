@@ -7,14 +7,71 @@
   <meta name="description" content="Oops! The page you're looking for doesn't exist. Return to The Lamp homepage or explore our sitemap to find what you need.">
   <meta name="robots" content="index, follow">
   <meta name="author" content="Rahul Kumar Puri">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata">
-  <link rel="stylesheet" href="Styles.css">
-
   
-  <!-- Force HTTPS without JavaScript -->
-  <meta http-equiv="refresh" content="3; url=https://rahulpuri.fun">
-  <link rel="canonical" href="https://rahulpuri.fun">
+  <!-- New Fonts and Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+  
+  <!-- Canonical Link (Kept from your original code) -->
+  <link rel="canonical" href="https://rahulpuri.fun/Home">
 
+  <!-- Custom Styles from the new design -->
+  <style>
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #0a0a0a;
+        color: #e5e5e5;
+        overflow: hidden; /* Prevents scrollbars */
+    }
+    .content-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        transition: opacity 0.5s ease-in-out;
+    }
+    .hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .text-404 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(6rem, 25vw, 15rem);
+        font-weight: 900;
+        color: #dc2626;
+        text-shadow: 0 0 10px #dc2626, 0 0 20px #dc2626;
+    }
+    .text-lets-go {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(3rem, 15vw, 8rem);
+        color: #10b981;
+        text-shadow: 0 0 15px #10b981, 0 0 30px #10b981;
+        animation: pulse-glow 2s infinite ease-in-out;
+    }
+    @keyframes pulse-glow {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.05); }
+    }
+    #videoPlayer {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        min-width: 100%;
+        min-height: 100%;
+        width: auto;
+        height: auto;
+        transform: translateX(-50%) translateY(-50%);
+        z-index: 10;
+    }
+  </style>
+
+  <!-- Scripts from your original code (Kept) -->
   <script>
     // Backup HTTPS Redirect via JavaScript
     if (location.protocol !== 'https:') {
@@ -27,14 +84,51 @@
     }
   </script>
 </head>
-<body>
-  <div class="noise"></div>
-  <div class="overlay"></div>
-  <div class="terminal">
-    <h1>Are<span class="errorcode">Yaar 😭</span></h1>
-    <p class="output">lagta hai kuchh galat huaa hai</p>
-    <p class="output">Please Wait....</p>
-    <p class="output"><a href="https://rahulpuri.fun/">Click here</a>.</p>
+<body class="flex items-center justify-center min-h-screen">
+
+  <!-- New Body Content -->
+  <!-- 1. Initial Content (404 Error and Button) -->
+  <div id="initialContent" class="content-container z-20">
+      <h1 class="text-404">404</h1>
+      <p class="text-xl md:text-2xl -mt-8 mb-8 text-gray-400">Lagta hai aap galat jagah aa gaye hain.</p>
+      <button id="clickButton" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105 shadow-lg shadow-red-600/50">
+          Click Here
+      </button>
   </div>
+
+  <!-- 2. Video Player (Initially hidden) -->
+  <!-- IMPORTANT: Place '404.mp4' file in the same folder as this HTML file -->
+  <video id="videoPlayer" class="hidden" preload="auto">
+      <source src="404.mp4" type="video/mp4">
+      Aapka browser video tag support nahi karta.
+  </video>
+
+  <!-- 3. Final Content ("Let's Go" Text, initially hidden) -->
+  <div id="finalContent" class="content-container hidden z-20">
+      <h2 class="text-lets-go">Let's Go</h2>
+  </div>
+
+  <!-- New JavaScript for functionality -->
+  <script>
+      const initialContent = document.getElementById('initialContent');
+      const clickButton = document.getElementById('clickButton');
+      const videoPlayer = document.getElementById('videoPlayer');
+      const finalContent = document.getElementById('finalContent');
+
+      clickButton.addEventListener('click', () => {
+          initialContent.classList.add('hidden');
+          videoPlayer.classList.remove('hidden');
+          videoPlayer.play();
+      });
+
+      videoPlayer.addEventListener('ended', () => {
+          videoPlayer.classList.add('hidden');
+          finalContent.classList.remove('hidden');
+          setTimeout(() => {
+              window.location.href = 'https://rahulpuri.fun/Home';
+          }, 1500);
+      });
+  </script>
 </body>
 </html>
+
