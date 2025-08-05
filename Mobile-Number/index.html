@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mera Mobile Number</title>
+    <title>My Mobile Number</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Inter -->
@@ -68,7 +68,7 @@
                     type="tel" 
                     id="phoneNumber" 
                     name="phoneNumber"
-                    placeholder="+91 12345 67890" 
+                    placeholder="Enter Your Number" 
                     required
                     class="w-full custom-input text-white placeholder-gray-400 rounded-lg py-3 px-4 leading-tight focus:ring-2 focus:ring-purple-500 transition duration-300 ease-in-out">
                 
@@ -100,16 +100,16 @@
                 const recipient = 'rahulpuribiz@gmail.com';
                 
                 // Email subject
-                const subject = 'Call Back Request from Website';
+                const subject = 'Hello rahul 👋';
                 
                 // Email body with the user's number
-                const body = `Hello rahul 👋\n\nYe mera number hai: ${phoneNumber}\n\nTum mere is number par call back karo, mujhe tumse ek kam hai.`;
+                const body = `Ye mera number hai: ${phoneNumber}\n\nTum mere is number par call back karo, mujhe tumse ek kam hai.`;
                 
                 // Create the mailto link
                 const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                 
                 // Show a status message to the user
-                statusMessage.textContent = 'Aapka email app khul raha hai...';
+                statusMessage.textContent = 'Wait...';
 
                 // Open the user's default email client
                 window.location.href = mailtoLink;
@@ -120,7 +120,7 @@
                 }, 4000);
 
             } else {
-                statusMessage.textContent = 'Kripya apna phone number daalein.';
+                statusMessage.textContent = 'Pahle apna number to Enter kar yaar 😂';
                 statusMessage.style.color = '#f87171'; // Red color for error
             }
         });
