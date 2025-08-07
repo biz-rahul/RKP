@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Income Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f2f2f2;
+    }
+    h1 {
+      text-align: center;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .income-display, .expenses, .break-btn {
+      margin-bottom: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+    }
+    .expense-item {
+      margin-top: 10px;
+      padding: 5px;
+      background-color: #eee;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Daily Income Tracker (₹550/day)</h1>
+  <div class="section income-display">
+    <h2>Total Income: ₹<span id="income">0.00</span></h2>
+    <h4>Status: <span id="status">Calculating...</span></h4>
+  </div>  <div class="section">
+    <button id="breakDayBtn">Break This Day</button>
+  </div>  <div class="section expenses">
+    <h2>Expenses</h2>
+    <input type="text" id="expenseTitle" placeholder="Expense title..." />
+    <input type="number" id="expenseAmount" placeholder="Amount (₹)..." />
+    <button onclick="addExpense()">Add Expense</button>
+    <div id="expensesList"></div>
+  </div>  <script>
+    const startDate = new Date("2025-08-10T00:00:00");
+    const dailyIncome = 550;
+    const incomeDisplay = document.getElementById("income");
+    const statusDisplay = document.getElementById("status");
+    const breakDayBtn = document.getElementById("breakDayBtn");
+    const expensesList = document.getElementById("expensesList");
+
+    let isBreakDay = JSON.parse(localStorage.getItem("breakDays") || '{}');
+    let expenseData = JSON.parse(localStorage.getItem("expenses") || '{}');
+
+    function updateIncome() {
+      const now = new Date();
+      const today = now.toISOString().split("T")[0];
+
+      if (now < startDate) {
+        incomeDisplay.innerText = "0.00";
+        statusDisplay.innerText = "Job not started yet";
+        return;
+      }
+
+      let totalIncome = 0;
+      let day = new Date(startDate);
+      while (day <= now) {
+        const dayStr = day.toISOString().split("T")[0];
+        if (!isBreakDay[dayStr]) {
+          if (dayStr === now.toISOString().split("T")[0]) {
+            const secondsInDay = 12 * 60 * 60;
+            const secondsWorked =
+              now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+            const progress = Math.min(secondsWorked, secondsInDay) / secondsInDay;
+            totalIncome += dailyIncome * progress;
+          } else {
+            totalIncome += dailyIncome;
+          }
+        }
+        day.setDate(day.getDate() + 1);
+      }
+
+      incomeDisplay.innerText = totalIncome.toFixed(2);
+      statusDisplay.innerText = isBreakDay[today] ? "Break Day" : "Calculating...";
+    }
+
+    function toggleBreakDay() {
+      const today = new Date().toISOString().split("T")[0];
+      isBreakDay[today] = !isBreakDay[today];
+      localStorage.setItem("breakDays", JSON.stringify(isBreakDay));
+    }
+
+    function addExpense() {
+      const title = document.getElementById("expenseTitle").value;
+      const amount = parseFloat(document.getElementById("expenseAmount").value);
+      const date = new Date().toISOString().split("T")[0];
+
+      if (!title || isNaN(amount)) return;
+
+      if (!expenseData[date]) expenseData[date] = [];
+      expenseData[date].push({ title, amount });
+      localStorage.setItem("expenses", JSON.stringify(expenseData));
+
+      document.getElementById("expenseTitle").value = "";
+      document.getElementById("expenseAmount").value = "";
+
+      showExpenses();
+    }
+
+    function showExpenses() {
+      expensesList.innerHTML = "";
+      const dates = Object.keys(expenseData).sort().reverse();
+      dates.forEach(date => {
+        const items = expenseData[date];
+        items.forEach(exp => {
+          const div = document.createElement("div");
+          div.className = "expense-item";
+          div.innerText = `${date} - ₹${exp.amount} | ${exp.title}`;
+          expensesList.appendChild(div);
+        });
+      });
+    }
+
+    breakDayBtn.addEventListener("click", () => {
+      toggleBreakDay();
+      updateIncome();
+    });
+
+    setInterval(updateIncome, 1000);
+    updateIncome();
+    showExpenses();
+  </script></body>
+</html>
