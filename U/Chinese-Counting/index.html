@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chinese Counting 1 to 100</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <style>
+        body {
+            background: #f5f6fa;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background: #0984e3;
+            color: #fff;
+            padding: 2rem 0 1rem 0;
+            text-align: center;
+        }
+        main {
+            max-width: 800px;
+            margin: 30px auto;
+            background: #fff;
+            padding: 22px 14px;
+            box-shadow: 0 2px 24px rgba(44,62,79,0.09);
+            border-radius: 12px;
+        }
+        label, input {
+            font-size: 1rem;
+        }
+        #rangeinput {
+            width: 60px;
+            padding: 3px 5px;
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 18px;
+        }
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 9px 3px;
+            text-align: center;
+        }
+        th {
+            background: #00b894;
+            color: #fff;
+            font-weight: 600;
+        }
+        tr:hover {
+            background: #f1f2f6;
+        }
+        .pronounce-btn {
+            background: #636e72;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            padding: 5px 11px;
+            font-size: 0.98em;
+        }
+        @media (max-width: 600px) {
+            main {
+                padding: 7px 1px;
+            }
+            th, td {
+                padding: 6px 1px;
+                font-size: 0.95em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Chinese Counting 1 to <span id="headmax">100</span></h1>
+        <p>अपनी पसंद के अनुसार 1 से लेकर जितना नंबर तक Chinese Counting सीखें — साथ में सुनें भी!</p>
+    </header>
+    <main>
+        <div style="margin-bottom:12px;">
+            <label for="rangeinput"><b>गिनती कहाँ तक दिखाना है?</b> </label>
+            <input type="number" id="rangeinput" min="1" max="9999" value="100">
+            <button onclick="generateTable()">Show</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Number</th>
+                    <th>Chinese</th>
+                    <th>Pinyin</th>
+                    <th>Pronounce</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>
+        <p style="margin-top:1em;">
+            <b>नोट:</b> चीनी गिनती सिस्टम (Counting System) बहुत logical है — नीचे दिए गए नंबर, उनके Chinese character, और पिन्यिन (uchcharan) के साथ दिए गए हैं। स्पीकर बटन पर क्लिक कर सुन भी सकते हैं।
+        </p>
+    </main>
+    <script>
+        // 1-10 words
+        const baseNumbers = [
+            {num:1, hans:'一', pin:'yī'},
+            {num:2, hans:'二', pin:'èr'},
+            {num:3, hans:'三', pin:'sān'},
+            {num:4, hans:'四', pin:'sì'},
+            {num:5, hans:'五', pin:'wǔ'},
+            {num:6, hans:'六', pin:'liù'},
+            {num:7, hans:'七', pin:'qī'},
+            {num:8, hans:'八', pin:'bā'},
+            {num:9, hans:'九', pin:'jiǔ'},
+            {num:10, hans:'十', pin:'shí'}
+        ];
+
+        function numberToChinese(n) {
+            if (n <= 10) {
+                const obj = baseNumbers[n-1];
+                return { hans: obj.hans, pin: obj.pin };
+            }
+            if (n < 20) {
+                return {
+                    hans: '十' + (n%10==0?'':baseNumbers[n%10-1].hans),
+                    pin: 'shí' + (n%10===0?'':' ' + baseNumbers[n%10-1].pin)
+                };
+            }
+            if (n < 100) {
+                let tens = Math.floor(n/10);
+                let units = n%10;
+                return {
+                    hans: baseNumbers[tens-1].hans + '十' + (units==0?'':baseNumbers[units-1].hans),
+                    pin: baseNumbers[tens-1].pin + ' shí' + (units===0?'':' ' + baseNumbers[units-1].pin)
+                };
+            }
+            if (n < 1000) {
+                let hundreds = Math.floor(n/100);
+                let rest = n%100;
+                let tens = Math.floor((n%100)/10);
+                let units = n%10;
+                let hans = baseNumbers[hundreds-1].hans + '百';
+                let pin = baseNumbers[hundreds-1].pin + ' bǎi';
+                if(rest === 0) {
+                    return { hans: hans, pin: pin };
+                }
+                if(rest < 10) {
+                    hans += '零' + baseNumbers[rest-1].hans;
+                    pin += ' líng ' + baseNumbers[rest-1].pin;
+                }
+                else {
+                    hans += ((tens==0)?'零':'') + numberToChinese(rest).hans;
+                    pin += ((tens==0)?' líng':' ') + numberToChinese(rest).pin;
+                }
+                return { hans, pin };
+            }
+            if (n < 10000) {
+                let thousands = Math.floor(n/1000);
+                let rest = n%1000;
+                let hans = baseNumbers[thousands-1].hans + '千';
+                let pin = baseNumbers[thousands-1].pin + ' qiān';
+                if(rest === 0) {
+                    return { hans, pin };
+                }
+                // need to insert zero if skip digit(s)
+                let restHans = numberToChinese(rest).hans;
+                let restPin = numberToChinese(rest).pin;
+                if(rest < 100) {
+                    hans += '零' + restHans;
+                    pin += ' líng ' + restPin;
+                }
+                else {
+                    hans += restHans;
+                    pin += ' ' + restPin;
+                }
+                return { hans, pin };
+            }
+            // for n >= 10000, only up to 9999 handled in UI for practical reasons
+            return { hans: "很大", pin: "hěn dà" };
+        }
+
+        function generateTable() {
+            let max = parseInt(document.getElementById('rangeinput').value);
+            if(isNaN(max) || max < 1) max=1;
+            if(max > 9999) max=9999;
+            document.getElementById('headmax').innerText = max;
+            const tbody = document.getElementById('tbody');
+            tbody.innerHTML = '';
+            for(let i=1;i<=max;i++){
+                const c = numberToChinese(i);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${i}</td>
+                <td>${c.hans}</td>
+                <td>${c.pin}</td>
+                <td><button class="pronounce-btn" onclick="pronounce('${c.pin}')">🔊</button></td>`;
+                tbody.appendChild(tr);
+            }
+        }
+
+        function pronounce(text){
+            if('speechSynthesis' in window) {
+                const msg = new SpeechSynthesisUtterance(text);
+                msg.lang = "zh-CN";
+                window.speechSynthesis.speak(msg);
+            } else {
+                alert("Your browser does not support speech synthesis.");
+            }
+        }
+
+        generateTable(); // Default run
+    </script>
+</body>
+</html>
