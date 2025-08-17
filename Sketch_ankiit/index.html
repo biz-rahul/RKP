@@ -15,7 +15,7 @@
     html, body {
       height: 100%;
       width: 100%;
-      overflow: hidden; /* ❌ Scroll disable */
+      overflow: hidden; /* ❌ No scroll */
     }
     body {
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
@@ -30,7 +30,7 @@
       position: relative;
     }
 
-    /* STAR EFFECT (adjusted to fit screen only) */
+    /* STAR EFFECT */
     body::before, body::after {
       content: "";
       position: absolute;
@@ -78,16 +78,11 @@
       margin-top: 30px;
       animation: float 3s ease-in-out infinite;
       z-index: 2;
-      /* No border/shadow (transparent background fit) */
     }
 
     @keyframes float {
-      0%, 100% {
-        transform: translateY(0);
-      }
-      50% {
-        transform: translateY(-15px);
-      }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
     }
   </style>
 </head>
@@ -95,12 +90,25 @@
   <h1>Explore my Creativity <span id="countdown">5</span></h1>
   <img src="Picsart_25-08-17_13-41-36-143.png" alt="Creative Image">
 
+  <!-- ✅ Properly closed script -->
   <script>
     let count = 5;
     const countdownEl = document.getElementById('countdown');
     const timer = setInterval(() => {
       count--;
       countdownEl.textContent = count;
+      if (count === 0) {
+        clearInterval(timer);
+        countdownEl.textContent = "🚀";
+        // Redirect to /Arts after 1 second
+        setTimeout(() => {
+          window.location.href = "/Arts";
+        }, 1000);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>      countdownEl.textContent = count;
       if(count === 0){
         clearInterval(timer);
         countdownEl.textContent = "🚀";
