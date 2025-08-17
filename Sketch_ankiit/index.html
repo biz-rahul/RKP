@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Explore my Creativity</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #111, #222, #333);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+    }
+    h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      text-align: center;
+      letter-spacing: 2px;
+      position: relative;
+    }
+    h1 span {
+      color: #ff006e;
+      margin-left: 10px;
+    }
+    img {
+      width: 280px;
+      margin-top: 30px;
+      animation: float 3s ease-in-out infinite;
+      border-radius: 20px;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    }
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Explore my Creativity <span id="countdown">5</span></h1>
+  <img src="https://picsum.photos/400/300" alt="Creative Image">
+
+  <script>
+    let count = 5;
+    const countdownEl = document.getElementById('countdown');
+    const timer = setInterval(() => {
+      count--;
+      countdownEl.textContent = count;
+      if(count === 0){
+        clearInterval(timer);
+        countdownEl.textContent = "🚀";
+      }
+    }, 1000);
+  </script>
+</body>
+</html>
