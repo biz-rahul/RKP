@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Explore my Creativity</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
+
     * {
       margin: 0;
       padding: 0;
@@ -12,34 +14,67 @@
     }
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #262626);
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
       color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-family: 'Poppins', sans-serif;
+      font-family: 'Orbitron', sans-serif;
       text-align: center;
       padding: 20px;
+      overflow: hidden;
     }
+    /* STAR EFFECT */
+    body::before, body::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0;
+      width: 200%;
+      height: 200%;
+      background-image: 
+        radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+        radial-gradient(2px 2px at 50px 80px, #fff, transparent),
+        radial-gradient(2px 2px at 90px 120px, #fff, transparent),
+        radial-gradient(2px 2px at 130px 170px, #fff, transparent),
+        radial-gradient(2px 2px at 200px 250px, #fff, transparent),
+        radial-gradient(2px 2px at 300px 400px, #fff, transparent);
+      background-repeat: repeat;
+      background-size: 400px 400px;
+      animation: moveStars 60s linear infinite;
+      opacity: 0.5;
+    }
+    body::after {
+      animation-duration: 120s;
+      opacity: 0.3;
+    }
+    @keyframes moveStars {
+      from { transform: translateY(0); }
+      to { transform: translateY(-1000px); }
+    }
+
     h1 {
-      font-size: clamp(1.8rem, 5vw, 3rem);
-      font-weight: 700;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 600;
       line-height: 1.2;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(255, 0, 110, 0.8);
+      z-index: 2;
     }
     h1 span {
       color: #ff006e;
       margin-left: 8px;
     }
+
     img {
-      max-width: 90%;
+      max-width: 70%;
       height: auto;
-      margin-top: 25px;
+      margin-top: 30px;
       animation: float 3s ease-in-out infinite;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      z-index: 2;
+      /* Clean cutout look (no border/shadow) */
     }
+
     @keyframes float {
       0%, 100% {
         transform: translateY(0);
@@ -63,6 +98,10 @@
       if(count === 0){
         clearInterval(timer);
         countdownEl.textContent = "🚀";
+        // Redirect to /Arts page after 1 second delay
+        setTimeout(() => {
+          window.location.href = "/Arts";
+        }, 1000);
       }
     }, 1000);
   </script>
