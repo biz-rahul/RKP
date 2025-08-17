@@ -7,17 +7,18 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
 
-    * {
+    html, body {
+      height: 100vh;
+      width: 100vw;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      overflow: hidden;
+      position: relative;
     }
-    html, body {
-      height: 100%;
-      width: 100%;
-      overflow: hidden; /* ❌ No scroll */
-    }
+
     body {
+      min-height: 100vh;
+      min-width: 100vw;
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
       color: #fff;
       display: flex;
@@ -28,15 +29,15 @@
       text-align: center;
       padding: 20px;
       position: relative;
+      overflow: hidden;
     }
 
-    /* STAR EFFECT */
     body::before, body::after {
       content: "";
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
       background-image: 
         radial-gradient(2px 2px at 20px 30px, #fff, transparent),
         radial-gradient(2px 2px at 50px 80px, #fff, transparent),
@@ -48,6 +49,7 @@
       background-size: 400px 400px;
       animation: moveStars 60s linear infinite;
       opacity: 0.5;
+      pointer-events: none;
       z-index: 0;
     }
     body::after {
@@ -56,7 +58,7 @@
     }
     @keyframes moveStars {
       from { transform: translateY(0); }
-      to { transform: translateY(-400px); }
+      to { transform: translateY(-1000px); }
     }
 
     h1 {
@@ -73,16 +75,25 @@
     }
 
     img {
-      max-width: 70%;
-      height: auto;
-      margin-top: 30px;
+      max-width: 90vw;
+      max-height: 50vh;
+      display: block;
+      margin: 30px auto 0 auto;
       animation: float 3s ease-in-out infinite;
       z-index: 2;
     }
 
     @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-15px);
+      }
+    }
+
+    *:focus {
+      outline: none;
     }
   </style>
 </head>
@@ -90,37 +101,18 @@
   <h1>Explore my Creativity <span id="countdown">5</span></h1>
   <img src="Picsart_25-08-17_13-41-36-143.png" alt="Creative Image">
 
-  <!-- ✅ Properly closed script -->
   <script>
     let count = 5;
     const countdownEl = document.getElementById('countdown');
     const timer = setInterval(() => {
       count--;
       countdownEl.textContent = count;
-      if (count === 0) {
-        clearInterval(timer);
-        countdownEl.textContent = "🚀";
-        // Redirect to /Arts after 1 second
-        setTimeout(() => {
-          window.location.href = "/Arts";
-        }, 1000);
-      }
-    }, 1000);
-  </script>
-</body>
-</html>      countdownEl.textContent = count;
       if(count === 0){
         clearInterval(timer);
         countdownEl.textContent = "🚀";
-        // Redirect to /Arts page after 1 sec
+        // Redirect to /Arts page after 1 second delay
         setTimeout(() => {
-          window.location.href = "/Sketch_ankiit/My_Arts";
-        }, 1000);
-      }
-    }, 1000);
-  </script>
-</body>
-</html>          window.location.href = "/Arts";
+          window.location.href = "/Arts";
         }, 1000);
       }
     }, 1000);
