@@ -1,1 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sketch Ankiit - Drawing Portfolio</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* Reset */
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #111;
+      color: #f1f1f1;
+      line-height: 1.6;
+    }
+    header {
+      background: #000;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #ff5c5c;
+    }
+    header img.logo {
+      width: 80px;
+      border-radius: 50%;
+    }
+    header h1 {
+      font-size: 2.5rem;
+      margin-top: 10px;
+      color: #ff5c5c;
+    }
+    .artist-photo {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .artist-photo img {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      border: 5px solid #ff5c5c;
+      object-fit: cover;
+    }
+    .social-links {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .social-links a {
+      color: #f1f1f1;
+      margin: 0 15px;
+      font-size: 1.8rem;
+      transition: 0.3s;
+    }
+    .social-links a:hover {
+      color: #ff5c5c;
+      transform: scale(1.2);
+    }
+    .gallery {
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .gallery h2 {
+      font-size: 2rem;
+      color: #ff5c5c;
+      margin-bottom: 20px;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+    }
+    .gallery-grid img {
+      width: 100%;
+      border-radius: 15px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .gallery-grid img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 20px rgba(255,92,92,0.7);
+    }
+    .contact {
+      padding: 40px 20px;
+      background: #1a1a1a;
+      text-align: center;
+    }
+    .contact h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+      color: #ff5c5c;
+    }
+    .contact p {
+      margin: 5px 0;
+    }
+    footer {
+      background: #000;
+      padding: 20px;
+      text-align: center;
+      margin-top: 30px;
+      border-top: 2px solid #ff5c5c;
+    }
+    footer p {
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <img src="logo.png" alt="Artist Logo" class="logo">
+    <h1>Sketch Ankiit</h1>
+  </header>
+
+  <!-- Artist Photo -->
+  <div class="artist-photo">
+    <img src="ankiit-photo.jpg" alt="Sketch Ankiit Photo">
+    <p>Artist: Sketch Ankiit</p>
+  </div>
+
+  <!-- Social Media Links -->
+  <div class="social-links">
+    <a href="https://instagram.com/your_instagram" target="_blank"><i class="fab fa-instagram"></i></a>
+    <a href="https://youtube.com/your_youtube" target="_blank"><i class="fab fa-youtube"></i></a>
+  </div>
+
+  <!-- Gallery -->
+  <section class="gallery">
+    <h2>Featured Drawings</h2>
+    <div class="gallery-grid">
+      <img src="drawing1.jpg" alt="Drawing 1">
+      <img src="drawing2.jpg" alt="Drawing 2">
+      <img src="drawing3.jpg" alt="Drawing 3">
+      <img src="drawing4.jpg" alt="Drawing 4">
+      <img src="drawing5.jpg" alt="Drawing 5">
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact">
+    <h2>Contact & Paid Drawing</h2>
+    <p>Email: <a href="mailto:akrraj1200@gmail.com">akrraj1200@gmail.com</a></p>
+    <p>Message me on Instagram: <a href="https://instagram.com/your_instagram" target="_blank">@your_instagram</a></p>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2025 Sketch Ankiit | All Rights Reserved</p>
+  </footer>
+
+</body>
+</html>
 
