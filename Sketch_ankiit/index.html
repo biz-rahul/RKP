@@ -12,8 +12,12 @@
       padding: 0;
       box-sizing: border-box;
     }
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden; /* ❌ Scroll disable */
+    }
     body {
-      min-height: 100vh;
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
       color: #fff;
       display: flex;
@@ -23,15 +27,16 @@
       font-family: 'Orbitron', sans-serif;
       text-align: center;
       padding: 20px;
-      overflow: hidden;
+      position: relative;
     }
-    /* STAR EFFECT */
+
+    /* STAR EFFECT (adjusted to fit screen only) */
     body::before, body::after {
       content: "";
       position: absolute;
       top: 0; left: 0;
-      width: 200%;
-      height: 200%;
+      width: 100%;
+      height: 100%;
       background-image: 
         radial-gradient(2px 2px at 20px 30px, #fff, transparent),
         radial-gradient(2px 2px at 50px 80px, #fff, transparent),
@@ -43,6 +48,7 @@
       background-size: 400px 400px;
       animation: moveStars 60s linear infinite;
       opacity: 0.5;
+      z-index: 0;
     }
     body::after {
       animation-duration: 120s;
@@ -50,7 +56,7 @@
     }
     @keyframes moveStars {
       from { transform: translateY(0); }
-      to { transform: translateY(-1000px); }
+      to { transform: translateY(-400px); }
     }
 
     h1 {
@@ -72,7 +78,7 @@
       margin-top: 30px;
       animation: float 3s ease-in-out infinite;
       z-index: 2;
-      /* Clean cutout look (no border/shadow) */
+      /* No border/shadow (transparent background fit) */
     }
 
     @keyframes float {
@@ -98,9 +104,15 @@
       if(count === 0){
         clearInterval(timer);
         countdownEl.textContent = "🚀";
-        // Redirect to /Arts page after 1 second delay
+        // Redirect to /Arts page after 1 sec
         setTimeout(() => {
           window.location.href = "/Arts";
+        }, 1000);
+      }
+    }, 1000);
+  </script>
+</body>
+</html>          window.location.href = "/Arts";
         }, 1000);
       }
     }, 1000);
