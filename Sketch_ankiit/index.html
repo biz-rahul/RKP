@@ -2,35 +2,34 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Explore my Creativity</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap');
 
     html, body {
-      height: 100%;
+      height: 100vh;
+      width: 100vw;
       margin: 0;
       padding: 0;
       overflow: hidden;
-      box-sizing: border-box;
+      position: relative;
     }
 
     body {
       min-height: 100vh;
       min-width: 100vw;
-      width: 100vw;
-      height: 100vh;
       background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
       color: #fff;
-      font-family: 'Orbitron', sans-serif;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
-      padding: 0;
+      justify-content: center;
+      font-family: 'Orbitron', sans-serif;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
     }
 
     body::before, body::after {
@@ -62,45 +61,26 @@
       to { transform: translateY(-1000px); }
     }
 
-    .center-content {
-      z-index: 2;
-      width: 100vw;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      position: relative;
-      padding: 0;
-    }
-
     h1 {
-      font-size: clamp(2rem, 8vw, 2.7rem);
+      font-size: clamp(2rem, 6vw, 3.5rem);
       font-weight: 600;
       line-height: 1.2;
-      letter-spacing: 1.5px;
-      text-shadow: 0 0 18px rgba(255, 0, 110, 0.75);
-      margin: 0.5em 0 0.2em 0;
-      z-index: 3;
-      padding: 0 10px;
+      letter-spacing: 2px;
+      text-shadow: 0 0 15px rgba(255, 0, 110, 0.8);
+      z-index: 2;
     }
     h1 span {
       color: #ff006e;
       margin-left: 8px;
     }
 
-    .creative-img {
-      width: 98vw;
-      max-width: 420px;
-      max-height: 60vh;
-      height: auto;
-      margin-top: 18px;
-      animation: float 2.6s ease-in-out infinite;
-      border-radius: 14px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.18);
-      background: transparent;
-      z-index: 3;
+    img {
+      max-width: 90vw;
+      max-height: 50vh;
       display: block;
+      margin: 30px auto 0 auto;
+      animation: float 3s ease-in-out infinite;
+      z-index: 2;
     }
 
     @keyframes float {
@@ -108,49 +88,18 @@
         transform: translateY(0);
       }
       50% {
-        transform: translateY(-14px);
+        transform: translateY(-15px);
       }
-    }
-    *:focus {
-      outline: none;
     }
 
-    @media (max-width: 400px) {
-      h1 {
-        font-size: 1.2rem;
-        padding: 0 4vw;
-      }
-      .creative-img {
-        width: 96vw;
-        max-width: 96vw;
-        max-height: 45vh;
-        margin-top: 12px;
-      }
+    *:focus {
+      outline: none;
     }
   </style>
 </head>
 <body>
-  <div class="center-content">
-    <h1>Explore my Creativity <span id="countdown">5</span></h1>
-    <img class="creative-img" src="Picsart_25-08-17_13-41-36-143.png" alt="Creative Image">
-  </div>
-  <script>
-    let count = 5;
-    const countdownEl = document.getElementById('countdown');
-    const timer = setInterval(() => {
-      count--;
-      countdownEl.textContent = count;
-      if(count === 0){
-        clearInterval(timer);
-        countdownEl.textContent = "🚀";
-        setTimeout(() => {
-          window.location.href = "/Arts";
-        }, 1000);
-      }
-    }, 1000);
-  </script>
-</body>
-</html>
+  <h1>Explore my Creativity <span id="countdown">5</span></h1>
+  <img src="Picsart_25-08-17_13-41-36-143.png" alt="Creative Image">
 
   <script>
     let count = 5;
