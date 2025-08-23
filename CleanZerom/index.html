@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CleanZerom — The Future of Clean</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --glass: rgba(255,255,255,0.6);
+      --primary: #0b84ff;
+      --accent: #7c3aed;
+      --muted: #64748b;
+    }
+    body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial}
+    .shimmer{background:linear-gradient(90deg,rgba(255,255,255,0.06)0%,rgba(255,255,255,0.12)50%,rgba(255,255,255,0.06)100%);animation:shimmer 3.5s linear infinite;background-size:200% 100%;mix-blend-mode:overlay}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .blob{position:absolute;filter:blur(60px);opacity:.18;transform:translateZ(0)}
+    .card-anim{opacity:0;transform:translateY(18px) scale(.995);animation:cardIn .7s ease-out forwards}
+    @keyframes cardIn{to{opacity:1;transform:none}}
+    .glass{backdrop-filter:blur(6px);background:linear-gradient(135deg,rgba(255,255,255,0.55),rgba(255,255,255,0.35))}
+    .price-ribbon{background:linear-gradient(90deg,var(--primary),#00b7ff);color:white}
+    .text-muted{color:var(--muted)}
+  </style>
+</head>
+<body class="antialiased bg-gradient-to-br from-slate-50 to-sky-50 text-slate-900">
+
+  <div class="pointer-events-none absolute -left-20 -top-24 blob w-72 h-72 rounded-full bg-purple-400/70"></div>
+  <div class="pointer-events-none absolute right-0 top-44 blob w-96 h-96 rounded-full bg-cyan-400/70"></div>
+
+  <!-- NAV -->
+  <header class="w-full sticky top-4 z-50">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between bg-white/80 glass rounded-3xl shadow-lg py-3 backdrop-blur-lg">
+      <a class="flex items-center gap-3 no-underline" href="#">
+        <div class="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-cyan-500 text-white shadow-md">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M12 8v8m0 0l3.2-3.2M12 16l-3.2-3.2"/></svg>
+        </div>
+        <div>
+          <div class="font-bold text-lg">CleanZerom</div>
+          <div class="text-xs text-muted -mt-0.5">Sparkle. Fast. Safe.</div>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-6">
+        <a href="#products" class="text-sm font-medium text-muted hover:text-slate-900">Product</a>
+        <a href="#feedback" class="text-sm font-medium text-muted hover:text-slate-900">Feedback</a>
+        <a href="#contact" class="text-sm font-medium text-muted hover:text-slate-900">Contact</a>
+        <button id="openDemo" class="ml-4 inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-cyan-500 text-white px-4 py-2 rounded-full text-sm shadow hover:scale-105 transition">Try Demo</button>
+      </nav>
+      <div class="md:hidden">
+        <button id="mobileBuy" class="bg-gradient-to-r from-indigo-600 to-cyan-500 text-white px-4 py-2 rounded-full text-sm shadow">Buy</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <main class="max-w-6xl mx-auto px-6 mt-12">
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+      <div class="space-y-6">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight">
+          Sparkling Clean. <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-cyan-500">Effortless Shine</span>
+        </h1>
+        <p class="text-lg text-muted max-w-xl">Meet CleanZerom — advanced toilet cleaner with a fast-acting formula that removes tough stains, kills 99.9% germs, and leaves a fresh, long-lasting fragrance. Saaf-safai ka naya level.</p>
+        <div class="flex flex-col sm:flex-row gap-4 mt-4">
+          <a href="#products" class="inline-flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-cyan-500 text-white px-6 py-3 rounded-full font-semibold shadow-xl transform hover:scale-105 transition">Buy Now — ₹100</a>
+          <button id="howWorks" class="bg-white border border-slate-200 px-5 py-3 rounded-full font-medium shadow-sm hover:shadow-md">How it works</button>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="card-anim glass rounded-3xl p-6 shadow-2xl flex flex-col md:flex-row items-center gap-6">
+          <div class="w-56 h-56 flex items-center justify-center rounded-2xl bg-white/60 drop-shadow-lg">
+            <img src="images/CleanZerom.webp" alt="CleanZerom" class="w-44 h-44 object-contain">
+          </div>
+          <div class="flex-1">
+            <h3 class="text-2xl font-bold">CleanZerom Toilet Cleaner</h3>
+            <p class="text-sm text-muted mt-1">Powerful stain removal, fresh fragrance, safe for septic systems.</p>
+            <div class="mt-4 flex items-center gap-4">
+              <div class="price-ribbon px-4 py-2 rounded-full font-semibold">₹100</div>
+              <div class="text-sm text-muted">+ Free shipping on orders over ₹499</div>
+            </div>
+            <ul class="mt-4 text-sm text-muted space-y-1">
+              <li>• Instant action on rust & lime</li>
+              <li>• Biodegradable surfactants</li>
+              <li>• Long-lasting fragrance (Lavender Breeze)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="absolute -top-4 right-6 bg-white rounded-full px-3 py-1 shadow-md text-xs font-semibold">Bestseller 🔥</div>
+      </div>
+    </section>
+
+    <!-- PRODUCT FEATURES GRID -->
+    <section id="products" class="mt-16">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-xl transition">
+          <h4 class="font-semibold">Powerful Clean</h4>
+          <p class="text-sm text-muted mt-2">Breaks down stains at molecular level for effortless scrubbing.</p>
+        </div>
+        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-xl transition">
+          <h4 class="font-semibold">Eco-friendly</h4>
+          <p class="text-sm text-muted mt-2">Formulated for high performance, low environmental impact.</p>
+        </div>
+        <div class="p-6 bg-white rounded-2xl shadow hover:shadow-xl transition">
+          <h4 class="font-semibold">Long-lasting fragrance</h4>
+          <p class="text-sm text-muted mt-2">Keeps bathrooms smelling fresh for days.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="mt-16 bg-gradient-to-tr from-white to-sky-50 p-8 rounded-2xl shadow-inner">
+      <h3 class="text-2xl font-bold">What customers say</h3>
+      <div class="mt-6 space-y-4">
+        <blockquote class="p-6 bg-white rounded-2xl shadow flex gap-4 items-center">
+          <img src="https://i.pravatar.cc/80?img=12" class="w-16 h-16 rounded-full" alt="avatar">
+          <div><div class="font-semibold">Aditi R.</div><p class="text-sm text-muted mt-1">"Stains were gone in minutes. Smells amazing. Will buy again."</p></div>
+        </blockquote>
+        <blockquote class="p-6 bg-white rounded-2xl shadow flex gap-4 items-center">
+          <img src="https://i.pravatar.cc/80?img=8" class="w-16 h-16 rounded-full" alt="avatar">
+          <div><div class="font-semibold">Rohit S.</div><p class="text-sm text-muted mt-1">"Good value. Worked better than expensive brands."</p></div>
+        </blockquote>
+      </div>
+    </section>
+
+    <!-- FEEDBACK SECTION -->
+    <section id="feedback" class="mt-16 p-8 bg-white rounded-2xl shadow">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <h3 class="text-2xl font-bold">Send Us Your Feedback</h3>
+          <p class="text-sm text-muted mt-2">Your thoughts help us improve. Quick 30-second form below.</p>
+        </div>
+        <form id="feedbackForm" class="space-y-3 bg-slate-50 p-4 rounded-lg">
+          <input required type="text" placeholder="Your name" class="w-full p-3 rounded-md border border-slate-200 bg-white">
+          <input required type="email" placeholder="Email" class="w-full p-3 rounded-md border border-slate-200 bg-white">
+          <textarea required rows="3" placeholder="Your feedback" class="w-full p-3 rounded-md border border-slate-200 bg-white"></textarea>
+          <div class="flex items-center gap-3">
+            <button type="submit" class="bg-gradient-to-r from-indigo-600 to-cyan-500 text-white px-4 py-2 rounded-full">Send feedback</button>
+            <div id="fbMsg" class="text-sm text-muted"></div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact" class="mt-12 p-8 rounded-2xl">
+      <div class="bg-gradient-to-r from-indigo-600 to-cyan-500 text-white p-8 rounded-2xl shadow-lg">
+        <h3 class="text-2xl font-bold">Get in touch</h3>
+        <p class="mt-2 text-sm">Have partnership ideas or distribution queries? Send a message and we'll reply fast.</p>
+        <div class="mt-4 flex flex-col sm:flex-row gap-4">
+          <a href="mailto:contact@cleanazerom.com" class="bg-white/10 px-4 py-2 rounded-md">contact@cleanazerom.com</a>
+          <a href="tel:+919876543210" class="bg-white/10 px-4 py-2 rounded-md">+91 98765 43210</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="mt-12 text-center text-sm text-muted pb-10">© 2024 CleanZerom. All rights reserved.</footer>
+  </main>
+
+  <script>
+    document.getElementById('feedbackForm')?.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      document.getElementById('fbMsg').textContent = 'Thanks! Feedback sent ✅';
+      e.target.reset();
+    });
+    document.getElementById('mobileBuy')?.addEventListener('click', ()=>{window.location.href = '#products'});
+  </script>
+</body>
+      </html>
