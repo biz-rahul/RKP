@@ -8,8 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Three.js CDN for 3D rendering -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         /* Custom styles for a polished look */
         body {
@@ -33,14 +31,12 @@
             animation: fade-in 1.2s ease-out forwards;
         }
 
-        /* Styles for the 3D canvas container */
-        .hero-canvas-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        /* Custom shadow classes for a more prominent 3D effect */
+        .shadow-3xl {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .shadow-4xl {
+            box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -56,22 +52,15 @@
         </div>
     </header>
 
-    <!-- Hero Section: Main Banner with 3D animation -->
-    <main id="home" class="py-16 md:py-24 lg:py-32 flex items-center justify-center text-center overflow-hidden">
-        <div class="container mx-auto px-6 grid lg:grid-cols-2 items-center gap-10">
-            <!-- Hero Text -->
-            <div class="lg:text-left">
-                <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-6 animate-fade-in">
-                    Sparkling Clean.<br class="sm:hidden"> Effortless Shine.
-                </h1>
-                <p class="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto lg:mx-0">
-                    Discover the revolutionary toilet cleaner that makes cleaning faster, better, and more enjoyable.
-                </p>
-            </div>
-            <!-- Three.js Canvas Container for 3D model -->
-            <div class="hero-canvas-container h-80 lg:h-full lg:order-last">
-                <canvas id="hero-canvas" class="w-full h-full block"></canvas>
-            </div>
+    <!-- Hero Section: Main Banner -->
+    <main id="home" class="py-16 md:py-24 lg:py-32 flex items-center justify-center text-center">
+        <div class="container mx-auto px-6">
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-6 animate-fade-in">
+                Sparkling Clean.<br class="sm:hidden"> Effortless Shine.
+            </h1>
+            <p class="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto">
+                Discover the revolutionary toilet cleaner that makes cleaning faster, better, and more enjoyable.
+            </p>
         </div>
     </main>
     
@@ -79,12 +68,12 @@
     <section id="products" class="py-16">
         <div class="container mx-auto px-6">
             <div class="flex justify-center">
-                <!-- Added subtle 3D transform on hover -->
-                <div class="w-full md:w-2/3 lg:w-1/2 bg-white rounded-3xl shadow-3xl p-8 flex flex-col md:flex-row items-center gap-8 transform transition-all duration-500 hover:scale-105 hover:shadow-4xl perspective">
-                    <!-- Product Image. Background is removed so it shows well on the white card. -->
+                <!-- Product Card with an enhanced 3D-like hover effect -->
+                <div class="w-full md:w-2/3 lg:w-1/2 bg-white rounded-3xl shadow-3xl p-8 flex flex-col md:flex-row items-center gap-8 transform transition-all duration-500 hover:scale-105 hover:shadow-4xl">
+                    <!-- Product Image -->
                     <div class="flex-shrink-0">
-                        <!-- IMPORTANT: Replace this placeholder URL with the path to your 'CleanZerom.jpg' file. -->
-                        <img src="https://placehold.co/400x500/A0B2C3/ffffff?text=Product+Image" alt="CleanZerom Toilet Cleaner" class="rounded-lg shadow-xl">
+                        <!-- Placeholder image with a subtle 3D-like effect on hover -->
+                        <img src="https://placehold.co/400x500/A0B2C3/ffffff?text=Product+Image" alt="CleanZerom Toilet Cleaner" class="rounded-lg shadow-xl transform transition-all duration-300 hover:rotate-3">
                     </div>
                     <!-- Product Details -->
                     <div class="text-center md:text-left">
@@ -100,6 +89,79 @@
                             <li>Kills 99.9% of germs</li>
                             <li>Leaves a fresh, long-lasting fragrance</li>
                             <li>Safe for septic tanks</li>
+                        </ul>
+                        <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                            <button class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 hover:bg-blue-700">
+                                Buy Now
+                            </button>
+                            <!-- Button for customer reviews -->
+                            <a href="/Review" class="bg-white text-blue-600 font-bold py-3 px-6 rounded-full shadow-lg border border-blue-600 transition duration-300 transform hover:scale-105 hover:bg-gray-100 flex items-center justify-center">
+                                See What our customer says
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section id="feedback" class="py-16 bg-white rounded-t-3xl shadow-inner">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+                Send Us Your Feedback
+            </h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto text-gray-600">
+                We value your thoughts and suggestions. Your feedback helps us improve our product and services. Please click the button below to share your experience.
+            </p>
+            <button class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 hover:bg-blue-700">
+                Send your feedback
+            </button>
+        </div>
+    </section>
+
+<!-- Contact Section -->
+    <section id="contact" class="py-16 bg-blue-600 text-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                Get In Touch
+            </h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto">
+                Have questions or want to partner with us? We'd love to hear from you.
+            </p>
+            <div class="flex flex-col md:flex-row justify-center items-center gap-6">
+                <!-- Placeholder Contact Info -->
+                <div class="flex items-center space-x-2">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+                    <span>contact@cleanazerom.com</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.774a11.549 11.549 0 004.623 4.623l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path></svg>
+                    <span>+91 98765 43210</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center bg-gray-900 text-gray-400">
+        <p>&copy; 2024 CleanaZerom. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
+
                         </ul>
                         <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
                             <button class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 hover:bg-blue-700">
