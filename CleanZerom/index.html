@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CleanaZerom - The Future of Clean</title>
+    <title>CleanZerom - The Future of Clean</title>
     <!-- Google Fonts: Inter for a modern look -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Tailwind CSS CDN for styling -->
@@ -14,26 +14,31 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(to bottom right, #f0f4f8, #eef2f5);
         }
+        /* Custom animation for the heading */
+        @keyframes fade-in {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in {
+            animation: fade-in 1.2s ease-out forwards;
+        }
     </style>
 </head>
 <body class="text-gray-800">
 
-    <!-- Header Section: Navigation Bar -->
+    <!-- Header Section: Only Brand Name/Logo -->
     <header class="p-6 bg-white shadow-lg sticky top-0 z-50">
-        <div class="container mx-auto flex justify-between items-center flex-wrap">
+        <div class="container mx-auto flex justify-center sm:justify-between items-center">
             <!-- Brand Logo/Name -->
-            <a href="#home" class="text-2xl font-bold text-blue-600 transition duration-300 transform hover:scale-105">
-                CleanaZerom
+            <a href="#" class="text-2xl font-bold text-blue-600 transition duration-300 transform hover:scale-105">
+                CleanZerom
             </a>
-            <!-- Navigation Links -->
-            <nav class="mt-4 sm:mt-0">
-                <ul class="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-8 text-lg font-medium">
-                    <li><a href="#home" class="text-gray-600 hover:text-blue-500 transition duration-300">Home</a></li>
-                    <li><a href="#about" class="text-gray-600 hover:text-blue-500 transition duration-300">About</a></li>
-                    <li><a href="#products" class="text-gray-600 hover:text-blue-500 transition duration-300">Products</a></li>
-                    <li><a href="#contact" class="text-gray-600 hover:text-blue-500 transition duration-300">Contact</a></li>
-                </ul>
-            </nav>
         </div>
     </header>
 
@@ -43,52 +48,26 @@
             <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 leading-tight mb-6 animate-fade-in">
                 Sparkling Clean.<br class="sm:hidden"> Effortless Shine.
             </h1>
-            <p class="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto mb-10">
+            <p class="text-lg md:text-xl lg:text-2xl text-gray-600 max-w-2xl mx-auto">
                 Discover the revolutionary toilet cleaner that makes cleaning faster, better, and more enjoyable.
             </p>
-            <a href="#products" class="inline-block bg-blue-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition duration-300 transform hover:scale-105 hover:bg-blue-700">
-                Explore Products
-            </a>
         </div>
     </main>
-
-    <!-- About Section -->
-    <section id="about" class="py-16 bg-white">
-        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center gap-12">
-            <!-- Placeholder Image for About Section -->
-            <div class="md:w-1/2 flex justify-center">
-                <img src="https://placehold.co/600x400/2563eb/ffffff?text=Our+Story" alt="Our Story at CleanaZerom" class="rounded-xl shadow-2xl transform transition duration-500 hover:scale-105">
-            </div>
-            <div class="md:w-1/2">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
-                    A Passion for Purity
-                </h2>
-                <p class="text-lg text-gray-600 leading-relaxed mb-4">
-                    CleanaZerom was founded with a simple mission: to revolutionize home cleaning. We believe that cleaning should be quick, effective, and safe for your family. Our toilet cleaner is a testament to this philosophy, crafted with a powerful formula that tackles the toughest stains while leaving a fresh, lasting scent.
-                </p>
-                <p class="text-lg text-gray-600 leading-relaxed">
-                    We are dedicated to quality, innovation, and making a positive impact, one sparkling toilet at a time. Thank you for being a part of our journey.
-                </p>
-            </div>
-        </div>
-    </section>
     
-    <!-- Products Section -->
+    <!-- Product Showcase Section -->
     <section id="products" class="py-16">
         <div class="container mx-auto px-6">
-            <h2 class="text-center text-3xl md:text-4xl font-bold mb-12 text-gray-900">
-                Our Signature Product
-            </h2>
             <div class="flex justify-center">
-                <div class="w-full md:w-2/3 lg:w-1/2 bg-white rounded-xl shadow-2xl p-8 flex flex-col md:flex-row items-center gap-8 transform transition duration-500 hover:scale-105">
-                    <!-- Placeholder Product Image -->
+                <div class="w-full md:w-2/3 lg:w-1/2 bg-white rounded-xl shadow-2xl p-8 flex flex-col md:flex-row items-center gap-8">
+                    <!-- Product Image. Background is removed so it shows well on the white card. -->
                     <div class="flex-shrink-0">
-                        <img src="https://placehold.co/300x400/3b82f6/ffffff?text=CleanaZerom" alt="CleanaZerom Toilet Cleaner" class="rounded-lg shadow-xl">
+                        <!-- IMPORTANT: Replace this placeholder URL with the path to your 'CleanZerom.jpg' file. -->
+                        <img src="https://placehold.co/300x400/3b82f6/ffffff?text=CleanZerom.jpg" alt="CleanZerom Toilet Cleaner" class="rounded-lg shadow-xl">
                     </div>
                     <!-- Product Details -->
                     <div class="text-center md:text-left">
                         <h3 class="text-3xl font-bold text-gray-900 mb-2">
-                            CleanaZerom Toilet Cleaner
+                            CleanZerom Toilet Cleaner
                         </h3>
                         <p class="text-xl text-blue-600 mb-4">₹100</p>
                         <p class="text-md text-gray-600 leading-relaxed mb-6">
@@ -100,6 +79,44 @@
                             <li>Leaves a fresh, long-lasting fragrance</li>
                             <li>Safe for septic tanks</li>
                         </ul>
+                        <div class="flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                            <button class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 hover:bg-blue-700">
+                                Buy Now
+                            </button>
+                            <!-- Button for customer reviews -->
+                            <a href="/Review" class="bg-white text-blue-600 font-bold py-3 px-6 rounded-full shadow-lg border border-blue-600 transition duration-300 transform hover:scale-105 hover:bg-gray-100 flex items-center justify-center">
+                                See What our customer says
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feedback Section -->
+    <section id="feedback" class="py-16 bg-white">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-4 text-gray-900">
+                Send Us Your Feedback
+            </h2>
+            <p class="text-lg mb-8 max-w-2xl mx-auto text-gray-600">
+                We value your thoughts and suggestions. Your feedback helps us improve our product and services. Please click the button below to share your experience.
+            </p>
+            <button class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 hover:bg-blue-700">
+                Send your feedback
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-6 text-center bg-gray-900 text-gray-400">
+        <p>&copy; 2024 CleanZerom. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
+
                         <button class="bg-blue-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transition duration-300 transform hover:scale-105 hover:bg-blue-700">
                             Buy Now
                         </button>
