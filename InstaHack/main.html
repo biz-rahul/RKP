@@ -1,111 +1,375 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>RKP Server Terminal</title>
+  <title>Rahul Kumar Puri — RKP Server Terminal</title>
   <style>
-    body {
-      margin: 0;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      font-family: 'Courier New', Courier, monospace;
-      color: #00ffcc;
-      overflow: hidden;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+    :root{
+      --bg1:#0f2027;
+      --bg2:#203a43;
+      --bg3:#2c5364;
+      --neon:#00ffff;
+      --mint:#00ffcc;
+      --blue:#0099ff;
+      --ink:#0a0a0a;
+      --glass: rgba(10,14,18,0.55);
+      --card: rgba(10,14,18,0.75);
     }
 
-    #matrixCanvas {
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-      filter: drop-shadow(0 0 10px #00ffcc);
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: radial-gradient(1200px 800px at 20% 10%, #102a34 10%, transparent 60%) ,
+                  linear-gradient(135deg, var(--bg1), var(--bg2), var(--bg3));
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Courier New', monospace;
+      color: var(--mint);
+      min-height:100svh;
+      overflow-x:hidden;
     }
 
-    .popup-terminal {
-      position: relative;
-      width: 400px;
-      height: 520px;
-      background: rgba(10, 10, 10, 0.85);
-      border: 2px solid #00ffffcc;
-      border-radius: 20px;
-      box-shadow: 0 0 30px #00ffffcc, 0 0 15px #00ffccaa inset;
-      padding: 20px 25px;
-      overflow-y: auto;
+    #matrixCanvas{
+      position:fixed; inset:0; z-index:-1;
+      filter: drop-shadow(0 0 10px var(--mint));
+    }
+
+    /* Header */
+    .site-header{
+      position:sticky; top:0; z-index:50;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 22px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.35), rgba(0,0,0,0));
       backdrop-filter: blur(6px);
-      animation: fadeInScale 0.6s ease forwards;
+      border-bottom: 1px solid rgba(0,255,204,0.15);
+    }
+    .brand{
+      display:flex; align-items:center; gap:12px;
+    }
+    .brand .logo{
+      width:38px; height:38px; border-radius:10px;
+      background: linear-gradient(135deg, #00ffee, #0077ff);
+      box-shadow: 0 0 18px rgba(0,255,255,0.35);
+    }
+    .brand .title{
+      font-weight:800; letter-spacing:0.6px; color:#e8fffb;
+      text-shadow: 0 0 10px rgba(0,255,255,0.35);
     }
 
-    .popup-terminal h3 {
-      margin: 0 0 18px;
-      font-size: 20px;
-      color: #00ffff;
-      border-bottom: 2px solid #00ffff88;
-      padding-bottom: 8px;
-      text-align: center;
-      text-shadow: 0 0 8px #00ffffcc;
-      letter-spacing: 1.2px;
+    .follow-btn{
+      text-decoration:none;
+      background: linear-gradient(135deg, #ff0050, #ff7a00);
+      color:#fff; padding:10px 18px; border-radius:999px;
+      font-weight:800; letter-spacing:0.4px; font-family:inherit;
+      box-shadow: 0 0 16px rgba(255,90,90,0.45);
+      transition: transform .18s ease, box-shadow .18s ease;
+      border:1px solid rgba(255,255,255,0.15);
+    }
+    .follow-btn:hover{ transform: translateY(-1px) scale(1.03); box-shadow:0 0 24px rgba(255,120,120,0.6) }
+    .follow-btn small{opacity:.9; font-weight:700}
+
+    /* Hero */
+    .hero{
+      max-width:1100px; margin:30px auto 10px; padding:0 18px;
+      display:grid; grid-template-columns: 140px 1fr; gap:18px; align-items:center;
+    }
+    .avatar-wrap{
+      width:140px; height:140px; border-radius:24px; overflow:hidden; position:relative;
+      box-shadow: 0 0 32px rgba(0,255,255,0.35), inset 0 0 18px rgba(0,255,255,0.25);
+      border:2px solid rgba(0,255,255,0.55);
+      background: linear-gradient(135deg, rgba(0,255,255,0.18), rgba(0,153,255,0.18));
+      backdrop-filter: blur(4px);
+    }
+    .avatar-wrap img{ width:100%; height:100%; object-fit:cover; display:block }
+
+    .hero-text{
+      background: linear-gradient(135deg, rgba(0, 20, 26, 0.55), rgba(0, 60, 70, 0.35));
+      border:1px solid rgba(0,255,255,0.28);
+      border-radius:18px; padding:16px 18px;
+      box-shadow: 0 0 26px rgba(0,255,255,0.18), inset 0 0 14px rgba(0,255,255,0.12);
+    }
+    .hero h1{
+      margin:0 0 6px; font-size:28px; line-height:1.2; color:#bffff3;
+      text-shadow: 0 0 10px rgba(0,255,255,0.35);
+    }
+    .hero p{
+      margin:0; color:#c8fff3; opacity:.9; font-family:'Courier New', monospace;
+      letter-spacing:0.6px;
     }
 
-    .server-line {
-      margin: 10px 0;
-      padding: 10px 14px;
-      border-radius: 10px;
+    /* Terminal Card */
+    .terminal-wrap{
+      max-width:900px; margin:18px auto 80px; padding:0 18px;
+    }
+    .popup-terminal{
+      position:relative; width:100%; height:auto; min-height:520px;
+      background: var(--card);
+      border: 1.5px solid rgba(0,255,255,0.35);
+      border-radius:22px;
+      box-shadow: 0 0 30px rgba(0,255,255,0.35), inset 0 0 15px rgba(0,255,255,0.22);
+      padding:20px 22px; overflow-y:auto; backdrop-filter: blur(8px);
+      animation: fadeInScale .6s ease forwards;
+    }
+    .popup-terminal h3{
+      margin:0 0 14px; font-size:19px; color:#a7fff3;
+      border-bottom: 1px dashed rgba(0,255,255,0.35);
+      padding-bottom:8px; text-align:left; text-shadow: 0 0 8px rgba(0,255,255,0.35);
+      letter-spacing:1px;
+    }
+
+    .server-line{
+      margin:10px 0; padding:10px 14px; border-radius:12px;
       background: linear-gradient(90deg, #003333, #005555);
-      box-shadow: inset 0 0 10px #00ffff44;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      transition: background 0.3s ease, transform 0.3s ease;
-      cursor: pointer;
-      position: relative;
+      box-shadow: inset 0 0 10px rgba(0,255,255,0.35);
+      display:flex; justify-content:space-between; align-items:center;
+      transition: background .25s ease, transform .25s ease;
+      cursor:pointer; position:relative; border:1px solid rgba(0,255,255,0.25);
     }
-
-    .server-line:hover {
+    .server-line:hover{
       background: linear-gradient(90deg, #00ffff, #00ccaa);
-      box-shadow: 0 0 15px #00ffffcc, 0 0 20px #00ffccdd inset;
-      transform: scale(1.05);
+      box-shadow: 0 0 15px rgba(0,255,255,0.6), 0 0 20px rgba(0,255,204,0.6) inset;
+      transform: translateY(-1px) scale(1.02);
     }
-
-    .server-line.selected {
+    .server-line.selected{
       background: linear-gradient(90deg, #0066ff, #0099ff);
-      box-shadow: 0 0 18px #0066ffcc, 0 0 10px #0066ffcc inset;
+      box-shadow: 0 0 18px rgba(0,102,255,0.7), 0 0 10px rgba(0,102,255,0.55) inset;
+      border-color: rgba(0,102,255,0.6);
     }
-
-    .server-line span {
-      color: #00ffff;
-      font-weight: 700;
-      text-shadow: 0 0 6px #00ffffcc;
-      letter-spacing: 1.5px;
+    .server-line span{
+      color:#eaffff; font-weight:800; text-shadow: 0 0 6px rgba(0,255,255,0.6);
+      letter-spacing:1.3px; font-family:'Courier New', monospace;
     }
-
-    .server-line.selected span {
-      color: #fff;
-      text-shadow: 0 0 6px #fff;
-    }
-
-    .server-line button {
+    .server-line.selected span{ color:#fff; text-shadow: 0 0 6px #fff }
+    .server-line button{
       background: linear-gradient(135deg, #00ffff, #00ccaa);
-      border: none;
-      color: #003333;
-      cursor: pointer;
-      padding: 8px 16px;
-      font-size: 15px;
-      font-weight: 700;
-      border-radius: 12px;
-      box-shadow: 0 0 12px #00ffffcc;
-      transition: background 0.3s ease, transform 0.3s ease;
-      text-shadow: none;
+      border:none; color:#003333; cursor:pointer; padding:8px 16px;
+      font-size:15px; font-weight:800; border-radius:12px;
+      box-shadow: 0 0 12px rgba(0,255,255,0.55);
+      transition: background .25s ease, transform .25s ease;
+      text-shadow:none; border:1px solid rgba(255,255,255,0.2);
+    }
+    .server-line.selected button{
+      background: linear-gradient(135deg, #0066ff, #0099ff); color:#fff;
+      box-shadow: 0 0 18px rgba(0,102,255,0.7);
+    }
+    .server-line button:hover{
+      background: linear-gradient(135deg, #00ccaa, #00ffff);
+      box-shadow: 0 0 18px rgba(0,255,255,0.85);
+      transform: translateY(-1px) scale(1.06);
+    }
+    .server-line.selected button:hover{
+      background: linear-gradient(135deg, #0099ff, #0066ff);
+      box-shadow: 0 0 22px rgba(0,102,255,0.8);
     }
 
-    .server-line.selected button {
-      background: linear-gradient(135deg, #0066ff, #0099ff);
-      color: #fff;
-      box-shadow: 0 0 18px #0066ffcc;
+    /* Footer CTA (mobile-friendly redundancy) */
+    .insta-follow{
+      position:fixed; bottom:22px; left:50%; transform:translateX(-50%);
+      z-index:40; text-align:center;
     }
+    .insta-follow a{
+      background: linear-gradient(135deg, #ff0050, #ff7a00);
+      color:#fff; text-decoration:none; padding:12px 22px; font-weight:800;
+      border-radius:999px; font-size:16px; box-shadow: 0 0 15px rgba(255,0,64,0.6);
+      transition:.25s ease; border:1px solid rgba(255,255,255,0.15);
+    }
+    .insta-follow a:hover{
+      background: linear-gradient(135deg, #ff3c8d, #ffc107);
+      box-shadow: 0 0 22px rgba(255,91,158,0.8); transform: translateY(-1px) scale(1.05);
+    }
+
+    @keyframes fadeInScale{
+      0%{opacity:0; transform:scale(.96)}
+      100%{opacity:1; transform:scale(1)}
+    }
+
+    /* Responsive */
+    @media (max-width:640px){
+      .hero{ grid-template-columns: 100px 1fr; gap:14px; margin-top:18px }
+      .avatar-wrap{ width:100px; height:100px; border-radius:18px }
+      .hero h1{ font-size:22px }
+      .hero p{ font-size:13px }
+      .terminal-wrap{ margin-bottom:96px }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="matrixCanvas"></canvas>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"></div>
+      <div class="title">RKP Terminal</div>
+    </div>
+    <a href="https://instagram.com/biz.rahul" target="_blank" class="follow-btn" rel="noopener">
+      Follow Developer: <small>@biz.rahul</small>
+    </a>
+  </header>
+
+  <!-- Hero: Name + Photo Highlight -->
+  <section class="hero" aria-label="Profile highlight">
+    <div class="avatar-wrap">
+      <!-- Replace src with actual image URL/path -->
+      <img src="profile.jpg" alt="Photo of Rahul Kumar Puri"/>
+    </div>
+    <div class="hero-text">
+      <h1>Rahul Kumar Puri</h1>
+      <p>Android & Web Developer • Creator • RKP Server Terminal</p>
+    </div>
+  </section>
+
+  <!-- Terminal Card -->
+  <main class="terminal-wrap">
+    <div class="popup-terminal">
+      <h3>RKP Instagram Server Terminal</h3>
+      <div id="serverList"></div>
+    </div>
+  </main>
+
+  <!-- Persistent Follow CTA -->
+  <div class="insta-follow">
+    <a href="https://instagram.com/biz.rahul" target="_blank" rel="noopener">Follow Developer: @biz.rahul</a>
+  </div>
+
+  <script>
+    // Server links (same as original minus removed ones)
+    const links = [
+      "https://birtakipci.com/",
+      "https://canlitakipci.com/",
+      "https://takipcibase.com/",
+      "https://instamoda.org/",
+      "https://fastfollow.in/",
+      "https://takipcimx.net/login",
+      "https://takipcizen.com/",
+      "https://takipcitime.com/",
+      "https://takipcigir.com/",
+      "https://takipcikrali.com/",
+      "https://bayitakipci.com/",
+      "https://followersize.com/",
+      "https://takipciking.net/",
+      "https://bigtakip.net/",
+      "https://www.takipcimx.com/",
+      "https://www.takipciking.com/"
+    ];
+
+    // Matrix animation
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+    function sizeCanvas(){
+      canvas.height = window.innerHeight;
+      canvas.width = window.innerWidth;
+    }
+    sizeCanvas();
+
+    const letters = "01";
+    const fontSize = 16;
+    let columns = Math.floor(canvas.width / fontSize);
+    let drops = Array(columns).fill(1);
+
+    function drawMatrix(){
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ff66";
+      ctx.font = fontSize + "px monospace";
+
+      drops.forEach((y,i)=>{
+        const text = letters[Math.floor(Math.random()*letters.length)];
+        ctx.fillText(text, i*fontSize, y*fontSize);
+        if (y*fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      });
+    }
+    let matrixTimer = setInterval(drawMatrix, 50);
+
+    window.addEventListener("resize", ()=>{
+      sizeCanvas();
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
+    });
+
+    function showTempError(button, link){
+      const errorBox = document.createElement("div");
+      errorBox.style.position = "fixed";
+      errorBox.style.top = "50%";
+      errorBox.style.left = "50%";
+      errorBox.style.transform = "translate(-50%, -50%)";
+      errorBox.style.background = "#220000";
+      errorBox.style.color = "#ff4444";
+      errorBox.style.border = "2px solid #ff4444";
+      errorBox.style.padding = "20px";
+      errorBox.style.fontFamily = "monospace";
+      errorBox.style.fontSize = "14px";
+      errorBox.style.borderRadius = "8px";
+      errorBox.style.boxShadow = "0 0 20px #ff4444a0";
+      errorBox.style.zIndex = "10000";
+
+      let countdown = 3;
+      errorBox.innerText = "[SERVER BLOCKED]\nAuto Fix in " + countdown + "s...";
+      document.body.appendChild(errorBox);
+
+      const interval = setInterval(()=>{
+        countdown--;
+        if (countdown > 0){
+          errorBox.innerText = "[SERVER BLOCKED]\nAuto Fix in " + countdown + "s...";
+        } else {
+          clearInterval(interval);
+          errorBox.innerText = "Fixed Successfully!";
+          setTimeout(()=>{
+            errorBox.remove();
+            window.location.href = link;
+          }, 900);
+        }
+      }, 1000);
+    }
+
+    // Build server list
+    const serverList = document.getElementById("serverList");
+    const serverElements = [];
+    links.forEach((link, i)=>{
+      const div = document.createElement("div");
+      div.className = "server-line";
+      div.dataset.index = i;
+
+      const button = document.createElement("button");
+      button.innerText = "Open";
+
+      button.addEventListener("click", ()=>{
+        serverElements.forEach(el => el.classList.remove("selected"));
+        div.classList.add("selected");
+
+        const expiry = new Date();
+        expiry.setDate(expiry.getDate() + 1);
+        localStorage.setItem("lastClickedServer", i);
+        localStorage.setItem("lastClickedServerExpiry", expiry.getTime());
+
+        if (Math.random() < 0.10){
+          showTempError(button, link);
+        } else {
+          window.location.href = link;
+        }
+      });
+
+      div.innerHTML = `<span>Server-${i+1}</span>`;
+      div.appendChild(button);
+      serverList.appendChild(div);
+      serverElements.push(div);
+    });
+
+    // Restore selected
+    const lastClickedServer = localStorage.getItem("lastClickedServer");
+    const expiryTime = localStorage.getItem("lastClickedServerExpiry");
+    if (lastClickedServer !== null && expiryTime !== null){
+      const now = Date.now();
+      if (now < parseInt(expiryTime)){
+        serverElements[lastClickedServer]?.classList.add("selected");
+      } else {
+        localStorage.removeItem("lastClickedServer");
+        localStorage.removeItem("lastClickedServerExpiry");
+      }
+    }
+  </script>
+</body>
+</html>
 
     .server-line button:hover {
       background: linear-gradient(135deg, #00ccaa, #00ffff);
