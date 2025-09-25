@@ -6,107 +6,430 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --primary: #0cc36d;
-      --text-dark: #222;
-      --bg: #f7f8fa;
-      --card-bg: #fff;
-      --accent: #ffa347;
-      --accent2: #5479f7;
-      --radius: 18px;
-      --shadow: 0 4px 16px rgba(0,0,0,0.04);
+      --bg: #f5faf8;
+      --primary: #15c374;
+      --contrast: #23243e;
+      --card-1: #ceefd2;
+      --card-2: #ffe8c7;
+      --card-3: #dbe8fc;
+      --footer-bg: #ffffff;
+      --shadow: 0 4px 32px rgba(54,163,104,0.09), 0 1.5px 3px rgba(54,163,104,0.03);
+      --radius-main: 25px;
+      --radius-card: 18px;
+      --transition: all 0.19s cubic-bezier(.23,1,.32,1);
     }
     body {
-      margin: 0;
       font-family: 'Segoe UI', Arial, sans-serif;
       background: var(--bg);
-      color: var(--text-dark);
+      color: var(--contrast);
+      margin: 0;
     }
-    header {
-      padding: 22px 16px 2px 16px;
-      background: var(--card-bg);
+    .promo-big {
+      margin: 28px 8px 14px 8px;
+      padding: 25px 15px 0 15px;
+      border-radius: var(--radius-main);
+      background: linear-gradient(140deg, #d2f7e5 55%, #bdf2e4 100%);
+      min-height: 410px;
+      position: relative;
       box-shadow: var(--shadow);
-      font-size: 28px;
-      font-weight: bold;
-      color: var(--primary);
-      letter-spacing: 2px;
       text-align: left;
+      overflow: hidden;
     }
-    .promo-banner {
-      margin: 16px;
-      padding: 24px 14px;
-      background: #d5fadf;
-      border-radius: var(--radius);
+    .news-badge {
+      background: #38e49d;
+      color: #fff;
+      padding: 5px 14px;
+      font-size: 14px;
+      border-radius: 16px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      display: inline-block;
+      margin-bottom: 13px;
+      margin-top: 5px;
+      box-shadow: 0 1px 9px rgba(44,207,136,0.07);
+    }
+    .promo-big h1 {
+      font-size: 2.1rem;
+      font-weight: 700;
+      margin: 11px 0 13px 0;
+      color: #1a2e27;
+    }
+    .promo-big h1 span {
+      color: var(--primary);
+    }
+    .promo-big p {
+      font-size: 17px;
+      color: #344443;
+      margin: 14px 0 11px 0;
+      font-weight: 500;
+    }
+    .start-price {
+      color: #23243e;
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      margin-top: 5px;
+      display: block;
+    }
+    .promo-btn {
+      padding: 12px 32px;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      background: #222848;
+      color: #fff;
+      margin: 15px 0 0 0;
+      cursor: pointer;
+      box-shadow: 0 3px 12px rgba(31,44,68,0.12);
+      letter-spacing: .2px;
+      transition: var(--transition);
+    }
+    .promo-big img {
+      position: absolute;
+      right: 8px;
+      bottom: 0;
+      width: 155px;
+      border-radius: 70px 70px 0 0;
+      box-shadow: 0 5px 28px rgba(30,240,156,0.09);
+    }
+
+    /* Feature Badges */
+    .feature-row {
+      display: flex;
+      gap: 15px;
+      margin: 24px 8px 13px 8px;
+    }
+    .feature {
+      flex: 1;
+      padding: 19px 0;
+      border-radius: var(--radius-card);
+      font-size: 19px;
+      text-align: center;
+      font-weight: 600;
+      color: #1b284a;
+      background: var(--card-2);
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: var(--transition);
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      box-shadow: var(--shadow);
+      position: relative;
+      min-width: 120px;
     }
-    .promo-banner .news {
-      background: var(--primary);
-      color: #fff;
-      border-radius: 12px;
-      font-size: 14px;
-      padding: 3px 12px;
-      display: inline-block;
-      margin-bottom: 10px;
-    }
-    .promo-banner h2 {
-      font-size: 21px;
-      margin: 7px;
-      color: var(--text-dark);
-      font-weight: 500;
-    }
-    .promo-banner .price-start {
-      font-size: 18px;
-      margin: 7px 0 7px 0;
-      color: var(--accent);
-    }
-    .promo-banner button {
-      background: var(--primary);
+    .feature img {width: 37px; margin-bottom: 8px;}
+    .feature:last-child {background: var(--card-3); color: #263273;}
+
+    /* Filters */
+    .filters-row {display: flex; gap: 13px; margin: 18px 8px;}
+    .flt-btn {
+      background: #f4f4fc;
       border: none;
-      color: #fff;
-      border-radius: 12px;
-      padding: 11px 24px;
-      font-size: 15px;
+      border-radius: 16px;
+      padding: 7px 20px;
+      font-size: 16px;
+      color: #5d5f7c;
+      margin-bottom: 2px;
       cursor: pointer;
-      margin-top: 12px;
+      transition: background .16s;
     }
-    .section-title {
-      font-size: 22px;
-      font-weight: 600;
-      margin: 26px 0 4px 18px;
+    .flt-btn.active {background: var(--primary); color: #fff;}
+
+    /* Product Cards */
+    .section {
+      margin: 38px 0 15px 14px;
+      font-size: 23px;
+      font-weight: 700;
     }
-    .desc {
-      color: #666;
+    .desc-row {
+      color: #7d8899;
       font-size: 15px;
-      margin-left: 18px;
-      margin-bottom: 4px;
+      margin-left: 16px;
+      margin-top: -11px;
+      margin-bottom: 6px;
     }
-    .products-row {
+
+    .product-list {
       display: flex;
       flex-wrap: wrap;
       gap: 18px;
-      margin: 20px 16px 0 16px;
+      margin: 8px 8px 16px 8px;
     }
     .product-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
+      background: var(--footer-bg);
+      border-radius: var(--radius-card);
       box-shadow: var(--shadow);
       width: calc(50% - 9px);
-      padding: 14px 14px 18px 14px;
+      padding: 18px 12px 15px 12px;
+      margin-bottom: 7px;
+      position: relative;
+      text-align: center;
+      overflow: hidden;
+      transition: box-shadow .16s;
+    }
+    .product-card:hover {box-shadow: 0 6px 24px #bafce6;}
+    .product-img {
+      width: 75px;
+      height: 75px;
+      object-fit: contain;
+      margin: 0 0 9px 0;
+      border-radius: 16px;
+      background: #f1fff9;
+      box-shadow: 0 1.5px 20px #b1edde22;
+    }
+    .product-title {
+      font-size: 16.5px;
+      font-weight: 600;
+      margin: 5px 0 1px 0;
+      letter-spacing: .1px;
+      color: #23243e;
+    }
+    .product-price {
+      color: var(--primary);
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 3px;
+    }
+    .stars {
+      color: #ffc600;
+      margin-bottom: 2px;
+      font-size: 14px;
+    }
+    .product-badge {
+      position: absolute;
+      right: 16px;
+      top: 12px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 9px;
+      border-radius: 16px;
+      box-shadow: 0 2px 6px #33e59e1f;
+    }
+
+    /* Specification Cards */
+    .spec-sec {
+      margin: 42px 0 10px 0;
+      text-align: center;
+    }
+    .spec-head {font-size: 22px; font-weight: bold;}
+    .spec-desc {color: #6b7686; margin-bottom: 14px;}
+    .spec-cards {
       display: flex;
       flex-direction: column;
+      gap: 18px;
+      margin: 10px 13px;
+    }
+    .spec-card {
+      padding: 18px 12px;
+      border-radius: var(--radius-card);
+      background: #eafaf3;
+      display: flex;
       align-items: center;
-      margin-bottom: 12px;
-      min-width: 155px;
+      font-size: 17px;
+      font-weight: 500;
+      box-shadow: var(--shadow);
+      gap: 13px;
     }
-    .product-img {
-      width: 68px;
-      height: 68px;
-      object-fit: cover;
-      margin: 0 0 8px 0;
+    .spec-card:nth-child(2) {background: #fff5e5;}
+    .spec-card:nth-child(3) {background: #eaf2fc;}
+    .spec-icon {
+      font-size: 28px;
+      border-radius: 36px;
+      padding: 9px;
+      background: #fff;
+      box-shadow: 0 2px 8px #e2ffe6;
+      margin-right: 6px;
     }
+
+    /* Footer */
+    footer {
+      background: var(--footer-bg);
+      border-top: 1px solid #e2eaea;
+      margin-top: 44px;
+      text-align: center;
+      padding: 40px 10px 22px 10px;
+      font-size: 15px;
+      color: #37444a;
+    }
+    .footer-brand {
+      font-size: 25px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    .footer-desc {
+      color: #58777b;
+      font-size: 16px;
+      margin: 14px 0 12px 0;
+      line-height: 1.4;
+    }
+    .footer-main {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 38px 60px;
+      margin-bottom: 11px;
+      margin-top: 18px;
+    }
+    .footer-col {
+      min-width: 135px;
+      text-align: left;
+    }
+    .footer-col h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 7px;
+    }
+    .footer-col a, .footer-contact span, .footer-contact a {
+      color: #444;
+      text-decoration: none;
+      display: block;
+      font-size: 14px;
+      margin-bottom: 7px;
+    }
+    .footer-social {
+      margin-bottom: 11px;
+    }
+    .footer-social a {
+      font-size: 19px;
+      color: var(--primary);
+      margin-right: 18px;
+      text-decoration: none;
+    }
+    .footer-copyright {
+      color: #adb7ba;
+      margin-top: 25px;
+      font-size: 13px;
+      text-align: center;
+    }
+    @media (max-width: 700px) {
+      .product-list {flex-direction: column;}
+      .product-card {width: 100%;}
+      .footer-main {flex-direction: column;gap:19px;}
+      .feature-row {flex-direction: column;}
+    }
+    /* Hide bg img at bottom on mobile if needed */
+  </style>
+</head>
+<body>
+  <div class="promo-big">
+    <span class="news-badge">Free Shipping on Orders Above $50!</span>
+    <h1>Gadgets you'll <span>love.</span><br>Prices you'll trust.</h1>
+    <p>Discover the latest, top-rated gadgets designed for you. Shop secure, get doorstep delivery, and enjoy unbeatable deals on smart tech.</p>
+    <span class="start-price">Starts from $4.90</span>
+    <button class="promo-btn">LEARN MORE</button>
+    <img src="https://img.freepik.com/free-photo/joyful-pretty-woman-listens-music-wireless-headphones-dressed-green-top_273609-42470.jpg" alt="Girl with headphones"/>
+  </div>
+
+  <div class="feature-row">
+    <div class="feature">
+      <img src="https://cdn-icons-png.flaticon.com/512/3180/3180175.png" alt="Earbuds"/>
+      Best products
+      <span style="font-size:13px;font-weight:400;color:#544;">View more →</span>
+    </div>
+    <div class="feature">
+      <img src="https://cdn-icons-png.flaticon.com/512/701/701963.png" alt="Discount watch"/>
+      20% discounts
+      <span style="font-size:13px;font-weight:400;color:#444;">View more →</span>
+    </div>
+  </div>
+
+  <div class="filters-row">
+    <button class="flt-btn active">Watch</button>
+    <button class="flt-btn">Earbuds</button>
+    <button class="flt-btn">Mouse</button>
+  </div>
+
+  <div class="section">Latest Products</div>
+  <div class="desc-row">Showing 4 of 12 products <span style="color:var(--primary);cursor:pointer;">View more →</span></div>
+  <div class="product-list" id="latest-products"></div>
+  <div class="section">Best Selling</div>
+  <div class="desc-row">Showing 8 of 12 products <span style="color:var(--primary);cursor:pointer;">View more →</span></div>
+  <div class="product-list" id="best-products"></div>
+
+  <div class="spec-sec">
+    <div class="spec-head">Our Specifications</div>
+    <div class="spec-desc">We offer top-tier service and convenience to ensure your shopping experience is smooth, secure and completely hassle-free.</div>
+    <div class="spec-cards">
+      <div class="spec-card"><span class="spec-icon">🚚</span><div><b>Free Shipping</b><br/>Enjoy fast, free delivery on every order, no conditions, just reliable doorstep.</div></div>
+      <div class="spec-card"><span class="spec-icon">🔄</span><div><b>7 Days easy Return</b><br/>Change your mind? No worries. Return any item within 7 days.</div></div>
+      <div class="spec-card"><span class="spec-icon">📞</span><div><b>24/7 Customer Support</b><br/>We're here for you. Get expert help with our customer support.</div></div>
+    </div>
+  </div>
+  <footer>
+    <div class="footer-brand">gocart.</div>
+    <div class="footer-desc">Welcome to gocart, your ultimate destination for the latest and smartest gadgets. From smartphones and smartwatches to essential accessories, we bring you the best in innovation — all in one place.</div>
+    <div class="footer-social">
+      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" width="22" alt="Instagram"></a>
+      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" width="22" alt="Twitter"></a>
+      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" width="22" alt="Facebook"></a>
+      <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384015.png" width="22" alt="LinkedIn"></a>
+    </div>
+    <div class="footer-main">
+      <div class="footer-col">
+        <h4>PRODUCTS</h4>
+        <a href="#">Earphones</a>
+        <a href="#">Headphones</a>
+        <a href="#">Smartphones</a>
+        <a href="#">Laptops</a>
+      </div>
+      <div class="footer-col">
+        <h4>WEBSITE?</h4>
+        <a href="#">Home</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Become Plus Member</a>
+        <a href="#">Create Your Store</a>
+      </div>
+      <div class="footer-col footer-contact">
+        <h4>CONTACT</h4>
+        <span>+1-212-456-7890</span>
+        <a href="mailto:contact@example.com">contact@example.com</a>
+        <span>794 Francisco, 94102</span>
+      </div>
+    </div>
+    <div class="footer-copyright">
+      Copyright 2025 © gocart All Right Reserved.
+    </div>
+  </footer>
+  <script>
+    const latestProducts = [
+      { img: "https://cdn-icons-png.flaticon.com/512/3595/3595455.png", name: "Smart Home Cleaner", price: 229, badge: "New", rating: 4.8 },
+      { img: "https://cdn-icons-png.flaticon.com/512/3662/3662815.png", name: "Ergonomic Mouse", price: 99, badge: "", rating: 4.7 },
+      { img: "https://cdn-icons-png.flaticon.com/512/3135/3135768.png", name: "Apple Smart Watch", price: 199, badge: "Hot", rating: 4.9 },
+      { img: "https://cdn-icons-png.flaticon.com/512/862/862880.png", name: "Apple Wireless Earbuds", price: 89, badge: "Sale", rating: 5.0 }
+    ];
+    const bestProducts = [
+      { img: "https://cdn-icons-png.flaticon.com/512/3595/3595455.png", name: "Smart Home Cleaner", price: 229, badge: "Hot", rating: 4.8 },
+      { img: "https://cdn-icons-png.flaticon.com/512/3662/3662815.png", name: "Ergonomic Mouse", price: 99, badge: "", rating: 4.7 },
+      { img: "https://cdn-icons-png.flaticon.com/512/7396/7396260.png", name: "Home Theater", price: 149, badge: "", rating: 4.8 },
+      { img: "https://cdn-icons-png.flaticon.com/512/3135/3135768.png", name: "Apple Smart Watch", price: 199, badge: "Best", rating: 4.9 },
+      { img: "https://cdn-icons-png.flaticon.com/512/862/862880.png", name: "Apple Wireless Earbuds", price: 89, badge: "Sale", rating: 5.0 },
+      { img: "https://cdn-icons-png.flaticon.com/512/1043/1043313.png", name: "Headphones", price: 129, badge: "", rating: 4.7 },
+      { img: "https://cdn-icons-png.flaticon.com/512/3132/3132088.png", name: "Tablet Pro", price: 499, badge: "New", rating: 4.9 },
+      { img: "https://cdn-icons-png.flaticon.com/512/927/927567.png", name: "Bluetooth Speaker", price: 59, badge: "", rating: 4.6 }
+    ];
+    function renderProducts(arr, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+      arr.forEach(p => {
+        container.innerHTML += `
+          <div class="product-card">
+            ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+            <img src="${p.img}" alt="${p.name}" class="product-img"/>
+            <div class="product-title">${p.name}</div>
+            <div class="product-price">$${p.price}</div>
+            <div class="stars">${'★'.repeat(Math.round(p.rating))}<span style="color:#888;font-size:13px;"> (${p.rating})</span></div>
+          </div>
+        `;
+      });
+    }
+    renderProducts(latestProducts, "latest-products");
+    renderProducts(bestProducts, "best-products");
+  </script>
+</body>
+</html>    }
     .product-title {
       font-size: 16px;
       font-weight: 400;
