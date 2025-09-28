@@ -25,65 +25,26 @@
       WebFont.load({  google: {    families: ["Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Lora:regular,italic,700,700italic"]  }});
     </script>
      <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
-
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: #ffd9d9; /* pink background */
-      color: #111;
-    }
-
-    .container {
-      max-width: 900px;
+    
+      
+      .container {
+      max-width: 800px;
       margin: auto;
-      padding: 50px 20px;
+      padding: 40px 20px;
     }
 
     h2 {
       text-align: center;
-      font-size: 22px;
+      font-size: 20px;
       letter-spacing: 3px;
       font-weight: 700;
       background: linear-gradient(90deg, #a259ff, #ff3d77, #ff9800);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 50px;
+      margin-bottom: 80px;
       text-transform: uppercase;
     }
 
-    /* INTRO SECTION */
-    .intro-box {
-      background: #fff;
-      padding: 30px;
-      border-radius: 20px;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-      margin-bottom: 60px;
-      opacity: 0;
-      transform: translateY(50px);
-      transition: all 1s ease-out;
-    }
-    .intro-box.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    .intro-title {
-      font-size: 24px;
-      font-weight: 700;
-      background: linear-gradient(90deg, #ff3d77, #ff9800);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-bottom: 20px;
-    }
-    .intro-text {
-      font-size: 16px;
-      line-height: 1.7;
-      color: #444;
-      text-align: justify;
-    }
-
-    /* INTERESTS SECTION */
     .logo {
       width: 80px;
       height: 80px;
@@ -118,6 +79,7 @@
       transition: all 0.8s ease-out;
     }
 
+    /* Fade-in effect */
     ul li.show {
       opacity: 1;
       transform: translateY(0);
@@ -226,22 +188,9 @@
         
         <div class="home-header_spacing"></div>
         
-          <div class="container">
+           <div clss="container">
     <h2>ABOUT ME MORE...</h2>
 
-    <!-- INTRO SECTION -->
-    <div class="intro-box">
-      <div class="intro-title">Introduction of Rahul Kumar Puri</div>
-      <p class="intro-text">
-        I am Rahul Kumar Puri, a passionate Web Developer, Writer, and Digital Professional from Motihari, Bihar, India. 
-        I specialize in creating fast, modern, and user-friendly websites, blending web development, design, and technology solutions. 
-        Beyond coding, I am a Poet and Men’s Rights Activist, advocating for fairness and equality in society. 
-        My work also explores <b>Guanxi and Mianzi</b>, key concepts of Chinese culture that influence leadership, business, and human psychology. 
-        With expertise across technology, creativity, and strategy, I aim to deliver impactful results that inspire and empower.
-      </p>
-    </div>
-
-    <!-- INTERESTS SECTION -->
     <div class="logo"></div>
     <div class="section-title">MY INTERESTS</div>
     <p class="desc">here are all interests that i like, Click there for more info.</p>
@@ -255,7 +204,7 @@
       <li>Coding</li>
       <li>Men's right activity</li>
     </ul>
-          </div>
+           </div>
         
           <section class="section-home-service">
             <div class="padding-global">
@@ -378,9 +327,9 @@
     <script>
       $(document).ready(function() {$(".w-webflow-badge").removeClass("w-webflow-badge").empty(); });
     </script>
-        <script>
-    // Fade-in scroll animation
-    const items = document.querySelectorAll("ul li, .intro-box");
+         <script>
+    // Scroll fade-in animation
+    const items = document.querySelectorAll("ul li");
 
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -391,6 +340,6 @@
     }, { threshold: 0.2 });
 
     items.forEach(item => observer.observe(item));
-        </script>
+         </script>
   </body>
   </html>
