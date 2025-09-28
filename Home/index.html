@@ -24,6 +24,105 @@
 
       WebFont.load({  google: {    families: ["Lato:100,100italic,300,300italic,400,400italic,700,700italic,900,900italic","Lora:regular,italic,700,700italic"]  }});
     </script>
+     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #ffd9d9; /* pink background */
+      color: #111;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      padding: 50px 20px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      letter-spacing: 3px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a259ff, #ff3d77, #ff9800);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 50px;
+      text-transform: uppercase;
+    }
+
+    /* INTRO SECTION */
+    .intro-box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      margin-bottom: 60px;
+      opacity: 0;
+      transform: translateY(50px);
+      transition: all 1s ease-out;
+    }
+    .intro-box.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .intro-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #ff3d77, #ff9800);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 20px;
+    }
+    .intro-text {
+      font-size: 16px;
+      line-height: 1.7;
+      color: #444;
+      text-align: justify;
+    }
+
+    /* INTERESTS SECTION */
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(90deg, #000, #ff6a00);
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .desc {
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 25px;
+    }
+
+    ul {
+      list-style-type: disc;
+      padding-left: 20px;
+    }
+
+    ul li {
+      font-weight: 700;
+      font-size: 17px;
+      margin-bottom: 12px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s ease-out;
+    }
+
+    ul li.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+     </style>
     <style>
       html, body {
   overflow-x: hidden;
@@ -127,28 +226,36 @@
         
         <div class="home-header_spacing"></div>
         
-        <section class="section_home-feature">
-          <div class="home-feature_wrapper">
-            <div class="home-feature_item _1">
-              <div class="home-feature_component">
-                
-                  <div class="home-feature_content">
-                    <div id="w-node-c2027749-951c-a613-6767-d5de8ea7eb8b-5e5152c7" class="home-feature_texts-wrap">
-                      <div class="home-feature_heading-wrap">
-                        <h2 class="heading-style-h3">Introduction of Rahul Kumar Puri</h2>
-                        <div class="home-feature_label-wrap">
-                        </div>
-                      </div>
-                      <div class="home-feature_text-wrap">
-                        <p>I am Rahul Kumar Puri, a passionate Web Developer, Writer, and Digital Professional from Motihari, Bihar, India. I specialize in creating fast, modern, and user-friendly websites, blending web development, design, and technology solutions. Beyond coding, I am a Poet and Men’s Rights Activist, advocating for fairness and equality in society. My work also explores Guanxi and Mianzi, key concepts of Chinese culture that influence leadership, business, and human psychology. With expertise across technology, creativity, and strategy, I aim to deliver impactful results that inspire and empower.</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          <div class="container">
+    <h2>ABOUT ME MORE...</h2>
+
+    <!-- INTRO SECTION -->
+    <div class="intro-box">
+      <div class="intro-title">Introduction of Rahul Kumar Puri</div>
+      <p class="intro-text">
+        I am Rahul Kumar Puri, a passionate Web Developer, Writer, and Digital Professional from Motihari, Bihar, India. 
+        I specialize in creating fast, modern, and user-friendly websites, blending web development, design, and technology solutions. 
+        Beyond coding, I am a Poet and Men’s Rights Activist, advocating for fairness and equality in society. 
+        My work also explores <b>Guanxi and Mianzi</b>, key concepts of Chinese culture that influence leadership, business, and human psychology. 
+        With expertise across technology, creativity, and strategy, I aim to deliver impactful results that inspire and empower.
+      </p>
+    </div>
+
+    <!-- INTERESTS SECTION -->
+    <div class="logo"></div>
+    <div class="section-title">MY INTERESTS</div>
+    <p class="desc">here are all interests that i like, Click there for more info.</p>
+
+    <ul>
+      <li>Writing</li>
+      <li>Politics</li>
+      <li>Cinema</li>
+      <li>Guanxi and Mianzi</li>
+      <li>Technology</li>
+      <li>Coding</li>
+      <li>Men's right activity</li>
+    </ul>
           </div>
-        </section>
         
           <section class="section-home-service">
             <div class="padding-global">
@@ -271,5 +378,19 @@
     <script>
       $(document).ready(function() {$(".w-webflow-badge").removeClass("w-webflow-badge").empty(); });
     </script>
+        <script>
+    // Fade-in scroll animation
+    const items = document.querySelectorAll("ul li, .intro-box");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        }
+      });
+    }, { threshold: 0.2 });
+
+    items.forEach(item => observer.observe(item));
+        </script>
   </body>
   </html>
