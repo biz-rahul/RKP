@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Me - Rahul Kumar Puri</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #ffd9d9, #fff0f5);
+      color: #111;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 60px 20px;
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 22px;
+      letter-spacing: 3px;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a259ff, #ff3d77, #ff9800);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 60px;
+      text-transform: uppercase;
+    }
+
+    /* HERO INTRO SECTION */
+    .intro-hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 25px;
+      margin-bottom: 100px;
+      opacity: 0;
+      transform: translateY(60px);
+      transition: all 1.2s ease-out;
+    }
+    .intro-hero.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .intro-hero h1 {
+      font-size: 46px;
+      font-weight: 800;
+      line-height: 1.3;
+      margin: 0;
+      background: linear-gradient(90deg, #ff3d77, #ff9800, #a259ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.15);
+    }
+    .intro-hero p {
+      font-size: 18px;
+      line-height: 1.9;
+      max-width: 850px;
+      color: #333;
+    }
+
+    /* INTERESTS SECTION */
+    .section-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-top: 60px;
+      margin-bottom: 15px;
+      text-align: center;
+      background: linear-gradient(90deg, #ff9800, #a259ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .desc {
+      font-size: 16px;
+      color: #555;
+      margin-bottom: 40px;
+      text-align: center;
+    }
+
+    .interests {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 25px;
+      margin-top: 40px;
+    }
+    .interest-card {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
+      font-size: 18px;
+      font-weight: 600;
+      text-align: center;
+      color: #111;
+      border: 1px solid rgba(255,255,255,0.3);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      cursor: pointer;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.9s ease-out, transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .interest-card:hover {
+      transform: translateY(-8px) scale(1.05);
+      box-shadow: 0 12px 35px rgba(255, 61, 119, 0.35);
+      background: rgba(255, 255, 255, 0.35);
+    }
+    .interest-card.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Animation Stagger Effect */
+    .interest-card:nth-child(1) { transition-delay: 0.1s; }
+    .interest-card:nth-child(2) { transition-delay: 0.2s; }
+    .interest-card:nth-child(3) { transition-delay: 0.3s; }
+    .interest-card:nth-child(4) { transition-delay: 0.4s; }
+    .interest-card:nth-child(5) { transition-delay: 0.5s; }
+    .interest-card:nth-child(6) { transition-delay: 0.6s; }
+    .interest-card:nth-child(7) { transition-delay: 0.7s; }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- HERO INTRO -->
+    <!-- INTERESTS -->
+    <div class="section-title">Introduction of Rahul Kumar Puri</div>
+    <p class="desc">I am Rahul Kumar Puri, a passionate Web Developer, Writer, and Digital Professional from Motihari, Bihar, India. I specialize in creating fast, modern, and user-friendly websites, blending web development, design, and technology solutions. Beyond coding, I am a Poet and Men’s Rights Activist, advocating for fairness and equality in society. My work also explores Guanxi and Mianzi, key concepts of Chinese culture that influence leadership, business, and human psychology. With expertise across technology, creativity, and strategy, I aim to deliver impactful results that inspire and empower.</p>
+    
+    
+    <div class="container">
+  <!-- Existing content ... -->
+
+  <!-- Books Section: already inside .container -->
+  <div class="section-title">My Books</div>
+  <p class="desc">here are All Books list that Rahul written by own.</p>
+  <div class="interests">
+    <div class="interest-card" onclick="location.href='/books/bhanwara-aur-phool'">भंवरा और फूल</div>
+    <div class="interest-card" onclick="location.href='/books/bik-gaya-insaan'">बिक गया इंसान</div>
+    <div class="interest-card" onclick="location.href='/books/shikayate'">शिकायते</div>
+    <div class="interest-card" onclick="location.href='/books/read-my-poetry'">Read My Poetry</div>
+  </div>
+
+  <!-- Language Section: move INSIDE .container for equal spacing -->
+  <div class="section-title">My Language Skills</div>
+  <p class="desc">Languages that i know or learning. Here percentage (%) shows proficiency in that language.</p>
+  <div class="interests">
+    <div class="interest-card" onclick="location.href='/languages/bhojpuri'">Bhojpuri (Fluent)</div>
+    <div class="interest-card" onclick="location.href='/languages/hindi'">Hindi (Fluent)</div>
+    <div class="interest-card" onclick="location.href='/languages/english'">English (70%)</div>
+    <div class="interest-card" onclick="location.href='/languages/chinese'">Chinese (5%)</div>
+  </div>
+</div>
+
+  <script>
+    // Fade-in scroll animation
+    const items = document.querySelectorAll(".intro-hero, .interest-card");
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("show");
+        }
+      });
+    }, { threshold: 0.2 });
+
+    items.forEach(item => observer.observe(item));
+  </script>
+</body>
+</html>
