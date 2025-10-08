@@ -1,408 +1,320 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
-     <title>Send Email| Rahul Kumar Puri</title>
-    <meta name="description" content="Contact The Lamp RKP for all your inquiries. Reach out to us today for any support and collaboration.">
-    <meta name="robots" content="index, follow">
-<meta name="author" content="Rahul Kumar Puri">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        /* Custom styles for the animated gradient background */
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(-45deg, #23a6d5, #23d5ab, #f87171, #60a5fa);
-            background-size: 400% 400%;
-            animation: gradient-animation 15s ease infinite;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Contact | Rahul Kumar Puri</title>
+  <meta name="description" content="Contact The Lamp RKP for inquiries, support, and collaboration."/>
+  <meta name="robots" content="index, follow"/>
+  <meta name="author" content="Rahul Kumar Puri"/>
 
-        @keyframes gradient-animation {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-        /* Glass effect for the main container */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Custom styling for the input field */
-        .custom-input {
-            background: rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-        .custom-input:focus {
-            background: rgba(0, 0, 0, 0.3);
-            border-color: rgba(192, 132, 252, 1); /* focus:border-purple-400 */
-            outline: none;
-        }
-        
-        /* Glow effect for the button */
-        .btn-glow:hover {
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-        }
-    
-        .container {
-    max-width: 900px;
-    margin: 40px auto;
-    background: none; /* No background for container */
-    padding: 0; /* Remove padding */
-    border-radius: 0; /* Remove rounded corners */
-    box-shadow: none; /* Remove shadow */
-        }
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet"/>
 
-        .section {
-            margin-bottom: 40px;
-        }
+  <!-- Font Awesome (optional icons) -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet"/>
 
-        .section-heading {
-            text-align: center;
-            font-size: 2rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+  <style>
+    /* Animated gradient background */
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(-45deg, #23a6d5, #23d5ab, #f87171, #60a5fa);
+      background-size: 400% 400%;
+      animation: gradient-animation 15s ease infinite;
+    }
+    @keyframes gradient-animation {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
 
-        /* Social Media Section */
-         .social-media {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+    /* Typography mapping */
+    h1, h2, .section-heading { font-family: 'Playfair Display', serif; }
+    body, p, input, textarea, select { font-family: 'Roboto', sans-serif; }
+    .btn, label { font-family: 'Poppins', sans-serif; font-weight: 600; }
 
-        /* CSS for BGMI Icon */
-        .social-media a.bgmi img {
-            width: 40px; /* BGMI icon size */
-            height: 40px;
-            object-fit: cover; /* Ensure the image fits proportionally */
-        }
+    /* Reusable glass card */
+    .glass-card {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
 
-        /* CSS for other social media icons */
-        .social-media a i {
-            font-size: 40px; /* Size for Font Awesome icons */
-        }
+    /* Inputs base */
+    .input-base {
+      width: 100%;
+      padding: 12px 14px;
+      font-size: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      border-radius: 10px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.18);
+      color: #111827;
+      transition: box-shadow .3s ease, border-color .3s ease, background .3s ease;
+      background-color: #ffffffcc;
+    }
+    .input-base::placeholder { color: #6b7280; }
+    .input-base:focus {
+      border-color: #8b5cf6;
+      box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.25);
+      background: #ffffffff;
+    }
 
-        /* Email Button Section */
-        .btn {
-            display: block;
-            margin: 20px auto;
-            padding: 15px 30px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            background: linear-gradient(135deg, #ff5f6d, #ffc371);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            text-align: center;
-            text-decoration: none;
-        }
+    /* Buttons */
+    .btn-primary {
+      background: linear-gradient(135deg, #36d1dc, #5b86e5);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .3s ease, background .3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #5b86e5, #36d1dc);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    }
 
-        .btn:hover {
-            transform: scale(1.1);
-            background: linear-gradient(135deg, #ff9966, #ff5e62);
-        }
+    .btn-accent {
+      background: linear-gradient(135deg, #ff5f6d, #ffc371);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform .18s ease, box-shadow .3s ease, background .3s ease;
+    }
+    .btn-accent:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #ff9966, #ff5e62);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+    }
 
-        /* Form Section */
-        form {
-            background: rgba(255, 255, 255, 0.15);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        form h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-
-        form .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
-        }
-
-        form label {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        form input, form textarea, form select {
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            outline: none;
-            background: rgba(255, 255, 255, 0.2);
-            color: #fff;
-        }
-
-        form textarea {
-            resize: none;
-            height: 120px;
-        }
-
-        form button {
-            background: linear-gradient(135deg, #36d1dc, #5b86e5);
-            border: none;
-            color: #fff;
-            font-size: 18px;
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        form button:hover {
-            transform: translateY(-3px);
-            background: linear-gradient(135deg, #5b86e5, #36d1dc);
-        }
-
-        h1, h2, .section-heading {
-    font-family: 'Playfair Display', serif;
-        }
-        body, p, form input, form textarea, form select {
-    font-family: 'Roboto', sans-serif;
-        }
-.btn, .form-group label {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 600;
-}
-        form input, form textarea, form select {
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ccc; /* Add a light border */
-    border-radius: 5px;
-    outline: none;
-    background: #f9f9f9; /* Add a light background color */
-    color: #333; /* Make text color darker for contrast */
-    transition: all 0.3s ease; /* Add a hover effect */
-}
-
-form input:focus, form textarea:focus, form select:focus {
-    border-color: #36d1dc; /* Highlight border on focus */
-    box-shadow: 0 0 5px rgba(54, 209, 220, 0.5); /* Add focus glow */
-    background: #ffffff; /* Slightly brighter background */
-}
-
-        .email-section {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 400px;
-    margin: auto;
-}
-
-.email-heading {
-    text-align: center;
-    color: #333;
-}
-
-.email-description {
-    text-align: center;
-    color: #777;
-}
-
-label {
-    display: block;
-    margin-top: 10px;
-    font-weight: bold;
-}
-
-input, select, textarea {
-    width: 100%;
-    padding: 10px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.email-btn {
-    width: 100%;
-    padding: 10px;
-    background: #28a745;
-    color: white;
-    border: none;
-    margin-top: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.email-btn:hover {
-    background: #218838;
-}
-    </style>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    /* Container */
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 16px;
+    }
+  </style>
 </head>
-<body>
-        
-        <!-- Email Section -->
-<div class="email-section">
-    <h2 class="email-heading">Drop me a Email</h2>
-    <p class="email-description">Want to chat? Fill out the form below!</p>
-    
-    <form id="emailForm">
-        <label for="email-name">Your Name</label>
-        <input type="text" id="email-name" name="name" required>
-        
-        <label for="email-subject">Subject</label>
-        <select id="email-subject" name="subject" required onchange="toggleCustomSubject()">
-    <option value="" disabled selected>Choose a topic</option>
-    <option value="Question">Mujhe tumse kuchh sawal puchhna hai</option>
-    <option value="Chat">Mujhe tumse ek personal baat karni hai</option>
-    <option value="Random">Mujhe tumhari ek Help chahiye</option>
-    <option value="Appreciation">Mujhe tumhe ek secret batani hai</option>
-    <option value="Feedback">Tumse ek chhoti si request hai Yaar</option>
-    <option value="Other">Others</option>
-        </select>
+<body class="min-h-screen">
 
-        <!-- Custom Subject Input (Hidden by Default) -->
-        <div id="custom-subject-container" style="display: none;">
-            <label for="custom-subject">Enter Your Topic</label>
-            <input type="text" id="custom-subject" name="custom-subject">
+  <header class="container text-center text-white">
+    <h1 class="text-3xl md:text-4xl font-bold mt-8">Contact Rahul Kumar Puri</h1>
+    <p class="mt-2 opacity-95">Collaboration, questions, ya callback—niche forms se choose karo ✨</p>
+  </header>
+
+  <main class="container mt-10 grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Email Form Card -->
+    <section class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl">
+      <header class="text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-white">Send an Email</h2>
+        <p class="text-white/90 mt-1">Form bharo aur default email client se direct mail ready ho jayega 📧</p>
+      </header>
+
+      <form id="emailForm" class="mt-6 space-y-4" aria-describedby="emailHelper">
+        <div>
+          <label for="email-name" class="block text-white">Your Name</label>
+          <input type="text" id="email-name" name="name" class="input-base" placeholder="Enter your name" required />
         </div>
 
-        <label for="email-message">Your Message</label>
-        <textarea id="email-message" name="message" rows="5" required></textarea>
+        <div>
+          <label for="email-subject" class="block text-white">Subject</label>
+          <select id="email-subject" name="subject" class="input-base" required>
+            <option value="" disabled selected>Choose a topic</option>
+            <option value="Question">Mujhe tumse kuchh sawal puchhna hai</option>
+            <option value="Chat">Mujhe tumse ek personal baat karni hai</option>
+            <option value="Random">Mujhe tumhari ek Help chahiye</option>
+            <option value="Appreciation">Mujhe tumhe ek secret batani hai</option>
+            <option value="Feedback">Tumse ek chhoti si request hai Yaar</option>
+            <option value="Other">Others</option>
+          </select>
+        </div>
 
-        <button type="submit" class="email-btn">Send Email</button>
-    </form>
+        <div id="custom-subject-container" class="hidden">
+          <label for="custom-subject" class="block text-white">Enter Your Topic</label>
+          <input type="text" id="custom-subject" name="custom-subject" class="input-base" placeholder="Custom subject (optional when Others selected)" />
+        </div>
 
+        <div>
+          <label for="email-message" class="block text-white">Your Message</label>
+          <textarea id="email-message" name="message" rows="6" class="input-base" placeholder="Write your message..." required></textarea>
+        </div>
 
-    <!-- Main container -->
-    <div class="w-full max-w-lg mx-auto glass-container rounded-2xl p-8 md:p-12 shadow-2xl text-white text-center">
-        
-        <!-- Message to the user -->
-        <h1 class="text-2xl md:text-3xl font-bold mb-4">Sorry!</h1>
-        <p class="mb-2 text-gray-200">Mai apna personal number publicly nahi bata sakta....</p>
-        <p class="mb-8 text-gray-200">Lekin tum yaha apna number enter karo aur mujhe send karo, fir mai tumhare number pe call back karta hu.</p>
+        <div class="flex items-center gap-3">
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-paper-plane mr-2"></i> Send Email
+          </button>
+          <a href="mailto:rahulpuribiz@gmail.com" class="btn-accent" aria-label="Open blank email">
+            <i class="fas fa-envelope-open-text mr-2"></i> Blank Email
+          </a>
+        </div>
 
-        <!-- Form to collect the number -->
-        <form id="callbackForm" class="w-full max-w-sm mx-auto">
-            <div class="flex flex-col sm:flex-row items-center gap-4">
-                <!-- Phone number input field -->
-                <input 
-                    type="tel" 
-                    id="phoneNumber" 
-                    name="phoneNumber"
-                    placeholder="Enter Your Number" 
-                    required
-                    class="w-full custom-input text-white placeholder-gray-400 rounded-lg py-3 px-4 leading-tight focus:ring-2 focus:ring-purple-500 transition duration-300 ease-in-out">
-                
-                <!-- Send button -->
-                <button 
-                    type="submit" 
-                    class="w-full sm:w-auto flex-shrink-0 bg-purple-600 hover:bg-purple-700 btn-glow border-purple-600 hover:border-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all duration-300 ease-in-out transform hover:scale-105">
-                    Send 🐶
-                </button>
-            </div>
-        </form>
-        <p id="statusMessage" class="mt-4 text-sm text-green-400"></p>
-    </div>
+        <p id="emailHelper" class="text-sm text-white/80">
+          Tip: Line breaks mail body me %0D%0A se safest work karte hain across clients. Encoding ke liye encodeURIComponent use ho raha hai. [Ref] [web:7][web:21]
+        </p>
+      </form>
+    </section>
 
-    <script>
-function toggleCustomSubject() {
-    const subjectDropdown = document.getElementById("email-subject");
-    const customSubjectContainer = document.getElementById("custom-subject-container");
-    if (subjectDropdown.value === "Other") {
-        customSubjectContainer.style.display = "block";
-    } else {
-        customSubjectContainer.style.display = "none";
-    }
-}
+    <!-- Callback Form Card -->
+    <section class="glass-card rounded-2xl p-6 md:p-8 shadow-2xl">
+      <header class="text-center">
+        <h2 class="text-2xl md:text-3xl font-bold text-white">Request a Callback</h2>
+        <p class="text-white/90 mt-1">Number bhejo, callback mil jayega—personal number public nahi kar sakte 🙏</p>
+      </header>
 
-document.getElementById("emailForm").addEventListener("submit", function(event) {
-    event.preventDefault();
+      <form id="callbackForm" class="mt-6 space-y-4" aria-describedby="callbackHelper">
+        <div>
+          <label for="phoneNumber" class="block text-white">Phone Number</label>
+          <input
+            type="tel"
+            id="phoneNumber"
+            name="phoneNumber"
+            class="input-base"
+            inputmode="tel"
+            placeholder="e.g., 9XXXXXXXXX"
+            required
+            aria-required="true"
+          />
+        </div>
 
-    const name = document.getElementById("email-name").value.trim();
-    const subjectDropdown = document.getElementById("email-subject").value;
-    const customSubject = document.getElementById("custom-subject").value.trim();
-    const message = document.getElementById("email-message").value.trim();
+        <div>
+          <label for="callback-note" class="block text-white">Note (optional)</label>
+          <textarea id="callback-note" name="note" rows="4" class="input-base" placeholder="Short context for the callback (optional)"></textarea>
+        </div>
 
-    let introLine = `Hello Rahul, Tum kaise ho? 👋%0D%0A%0D%0A`;
-    let nameLine = `Mera naam ${name} hai.%0D%0A%0D%0A`;
-    let middleLine = "";
-    
-    if (subjectDropdown === "Question") {
-        middleLine = "Kya tum mujhe bata sakte ho ki,%0D%0A";
-    } else if (subjectDropdown === "Chat") {
-        middleLine = "Kuchh dino se tumse ek bat karni thi,%0D%0A";
-    } else if (subjectDropdown === "Random") {
-        middleLine = "Suna hai sabki help karte ho 😅, to aaj meri bhi ek kardo,%0D%0A";
-    } else if (subjectDropdown === "Appreciation") {
-        middleLine = "Kya tum ek secret jante ho, Tumhe pata hai kya huaa,%0D%0A";
-    } else if (subjectDropdown === "Feedback") {
-        middleLine = "Suno na ek chhoti sa request hai yaar,%0D%0A";
-    } else if (subjectDropdown === "Other" && customSubject) {
-        middleLine = `Kya kar rahe ho Aaj kal: ${customSubject}%0D%0A`;
-    }
+        <div class="flex items-center gap-3">
+          <button type="submit" class="btn-primary">
+            <i class="fas fa-phone mr-2"></i> Request Callback
+          </button>
+          <button type="button" id="clearCallback" class="btn-accent">
+            <i class="fas fa-eraser mr-2"></i> Clear
+          </button>
+        </div>
 
-    let finalBody = introLine + nameLine + middleLine + "%0D%0A" + message;
+        <p id="statusMessage" class="mt-2 text-sm text-green-100" aria-live="polite"></p>
+        <p id="callbackHelper" class="text-sm text-white/80">
+          Status message live-region me announce hota hai; time-sensitive notices assertive nahi rakhte for UX. [Ref] [web:16][web:8]
+        </p>
+      </form>
+    </section>
+  </main>
 
-    const subjectText = subjectDropdown === "Other" && customSubject ? customSubject : document.querySelector(`#email-subject option[value="${subjectDropdown}"]`).textContent;
+  <footer class="container text-center text-white/90 mt-10 mb-8">
+    <p>Made with glassmorphism + Tailwind. Readability and contrast balanced for better accessibility.</p>
+  </footer>
 
-    const mailtoLink = `mailto:rahulpuribiz@gmail.com?subject=${encodeURIComponent(subjectText)}&body=${finalBody}`;
+  <script>
+    // Subject toggle for "Others"
+    const subjectSelect = document.getElementById('email-subject');
+    const customSubjectContainer = document.getElementById('custom-subject-container');
 
-    window.location.href = mailtoLink;
-});
-    </script>
-        <script>
-        // JavaScript to handle form submission
-        const callbackForm = document.getElementById('callbackForm');
-        const statusMessage = document.getElementById('statusMessage');
+    subjectSelect.addEventListener('change', () => {
+      if (subjectSelect.value === 'Other') {
+        customSubjectContainer.classList.remove('hidden');
+      } else {
+        customSubjectContainer.classList.add('hidden');
+      }
+    });
 
-        callbackForm.addEventListener('submit', function(event) {
-            // Prevent the form from submitting the traditional way
-            event.preventDefault();
-            
-            // Get the phone number from the input field
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            
-            if (phoneNumber) {
-                // Your email address
-                const recipient = 'rahulpuribiz@gmail.com';
-                
-                // Email subject
-                const subject = 'Hello rahul 👋';
-                
-                // Email body with the user's number
-                const body = `Ye mera number hai: ${phoneNumber}\n\nTum mere is number par call back karo, mujhe tumse ek kam hai.`;
-                
-                // Create the mailto link
-                const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-                
-                // Show a status message to the user
-                statusMessage.textContent = 'Wait...';
+    // Email form submit
+    document.getElementById('emailForm').addEventListener('submit', function (event) {
+      event.preventDefault();
 
-                // Open the user's default email client
-                window.location.href = mailtoLink;
+      const name = document.getElementById('email-name').value.trim();
+      const subjectDropdown = document.getElementById('email-subject').value;
+      const customSubject = (document.getElementById('custom-subject').value || '').trim();
+      const message = document.getElementById('email-message').value.trim();
 
-                // Clear the message after a few seconds
-                 setTimeout(() => {
-                    statusMessage.textContent = '';
-                }, 4000);
+      // Build body with CRLF (%0D%0A) via JS + encodeURIComponent
+      const CRLF = '\\r\
+';
+      const introLine = 'Hello Rahul, Tum kaise ho? 👋' + CRLF + CRLF;
+      const nameLine = `Mera naam ${name} hai.` + CRLF + CRLF;
 
-            } else {
-                statusMessage.textContent = 'Pahle apna number to Enter kar yaar 😂🤡';
-                statusMessage.style.color = '#f87171'; // Red color for error
-            }
-        });
-        </script>
+      let middleLine = '';
+      switch (subjectDropdown) {
+        case 'Question':
+          middleLine = 'Kya tum mujhe bata sakte ho ki,' + CRLF;
+          break;
+        case 'Chat':
+          middleLine = 'Kuchh dino se tumse ek bat karni thi,' + CRLF;
+          break;
+        case 'Random':
+          middleLine = 'Suna hai sabki help karte ho 😅, to aaj meri bhi ek kardo,' + CRLF;
+          break;
+        case 'Appreciation':
+          middleLine = 'Kya tum ek secret jante ho, Tumhe pata hai kya huaa,' + CRLF;
+          break;
+        case 'Feedback':
+          middleLine = 'Suno na ek chhoti sa request hai yaar,' + CRLF;
+          break;
+        case 'Other':
+          if (customSubject) {
+            middleLine = `Kya kar rahe ho Aaj kal: ${customSubject}` + CRLF;
+          }
+          break;
+      }
+
+      const finalBodyRaw = introLine + nameLine + middleLine + CRLF + message;
+      const finalBody = encodeURIComponent(finalBodyRaw);
+
+      const subjectText = (subjectDropdown === 'Other' && customSubject)
+        ? customSubject
+        : document.querySelector(`#email-subject option[value="${subjectDropdown}"]`)?.textContent || 'Message';
+
+      const mailtoLink = `mailto:rahulpuribiz@gmail.com?subject=${encodeURIComponent(subjectText)}&body=${finalBody}`;
+      window.location.href = mailtoLink;
+    });
+
+    // Callback form submit
+    const callbackForm = document.getElementById('callbackForm');
+    const statusMessage = document.getElementById('statusMessage');
+    const clearCallbackBtn = document.getElementById('clearCallback');
+
+    callbackForm.addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const phoneNumber = document.getElementById('phoneNumber').value.trim();
+      const note = (document.getElementById('callback-note').value || '').trim();
+
+      if (!phoneNumber) {
+        statusMessage.textContent = 'Pahle apna number to enter kar yaar 😂🤡';
+        statusMessage.style.color = '#fca5a5';
+        return;
+      }
+
+      const CRLF = '\\r\
+';
+      const recipient = 'rahulpuribiz@gmail.com';
+      const subject = 'Hello Rahul 👋';
+      const bodyRaw = `Ye mera number hai: ${phoneNumber}` + CRLF + CRLF +
+                      (note ? `Note: ${note}` + CRLF + CRLF : '') +
+                      'Tum mere is number par call back karo, mujhe tumse ek kam hai.';
+      const body = encodeURIComponent(bodyRaw);
+
+      statusMessage.textContent = 'Wait...';
+      statusMessage.style.color = '#bbf7d0';
+
+      const mailtoLink = `mailto:${recipient}?subject=${encodeURIComponent(subject)}&body=${body}`;
+      window.location.href = mailtoLink;
+
+      setTimeout(() => { statusMessage.textContent = ''; }, 4000);
+    });
+
+    clearCallbackBtn.addEventListener('click', () => {
+      document.getElementById('phoneNumber').value = '';
+      document.getElementById('callback-note').value = '';
+      statusMessage.textContent = '';
+    });
+  </script>
 </body>
 </html>
