@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- SEO for Books Page | Rahul Kumar Puri -->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta content="width=device-width, initial-scale=1" name="viewport">
+
+<title>📚 Books by Rahul Kumar Puri | Author, Writer & Poet</title>
+
+<meta name="description" content="Explore all the books written by Rahul Kumar Puri — a writer, poet, and web developer from Motihari, Bihar. Read his original works including ‘भंवरा और फूल’, ‘बिक गया इंसान’, and ‘शिकायते’.">
+<meta name="keywords" content="Rahul Kumar Puri books, RKP books, Rahul Puri writer, Rahul Kumar author, Bhavra aur Phool, Bik Gaya Insaan, Shikayate, Motihari, madhubani ghat, bihar writers, Hindi books, poetry, literature">
+
+<!-- URL & LANGUAGE -->
+<link rel="canonical" href="https://rahulpuri.fun/Books">
+<meta http-equiv="Content-Language" content="en">
+<meta name="language" content="English">
+
+<!-- INDEXING -->
+<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+<meta name="googlebot" content="index, follow">
+<meta name="bingbot" content="index, follow">
+
+<!-- AUTHORSHIP -->
+<meta name="author" content="Rahul Kumar Puri">
+<meta name="publisher" content="Rahul Kumar Puri">
+<meta name="application-name" content="Books by Rahul Kumar Puri">
+
+<!-- OPEN GRAPH / SOCIAL SHARING -->
+<meta property="og:title" content="📖 Books by Rahul Kumar Puri">
+<meta property="og:description" content="Discover the original writings and published books by Rahul Kumar Puri — from poetry to thought-provoking stories.">
+<meta property="og:url" content="https://rahulpuri.fun/Books">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://rahulpuri.fun/images/Rahul-Kumar-Puri-Images.jpg">
+
+<!-- TWITTER CARD -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="📚 Rahul Kumar Puri - Official Books Collection">
+<meta name="twitter:description" content="Explore the creative world of Rahul Kumar Puri through his original books and writings.">
+<meta name="twitter:image" content="https://rahulpuri.fun/images/Rahul-Kumar-Puri-Images.jpg">
+
+<!-- EXTRA INFO -->
+<meta name="page_topic" content="Books and Writings by Rahul Kumar Puri">
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:#0f1724; --muted:#94a3b8; --accent:#06b6d4; --maxw:1200px;
+    }
+    
+    /* Footer Styles */
+    .site-footer {
+      background:linear-gradient(180deg, rgba(8,16,30,0.85), rgba(7,10,18,1));
+      padding:3rem 1rem; color:var(--muted);
+    }
+    .site-footer .container {
+      max-width:var(--maxw); margin:auto;
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem;
+    }
+
+    h4 {color:#fff; margin:0 0 .5rem;}
+    p, li, a {color:var(--muted); font-size:.95rem; line-height:1.5;}
+    a {color:var(--accent); text-decoration:none;}
+    a:hover {text-decoration:underline;}
+
+    .brand-logo {display:flex; align-items:center; gap:.8rem;}
+    .brand-logo svg {width:44px; height:44px; flex-shrink:0;}
+    ul {list-style:none; padding:0; margin:0;}
+
+    .footer-bottom {
+      border-top:1px solid rgba(255,255,255,0.04);
+      margin-top:2rem; padding-top:1rem;
+      display:flex; justify-content:space-between; flex-wrap:wrap;
+      font-size:.85rem; color:var(--muted);
+    }
+    @media (max-width:600px){.footer-bottom{flex-direction:column;align-items:center;text-align:center;}}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #f0f2f5;
+      color: #111;
+      line-height: 1.6;
+    }
+    header {
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: white;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    header h1 {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+    }
+    header p {
+      font-size: 1.2rem;
+      opacity: 0.9;
+    }
+
+    section {
+      padding: 50px 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    h2 {
+      font-size: 2rem;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #1e1e1e;
+      position: relative;
+    }
+    h2::after {
+      content: '';
+      width: 60px;
+      height: 3px;
+      background: #007BFF;
+      display: block;
+      margin: 8px auto 0;
+    }
+
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+      max-height: 350px;
+      object-fit: contain;
+      background: #fff;
+    }
+
+    .card-content {
+      padding: 20px;
+    }
+
+    .card-content h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: #222;
+    }
+
+    .card-content p {
+      font-size: 0.95rem;
+      color: #666;
+    }
+
+    .buttons {
+      margin-top: 15px;
+    }
+
+    .buttons a {
+      display: inline-block;
+      background: #007BFF;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      text-decoration: none;
+      margin-right: 10px;
+      transition: background 0.3s ease;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .buttons a:hover {
+      background: #0056b3;
+    }
+
+    .upcoming {
+      background: #fff7f0;
+      border-top: 4px solid #ff6600;
+      padding: 40px 20px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+    }
+
+    .upcoming h2 {
+      color: #d94e00;
+    }
+
+    .upcoming-card {
+      background: #fff;
+      border-left: 6px solid #ff6600;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .upcoming-card h3 {
+      margin-bottom: 8px;
+      color: #333;
+    }
+
+    .upcoming-card p {
+      color: #777;
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 2rem;
+      }
+      .card img {
+        max-height: 250px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>WRITER: Rahul Kumar Puri</h1>
+  <p>My Books Collection</p>
+</header>
+
+<section>
+  <h2>Books</h2>
+  <div class="card-container">
+    <!-- Book: Bhanwra aur Ful -->
+        <div class="card">
+      <img src="BhanwraAurFulCover.png" alt="Bhanwra Aur Ful">
+      <div class="card-content">
+        <h3>भंवरा और फूल</h3>
+        <p>Genre: Love and Tragedy</p>
+        <p>Published Date: 23/09/2025</p>
+        <div class="buttons">
+          <a href="BhanwraAurFul" target="_blank">Read Now</a>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Book: Bik Gaya Insaan-->
+    <div class="card">
+      <img src="images/Bik_gaya_Insaan_Cover.png" alt="Shikayten">
+      <div class="card-content">
+        <h3>बिक गया इंसान</h3>
+        <p>Genre: Crimes and Thriller</p>
+        <p>Published Date: 03/05/2025</p>
+        <div class="buttons">
+          <a href="Bik_gaya_insaan.html" target="_blank">Read Now</a>
+        </div>
+      </div>
+    </div>
+
+    
+    <!-- Book: Shikayten -->
+    <div class="card">
+      <img src="images/bookcoverphoto.png" alt="Shikayten">
+      <div class="card-content">
+        <h3>शिकायते</h3>
+        <p>Genre: Love and Tragedy</p>
+        <p>Published Date: 06/04/2024</p>
+        <div class="buttons">
+          <a href="Shikayten.html" target="_blank">Read Now</a>
+        </div>
+      </div>
+    </div>
+
+    
+  </div>
+</section>
+<footer class="site-footer" role="contentinfo" aria-labelledby="footer-heading">
+  <div class="container">
+
+    <div class="footer-brand">
+      
+          <strong style="color:#fff;display:block">Rahul Kumar Puri</strong>
+          <span class="muted">Web Developer | Men Activist | Writer | Poet | Guanxi & Mianzi Expert</span>
+        </div>
+      </div>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      <h4 id="footer-heading">Social Media</h4>
+      <ul>
+        <li><a href="https://instagram.com/biz.rahul" target="_blank">Instagram</a></li>
+        <li><a href="https://www.linkedin.com/in/rahulkumarpuri/" target="_blank">LinkedIn</a></li>
+        <li><a href="https://www.snapchat.com/add/cyb_rahul" target="_blank">Snapchat</a></li>
+        <li><a href="https://pin.it/2wuGwjrUb" target="_blank">Pinterest</a></li>
+        <li><a href="https://www.reddit.com/r/rahulkumarpuri/" target="_blank">Reddit</a></li>
+      </ul>
+
+      <div style="margin-top:1rem">
+        <h4>Helpful Resources</h4>
+        <ul>
+          <li><a href="/sitemap.xml" rel="nofollow">Sitemap (XML)</a></li>
+          <li><a href="/robots.txt" rel="nofollow">Robots.txt</a></li>
+          <li><a href="/humans.txt" rel="nofollow">humans.txt</a></li>
+          <li><a href="/privacy-policy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms & Conditions</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <section class="footer-contact" aria-label="Contact information">
+      <h4>Contact</h4>
+      <address>
+        Madhubani Ghat Road, Motihari, Bihar<br>
+        <a href="mailto:rahulpuribiz@gmail.com">rahulpuribiz@gmail.com</a>
+      </address>
+    </section>
+
+  </div>
+
+  <div class="container">
+    <div class="footer-bottom">
+      <div>© <span id="current-year"></span> Rahul Kumar Puri — All rights reserved.</div>
+      <div>Made by RKP</div>
+    </div>
+  </div>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Rahul Kumar Puri",
+    "url": "https://rahulpuri.fun",
+    "logo": "https://rahulpuri.fun/images/Rahul-Kumar-Puri-Images.jpg",
+    "sameAs": [
+      "https://www.instagram.com/biz.rahul",
+      "https://www.linkedin.com/in/rahulkumarpuri",
+      "https://www.snapchat.com/add/cyb_rahul",
+      "https://www.reddit.com/r/rahulkumarpuri/",
+      "https://pin.it/2wuGwjrUb"
+    ],
+    "contactPoint": [{
+      "@type": "ContactPoint",
+      "email": "rahulpuribiz@gmail.com",
+      "contactType": "Business Inquiry",
+      "areaServed": "IN",
+      "availableLanguage": ["English", "Hindi"]
+    }]
+  }
+  </script>
+
+</footer>
+
+<script>
+  document.getElementById('current-year').textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
