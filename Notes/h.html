@@ -40,7 +40,8 @@ header nav button{
 .notes{display:grid;gap:16px}
 .note{
   padding:18px;border-radius:22px;color:#000;
-  position:relative;cursor:pointer;min-height:80px
+  position:relative;cursor:pointer;min-height:80px;
+  background:#fff1b8;
 }
 .note.pinned::before{
   content:"📌";position:absolute;top:8px;right:10px
@@ -53,12 +54,6 @@ header nav button{
   font-size:11px;opacity:0.8;margin-top:6px;
   display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap
 }
-
-/* COLORS */
-.yellow{background:#fff1b8}
-.blue{background:#d9f2ff}
-.pink{background:#ffd6e7}
-.green{background:#d8f8e1}
 
 /* MENU */
 .menu-btn{
@@ -423,6 +418,19 @@ let currentFormat={
   strike:false
 };
 
+const CARD_COLORS = [
+  "#fff1b8", // soft yellow
+  "#d9f2ff", // light blue
+  "#ffd6e7", // soft pink
+  "#d8f8e1", // soft green
+  "#ffeaa7", // warm cream
+  "#fab1a0", // peach
+  "#a29bfe", // purple
+  "#81ecec", // teal
+  "#ff7675", // red-ish
+  "#55efc4"  // mint
+];
+
 /* ASK USER NAME + GREETING */
 let userName=localStorage.getItem("rkpUserName")||"";
 function askUserName(){
@@ -465,7 +473,7 @@ const clearSearchBtn=document.getElementById("clearSearchBtn");
 const autosaveIndicator=document.getElementById("autosave-indicator");
 let autosaveTimeout=null;
 
-/* AUTOSAVE INDICATOR (writing time) */
+/* AUTOSAVE INDICATOR */
 function triggerAutoSaveIndicator(){
   autosaveIndicator.textContent="⏳ Saving…";
   if(autosaveTimeout) clearTimeout(autosaveTimeout);
@@ -496,6 +504,26 @@ function highlight(text,keyword){
   return text.replace(regex,"<mark>$1</mark>");
 }
 
+/* SIMPLE HTML ESCAPE */
+function escapeHtml(str){
+  return str.replace(/&/g,"&amp;")
+            .replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;");
+}
+
+/* PASSWORD CHECK COMMON */
+function askPasswordIfLocked(i){
+  const n = notes[i];
+  if(!n.locked) return true;
+  const pwd = prompt("This note is locked. Enter password:");
+  if(pwd === n.password){
+    return true;
+  } else {
+    alert("Wrong password!");
+    return false;
+  }
+}
+
 /* TABS */
 notesTab.onclick=()=>{viewMode="notes";notesBox.style.display="grid";binBox.classList.remove("active");renderNotes();};
 binTab.onclick=()=>{viewMode="bin";notesBox.style.display="none";binBox.classList.add("active");renderBin();};
@@ -510,7 +538,11 @@ function renderNotes(){
  active.forEach(n=>{
   const idx=notes.indexOf(n);
   const card=document.createElement("div");
-  card.className=`note ${n.color||"yellow"} ${n.pinned?"pinned":""}`;
+  card.className=`note ${n.pinned?"pinned":""}`;
+
+  const bg = n.color || "#fff1b8";
+  card.style.background = bg;
+
   card.onclick=e=>{
     if(!e.target.closest(".menu-btn") && !e.target.closest(".menu")){
       openEditor(idx);
@@ -522,19 +554,23 @@ function renderNotes(){
     h.innerHTML=highlight(escapeHtml(n.heading),searchKeyword);
     card.appendChild(h);
   }
+
   const p=document.createElement("p");
-  let plain="";
-  if(n.content){
-    const temp=document.createElement("div");
-    temp.innerHTML=n.content;
-    plain=(temp.textContent||"").slice(0,150);
+  if(n.locked){
+    p.innerText = "🔒 This note is locked. Unlock to view content.";
   } else {
-    plain="Empty note";
+    let plain="";
+    if(n.content){
+      const temp=document.createElement("div");
+      temp.innerHTML=n.content;
+      plain=(temp.textContent||"").slice(0,150);
+    } else {
+      plain="Empty note";
+    }
+    p.innerHTML=highlight(escapeHtml(plain+(plain.length===150?"...":"")),searchKeyword);
   }
-  p.innerHTML=highlight(escapeHtml(plain+(plain.length===150?"...":"")),searchKeyword);
   card.appendChild(p);
 
-  // META: last edited + lock status
   const meta=document.createElement("div");
   meta.className="note-meta";
   const lockedLabel=n.locked?"🔒 Locked":"🔓 Unlocked";
@@ -552,23 +588,16 @@ function renderNotes(){
   const menu=document.createElement("div");
   menu.className="menu";
   menu.innerHTML=`
-    <button onclick="event.stopPropagation();togglePin(${idx});closeMenus()">📌 ${n.pinned?"Unpin":"Pin"}</button>
-    <button onclick="event.stopPropagation();changeColor(${idx});closeMenus()">🎨 Change color</button>
+    <button onclick="event.stopPropagation();togglePinProtected(${idx});closeMenus()">📌 ${n.pinned?"Unpin":"Pin"}</button>
+    <button onclick="event.stopPropagation();openColorPicker(${idx});closeMenus()">🎨 Change color</button>
     <button onclick="event.stopPropagation();toggleLock(${idx});closeMenus()">${n.locked?"🔓 Unlock":"🔒 Lock"}</button>
-    <button onclick="event.stopPropagation();softDelete(${idx});closeMenus()">🗑️ Delete</button>
+    <button onclick="event.stopPropagation();softDeleteProtected(${idx});closeMenus()">🗑️ Delete</button>
   `;
   card.appendChild(menuBtn);
   card.appendChild(menu);
 
   notesBox.appendChild(card);
  });
-}
-
-/* SIMPLE HTML ESCAPE */
-function escapeHtml(str){
-  return str.replace(/&/g,"&amp;")
-            .replace(/</g,"&lt;")
-            .replace(/>/g,"&gt;");
 }
 
 /* BIN RENDER */
@@ -582,14 +611,20 @@ function renderBin(){
  deleted.forEach(n=>{
   const idx=notes.indexOf(n);
   const card=document.createElement("div");
-  card.className=`note ${n.color||"yellow"}`;
+  card.className=`note`;
   card.style.marginBottom="12px";
+  card.style.background = n.color || "#fff1b8";
+
   if(n.heading){
     const h=document.createElement("h3");
     h.innerText=n.heading;
     card.appendChild(h);
   }
-  if(n.content){
+  if(n.locked){
+    const p=document.createElement("p");
+    p.innerText="🔒 Locked note (content hidden)";
+    card.appendChild(p);
+  } else if(n.content){
     const temp=document.createElement("div");
     temp.innerHTML=n.content;
     const txt=(temp.textContent||"").slice(0,150);
@@ -600,8 +635,8 @@ function renderBin(){
   const actions=document.createElement("div");
   actions.style.marginTop="10px";
   actions.innerHTML=`
-    <button style="background:#4CAF50;color:#fff;border:none;padding:6px 12px;border-radius:6px;margin-right:8px;cursor:pointer" onclick="restoreNote(${idx})">♻️ Restore</button>
-    <button style="background:#f44336;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer" onclick="deleteForever(${idx})">🗑️ Delete Forever</button>
+    <button style="background:#4CAF50;color:#fff;border:none;padding:6px 12px;border-radius:6px;margin-right:8px;cursor:pointer" onclick="restoreProtected(${idx})">♻️ Restore</button>
+    <button style="background:#f44336;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer" onclick="deleteForeverProtected(${idx})">🗑️ Delete Forever</button>
   `;
   card.appendChild(actions);
   binBox.appendChild(card);
@@ -628,7 +663,7 @@ addBtn.onclick=function(){
   heading:"",
   content:"",
   todos:[],
-  color:["yellow","blue","pink","green"][Math.floor(Math.random()*4)],
+  color:CARD_COLORS[Math.floor(Math.random()*CARD_COLORS.length)],
   pinned:false,
   created:Date.now(),
   lastEdited:Date.now(),
@@ -697,18 +732,91 @@ function deleteForever(i){
  }
 }
 
-/* CHANGE COLOR */
-function changeColor(i){
- const n=notes[i];
- const color=prompt("Enter any CSS color (e.g. yellow, #ffcc80, rgb(255,230,180))",n.color||"yellow");
- if(!color) return;
- n.color="";
- // CSS class ke bajay inline color
- // simple way: store customBg and use style in render if needed
- n.customBg=color;
- n.lastEdited=Date.now();
- save();
- renderNotes();
+/* PROTECTED WRAPPERS */
+function togglePinProtected(i){
+  if(!askPasswordIfLocked(i)) return;
+  togglePin(i);
+}
+function softDeleteProtected(i){
+  if(!askPasswordIfLocked(i)) return;
+  softDelete(i);
+}
+function restoreProtected(i){
+  if(!askPasswordIfLocked(i)) return;
+  restoreNote(i);
+}
+function deleteForeverProtected(i){
+  if(!askPasswordIfLocked(i)) return;
+  deleteForever(i);
+}
+
+/* CHANGE COLOR POPUP */
+function openColorPicker(i){
+  const n = notes[i];
+
+  const popup = document.createElement("div");
+  popup.style.position = "fixed";
+  popup.style.left = "50%";
+  popup.style.top = "50%";
+  popup.style.transform = "translate(-50%, -50%)";
+  popup.style.background = "#1e1e1e";
+  popup.style.padding = "16px";
+  popup.style.borderRadius = "12px";
+  popup.style.boxShadow = "0 4px 24px rgba(0,0,0,0.6)";
+  popup.style.zIndex = "9999";
+  popup.style.maxWidth = "320px";
+
+  const title = document.createElement("div");
+  title.innerText = "Select card color";
+  title.style.marginBottom = "10px";
+  title.style.fontSize = "14px";
+  title.style.color = "#fff";
+  popup.appendChild(title);
+
+  const grid = document.createElement("div");
+  grid.style.display = "grid";
+  grid.style.gridTemplateColumns = "repeat(5, 1fr)";
+  grid.style.gap = "8px";
+
+  CARD_COLORS.forEach(col => {
+    const box = document.createElement("div");
+    box.style.width = "40px";
+    box.style.height = "40px";
+    box.style.borderRadius = "10px";
+    box.style.cursor = "pointer";
+    box.style.border = "2px solid transparent";
+    box.style.background = col;
+    if(n.color === col){
+      box.style.borderColor = "#fff";
+    }
+    box.onclick = () => {
+      n.color = col;
+      n.lastEdited = Date.now();
+      save();
+      document.body.removeChild(popup);
+      renderNotes();
+    };
+    grid.appendChild(box);
+  });
+
+  popup.appendChild(grid);
+
+  const closeBtn = document.createElement("button");
+  closeBtn.innerText = "Close";
+  closeBtn.style.marginTop = "12px";
+  closeBtn.style.width = "100%";
+  closeBtn.style.background = "#333";
+  closeBtn.style.color = "#fff";
+  closeBtn.style.border = "none";
+  closeBtn.style.padding = "8px 0";
+  closeBtn.style.borderRadius = "8px";
+  closeBtn.style.cursor = "pointer";
+  closeBtn.onclick = () => {
+    document.body.removeChild(popup);
+  };
+  popup.appendChild(closeBtn);
+
+  document.body.appendChild(popup);
 }
 
 /* LOCK / UNLOCK */
@@ -716,7 +824,10 @@ function toggleLock(i){
  const n=notes[i];
  if(!n.locked){
    const pwd=prompt("Set password (digits/words/mixed allowed):");
-   if(!pwd){alert("Password empty nahi ho sakta");return;}
+   if(!pwd){
+     alert("Password empty nahi ho sakta");
+     return;
+   }
    n.password=pwd;
    n.locked=true;
    alert("Note locked.");
