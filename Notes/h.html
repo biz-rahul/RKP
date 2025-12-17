@@ -3,22 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Notes Editor (Selection Format)</title>
+<title>Advanced Notes Editor (Stable)</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#0c0c0c;color:#fff}
-
-/* APP */
 .app{max-width:430px;margin:auto;padding:20px}
 
 /* HEADER */
 header h1{font-size:32px;font-weight:800}
-header p{color:#aaa;margin-bottom:20px}
-header nav{display:flex;gap:12px;margin-bottom:20px}
+header p{color:#aaa;margin-bottom:8px}
+#greeting{font-size:13px;color:#ffeb3b;margin-bottom:10px}
+header nav{display:flex;gap:12px;margin-bottom:10px;flex-wrap:wrap}
 header nav button{
   background:#1e1e1e;border:none;color:#fff;
-  padding:10px 16px;border-radius:10px;cursor:pointer
+  padding:8px 12px;border-radius:10px;cursor:pointer;font-size:13px
+}
+
+/* SEARCH + AUTOSAVE */
+.search-bar{
+  display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center
+}
+.search-bar input{
+  flex:1;padding:8px 10px;border-radius:10px;border:none;
+  background:#1e1e1e;color:#fff;font-size:13px
+}
+.search-bar button{
+  background:#1e1e1e;border:none;color:#fff;
+  padding:8px 10px;border-radius:10px;cursor:pointer;font-size:13px
+}
+#autosave-indicator{
+  font-size:11px;color:#aaa
 }
 
 /* NOTES */
@@ -30,13 +45,13 @@ header nav button{
 .note.pinned::before{
   content:"📌";position:absolute;top:8px;right:10px
 }
-.note h3{
-  font-size:18px;font-weight:700;
-  margin-bottom:8px;word-wrap:break-word
-}
-.note p{
-  font-size:14px;opacity:0.8;
-  word-wrap:break-word;line-height:1.4
+.note h3{font-size:18px;font-weight:700;margin-bottom:8px;word-wrap:break-word}
+.note p{font-size:14px;opacity:0.8;word-wrap:break-word;line-height:1.4}
+
+/* META */
+.note-meta{
+  font-size:11px;opacity:0.8;margin-top:6px;
+  display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap
 }
 
 /* COLORS */
@@ -58,7 +73,7 @@ header nav button{
 .menu button{
   background:none;border:none;color:#fff;
   padding:8px 12px;display:block;width:100%;
-  text-align:left;cursor:pointer;border-radius:6px
+  text-align:left;cursor:pointer;border-radius:6px;font-size:13px
 }
 .menu button:hover{background:#333}
 
@@ -84,8 +99,6 @@ header nav button{
   background:none;border:none;color:#fff;
   font-size:22px;cursor:pointer
 }
-
-/* HEADING INPUT */
 .heading-input{
   padding:12px;background:#1e1e1e;border:none;
   color:#fff;font-size:24px;font-weight:700;
@@ -103,6 +116,7 @@ header nav button{
   font-size:14px;font-weight:500
 }
 .format-toolbar button:hover{background:#3a3a3a}
+.format-toolbar button.active{background:#ff69b4;color:#000}
 
 /* FORMAT MODAL */
 .format-modal{
@@ -234,18 +248,36 @@ header nav button{
 /* BIN VIEW */
 .bin-view{display:none}
 .bin-view.active{display:block}
+
+/* SEARCH HIGHLIGHT */
+mark{
+  background:#ffeb3b;
+  padding:0 2px;
+}
 </style>
 </head>
 <body>
 
 <div class="app">
 <header>
-<h1>My Notes</h1>
-<p>Clean. Serious. Powerful.</p>
+<h1>RKP Notes</h1>
+<p>Let's describe your days</p>
+<div id="greeting"></div>
+
 <nav>
   <button id="notesTab">📝 Notes</button>
   <button id="binTab">🗑️ Bin</button>
+  <button id="exportBtn">⬇️ Export</button>
+  <button id="importBtn">⬆️ Import</button>
+  <input type="file" id="importFile" accept=".txt" style="display:none">
 </nav>
+
+<div class="search-bar">
+  <input type="text" id="searchInput" placeholder="Search notes...">
+  <button id="searchBtn">Search 🔍</button>
+  <button id="clearSearchBtn">Clear</button>
+  <span id="autosave-indicator">✅ Saved</span>
+</div>
 </header>
 
 <div class="notes" id="notes"></div>
@@ -264,6 +296,8 @@ header nav button{
   <input type="text" id="heading" class="heading-input" placeholder="Note Heading...">
 
   <div class="format-toolbar">
+    <button id="formatOnBtn" class="active">A✓</button>
+    <button id="formatOffBtn">A×</button>
     <button id="formatOpenBtn">Format ⚙️</button>
   </div>
 
@@ -288,27 +322,27 @@ header nav button{
       <span>▼</span>
     </div>
     <div class="format-dropdown-menu" id="formatDropdownMenu">
-      <div class="format-option" data-size="16" data-weight="400">
+      <div class="format-option" data-type="normal" data-size="16" data-weight="400">
         <div class="name">Normal text</div>
         <div class="preview" style="font-size:16px">Regular paragraph text</div>
       </div>
-      <div class="format-option" data-size="28" data-weight="700">
+      <div class="format-option" data-type="title" data-size="28" data-weight="700">
         <div class="name">Title</div>
         <div class="preview" style="font-size:24px;font-weight:700">Document Title</div>
       </div>
-      <div class="format-option" data-size="20" data-weight="600">
+      <div class="format-option" data-type="subtitle" data-size="20" data-weight="600">
         <div class="name">Subtitle</div>
         <div class="preview" style="font-size:18px;font-weight:600">Subtitle Text</div>
       </div>
-      <div class="format-option" data-size="24" data-weight="700">
+      <div class="format-option" data-type="h1" data-size="24" data-weight="700">
         <div class="name">Heading 1</div>
         <div class="preview" style="font-size:20px;font-weight:700">Heading 1</div>
       </div>
-      <div class="format-option" data-size="20" data-weight="600">
+      <div class="format-option" data-type="h2" data-size="20" data-weight="600">
         <div class="name">Heading 2</div>
         <div class="preview" style="font-size:18px;font-weight:600">Heading 2</div>
       </div>
-      <div class="format-option" data-size="18" data-weight="600">
+      <div class="format-option" data-type="h3" data-size="18" data-weight="600">
         <div class="name">Heading 3</div>
         <div class="preview" style="font-size:16px;font-weight:600">Heading 3</div>
       </div>
@@ -370,13 +404,15 @@ header nav button{
 </div>
 
 <script>
-const KEY="ADV_NOTES_V6";
+const KEY="ADV_NOTES_V5";
 const YEAR=31536000000,TWO_MONTHS=5184000000;
 let notes=JSON.parse(localStorage.getItem(KEY))||[];
 let currentIndex=null;
 let viewMode="notes";
+let formatMode=true;
+let searchKeyword="";
 
-let formatState={
+let currentFormat={
   fontFamily:"system-ui",
   fontSize:16,
   fontWeight:400,
@@ -387,17 +423,30 @@ let formatState={
   strike:false
 };
 
+/* ASK USER NAME + GREETING */
+let userName=localStorage.getItem("rkpUserName")||"";
+function askUserName(){
+  if(!userName){
+    userName=prompt("Apna naam likho:");
+    if(!userName) userName="yaar";
+    localStorage.setItem("rkpUserName",userName);
+  }
+  const g=document.getElementById("greeting");
+  g.textContent=`hello ${userName.toLowerCase()} kaise ho, aaj kuchh likhne ka plan hai ya nahi????`;
+}
+askUserName();
+
 /* CLEANUP */
 (function(){
  const now=Date.now();
  notes=notes.filter(n=>!n.deleted||now-n.deleted<TWO_MONTHS);
- notes=notes.filter(n=>now-n.created<YEAR);
+ notes=notes.filter(n=>now-(n.created||now)<YEAR);
  save();
 })();
 
 function save(){localStorage.setItem(KEY,JSON.stringify(notes))}
 
-/* ELEMENTS */
+/* BASIC UI ELEMENTS */
 const notesTab=document.getElementById("notesTab");
 const binTab=document.getElementById("binTab");
 const addBtn=document.getElementById("addBtn");
@@ -407,6 +456,45 @@ const headingInput=document.getElementById("heading");
 const textEditor=document.getElementById("textEditor");
 const notesBox=document.getElementById("notes");
 const binBox=document.getElementById("bin");
+const exportBtn = document.getElementById("exportBtn");
+const importBtn = document.getElementById("importBtn");
+const importFile = document.getElementById("importFile");
+const searchInput=document.getElementById("searchInput");
+const searchBtn=document.getElementById("searchBtn");
+const clearSearchBtn=document.getElementById("clearSearchBtn");
+const autosaveIndicator=document.getElementById("autosave-indicator");
+let autosaveTimeout=null;
+
+/* AUTOSAVE INDICATOR (writing time) */
+function triggerAutoSaveIndicator(){
+  autosaveIndicator.textContent="⏳ Saving…";
+  if(autosaveTimeout) clearTimeout(autosaveTimeout);
+  autosaveTimeout=setTimeout(()=>{
+    autosaveIndicator.textContent="✅ Saved";
+  },600);
+}
+
+/* LAST EDITED TIME HELPER */
+function timeAgo(ts){
+  if(!ts) return "";
+  const diff=Date.now()-ts;
+  const sec=Math.floor(diff/1000);
+  if(sec<60) return "just now";
+  const min=Math.floor(sec/60);
+  if(min<60) return min+" min ago";
+  const hr=Math.floor(min/60);
+  if(hr<24) return hr+" hour ago";
+  const day=Math.floor(hr/24);
+  return day+" day ago";
+}
+
+/* SEARCH HIGHLIGHT */
+function highlight(text,keyword){
+  if(!keyword) return text;
+  const safeKeyword=keyword.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  const regex=new RegExp("("+safeKeyword+")","gi");
+  return text.replace(regex,"<mark>$1</mark>");
+}
 
 /* TABS */
 notesTab.onclick=()=>{viewMode="notes";notesBox.style.display="grid";binBox.classList.remove("active");renderNotes();};
@@ -415,31 +503,43 @@ binTab.onclick=()=>{viewMode="bin";notesBox.style.display="none";binBox.classLis
 /* RENDER NOTES */
 function renderNotes(){
  notesBox.innerHTML="";
- const active=notes.filter(n=>!n.deleted).sort((a,b)=>b.pinned-a.pinned);
+ const active=notes
+   .filter(n=>!n.deleted)
+   .sort((a,b)=> (b.pinned?-1:0) - (a.pinned?-1:0));
+
  active.forEach(n=>{
   const idx=notes.indexOf(n);
   const card=document.createElement("div");
-  card.className=`note ${n.color} ${n.pinned?"pinned":""}`;
+  card.className=`note ${n.color||"yellow"} ${n.pinned?"pinned":""}`;
   card.onclick=e=>{
     if(!e.target.closest(".menu-btn") && !e.target.closest(".menu")){
       openEditor(idx);
     }
   };
+
   if(n.heading){
     const h=document.createElement("h3");
-    h.innerText=n.heading;
+    h.innerHTML=highlight(escapeHtml(n.heading),searchKeyword);
     card.appendChild(h);
   }
   const p=document.createElement("p");
+  let plain="";
   if(n.content){
     const temp=document.createElement("div");
     temp.innerHTML=n.content;
-    const plain=(temp.textContent||"").slice(0,150);
-    p.innerText=plain+(plain.length===150?"...":"");
-  }else{
-    p.innerText="Empty note";
+    plain=(temp.textContent||"").slice(0,150);
+  } else {
+    plain="Empty note";
   }
+  p.innerHTML=highlight(escapeHtml(plain+(plain.length===150?"...":"")),searchKeyword);
   card.appendChild(p);
+
+  // META: last edited + lock status
+  const meta=document.createElement("div");
+  meta.className="note-meta";
+  const lockedLabel=n.locked?"🔒 Locked":"🔓 Unlocked";
+  meta.innerHTML=`<span>${lockedLabel}</span><span>Last edited: ${timeAgo(n.lastEdited||n.created)}</span>`;
+  card.appendChild(meta);
 
   const menuBtn=document.createElement("div");
   menuBtn.className="menu-btn";
@@ -448,16 +548,27 @@ function renderNotes(){
     ev.stopPropagation();
     toggleMenu(idx,menuBtn);
   };
+
   const menu=document.createElement("div");
   menu.className="menu";
   menu.innerHTML=`
     <button onclick="event.stopPropagation();togglePin(${idx});closeMenus()">📌 ${n.pinned?"Unpin":"Pin"}</button>
+    <button onclick="event.stopPropagation();changeColor(${idx});closeMenus()">🎨 Change color</button>
+    <button onclick="event.stopPropagation();toggleLock(${idx});closeMenus()">${n.locked?"🔓 Unlock":"🔒 Lock"}</button>
     <button onclick="event.stopPropagation();softDelete(${idx});closeMenus()">🗑️ Delete</button>
   `;
   card.appendChild(menuBtn);
   card.appendChild(menu);
+
   notesBox.appendChild(card);
  });
+}
+
+/* SIMPLE HTML ESCAPE */
+function escapeHtml(str){
+  return str.replace(/&/g,"&amp;")
+            .replace(/</g,"&lt;")
+            .replace(/>/g,"&gt;");
 }
 
 /* BIN RENDER */
@@ -471,7 +582,7 @@ function renderBin(){
  deleted.forEach(n=>{
   const idx=notes.indexOf(n);
   const card=document.createElement("div");
-  card.className=`note ${n.color}`;
+  card.className=`note ${n.color||"yellow"}`;
   card.style.marginBottom="12px";
   if(n.heading){
     const h=document.createElement("h3");
@@ -519,7 +630,10 @@ addBtn.onclick=function(){
   todos:[],
   color:["yellow","blue","pink","green"][Math.floor(Math.random()*4)],
   pinned:false,
-  created:Date.now()
+  created:Date.now(),
+  lastEdited:Date.now(),
+  locked:false,
+  password:""
  });
  save();
  openEditor(notes.length-1);
@@ -528,11 +642,22 @@ addBtn.onclick=function(){
 function openEditor(i){
  currentIndex=i;
  const n=notes[i];
+
+ if(n.locked){
+   const pwd=prompt("Enter password to unlock this note:");
+   if(pwd!==n.password){
+     alert("Wrong password!");
+     return;
+   }
+ }
+
  headingInput.value=n.heading||"";
  textEditor.innerHTML=n.content||"";
  document.getElementById("todos").innerHTML="";
  (n.todos||[]).forEach(t=>addTodoItem(t));
  editorModal.classList.add("active");
+ formatMode=true;
+ updateFormatButtons();
 }
 
 backBtn.onclick=function(){
@@ -542,22 +667,27 @@ backBtn.onclick=function(){
   n.content=textEditor.innerHTML;
   const todosUl=document.getElementById("todos");
   n.todos=[...todosUl.children].map(li=>li.firstChild.textContent);
+  n.lastEdited=Date.now();
   save();
  }
  editorModal.classList.remove("active");
+ autosaveIndicator.textContent="✅ Saved";
  if(viewMode==="bin") renderBin(); else renderNotes();
 };
 
 function togglePin(i){
  notes[i].pinned=!notes[i].pinned;
+ notes[i].lastEdited=Date.now();
  save();renderNotes();
 }
 function softDelete(i){
  notes[i].deleted=Date.now();
+ notes[i].lastEdited=Date.now();
  save();renderNotes();
 }
 function restoreNote(i){
  delete notes[i].deleted;
+ notes[i].lastEdited=Date.now();
  save();renderBin();
 }
 function deleteForever(i){
@@ -565,6 +695,43 @@ function deleteForever(i){
   notes.splice(i,1);
   save();renderBin();
  }
+}
+
+/* CHANGE COLOR */
+function changeColor(i){
+ const n=notes[i];
+ const color=prompt("Enter any CSS color (e.g. yellow, #ffcc80, rgb(255,230,180))",n.color||"yellow");
+ if(!color) return;
+ n.color="";
+ // CSS class ke bajay inline color
+ // simple way: store customBg and use style in render if needed
+ n.customBg=color;
+ n.lastEdited=Date.now();
+ save();
+ renderNotes();
+}
+
+/* LOCK / UNLOCK */
+function toggleLock(i){
+ const n=notes[i];
+ if(!n.locked){
+   const pwd=prompt("Set password (digits/words/mixed allowed):");
+   if(!pwd){alert("Password empty nahi ho sakta");return;}
+   n.password=pwd;
+   n.locked=true;
+   alert("Note locked.");
+ }else{
+   const pwd=prompt("Enter password to unlock:");
+   if(pwd===n.password){
+     n.locked=false;
+     alert("Note unlocked.");
+   }else{
+     alert("Wrong password!");
+   }
+ }
+ n.lastEdited=Date.now();
+ save();
+ renderNotes();
 }
 
 /* TODO */
@@ -587,6 +754,17 @@ function addTodoItem(text){
  document.getElementById("todos").appendChild(li);
 }
 
+/* FORMAT MODE */
+const formatOnBtn=document.getElementById("formatOnBtn");
+const formatOffBtn=document.getElementById("formatOffBtn");
+
+function updateFormatButtons(){
+ formatOnBtn.classList.toggle("active",formatMode);
+ formatOffBtn.classList.toggle("active",!formatMode);
+}
+formatOnBtn.onclick=()=>{formatMode=true;updateFormatButtons();};
+formatOffBtn.onclick=()=>{formatMode=false;updateFormatButtons();};
+
 /* FORMAT PANEL UI */
 const formatPanel=document.getElementById("formatPanel");
 document.getElementById("formatOpenBtn").onclick=()=>formatPanel.classList.add("active");
@@ -598,36 +776,37 @@ formatDropdownBtn.onclick=()=>formatDropdownMenu.classList.toggle("active");
 
 formatDropdownMenu.querySelectorAll(".format-option").forEach(opt=>{
  opt.onclick=()=>{
+  const type=opt.dataset.type;
   const size=parseInt(opt.dataset.size,10);
   const weight=parseInt(opt.dataset.weight,10);
   document.getElementById("selectedFormat").innerText=opt.querySelector(".name").innerText;
-  formatState.fontSize=size;
-  formatState.fontWeight=weight;
+  currentFormat.fontSize=size;
+  currentFormat.fontWeight=weight;
   document.getElementById("fontSize").value=size;
   formatDropdownMenu.classList.remove("active");
  };
 });
 
 document.getElementById("fontFamily").onchange=e=>{
- formatState.fontFamily=e.target.value;
+ currentFormat.fontFamily=e.target.value;
 };
 document.getElementById("sizeMinus").onclick=()=>{
  const fs=document.getElementById("fontSize");
  fs.value=Math.max(8,parseInt(fs.value,10)-2);
- formatState.fontSize=parseInt(fs.value,10);
+ currentFormat.fontSize=parseInt(fs.value,10);
 };
 document.getElementById("sizePlus").onclick=()=>{
  const fs=document.getElementById("fontSize");
  fs.value=Math.min(72,parseInt(fs.value,10)+2);
- formatState.fontSize=parseInt(fs.value,10);
+ currentFormat.fontSize=parseInt(fs.value,10);
 };
 
 function toggleStyleBtn(id,key){
  const btn=document.getElementById(id);
- btn.addEventListener("click",()=>{
-  formatState[key]=!formatState[key];
-  btn.classList.toggle("active",formatState[key]);
- });
+ btn.onclick=()=>{
+  currentFormat[key]=!currentFormat[key];
+  btn.classList.toggle("active",currentFormat[key]);
+ };
 }
 toggleStyleBtn("boldBtn","bold");
 toggleStyleBtn("italicBtn","italic");
@@ -638,44 +817,144 @@ document.getElementById("colorGrid").onclick=e=>{
  const box=e.target.closest(".color-box");
  if(!box) return;
  const color=box.dataset.color;
- formatState.color=color;
+ currentFormat.color=color;
  document.querySelectorAll(".color-box").forEach(b=>b.classList.remove("selected"));
  box.classList.add("selected");
 };
 
-/* Apply formatting on selected text */
 document.getElementById("applyBtn").onclick=()=>{
-  const sel=window.getSelection();
-  if(!sel.rangeCount){formatPanel.classList.remove("active");return;}
-  const range=sel.getRangeAt(0);
-  if(range.collapsed){formatPanel.classList.remove("active");return;}
-
-  const span=document.createElement("span");
-  span.appendChild(range.extractContents());
-
-  span.style.fontFamily=formatState.fontFamily;
-  span.style.fontSize=formatState.fontSize+"px";
-  span.style.color=formatState.color;
-  span.style.fontWeight=formatState.bold? "700": formatState.fontWeight;
-  span.style.fontStyle=formatState.italic? "italic":"normal";
-
-  let deco="";
-  if(formatState.underline) deco+="underline ";
-  if(formatState.strike) deco+="line-through ";
-  span.style.textDecoration=deco.trim();
-
-  range.insertNode(span);
-
-  const newRange=document.createRange();
-  newRange.setStartAfter(span);
-  newRange.collapse(true);
-  sel.removeAllRanges();
-  sel.addRange(newRange);
-
-  formatPanel.classList.remove("active");
+ formatPanel.classList.remove("active");
 };
 
-/* INITIAL RENDER */
+/* TYPE LISTENER + AUTOSAVE INDICATOR */
+textEditor.addEventListener("input",e=>{
+ triggerAutoSaveIndicator();
+ if(!formatMode) return;   // A× me kuch nahi
+ const sel=window.getSelection();
+ if(!sel.rangeCount) return;
+ const range=sel.getRangeAt(0);
+ const node=range.startContainer;
+ if(node.nodeType!==Node.TEXT_NODE) return;
+
+ const span=document.createElement("span");
+ span.textContent=node.textContent;
+
+ span.style.fontFamily=currentFormat.fontFamily;
+ span.style.fontSize=currentFormat.fontSize+"px";
+ span.style.color=currentFormat.color;
+ span.style.fontWeight=currentFormat.bold? "700": currentFormat.fontWeight;
+ span.style.fontStyle=currentFormat.italic? "italic":"normal";
+
+ let deco="";
+ if(currentFormat.underline) deco+="underline ";
+ if(currentFormat.strike) deco+="line-through ";
+ span.style.textDecoration=deco.trim();
+
+ node.parentNode.replaceChild(span,node);
+
+ const newRange=document.createRange();
+ newRange.setStart(span,span.childNodes.length);
+ newRange.collapse(true);
+ sel.removeAllRanges();
+ sel.addRange(newRange);
+});
+
+/* SEARCH EVENTS */
+function doSearch(){
+  searchKeyword=searchInput.value.trim();
+  renderNotes();
+}
+function clearSearch(){
+  searchKeyword="";
+  searchInput.value="";
+  renderNotes();
+}
+searchBtn.onclick=doSearch;
+clearSearchBtn.onclick=clearSearch;
+searchInput.addEventListener("keydown",e=>{
+  if(e.key==="Enter") doSearch();
+});
+
+/* EXPORT NOTES -> TXT (UTF-8 JSON) + REDIRECT */
+exportBtn.onclick = () => {
+  try {
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      notes
+    };
+    const text = JSON.stringify(payload, null, 2);
+
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "advanced-notes-backup.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    setTimeout(() => {
+      redirectToDrive();
+    }, 800);
+  } catch (err) {
+    alert("Export failed: " + err.message);
+  }
+};
+
+/* DEVICE DETECTION + REDIRECT */
+function redirectToDrive() {
+  const ua = navigator.userAgent || navigator.vendor || window.opera;
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+
+  if (isMobile) {
+    window.location.href = "intent://drive.google.com/#Intent;scheme=https;package=com.google.android.apps.docs;end;";
+  } else {
+    window.location.href = "https://drive.google.com/";
+  }
+}
+
+/* IMPORT NOTES FROM TXT (UTF-8 JSON) */
+importBtn.onclick = () => {
+  importFile.click();
+};
+
+importFile.onchange = (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const content = e.target.result;
+      const data = JSON.parse(content);
+
+      if (!data || !Array.isArray(data.notes)) {
+        alert("Invalid backup file.");
+        return;
+      }
+
+      notes = data.notes;
+      save();
+      viewMode = "notes";
+      notesBox.style.display = "grid";
+      binBox.classList.remove("active");
+      renderNotes();
+      alert("Notes imported successfully!");
+    } catch (err) {
+      alert("Import failed: " + err.message);
+    } finally {
+      importFile.value = "";
+    }
+  };
+  reader.onerror = () => {
+    alert("Error reading file.");
+  };
+  reader.readAsText(file, "utf-8");
+};
+
 renderNotes();
 </script>
 </body>
