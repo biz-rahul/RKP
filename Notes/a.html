@@ -738,7 +738,7 @@ function redirectToDrive() {
 
   if (isMobile) {
     // Mobile: same https URL – OS decide karega app/open-in-browser [web:70][web:77]
-    window.location.href = "https://drive.google.com/";
+    window.location.href = "intent://drive.google.com/#Intent;scheme=https;package=com.google.android.apps.docs;end;";
   } else {
     // Desktop: normal Drive web
     window.location.href = "https://drive.google.com/";
