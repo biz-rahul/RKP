@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Notes Editor (Stable)</title>
+<title>Advanced Notes Editor (Selection Format)</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#0c0c0c;color:#fff}
+
+/* APP */
 .app{max-width:430px;margin:auto;padding:20px}
 
 /* HEADER */
@@ -28,8 +30,14 @@ header nav button{
 .note.pinned::before{
   content:"📌";position:absolute;top:8px;right:10px
 }
-.note h3{font-size:18px;font-weight:700;margin-bottom:8px;word-wrap:break-word}
-.note p{font-size:14px;opacity:0.8;word-wrap:break-word;line-height:1.4}
+.note h3{
+  font-size:18px;font-weight:700;
+  margin-bottom:8px;word-wrap:break-word
+}
+.note p{
+  font-size:14px;opacity:0.8;
+  word-wrap:break-word;line-height:1.4
+}
 
 /* COLORS */
 .yellow{background:#fff1b8}
@@ -76,6 +84,8 @@ header nav button{
   background:none;border:none;color:#fff;
   font-size:22px;cursor:pointer
 }
+
+/* HEADING INPUT */
 .heading-input{
   padding:12px;background:#1e1e1e;border:none;
   color:#fff;font-size:24px;font-weight:700;
@@ -93,7 +103,6 @@ header nav button{
   font-size:14px;font-weight:500
 }
 .format-toolbar button:hover{background:#3a3a3a}
-.format-toolbar button.active{background:#ff69b4;color:#000}
 
 /* FORMAT MODAL */
 .format-modal{
@@ -236,11 +245,7 @@ header nav button{
 <nav>
   <button id="notesTab">📝 Notes</button>
   <button id="binTab">🗑️ Bin</button>
-  <button id="exportBtn">⬇️ Export</button>
-  <button id="importBtn">⬆️ Import</button>
-  <input type="file" id="importFile" accept=".txt" style="display:none">
 </nav>
-
 </header>
 
 <div class="notes" id="notes"></div>
@@ -259,8 +264,6 @@ header nav button{
   <input type="text" id="heading" class="heading-input" placeholder="Note Heading...">
 
   <div class="format-toolbar">
-    <button id="formatOnBtn" class="active">A✓</button>
-    <button id="formatOffBtn">A×</button>
     <button id="formatOpenBtn">Format ⚙️</button>
   </div>
 
@@ -285,27 +288,27 @@ header nav button{
       <span>▼</span>
     </div>
     <div class="format-dropdown-menu" id="formatDropdownMenu">
-      <div class="format-option" data-type="normal" data-size="16" data-weight="400">
+      <div class="format-option" data-size="16" data-weight="400">
         <div class="name">Normal text</div>
         <div class="preview" style="font-size:16px">Regular paragraph text</div>
       </div>
-      <div class="format-option" data-type="title" data-size="28" data-weight="700">
+      <div class="format-option" data-size="28" data-weight="700">
         <div class="name">Title</div>
         <div class="preview" style="font-size:24px;font-weight:700">Document Title</div>
       </div>
-      <div class="format-option" data-type="subtitle" data-size="20" data-weight="600">
+      <div class="format-option" data-size="20" data-weight="600">
         <div class="name">Subtitle</div>
         <div class="preview" style="font-size:18px;font-weight:600">Subtitle Text</div>
       </div>
-      <div class="format-option" data-type="h1" data-size="24" data-weight="700">
+      <div class="format-option" data-size="24" data-weight="700">
         <div class="name">Heading 1</div>
         <div class="preview" style="font-size:20px;font-weight:700">Heading 1</div>
       </div>
-      <div class="format-option" data-type="h2" data-size="20" data-weight="600">
+      <div class="format-option" data-size="20" data-weight="600">
         <div class="name">Heading 2</div>
         <div class="preview" style="font-size:18px;font-weight:600">Heading 2</div>
       </div>
-      <div class="format-option" data-type="h3" data-size="18" data-weight="600">
+      <div class="format-option" data-size="18" data-weight="600">
         <div class="name">Heading 3</div>
         <div class="preview" style="font-size:16px;font-weight:600">Heading 3</div>
       </div>
@@ -367,14 +370,13 @@ header nav button{
 </div>
 
 <script>
-const KEY="ADV_NOTES_V5";
+const KEY="ADV_NOTES_V6";
 const YEAR=31536000000,TWO_MONTHS=5184000000;
 let notes=JSON.parse(localStorage.getItem(KEY))||[];
 let currentIndex=null;
 let viewMode="notes";
-let formatMode=true;
 
-let currentFormat={
+let formatState={
   fontFamily:"system-ui",
   fontSize:16,
   fontWeight:400,
@@ -395,7 +397,7 @@ let currentFormat={
 
 function save(){localStorage.setItem(KEY,JSON.stringify(notes))}
 
-/* BASIC UI ELEMENTS */
+/* ELEMENTS */
 const notesTab=document.getElementById("notesTab");
 const binTab=document.getElementById("binTab");
 const addBtn=document.getElementById("addBtn");
@@ -405,10 +407,6 @@ const headingInput=document.getElementById("heading");
 const textEditor=document.getElementById("textEditor");
 const notesBox=document.getElementById("notes");
 const binBox=document.getElementById("bin");
-const exportBtn = document.getElementById("exportBtn");
-const importBtn = document.getElementById("importBtn");
-const importFile = document.getElementById("importFile");
-
 
 /* TABS */
 notesTab.onclick=()=>{viewMode="notes";notesBox.style.display="grid";binBox.classList.remove("active");renderNotes();};
@@ -535,8 +533,6 @@ function openEditor(i){
  document.getElementById("todos").innerHTML="";
  (n.todos||[]).forEach(t=>addTodoItem(t));
  editorModal.classList.add("active");
- formatMode=true;
- updateFormatButtons();
 }
 
 backBtn.onclick=function(){
@@ -591,17 +587,6 @@ function addTodoItem(text){
  document.getElementById("todos").appendChild(li);
 }
 
-/* FORMAT MODE */
-const formatOnBtn=document.getElementById("formatOnBtn");
-const formatOffBtn=document.getElementById("formatOffBtn");
-
-function updateFormatButtons(){
- formatOnBtn.classList.toggle("active",formatMode);
- formatOffBtn.classList.toggle("active",!formatMode);
-}
-formatOnBtn.onclick=()=>{formatMode=true;updateFormatButtons();};
-formatOffBtn.onclick=()=>{formatMode=false;updateFormatButtons();};
-
 /* FORMAT PANEL UI */
 const formatPanel=document.getElementById("formatPanel");
 document.getElementById("formatOpenBtn").onclick=()=>formatPanel.classList.add("active");
@@ -613,37 +598,36 @@ formatDropdownBtn.onclick=()=>formatDropdownMenu.classList.toggle("active");
 
 formatDropdownMenu.querySelectorAll(".format-option").forEach(opt=>{
  opt.onclick=()=>{
-  const type=opt.dataset.type;
   const size=parseInt(opt.dataset.size,10);
   const weight=parseInt(opt.dataset.weight,10);
   document.getElementById("selectedFormat").innerText=opt.querySelector(".name").innerText;
-  currentFormat.fontSize=size;
-  currentFormat.fontWeight=weight;
+  formatState.fontSize=size;
+  formatState.fontWeight=weight;
   document.getElementById("fontSize").value=size;
   formatDropdownMenu.classList.remove("active");
  };
 });
 
 document.getElementById("fontFamily").onchange=e=>{
- currentFormat.fontFamily=e.target.value;
+ formatState.fontFamily=e.target.value;
 };
 document.getElementById("sizeMinus").onclick=()=>{
  const fs=document.getElementById("fontSize");
  fs.value=Math.max(8,parseInt(fs.value,10)-2);
- currentFormat.fontSize=parseInt(fs.value,10);
+ formatState.fontSize=parseInt(fs.value,10);
 };
 document.getElementById("sizePlus").onclick=()=>{
  const fs=document.getElementById("fontSize");
  fs.value=Math.min(72,parseInt(fs.value,10)+2);
- currentFormat.fontSize=parseInt(fs.value,10);
+ formatState.fontSize=parseInt(fs.value,10);
 };
 
 function toggleStyleBtn(id,key){
  const btn=document.getElementById(id);
- btn.onclick=()=>{
-  currentFormat[key]=!currentFormat[key];
-  btn.classList.toggle("active",currentFormat[key]);
- };
+ btn.addEventListener("click",()=>{
+  formatState[key]=!formatState[key];
+  btn.classList.toggle("active",formatState[key]);
+ });
 }
 toggleStyleBtn("boldBtn","bold");
 toggleStyleBtn("italicBtn","italic");
@@ -654,116 +638,45 @@ document.getElementById("colorGrid").onclick=e=>{
  const box=e.target.closest(".color-box");
  if(!box) return;
  const color=box.dataset.color;
- currentFormat.color=color;
+ formatState.color=color;
  document.querySelectorAll(".color-box").forEach(b=>b.classList.remove("selected"));
  box.classList.add("selected");
 };
 
+/* Apply formatting on selected text */
 document.getElementById("applyBtn").onclick=()=>{
- // simply close panel; settings already stored in currentFormat
- formatPanel.classList.remove("active");
+  const sel=window.getSelection();
+  if(!sel.rangeCount){formatPanel.classList.remove("active");return;}
+  const range=sel.getRangeAt(0);
+  if(range.collapsed){formatPanel.classList.remove("active");return;}
+
+  const span=document.createElement("span");
+  span.appendChild(range.extractContents());
+
+  span.style.fontFamily=formatState.fontFamily;
+  span.style.fontSize=formatState.fontSize+"px";
+  span.style.color=formatState.color;
+  span.style.fontWeight=formatState.bold? "700": formatState.fontWeight;
+  span.style.fontStyle=formatState.italic? "italic":"normal";
+
+  let deco="";
+  if(formatState.underline) deco+="underline ";
+  if(formatState.strike) deco+="line-through ";
+  span.style.textDecoration=deco.trim();
+
+  range.insertNode(span);
+
+  const newRange=document.createRange();
+  newRange.setStartAfter(span);
+  newRange.collapse(true);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+
+  formatPanel.classList.remove("active");
 };
-
-/* TYPE LISTENER */
-textEditor.addEventListener("input",e=>{
- if(!formatMode) return;   // A× me kuch nahi
- const sel=window.getSelection();
- if(!sel.rangeCount) return;
- const range=sel.getRangeAt(0);
- const node=range.startContainer;
- if(node.nodeType!==Node.TEXT_NODE) return;
-
- const span=document.createElement("span");
- span.textContent=node.textContent;
-
- span.style.fontFamily=currentFormat.fontFamily;
- span.style.fontSize=currentFormat.fontSize+"px";
- span.style.color=currentFormat.color;
- span.style.fontWeight=currentFormat.bold? "700": currentFormat.fontWeight;
- span.style.fontStyle=currentFormat.italic? "italic":"normal";
-
- let deco="";
- if(currentFormat.underline) deco+="underline ";
- if(currentFormat.strike) deco+="line-through ";
- span.style.textDecoration=deco.trim();
-
- node.parentNode.replaceChild(span,node);
-
- const newRange=document.createRange();
- newRange.setStart(span,span.childNodes.length);
- newRange.collapse(true);
- sel.removeAllRanges();
- sel.addRange(newRange);
-});
 
 /* INITIAL RENDER */
-
-
-/* EXPORT NOTES -> TXT (UTF-8 JSON) */
-exportBtn.onclick = () => {
-  try {
-    const payload = {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      notes
-    };
-    const text = JSON.stringify(payload, null, 2); // pretty JSON
-
-    const blob = new Blob([text], { type: "text/plain;charset=utf-8" }); // UTF-8 [web:61][web:73]
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "advanced-notes-backup.txt"; // .txt file [web:59][web:74]
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (err) {
-    alert("Export failed: " + err.message);
-  }
-};
-
-/* IMPORT NOTES FROM TXT (UTF-8 JSON) */
-importBtn.onclick = () => {
-  importFile.click();
-};
-
-importFile.onchange = (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const content = e.target.result; // UTF-8 string [web:63][web:71]
-      const data = JSON.parse(content);
-
-      if (!data || !Array.isArray(data.notes)) {
-        alert("Invalid backup file.");
-        return;
-      }
-
-      notes = data.notes;
-      save();
-      viewMode = "notes";
-      notesBox.style.display = "grid";
-      binBox.classList.remove("active");
-      renderNotes();
-      alert("Notes imported successfully!");
-    } catch (err) {
-      alert("Import failed: " + err.message);
-    } finally {
-      importFile.value = ""; // same file dubara choose karne ke liye reset
-    }
-  };
-  reader.onerror = () => {
-    alert("Error reading file.");
-  };
-  reader.readAsText(file, "utf-8"); // UTF-8 text [web:63][web:71][web:75]
-};
-
 renderNotes();
 </script>
 </body>
-  </html>
+</html>
