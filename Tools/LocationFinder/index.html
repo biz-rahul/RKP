@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Precise Location Finder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg:#0f1220;
+  --card:#171a2e;
+  --accent:#6c8cff;
+  --text:#eaeaff;
+  --muted:#9aa0ff;
+}
+
+*{
+  box-sizing:border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(circle at top, #1a1f4a, var(--bg));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text);
+}
+
+.container{
+  width:100%;
+  max-width:520px;
+  background:var(--card);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 25px 60px rgba(0,0,0,0.5);
+}
+
+h1{
+  margin:0 0 10px;
+  font-size:1.8rem;
+  text-align:center;
+}
+
+.subtitle{
+  text-align:center;
+  color:var(--muted);
+  font-size:0.95rem;
+  margin-bottom:25px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),#8fa5ff);
+  color:#000;
+  font-weight:600;
+  font-size:1rem;
+  cursor:pointer;
+  transition:transform .15s, box-shadow .15s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(108,140,255,0.4);
+}
+
+.input-group{
+  margin-top:18px;
+  display:none;
+}
+
+input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #2d3270;
+  background:#0c0f24;
+  color:var(--text);
+  font-size:0.95rem;
+}
+
+.results{
+  margin-top:20px;
+  background:#0b0e23;
+  padding:16px;
+  border-radius:12px;
+  display:none;
+}
+
+.result-item{
+  margin-bottom:10px;
+  word-break:break-all;
+}
+
+.label{
+  color:var(--muted);
+  font-size:0.85rem;
+}
+
+.copy-btn{
+  margin-top:14px;
+  background:#22c55e;
+  color:#000;
+}
+
+footer{
+  margin-top:18px;
+  text-align:center;
+  font-size:0.75rem;
+  color:#7f85ff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>📍 Location Finder</h1>
+  <div class="subtitle">Get exact longitude & latitude with one click</div>
+
+  <button onclick="getLocation()">Detect My Location</button>
+
+  <div class="input-group" id="placeGroup">
+    <input type="text" id="placeName" placeholder="Enter place name">
+  </div>
+
+  <div class="results" id="resultsBox">
+    <div class="result-item">
+      <div class="label">Place Name</div>
+      <div id="rPlace"></div>
+    </div>
+
+    <div class="result-item">
+      <div class="label">Coordinates</div>
+      <div id="rCoords"></div>
+    </div>
+
+    <div class="result-item">
+      <div class="label">Google Maps Link</div>
+      <a id="rMap" href="#" target="_blank" style="color:var(--accent);"></a>
+    </div>
+
+    <button class="copy-btn" onclick="copyResults()">Copy Results</button>
+  </div>
+
+  <footer>Precision powered by your device GPS</footer>
+</div>
+
+<script>
+let latitude, longitude;
+
+function getLocation(){
+  if(!navigator.geolocation){
+    alert("Geolocation not supported.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      latitude = pos.coords.latitude.toFixed(6);
+      longitude = pos.coords.longitude.toFixed(6);
+
+      document.getElementById("placeGroup").style.display="block";
+      document.getElementById("resultsBox").style.display="block";
+
+      updateResults();
+    },
+    err=>{
+      alert("Permission denied or unavailable.");
+    },
+    { enableHighAccuracy:true }
+  );
+}
+
+function updateResults(){
+  const place = document.getElementById("placeName").value || "Unnamed Place";
+  const mapLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+  document.getElementById("rPlace").innerText = place;
+  document.getElementById("rCoords").innerText =
+    `Longitude: ${longitude} , Latitude: ${latitude}`;
+  document.getElementById("rMap").innerText = mapLink;
+  document.getElementById("rMap").href = mapLink;
+}
+
+document.getElementById("placeName").addEventListener("input", updateResults);
+
+function copyResults(){
+  const text =
+`Place Name: ${document.getElementById("rPlace").innerText}
+Longitude: ${longitude}
+Latitude: ${latitude}
+Google Map Link: ${document.getElementById("rMap").href}`;
+
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("Results copied to clipboard.");
+  });
+}
+</script>
+
+</body>
+</html>
