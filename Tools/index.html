@@ -7,11 +7,12 @@
 
 <style>
 :root{
-  --bg:#0b0d1a;
-  --card:#151830;
-  --accent:#7c8cff;
-  --text:#f1f1ff;
-  --muted:#9aa1ff;
+  --bg:#1a0b14;
+  --card:#2a0f1f;
+  --accent:#ff5fa2;
+  --accent-soft:#ff8fc4;
+  --text:#ffe6f2;
+  --muted:#ffb3d9;
 }
 
 *{
@@ -22,7 +23,7 @@
 body{
   margin:0;
   min-height:100vh;
-  background:radial-gradient(circle at top, #1a1f4a, var(--bg));
+  background:radial-gradient(circle at top, #3a0f27, var(--bg));
   color:var(--text);
   display:flex;
   justify-content:center;
@@ -35,38 +36,27 @@ body{
 }
 
 header{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
   margin-bottom:30px;
 }
 
 h1{
   margin:0;
-  font-size:2rem;
-}
-
-.add-btn{
-  padding:12px 18px;
-  border:none;
-  border-radius:12px;
-  background:linear-gradient(135deg,var(--accent),#9aa8ff);
-  color:#000;
-  font-weight:600;
-  cursor:pointer;
+  font-size:2.2rem;
+  text-align:center;
+  color:var(--accent);
 }
 
 .tools-grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
   gap:22px;
 }
 
 .tool-card{
-  background:var(--card);
-  border-radius:18px;
-  padding:22px;
-  box-shadow:0 20px 45px rgba(0,0,0,.45);
+  background:linear-gradient(145deg, var(--card), #3a1230);
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 25px 55px rgba(0,0,0,.55);
   display:flex;
   flex-direction:column;
   justify-content:space-between;
@@ -74,13 +64,14 @@ h1{
 }
 
 .tool-card:hover{
-  transform:translateY(-4px);
-  box-shadow:0 30px 65px rgba(0,0,0,.6);
+  transform:translateY(-5px) scale(1.01);
+  box-shadow:0 35px 75px rgba(255,95,162,.25);
 }
 
 .tool-title{
-  font-size:1.25rem;
-  margin-bottom:8px;
+  font-size:1.35rem;
+  margin-bottom:10px;
+  color:#ffd1e8;
 }
 
 .tool-link{
@@ -90,21 +81,21 @@ h1{
 }
 
 .open-btn{
-  margin-top:18px;
-  padding:12px;
+  margin-top:22px;
+  padding:13px;
   border:none;
-  border-radius:10px;
-  background:#22c55e;
-  color:#000;
-  font-weight:600;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-soft));
+  color:#1a0010;
+  font-weight:700;
+  font-size:1rem;
   cursor:pointer;
+  transition:transform .15s, box-shadow .15s;
 }
 
-footer{
-  margin-top:35px;
-  text-align:center;
-  font-size:.75rem;
-  color:#7f85ff;
+.open-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px rgba(255,95,162,.45);
 }
 </style>
 </head>
@@ -114,15 +105,10 @@ footer{
 <div class="container">
 
 <header>
-  <h1>🧰 My Tools</h1>
-  <button class="add-btn" onclick="addTool()">+ Add Tool</button>
+  <h1>🩷 My Tools</h1>
 </header>
 
-<div class="tools-grid" id="toolsGrid">
-  <!-- Tools will appear here -->
-</div>
-
-<footer>Building tools, one obsession at a time</footer>
+<div class="tools-grid" id="toolsGrid"></div>
 
 </div>
 
@@ -148,7 +134,7 @@ function renderTools(){
         <div class="tool-link">${tool.link}</div>
       </div>
       <button class="open-btn" onclick="window.open('${tool.link}','_blank')">
-        Open Tool
+        Open
       </button>
     `;
 
@@ -156,19 +142,8 @@ function renderTools(){
   });
 }
 
-function addTool(){
-  const name = prompt("Enter tool name:");
-  if(!name) return;
-
-  const link = prompt("Enter tool link:");
-  if(!link) return;
-
-  tools.push({name, link});
-  renderTools();
-}
-
 renderTools();
 </script>
 
 </body>
-</html>
+</html>    
