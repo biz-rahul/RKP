@@ -2,694 +2,206 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>Precise Location Finder</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Notes Editor (Stable)</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#0c0c0c;color:#fff}
-.app{max-width:430px;margin:auto;padding:20px}
-
-/* HEADER */
-header h1{font-size:32px;font-weight:800}
-header p{color:#aaa;margin-bottom:20px}
-header nav{display:flex;gap:12px;margin-bottom:20px}
-header nav button{
-  background:#1e1e1e;border:none;color:#fff;
-  padding:10px 16px;border-radius:10px;cursor:pointer
+:root{
+  --bg:#0f1220;
+  --card:#171a2e;
+  --accent:#6c8cff;
+  --text:#eaeaff;
+  --muted:#9aa0ff;
 }
 
-/* NOTES */
-.notes{display:grid;gap:16px}
-.note{
-  padding:18px;border-radius:22px;color:#000;
-  position:relative;cursor:pointer;min-height:80px
-}
-.note.pinned::before{
-  content:"📌";position:absolute;top:8px;right:10px
-}
-.note h3{font-size:18px;font-weight:700;margin-bottom:8px;word-wrap:break-word}
-.note p{font-size:14px;opacity:0.8;word-wrap:break-word;line-height:1.4}
-
-/* COLORS */
-.yellow{background:#fff1b8}
-.blue{background:#d9f2ff}
-.pink{background:#ffd6e7}
-.green{background:#d8f8e1}
-
-/* MENU */
-.menu-btn{
-  position:absolute;bottom:8px;right:10px;
-  font-size:20px;color:#000;cursor:pointer;z-index:10
-}
-.menu{
-  position:absolute;right:10px;bottom:40px;
-  background:#1e1e1e;color:#fff;
-  border-radius:12px;padding:8px;display:none;z-index:20
-}
-.menu button{
-  background:none;border:none;color:#fff;
-  padding:8px 12px;display:block;width:100%;
-  text-align:left;cursor:pointer;border-radius:6px
-}
-.menu button:hover{background:#333}
-
-/* ADD */
-.add-btn{
-  position:fixed;bottom:25px;right:25px;
-  width:64px;height:64px;border-radius:50%;
-  border:none;font-size:36px;background:#fff;color:#000;
-  cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3)
+*{
+  box-sizing:border-box;
+  font-family: "Segoe UI", system-ui, sans-serif;
 }
 
-/* EDITOR */
-.modal{
-  position:fixed;inset:0;background:#0c0c0c;
-  display:none;flex-direction:column;z-index:100
-}
-.modal.active{display:flex}
-.topbar{
-  display:flex;align-items:center;
-  padding:12px;gap:10px;background:#1a1a1a
-}
-.topbar button{
-  background:none;border:none;color:#fff;
-  font-size:22px;cursor:pointer
-}
-.heading-input{
-  padding:12px;background:#1e1e1e;border:none;
-  color:#fff;font-size:24px;font-weight:700;
-  border-radius:10px;margin:10px
+body{
+  margin:0;
+  min-height:100vh;
+  background:radial-gradient(circle at top, #1a1f4a, var(--bg));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:var(--text);
 }
 
-/* FORMAT TOOLBAR */
-.format-toolbar{
-  display:flex;gap:8px;padding:10px;
-  background:#1a1a1a;align-items:center;flex-wrap:wrap
-}
-.format-toolbar button{
-  background:#2a2a2a;border:none;color:#fff;
-  padding:8px 12px;border-radius:8px;cursor:pointer;
-  font-size:14px;font-weight:500
-}
-.format-toolbar button:hover{background:#3a3a3a}
-.format-toolbar button.active{background:#ff69b4;color:#000}
-
-/* FORMAT MODAL */
-.format-modal{
-  position:fixed;bottom:0;left:0;right:0;
-  background:linear-gradient(180deg,#2d2d2d 0%,#1a1a1a 100%);
-  border-radius:24px 24px 0 0;
-  padding:24px;max-height:70vh;overflow-y:auto;
-  transform:translateY(100%);transition:transform 0.3s ease;
-  z-index:200;box-shadow:0 -4px 24px rgba(0,0,0,0.5)
-}
-.format-modal.active{transform:translateY(0)}
-.format-modal h3{
-  margin-bottom:12px;font-size:13px;color:#888;
-  text-transform:uppercase;letter-spacing:0.5px;font-weight:600
-}
-.format-modal .close-btn{
-  position:absolute;top:20px;right:20px;
-  background:none;border:none;color:#aaa;
-  font-size:28px;cursor:pointer;transition:color 0.2s
-}
-.format-modal .close-btn:hover{color:#fff}
-
-/* FORMAT DROPDOWN */
-.format-dropdown{position:relative;margin-bottom:20px}
-.format-dropdown-btn{
-  width:100%;background:#1e1e1e;color:#fff;
-  padding:14px;border-radius:12px;border:1px solid #3a3a3a;
-  text-align:left;cursor:pointer;display:flex;
-  justify-content:space-between;align-items:center;
-  font-size:15px;transition:all 0.2s
-}
-.format-dropdown-btn:hover{background:#252525;border-color:#4a4a4a}
-.format-dropdown-menu{
-  position:absolute;top:100%;left:0;right:0;
-  background:#1e1e1e;border-radius:12px;
-  margin-top:8px;padding:8px;display:none;
-  border:1px solid #3a3a3a;max-height:300px;overflow-y:auto;
-  box-shadow:0 8px 16px rgba(0,0,0,0.4);z-index:10
-}
-.format-dropdown-menu.active{display:block}
-.format-option{
-  padding:12px;border-radius:8px;cursor:pointer;
-  transition:background 0.2s;margin-bottom:4px
-}
-.format-option:hover{background:#2a2a2a}
-.format-option .name{font-size:13px;color:#888;margin-bottom:4px}
-.format-option .preview{color:#fff}
-
-/* FONT / SIZE */
-.font-controls{
-  display:flex;gap:10px;align-items:center;margin-bottom:20px
-}
-.font-controls select{
-  background:#1e1e1e;color:#fff;border:1px solid #3a3a3a;
-  padding:12px;border-radius:10px;flex:1;cursor:pointer;
-  transition:all 0.2s
-}
-.font-controls select:hover{background:#252525;border-color:#4a4a4a}
-
-/* TEXT BUTTONS */
-.format-buttons{
-  display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap
-}
-.format-buttons button{
-  background:#1e1e1e;color:#fff;border:1px solid #3a3a3a;
-  padding:10px 18px;border-radius:10px;cursor:pointer;
-  font-weight:600;transition:all 0.2s;
-  display:flex;align-items:center;gap:6px
-}
-.format-buttons button:hover{background:#2a2a2a;border-color:#4a4a4a}
-.format-buttons button.active{background:#ff69b4;color:#000;border-color:#ff69b4}
-
-/* COLOR PICKER */
-.color-section{margin-bottom:20px}
-.color-grid{
-  display:grid;grid-template-columns:repeat(8,1fr);gap:8px
-}
-.color-box{
-  width:40px;height:40px;border-radius:8px;
-  cursor:pointer;border:2px solid transparent
-}
-.color-box.selected{border-color:#fff}
-
-/* APPLY BUTTON */
-.apply-btn-container{
-  position:sticky;bottom:0;background:linear-gradient(180deg,transparent 0%,#1a1a1a 20%);
-  padding:16px 0 0;margin-top:20px
-}
-.apply-btn{
-  width:100%;background:#ff69b4;color:#000;
-  border:none;padding:16px;border-radius:12px;
-  font-size:16px;font-weight:700;cursor:pointer;
-  transition:all 0.2s;box-shadow:0 4px 12px rgba(255,105,180,0.3)
-}
-.apply-btn:hover{background:#ff82c3;transform:translateY(-2px);
-  box-shadow:0 6px 16px rgba(255,105,180,0.4)}
-.apply-btn:active{transform:translateY(0)}
-
-/* EDITOR CONTENT */
-.editor-content{
-  flex:1;overflow-y:auto;padding:16px;
-  background:#0c0c0c
-}
-#textEditor{
-  min-height:300px;background:#1e1e1e;
-  border:none;color:#fff;font-size:16px;
-  padding:16px;border-radius:12px;
-  outline:none;line-height:1.6
-}
-#textEditor[contenteditable="true"]{cursor:text}
-
-/* TODO */
-.todo{padding:12px;background:#0c0c0c}
-.todo input{
-  width:100%;padding:10px;border-radius:10px;border:none;
-  background:#1e1e1e;color:#fff
-}
-.todo ul{list-style:none;margin-top:8px}
-.todo li{
-  background:#1e1e1e;padding:8px 12px;
-  border-radius:10px;margin-bottom:6px;
-  display:flex;justify-content:space-between;align-items:center
-}
-.todo li button{
-  background:#ff4444;border:none;color:#fff;
-  padding:4px 8px;border-radius:6px;cursor:pointer
+.container{
+  width:100%;
+  max-width:520px;
+  background:var(--card);
+  border-radius:18px;
+  padding:28px;
+  box-shadow:0 25px 60px rgba(0,0,0,0.5);
 }
 
-/* BIN VIEW */
-.bin-view{display:none}
-.bin-view.active{display:block}
+h1{
+  margin:0 0 10px;
+  font-size:1.8rem;
+  text-align:center;
+}
+
+.subtitle{
+  text-align:center;
+  color:var(--muted);
+  font-size:0.95rem;
+  margin-bottom:25px;
+}
+
+button{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--accent),#8fa5ff);
+  color:#000;
+  font-weight:600;
+  font-size:1rem;
+  cursor:pointer;
+  transition:transform .15s, box-shadow .15s;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 8px 20px rgba(108,140,255,0.4);
+}
+
+.input-group{
+  margin-top:18px;
+  display:none;
+}
+
+input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid #2d3270;
+  background:#0c0f24;
+  color:var(--text);
+  font-size:0.95rem;
+}
+
+.results{
+  margin-top:20px;
+  background:#0b0e23;
+  padding:16px;
+  border-radius:12px;
+  display:none;
+}
+
+.result-item{
+  margin-bottom:10px;
+  word-break:break-all;
+}
+
+.label{
+  color:var(--muted);
+  font-size:0.85rem;
+}
+
+.copy-btn{
+  margin-top:14px;
+  background:#22c55e;
+  color:#000;
+}
+
+footer{
+  margin-top:18px;
+  text-align:center;
+  font-size:0.75rem;
+  color:#7f85ff;
+}
 </style>
 </head>
+
 <body>
 
-<div class="app">
-<header>
-<h1>My Notes</h1>
-<p>Clean. Serious. Powerful.</p>
-<nav>
-  <button id="notesTab">📝 Notes</button>
-  <button id="binTab">🗑️ Bin</button>
-</nav>
-</header>
+<div class="container">
+  <h1>📍 Location Finder</h1>
+  <div class="subtitle">Get exact longitude & latitude with one click</div>
 
-<div class="notes" id="notes"></div>
-<div class="bin-view" id="bin"></div>
-</div>
+  <button onclick="getLocation()">Detect My Location</button>
 
-<button class="add-btn" id="addBtn">+</button>
-
-<!-- EDITOR -->
-<div class="modal" id="editor">
-  <div class="topbar">
-    <button id="backBtn">⬅️</button>
-    <span>Edit Note</span>
+  <div class="input-group" id="placeGroup">
+    <input type="text" id="placeName" placeholder="Enter place name">
   </div>
 
-  <input type="text" id="heading" class="heading-input" placeholder="Note Heading...">
-
-  <div class="format-toolbar">
-    <button id="formatOnBtn" class="active">A✓</button>
-    <button id="formatOffBtn">A×</button>
-    <button id="formatOpenBtn">Format ⚙️</button>
-  </div>
-
-  <div class="editor-content">
-    <div id="textEditor" contenteditable="true"></div>
-  </div>
-
-  <div class="todo">
-    <input id="todoInput" placeholder="Add To-Do & press Enter">
-    <ul id="todos"></ul>
-  </div>
-</div>
-
-<!-- FORMAT PANEL -->
-<div class="format-modal" id="formatPanel">
-  <button class="close-btn" id="formatCloseBtn">×</button>
-  
-  <h3>Format</h3>
-  <div class="format-dropdown">
-    <div class="format-dropdown-btn" id="formatDropdownBtn">
-      <span id="selectedFormat">Normal text</span>
-      <span>▼</span>
+  <div class="results" id="resultsBox">
+    <div class="result-item">
+      <div class="label">Place Name</div>
+      <div id="rPlace"></div>
     </div>
-    <div class="format-dropdown-menu" id="formatDropdownMenu">
-      <div class="format-option" data-type="normal" data-size="16" data-weight="400">
-        <div class="name">Normal text</div>
-        <div class="preview" style="font-size:16px">Regular paragraph text</div>
-      </div>
-      <div class="format-option" data-type="title" data-size="28" data-weight="700">
-        <div class="name">Title</div>
-        <div class="preview" style="font-size:24px;font-weight:700">Document Title</div>
-      </div>
-      <div class="format-option" data-type="subtitle" data-size="20" data-weight="600">
-        <div class="name">Subtitle</div>
-        <div class="preview" style="font-size:18px;font-weight:600">Subtitle Text</div>
-      </div>
-      <div class="format-option" data-type="h1" data-size="24" data-weight="700">
-        <div class="name">Heading 1</div>
-        <div class="preview" style="font-size:20px;font-weight:700">Heading 1</div>
-      </div>
-      <div class="format-option" data-type="h2" data-size="20" data-weight="600">
-        <div class="name">Heading 2</div>
-        <div class="preview" style="font-size:18px;font-weight:600">Heading 2</div>
-      </div>
-      <div class="format-option" data-type="h3" data-size="18" data-weight="600">
-        <div class="name">Heading 3</div>
-        <div class="preview" style="font-size:16px;font-weight:600">Heading 3</div>
-      </div>
+
+    <div class="result-item">
+      <div class="label">Coordinates</div>
+      <div id="rCoords"></div>
     </div>
-  </div>
 
-  <h3>Font</h3>
-  <div class="font-controls">
-    <select id="fontFamily">
-      <option value="system-ui">System UI</option>
-      <option value="Arial">Arial</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Times New Roman">Times New Roman</option>
-      <option value="Courier New">Courier New</option>
-      <option value="Verdana">Verdana</option>
-    </select>
-  </div>
-
-  <h3>Size</h3>
-  <div class="font-controls">
-    <button id="sizeMinus">−</button>
-    <input type="number" id="fontSize" value="16" min="8" max="72">
-    <button id="sizePlus">+</button>
-  </div>
-
-  <h3>Text Style</h3>
-  <div class="format-buttons">
-    <button id="boldBtn"><b>B</b></button>
-    <button id="italicBtn"><i>I</i></button>
-    <button id="underlineBtn"><u>U</u></button>
-    <button id="strikeBtn"><s>S</s></button>
-  </div>
-
-  <h3>Text Color</h3>
-  <div class="color-section">
-    <div class="color-grid" id="colorGrid">
-      <div class="color-box" style="background:#000" data-color="#000"></div>
-      <div class="color-box" style="background:#fff" data-color="#fff"></div>
-      <div class="color-box" style="background:#ff0000" data-color="#ff0000"></div>
-      <div class="color-box" style="background:#ff9900" data-color="#ff9900"></div>
-      <div class="color-box" style="background:#ffff00" data-color="#ffff00"></div>
-      <div class="color-box" style="background:#00ff00" data-color="#00ff00"></div>
-      <div class="color-box" style="background:#00ffff" data-color="#00ffff"></div>
-      <div class="color-box" style="background:#0000ff" data-color="#0000ff"></div>
-      <div class="color-box" style="background:#ff00ff" data-color="#ff00ff"></div>
-      <div class="color-box" style="background:#808080" data-color="#808080"></div>
-      <div class="color-box" style="background:#800000" data-color="#800000"></div>
-      <div class="color-box" style="background:#ff6b6b" data-color="#ff6b6b"></div>
-      <div class="color-box" style="background:#4ecdc4" data-color="#4ecdc4"></div>
-      <div class="color-box" style="background:#45b7d1" data-color="#45b7d1"></div>
-      <div class="color-box" style="background:#96ceb4" data-color="#96ceb4"></div>
-      <div class="color-box" style="background:#ffeaa7" data-color="#ffeaa7"></div>
+    <div class="result-item">
+      <div class="label">Google Maps Link</div>
+      <a id="rMap" href="#" target="_blank" style="color:var(--accent);"></a>
     </div>
+
+    <button class="copy-btn" onclick="copyResults()">Copy Results</button>
   </div>
 
-  <div class="apply-btn-container">
-    <button class="apply-btn" id="applyBtn">Apply Changes</button>
-  </div>
+  <footer>Precision powered by your device GPS</footer>
 </div>
 
 <script>
-const KEY="ADV_NOTES_V5";
-const YEAR=31536000000,TWO_MONTHS=5184000000;
-let notes=JSON.parse(localStorage.getItem(KEY))||[];
-let currentIndex=null;
-let viewMode="notes";
-let formatMode=true;
+let latitude, longitude;
 
-let currentFormat={
-  fontFamily:"system-ui",
-  fontSize:16,
-  fontWeight:400,
-  color:"#ffffff",
-  bold:false,
-  italic:false,
-  underline:false,
-  strike:false
-};
-
-/* CLEANUP */
-(function(){
- const now=Date.now();
- notes=notes.filter(n=>!n.deleted||now-n.deleted<TWO_MONTHS);
- notes=notes.filter(n=>now-n.created<YEAR);
- save();
-})();
-
-function save(){localStorage.setItem(KEY,JSON.stringify(notes))}
-
-/* BASIC UI ELEMENTS */
-const notesTab=document.getElementById("notesTab");
-const binTab=document.getElementById("binTab");
-const addBtn=document.getElementById("addBtn");
-const editorModal=document.getElementById("editor");
-const backBtn=document.getElementById("backBtn");
-const headingInput=document.getElementById("heading");
-const textEditor=document.getElementById("textEditor");
-const notesBox=document.getElementById("notes");
-const binBox=document.getElementById("bin");
-
-/* TABS */
-notesTab.onclick=()=>{viewMode="notes";notesBox.style.display="grid";binBox.classList.remove("active");renderNotes();};
-binTab.onclick=()=>{viewMode="bin";notesBox.style.display="none";binBox.classList.add("active");renderBin();};
-
-/* RENDER NOTES */
-function renderNotes(){
- notesBox.innerHTML="";
- const active=notes.filter(n=>!n.deleted).sort((a,b)=>b.pinned-a.pinned);
- active.forEach(n=>{
-  const idx=notes.indexOf(n);
-  const card=document.createElement("div");
-  card.className=`note ${n.color} ${n.pinned?"pinned":""}`;
-  card.onclick=e=>{
-    if(!e.target.closest(".menu-btn") && !e.target.closest(".menu")){
-      openEditor(idx);
-    }
-  };
-  if(n.heading){
-    const h=document.createElement("h3");
-    h.innerText=n.heading;
-    card.appendChild(h);
+function getLocation(){
+  if(!navigator.geolocation){
+    alert("Geolocation not supported.");
+    return;
   }
-  const p=document.createElement("p");
-  if(n.content){
-    const temp=document.createElement("div");
-    temp.innerHTML=n.content;
-    const plain=(temp.textContent||"").slice(0,150);
-    p.innerText=plain+(plain.length===150?"...":"");
-  }else{
-    p.innerText="Empty note";
-  }
-  card.appendChild(p);
 
-  const menuBtn=document.createElement("div");
-  menuBtn.className="menu-btn";
-  menuBtn.innerText="⋮";
-  menuBtn.onclick=ev=>{
-    ev.stopPropagation();
-    toggleMenu(idx,menuBtn);
-  };
-  const menu=document.createElement("div");
-  menu.className="menu";
-  menu.innerHTML=`
-    <button onclick="event.stopPropagation();togglePin(${idx});closeMenus()">📌 ${n.pinned?"Unpin":"Pin"}</button>
-    <button onclick="event.stopPropagation();softDelete(${idx});closeMenus()">🗑️ Delete</button>
-  `;
-  card.appendChild(menuBtn);
-  card.appendChild(menu);
-  notesBox.appendChild(card);
- });
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      latitude = pos.coords.latitude.toFixed(6);
+      longitude = pos.coords.longitude.toFixed(6);
+
+      document.getElementById("placeGroup").style.display="block";
+      document.getElementById("resultsBox").style.display="block";
+
+      updateResults();
+    },
+    err=>{
+      alert("Permission denied or unavailable.");
+    },
+    { enableHighAccuracy:true }
+  );
 }
 
-/* BIN RENDER */
-function renderBin(){
- binBox.innerHTML="<h2 style='margin-bottom:16px'>🗑️ Deleted Notes</h2>";
- const deleted=notes.filter(n=>n.deleted);
- if(!deleted.length){
-  binBox.innerHTML+="<p style='color:#aaa'>Bin is empty</p>";
-  return;
- }
- deleted.forEach(n=>{
-  const idx=notes.indexOf(n);
-  const card=document.createElement("div");
-  card.className=`note ${n.color}`;
-  card.style.marginBottom="12px";
-  if(n.heading){
-    const h=document.createElement("h3");
-    h.innerText=n.heading;
-    card.appendChild(h);
-  }
-  if(n.content){
-    const temp=document.createElement("div");
-    temp.innerHTML=n.content;
-    const txt=(temp.textContent||"").slice(0,150);
-    const p=document.createElement("p");
-    p.innerText=txt+(txt.length===150?"...":"");
-    card.appendChild(p);
-  }
-  const actions=document.createElement("div");
-  actions.style.marginTop="10px";
-  actions.innerHTML=`
-    <button style="background:#4CAF50;color:#fff;border:none;padding:6px 12px;border-radius:6px;margin-right:8px;cursor:pointer" onclick="restoreNote(${idx})">♻️ Restore</button>
-    <button style="background:#f44336;color:#fff;border:none;padding:6px 12px;border-radius:6px;cursor:pointer" onclick="deleteForever(${idx})">🗑️ Delete Forever</button>
-  `;
-  card.appendChild(actions);
-  binBox.appendChild(card);
- });
+function updateResults(){
+  const place = document.getElementById("placeName").value || "Unnamed Place";
+  const mapLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
+
+  document.getElementById("rPlace").innerText = place;
+  document.getElementById("rCoords").innerText =
+    `Longitude: ${longitude} , Latitude: ${latitude}`;
+  document.getElementById("rMap").innerText = mapLink;
+  document.getElementById("rMap").href = mapLink;
 }
 
-/* MENU HELPERS */
-function toggleMenu(i,btn){
- const menu=btn.nextElementSibling;
- const visible=menu.style.display==="block";
- closeMenus();
- if(!visible) menu.style.display="block";
+document.getElementById("placeName").addEventListener("input", updateResults);
+
+function copyResults(){
+  const text =
+`Place Name: ${document.getElementById("rPlace").innerText}
+Longitude: ${longitude}
+Latitude: ${latitude}
+Google Map Link: ${document.getElementById("rMap").href}`;
+
+  navigator.clipboard.writeText(text).then(()=>{
+    alert("Results copied to clipboard.");
+  });
 }
-function closeMenus(){
- document.querySelectorAll(".menu").forEach(m=>m.style.display="none");
-}
-document.addEventListener("click",e=>{
- if(!e.target.closest(".menu") && !e.target.closest(".menu-btn")) closeMenus();
-});
-
-/* CRUD */
-addBtn.onclick=function(){
- notes.push({
-  heading:"",
-  content:"",
-  todos:[],
-  color:["yellow","blue","pink","green"][Math.floor(Math.random()*4)],
-  pinned:false,
-  created:Date.now()
- });
- save();
- openEditor(notes.length-1);
-};
-
-function openEditor(i){
- currentIndex=i;
- const n=notes[i];
- headingInput.value=n.heading||"";
- textEditor.innerHTML=n.content||"";
- document.getElementById("todos").innerHTML="";
- (n.todos||[]).forEach(t=>addTodoItem(t));
- editorModal.classList.add("active");
- formatMode=true;
- updateFormatButtons();
-}
-
-backBtn.onclick=function(){
- if(currentIndex!==null){
-  const n=notes[currentIndex];
-  n.heading=headingInput.value.trim();
-  n.content=textEditor.innerHTML;
-  const todosUl=document.getElementById("todos");
-  n.todos=[...todosUl.children].map(li=>li.firstChild.textContent);
-  save();
- }
- editorModal.classList.remove("active");
- if(viewMode==="bin") renderBin(); else renderNotes();
-};
-
-function togglePin(i){
- notes[i].pinned=!notes[i].pinned;
- save();renderNotes();
-}
-function softDelete(i){
- notes[i].deleted=Date.now();
- save();renderNotes();
-}
-function restoreNote(i){
- delete notes[i].deleted;
- save();renderBin();
-}
-function deleteForever(i){
- if(confirm("Delete permanently?")){
-  notes.splice(i,1);
-  save();renderBin();
- }
-}
-
-/* TODO */
-const todoInput=document.getElementById("todoInput");
-todoInput.onkeydown=e=>{
- if(e.key==="Enter" && e.target.value.trim()){
-  addTodoItem(e.target.value.trim());
-  e.target.value="";
- }
-};
-function addTodoItem(text){
- const li=document.createElement("li");
- const span=document.createElement("span");
- span.innerText=text;
- const btn=document.createElement("button");
- btn.innerText="×";
- btn.onclick=()=>li.remove();
- li.appendChild(span);
- li.appendChild(btn);
- document.getElementById("todos").appendChild(li);
-}
-
-/* FORMAT MODE */
-const formatOnBtn=document.getElementById("formatOnBtn");
-const formatOffBtn=document.getElementById("formatOffBtn");
-
-function updateFormatButtons(){
- formatOnBtn.classList.toggle("active",formatMode);
- formatOffBtn.classList.toggle("active",!formatMode);
-}
-formatOnBtn.onclick=()=>{formatMode=true;updateFormatButtons();};
-formatOffBtn.onclick=()=>{formatMode=false;updateFormatButtons();};
-
-/* FORMAT PANEL UI */
-const formatPanel=document.getElementById("formatPanel");
-document.getElementById("formatOpenBtn").onclick=()=>formatPanel.classList.add("active");
-document.getElementById("formatCloseBtn").onclick=()=>formatPanel.classList.remove("active");
-
-const formatDropdownBtn=document.getElementById("formatDropdownBtn");
-const formatDropdownMenu=document.getElementById("formatDropdownMenu");
-formatDropdownBtn.onclick=()=>formatDropdownMenu.classList.toggle("active");
-
-formatDropdownMenu.querySelectorAll(".format-option").forEach(opt=>{
- opt.onclick=()=>{
-  const type=opt.dataset.type;
-  const size=parseInt(opt.dataset.size,10);
-  const weight=parseInt(opt.dataset.weight,10);
-  document.getElementById("selectedFormat").innerText=opt.querySelector(".name").innerText;
-  currentFormat.fontSize=size;
-  currentFormat.fontWeight=weight;
-  document.getElementById("fontSize").value=size;
-  formatDropdownMenu.classList.remove("active");
- };
-});
-
-document.getElementById("fontFamily").onchange=e=>{
- currentFormat.fontFamily=e.target.value;
-};
-document.getElementById("sizeMinus").onclick=()=>{
- const fs=document.getElementById("fontSize");
- fs.value=Math.max(8,parseInt(fs.value,10)-2);
- currentFormat.fontSize=parseInt(fs.value,10);
-};
-document.getElementById("sizePlus").onclick=()=>{
- const fs=document.getElementById("fontSize");
- fs.value=Math.min(72,parseInt(fs.value,10)+2);
- currentFormat.fontSize=parseInt(fs.value,10);
-};
-
-function toggleStyleBtn(id,key){
- const btn=document.getElementById(id);
- btn.onclick=()=>{
-  currentFormat[key]=!currentFormat[key];
-  btn.classList.toggle("active",currentFormat[key]);
- };
-}
-toggleStyleBtn("boldBtn","bold");
-toggleStyleBtn("italicBtn","italic");
-toggleStyleBtn("underlineBtn","underline");
-toggleStyleBtn("strikeBtn","strike");
-
-document.getElementById("colorGrid").onclick=e=>{
- const box=e.target.closest(".color-box");
- if(!box) return;
- const color=box.dataset.color;
- currentFormat.color=color;
- document.querySelectorAll(".color-box").forEach(b=>b.classList.remove("selected"));
- box.classList.add("selected");
-};
-
-document.getElementById("applyBtn").onclick=()=>{
- // simply close panel; settings already stored in currentFormat
- formatPanel.classList.remove("active");
-};
-
-/* TYPE LISTENER */
-textEditor.addEventListener("input",e=>{
- if(!formatMode) return;   // A× me kuch nahi
- const sel=window.getSelection();
- if(!sel.rangeCount) return;
- const range=sel.getRangeAt(0);
- const node=range.startContainer;
- if(node.nodeType!==Node.TEXT_NODE) return;
-
- const span=document.createElement("span");
- span.textContent=node.textContent;
-
- span.style.fontFamily=currentFormat.fontFamily;
- span.style.fontSize=currentFormat.fontSize+"px";
- span.style.color=currentFormat.color;
- span.style.fontWeight=currentFormat.bold? "700": currentFormat.fontWeight;
- span.style.fontStyle=currentFormat.italic? "italic":"normal";
-
- let deco="";
- if(currentFormat.underline) deco+="underline ";
- if(currentFormat.strike) deco+="line-through ";
- span.style.textDecoration=deco.trim();
-
- node.parentNode.replaceChild(span,node);
-
- const newRange=document.createRange();
- newRange.setStart(span,span.childNodes.length);
- newRange.collapse(true);
- sel.removeAllRanges();
- sel.addRange(newRange);
-});
-
-/* INITIAL RENDER */
-renderNotes();
 </script>
+
 </body>
 </html>
