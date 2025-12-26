@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Protected Text Website</title>
+
+    <style>
+        /* Disable text selection globally */
+        body {
+            font-family: Arial, sans-serif;
+            background: #0f0f0f;
+            color: #ffffff;
+            padding: 40px;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        h1, p {
+            margin-bottom: 20px;
+        }
+
+        .protected-content {
+            background: #1c1c1c;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            background: #121212;
+            color: #ffffff;
+            border: 1px solid #444;
+            border-radius: 6px;
+            padding: 10px;
+            resize: none;
+            outline: none;
+
+            /* Allow typing but prevent selection */
+            user-select: text;
+        }
+
+        .warning {
+            font-size: 14px;
+            color: #ff6b6b;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Secure Content Area</h1>
+
+    <div class="protected-content">
+        <p>
+            This text is protected.  
+            You cannot select it.  
+            You cannot copy it.  
+            You cannot right-click it.  
+            You cannot steal it like a midnight ninja.
+        </p>
+    </div>
+
+    <h2>Manual Input Only Box</h2>
+
+    <textarea id="secureBox" placeholder="You may only type manually here..."></textarea>
+    <div class="warning">Pasting text is strictly disabled.</div>
+
+    <script>
+        /* Disable right-click */
+        document.addEventListener('contextmenu', function (e) {
+            e.preventDefault();
+        });
+
+        /* Block copy, cut, paste shortcuts */
+        document.addEventListener('keydown', function (e) {
+            if (
+                (e.ctrlKey || e.metaKey) &&
+                (e.key === 'c' || e.key === 'x' || e.key === 'v' || e.key === 'a' || e.key === 'u')
+            ) {
+                e.preventDefault();
+            }
+        });
+
+        /* Explicitly block paste in textarea */
+        const secureBox = document.getElementById('secureBox');
+
+        secureBox.addEventListener('paste', function (e) {
+            e.preventDefault();
+        });
+
+        /* Block drag-drop paste */
+        secureBox.addEventListener('drop', function (e) {
+            e.preventDefault();
+        });
+    </script>
+
+</body>
+</html>
