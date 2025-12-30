@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Happy New Year 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+body{
+  font-family:'Poppins',sans-serif;
+  background:radial-gradient(circle at top,#2a003d,#05000d);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+  position:relative;
+  color:#fff;
+}
+
+/* subtle grid / noise effect background look */
+body::before{
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 10% 20%,rgba(255,255,255,.06),transparent 60%),
+    radial-gradient(circle at 90% 80%,rgba(255,0,150,.12),transparent 60%);
+  opacity:.9;
+  pointer-events:none;
+}
+
+/* SCREEN WRAPPER */
+.screen{
+  width:100%;
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+}
+
+/* GLASS CARD */
+.card{
+  position:relative;
+  max-width:330px;
+  width:88%;
+  padding:46px 36px 40px;
+  border-radius:32px;
+  background:rgba(10,0,20,.75);
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(255,255,255,.18);
+  backdrop-filter:blur(26px);
+  text-align:center;
+  overflow:hidden;
+}
+
+/* soft purple corner */
+.card::before{
+  content:'';
+  position:absolute;
+  left:-40px;
+  bottom:-40px;
+  width:140px;
+  height:140px;
+  border-radius:40px;
+  background:radial-gradient(circle at top left,rgba(255,105,180,.35),transparent 70%);
+}
+
+/* shine sweep */
+.card::after{
+  content:'';
+  position:absolute;
+  top:-60%;
+  left:-60%;
+  width:220%;
+  height:220%;
+  background:linear-gradient(45deg,transparent 35%,rgba(255,255,255,.1) 50%,transparent 65%);
+  transform:translateX(-100%) rotate(12deg);
+  animation:shine 7s ease-in-out infinite;
+}
+
+@keyframes shine{
+  0%,40%{transform:translateX(-120%) rotate(12deg);}
+  60%{transform:translateX(20%) rotate(12deg);}
+  100%{transform:translateX(120%) rotate(12deg);}
+}
+
+.title{
+  position:relative;
+  font-size:1.45rem;
+  font-weight:600;
+  margin-bottom:6px;
+  letter-spacing:.5px;
+  text-shadow:0 0 16px rgba(255,120,220,.6);
+}
+
+.subtitle{
+  position:relative;
+  font-size:.93rem;
+  font-weight:300;
+  opacity:.8;
+  margin-bottom:38px;
+}
+
+/* HEART + PROGRESS */
+.heart-wrap{
+  position:relative;
+  width:140px;
+  height:140px;
+  margin:0 auto 32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.progress-ring{
+  position:absolute;
+  inset:0;
+  transform:rotate(-90deg);
+  opacity:0;
+  transition:opacity .25s ease;
+}
+
+.progress-ring.active{
+  opacity:1;
+}
+
+.progress-ring circle{
+  fill:transparent;
+  stroke-width:4.5;
+  stroke-linecap:round;
+}
+
+.progress-track{
+  stroke:rgba(255,255,255,.08);
+}
+
+.progress-value{
+  stroke:url(#grad);
+  filter:drop-shadow(0 0 7px rgba(255,105,180,.9));
+  stroke-dasharray:408.4;
+  stroke-dashoffset:408.4;
+  transition:stroke-dashoffset .08s linear;
+}
+
+/* HEART BUTTON */
+.heart{
+  position:relative;
+  width:86px;
+  height:86px;
+  border-radius:50%;
+  background:radial-gradient(circle at 30% 20%,#ff9ad0 0%,#ff4f9a 35%,#ff1f6b 70%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:40px;
+  cursor:pointer;
+  box-shadow:
+    0 14px 30px rgba(0,0,0,.65),
+    0 0 25px rgba(255,77,136,.9);
+  user-select:none;
+  z-index:2;
+  animation:heartIdle 2.1s ease-in-out infinite;
+}
+
+@keyframes heartIdle{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.05);}
+}
+
+.heart.holding{
+  animation:heartHold .9s ease-in-out infinite;
+}
+
+@keyframes heartHold{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+}
+
+.instruction{
+  position:relative;
+  font-size:.88rem;
+  font-weight:400;
+  letter-spacing:.4px;
+  color:rgba(255,255,255,.7);
+  animation:blink 1.9s ease-in-out infinite;
+}
+
+@keyframes blink{
+  0%,100%{opacity:.55;}
+  50%{opacity:1;}
+}
+
+/* watermark */
+.watermark{
+  position:absolute;
+  right:16px;
+  bottom:18px;
+  font-size:.7rem;
+  letter-spacing:.6px;
+  color:rgba(255,255,255,.35);
+}
+
+/* tiny stars */
+.star{
+  position:absolute;
+  width:2px;
+  height:2px;
+  border-radius:50%;
+  background:rgba(255,255,255,.9);
+  opacity:.7;
+  animation:twinkle 3.4s ease-in-out infinite;
+}
+
+@keyframes twinkle{
+  0%,100%{transform:scale(0);opacity:0;}
+  40%{transform:scale(1.2);opacity:.9;}
+}
+
+/* responsive tweaks */
+@media(max-width:400px){
+  .card{padding:40px 28px 34px;border-radius:28px;}
+  .title{font-size:1.3rem;}
+  .subtitle{font-size:.85rem;margin-bottom:32px;}
+  .heart-wrap{width:130px;height:130px;}
+  .heart{width:80px;height:80px;font-size:36px;}
+}
+</style>
+</head>
+<body>
+
+<div class="screen">
+  <div class="card">
+    <h2 class="title">A little surprise for you</h2>
+    <p class="subtitle">Before this year begins</p>
+
+    <div class="heart-wrap" id="holdArea">
+      <svg class="progress-ring" width="140" height="140">
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#ff9ad0"/>
+            <stop offset="50%" stop-color="#ff4f9a"/>
+            <stop offset="100%" stop-color="#ffd1ff"/>
+          </linearGradient>
+        </defs>
+        <circle class="progress-track" cx="70" cy="70" r="65"></circle>
+        <circle class="progress-value" id="pCircle" cx="70" cy="70" r="65"></circle>
+      </svg>
+
+      <div class="heart" id="heart">❤</div>
+    </div>
+
+    <p class="instruction">Tap and hold</p>
+  </div>
+
+  <div class="watermark">@sanjivbuilds</div>
+</div>
+
+<script>
+// SVG circle math [web:17][web:22]
+const circle = document.getElementById('pCircle');
+const radius = circle.r.baseVal.value;
+const circumference = 2 * Math.PI * radius;
+circle.style.strokeDasharray = `${circumference}`;
+circle.style.strokeDashoffset = `${circumference}`;
+
+function setProgress(percent){
+  const offset = circumference - percent / 100 * circumference;
+  circle.style.strokeDashoffset = offset;
+}
+
+const heart = document.getElementById('heart');
+const ring  = document.querySelector('.progress-ring');
+
+let startTime = null;
+let rafId = null;
+const HOLD_MS = 900; // kitni der hold karna hai
+
+function startHold(){
+  if(startTime) return;
+  startTime = performance.now();
+  ring.classList.add('active');
+  heart.classList.add('holding');
+  animate();
+}
+
+function endHold(cancel = true){
+  if(!startTime) return;
+  cancelAnimationFrame(rafId);
+  heart.classList.remove('holding');
+
+  if(cancel){
+    // reset
+    setProgress(0);
+    ring.classList.remove('active');
+  }
+  startTime = null;
+}
+
+function animate(now){
+  if(!startTime) return;
+  const elapsed = now - startTime;
+  const progress = Math.min(elapsed / HOLD_MS * 100, 100);
+  setProgress(progress);
+
+  if(progress >= 100){
+    ring.classList.add('active');
+    // yahi pe next screen trigger karenge baad me
+    console.log('Hold complete – ready for next step');
+    endHold(false);
+    return;
+  }
+  rafId = requestAnimationFrame(animate);
+}
+
+// events – mobile + desktop [web:18][web:26]
+heart.addEventListener('mousedown', e=>{
+  e.preventDefault();
+  startHold();
+});
+heart.addEventListener('mouseup', ()=>endHold(true));
+heart.addEventListener('mouseleave', ()=>endHold(true));
+
+heart.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  startHold();
+},{passive:false});
+
+heart.addEventListener('touchend', ()=>endHold(true));
+heart.addEventListener('touchcancel', ()=>endHold(true));
+
+heart.addEventListener('contextmenu', e=>e.preventDefault());
+
+// random tiny stars
+for(let i=0;i<14;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.left=Math.random()*100+'%';
+  s.style.top=Math.random()*100+'%';
+  s.style.animationDelay=(Math.random()*4)+'s';
+  s.style.opacity=Math.random()*0.9+0.1;
+  document.body.appendChild(s);
+}
+</script>
+</body>
+</html>
