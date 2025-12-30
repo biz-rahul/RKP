@@ -3,136 +3,144 @@
 <head>
 <meta charset="UTF-8" />
 <title>Happy New Year</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-/* ---------------- RESET ---------------- */
-* { margin:0; padding:0; box-sizing:border-box; font-family: "Comic Sans MS", "Poppins", sans-serif; }
-body {
-  background: radial-gradient(circle at top, #1b0028, #000);
-  color:#fff;
+*{margin:0;padding:0;box-sizing:border-box;font-family:"Comic Sans MS","Poppins",sans-serif}
+body{
+  background:radial-gradient(circle at top,#2a003d,#000);
   height:100vh;
   overflow:hidden;
+  color:#fff;
 }
 
-/* ---------------- COMMON ---------------- */
-.screen {
+/* ---------- COMMON ---------- */
+.screen{
   position:absolute;
   inset:0;
   display:flex;
-  flex-direction:column;
   align-items:center;
   justify-content:center;
-  transition:opacity .6s ease, transform .6s ease;
+  flex-direction:column;
+  transition:.6s ease;
 }
-.hidden { opacity:0; pointer-events:none; transform:scale(.95); }
+.hidden{opacity:0;pointer-events:none;transform:scale(.95)}
 
-.card {
+.glass{
   background:rgba(255,255,255,.08);
-  border-radius:20px;
-  padding:25px;
   backdrop-filter:blur(12px);
+  border-radius:22px;
+  padding:24px;
   text-align:center;
 }
 
-/* ---------------- SCREEN 1 ---------------- */
-.heart {
-  width:90px; height:90px;
+/* ---------- HOLD HEART ---------- */
+.hold-wrap{position:relative}
+.heart{
+  width:90px;height:90px;
   background:#ff4f9a;
   border-radius:50%;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:38px;
-  cursor:pointer;
-  animation:pulse 1.6s infinite;
+  font-size:36px;
 }
-@keyframes pulse {
-  0% { transform:scale(1); }
-  50% { transform:scale(1.15); }
-  100% { transform:scale(1); }
-}
-
-/* ---------------- SCREEN 2 ---------------- */
-.cards-wrap {
-  width:280px; height:280px;
-  position:relative;
-}
-.distraction {
-  width:120px; height:150px;
-  border-radius:16px;
+.progress{
   position:absolute;
+  inset:-8px;
+  border-radius:50%;
+  border:4px solid transparent;
+  border-top:4px solid #ff4f9a;
+  animation:spin 1s linear infinite;
+  display:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---------- DISTRACTIONS ---------- */
+.stack{position:relative;width:280px;height:280px}
+.dis{
+  position:absolute;
+  width:120px;height:150px;
+  border-radius:16px;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:14px;
   color:#000;
-  cursor:grab;
-  transition:transform .5s ease, opacity .5s ease;
+  transition:.5s;
+  cursor:pointer;
 }
-.c1 { background:#ffd3a3; left:0; top:60px; }
-.c2 { background:#cfe5ff; right:0; top:60px; }
-.c3 { background:#fff3a3; left:40px; top:0; }
-.c4 { background:#ffc7dc; left:80px; bottom:0; }
+.d1{background:#ffd3a3;left:0;top:70px}
+.d2{background:#cfe5ff;right:0;top:70px}
+.d3{background:#fff3a3;left:40px;top:0}
+.d4{background:#ffc7dc;left:80px;bottom:0}
 
-.gift {
-  width:90px; height:90px;
+.gift{
+  width:90px;height:90px;
   background:#ff4f9a;
   border-radius:20px;
   display:none;
   align-items:center;
   justify-content:center;
-  font-size:34px;
+  font-size:32px;
   position:absolute;
-  left:95px; top:95px;
-  cursor:pointer;
+  left:95px;top:95px;
 }
 
-/* ---------------- GOLDEN TICKET ---------------- */
-.ticket {
-  background:#0b1020;
+/* ---------- TICKET ---------- */
+.ticket{
+  background:#0d1025;
   border:3px solid gold;
   border-radius:18px;
-  padding:25px;
+  padding:26px;
   width:280px;
 }
-.claim {
-  margin-top:15px;
-  color:#fff;
-  cursor:pointer;
-}
+.claim{margin-top:16px;cursor:pointer}
 
-/* ---------------- PHOTOS ---------------- */
-.photo {
-  width:260px; height:320px;
+/* ---------- PHOTOS ---------- */
+.photo{
+  width:260px;height:320px;
   border-radius:18px;
   background:#eee;
   color:#000;
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:20px;
-  cursor:pointer;
 }
 
-/* ---------------- FINAL ---------------- */
-.final-card {
+/* ---------- BOOK ---------- */
+.book{
+  width:260px;height:340px;
+  perspective:1200px;
+}
+.cover, .page{
+  position:absolute;
+  width:100%;height:100%;
   background:#fff;
-  color:#000;
-  border-radius:18px;
-  padding:20px;
+  border-radius:16px;
+  backface-visibility:hidden;
 }
+.cover{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+}
+.page{
+  transform:rotateY(180deg);
+  padding:20px;
+  color:#000;
+}
+.book.open .cover{transform:rotateY(-180deg)}
+.book.open .page{transform:rotateY(0)}
+.book *{transition:.8s ease}
 
-/* ---------------- CONFETTI ---------------- */
-.confetti {
-  position:fixed;
-  width:6px; height:6px;
+/* ---------- CONFETTI ---------- */
+.conf{
+  position:fixed;width:6px;height:6px;
   background:gold;
   animation:fall 3s linear forwards;
 }
-@keyframes fall {
-  to { transform:translateY(100vh) rotate(360deg); opacity:0; }
-}
+@keyframes fall{to{transform:translateY(100vh) rotate(360deg);opacity:0}}
 </style>
 </head>
 
@@ -140,10 +148,13 @@ body {
 
 <!-- SCREEN 1 -->
 <div class="screen" id="s1">
-  <div class="card">
+  <div class="glass">
     <h2>A little surprise for you</h2>
     <p>Before this year begins</p><br>
-    <div class="heart" id="hold">❤</div>
+    <div class="hold-wrap" id="hold">
+      <div class="progress" id="prog"></div>
+      <div class="heart">❤</div>
+    </div>
     <p>Tap and hold</p>
   </div>
 </div>
@@ -152,11 +163,11 @@ body {
 <div class="screen hidden" id="s2">
   <h2>Something is waiting for you</h2>
   <p>Move the little distractions aside</p><br>
-  <div class="cards-wrap">
-    <div class="distraction c1">Work</div>
-    <div class="distraction c2">Distance</div>
-    <div class="distraction c3">Stress</div>
-    <div class="distraction c4">Bad Days</div>
+  <div class="stack">
+    <div class="dis d1">Work</div>
+    <div class="dis d2">Distance</div>
+    <div class="dis d3">Stress</div>
+    <div class="dis d4">Bad Days</div>
     <div class="gift" id="gift">🎁</div>
   </div>
 </div>
@@ -173,65 +184,69 @@ body {
 <!-- SCREEN 4 -->
 <div class="screen hidden" id="s4">
   <h2>Some moments from this year</h2><br>
-  <div class="photo" id="photo">Swipe / Tap</div>
+  <div class="photo" id="photo">Photo 1</div>
 </div>
 
 <!-- SCREEN 5 -->
 <div class="screen hidden" id="s5">
   <h2>For my Cutiepie :)</h2><br>
-  <div class="final-card">
-    <h3>Happy New Year 2026</h3>
+  <div class="book" id="book">
+    <div class="cover">Happy New Year 2026</div>
+    <div class="page">
+      <p>
+      You deserve a year filled with happiness,<br>
+      light, warm, and meaningful moments.<br><br>
+      May this year be gentle with you<br>
+      and give you everything your heart hopes for.<br><br>
+      Wishing you a beautiful New Year ✨
+      </p>
+    </div>
   </div>
 </div>
 
 <script>
-/* ---------------- HOLD ---------------- */
-let timer;
-hold.onmousedown = () => timer = setTimeout(()=>show(2),800);
-hold.onmouseup = () => clearTimeout(timer);
+/* HOLD FIX */
+let t;
+const hold=document.getElementById("hold");
+hold.addEventListener("pointerdown",()=>{
+  prog.style.display="block";
+  t=setTimeout(()=>show(2),900);
+});
+hold.addEventListener("pointerup",()=>{prog.style.display="none";clearTimeout(t)});
+hold.addEventListener("pointerleave",()=>{prog.style.display="none";clearTimeout(t)});
 
-/* ---------------- REMOVE CARDS ---------------- */
-let removed=0;
-document.querySelectorAll('.distraction').forEach(c=>{
-  c.onclick=()=>{
-    c.style.transform='translateY(200px) rotate(20deg)';
-    c.style.opacity=0;
-    removed++;
-    if(removed===4) gift.style.display='flex';
+/* DISTRACTIONS */
+let r=0;
+document.querySelectorAll(".dis").forEach(d=>{
+  d.onclick=()=>{
+    d.style.transform="translateY(300px) rotate(30deg)";
+    d.style.opacity=0;
+    r++; if(r===4) gift.style.display="flex";
   }
 });
 
-/* ---------------- GIFT ---------------- */
-gift.onclick=()=>{
-  confetti();
-  show(3);
-}
+/* FLOW */
+gift.onclick=()=>{conf();show(3)};
+claim.onclick=()=>show(4);
 
-/* ---------------- CLAIM ---------------- */
-claim.onclick=()=>{
-  show(4);
-}
-
-/* ---------------- PHOTOS ---------------- */
-let p=0;
-const photos=["Photo 1","Photo 2","Photo 3","Photo 4"];
+let p=1;
 photo.onclick=()=>{
-  p++;
-  if(p<4) photo.innerText=photos[p];
-  else { confetti(); show(5); }
-}
+  p++; if(p<=4) photo.innerText="Photo "+p;
+  else{conf();show(5);}
+};
 
-/* ---------------- HELPERS ---------------- */
+book.onclick=()=>book.classList.toggle("open");
+
+/* HELPERS */
 function show(n){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hidden'));
-  document.getElementById('s'+n).classList.remove('hidden');
+  document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));
+  document.getElementById("s"+n).classList.remove("hidden");
 }
-function confetti(){
-  for(let i=0;i<80;i++){
-    const c=document.createElement('div');
-    c.className='confetti';
-    c.style.left=Math.random()*100+'vw';
-    c.style.top='-10px';
+function conf(){
+  for(let i=0;i<90;i++){
+    let c=document.createElement("div");
+    c.className="conf";
+    c.style.left=Math.random()*100+"vw";
     document.body.appendChild(c);
     setTimeout(()=>c.remove(),3000);
   }
