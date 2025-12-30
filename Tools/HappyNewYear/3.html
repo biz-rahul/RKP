@@ -728,4 +728,254 @@ body::before{
 
 <div class="watermark">@sanjivbuilds</div>
 
+<script>
+// ========== SCREEN 1 LOGIC ==========
+const circle = document.getElementById('pCircle');
+const radius = circle.r.baseVal.value;
+const circumference = 2 * Math.PI * radius;
+circle.style.strokeDasharray = `${circumference}`;
+circle.style.strokeDashoffset = `${circumference}`;
 
+function setProgress(percent){
+  const offset = circumference - percent / 100 * circumference;
+  circle.style.strokeDashoffset = offset;
+}
+
+const heart = document.getElementById('heart');
+const ring  = document.querySelector('.progress-ring');
+
+let startTime = null;
+let rafId = null;
+const HOLD_MS = 900;
+
+function startHold(){
+  if(startTime) return;
+  startTime = performance.now();
+  ring.classList.add('active');
+  heart.classList.add('holding');
+  animate();
+}
+
+function endHold(cancel = true){
+  if(!startTime) return;
+  cancelAnimationFrame(rafId);
+  heart.classList.remove('holding');
+
+  if(cancel){
+    setProgress(0);
+    ring.classList.remove('active');
+  }
+  startTime = null;
+}
+
+function animate(now){
+  if(!startTime) return;
+  const elapsed = now - startTime;
+  const progress = Math.min(elapsed / HOLD_MS * 100, 100);
+  setProgress(progress);
+
+  if(progress >= 100){
+    ring.classList.add('active');
+    endHold(false);
+    showScreen(2);
+    return;
+  }
+  rafId = requestAnimationFrame(animate);
+}
+
+heart.addEventListener('mousedown', e=>{
+  e.preventDefault();
+  startHold();
+});
+heart.addEventListener('mouseup', ()=>endHold(true));
+heart.addEventListener('mouseleave', ()=>endHold(true));
+
+heart.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  startHold();
+},{passive:false});
+
+heart.addEventListener('touchend', ()=>endHold(true));
+heart.addEventListener('touchcancel', ()=>endHold(true));
+heart.addEventListener('contextmenu', e=>e.preventDefault());
+
+// ========== SCREEN 2 LOGIC ==========
+const distCards = document.querySelectorAll('.dist-card');
+const giftCard = document.getElementById('giftCard');
+let removedCount = 0;
+
+distCards.forEach(card => {
+  card.addEventListener('click', function(){
+    if(this.classList.contains('clicked')) return;
+    
+    this.classList.add('clicked');
+    removedCount++;
+
+    if(removedCount === 4){
+      setTimeout(() => {
+        giftCard.classList.add('show');
+      }, 400);
+    }
+  });
+});
+
+giftCard.addEventListener('click', function(){
+  createConfetti();
+  setTimeout(() => {
+    showScreen(3);
+  }, 500);
+});
+
+// ========== SCREEN 3 LOGIC ==========
+const claimBtn = document.getElementById('claimBtn');
+
+claimBtn.addEventListener('click', function(){
+  createConfetti();
+  setTimeout(() => {
+    showScreen(4);
+    initPhotoSwipe();
+  }, 500);
+});
+
+// ========== SCREEN 4: PHOTO SWIPE LOGIC ==========
+let currentPhotoIndex = 0;
+const photoCards = document.querySelectorAll('.photo-card');
+let isDragging = false;
+let startX = 0;
+let startY = 0;
+let currentX = 0;
+let currentY = 0;
+
+function initPhotoSwipe(){
+  photoCards.forEach((card, index) => {
+    card.style.zIndex = photoCards.length - index;
+    card.style.transform = `scale(${1 - index * 0.05}) translateY(${index * 10}px)`;
+  });
+
+  const topCard = photoCards[currentPhotoIndex];
+  
+  // Mouse events
+  topCard.addEventListener('mousedown', handleStart);
+  document.addEventListener('mousemove', handleMove);
+  document.addEventListener('mouseup', handleEnd);
+  
+  // Touch events
+  topCard.addEventListener('touchstart', handleStart, {passive: false});
+  document.addEventListener('touchmove', handleMove, {passive: false});
+  document.addEventListener('touchend', handleEnd);
+  
+  // Click to swipe
+  topCard.addEventListener('click', (e) => {
+    if(!isDragging){
+      swipeCard(topCard, 'right');
+    }
+  });
+}
+
+function handleStart(e){
+  if(currentPhotoIndex >= photoCards.length) return;
+  
+  isDragging = true;
+  const pos = e.type.includes('mouse') ? e : e.touches[0];
+  startX = pos.clientX;
+  startY = pos.clientY;
+  
+  photoCards[currentPhotoIndex].style.transition = 'none';
+}
+
+function handleMove(e){
+  if(!isDragging) return;
+  e.preventDefault();
+  
+  const pos = e.type.includes('mouse') ? e : e.touches[0];
+  currentX = pos.clientX - startX;
+  currentY = pos.clientY - startY;
+  
+  const rotation = currentX / 20;
+  photoCards[currentPhotoIndex].style.transform = 
+    `translate(${currentX}px, ${currentY}px) rotate(${rotation}deg)`;
+}
+
+function handleEnd(e){
+  if(!isDragging) return;
+  isDragging = false;
+  
+  const threshold = 100;
+  
+  if(Math.abs(currentX) > threshold){
+    const direction = currentX > 0 ? 'right' : 'left';
+    swipeCard(photoCards[currentPhotoIndex], direction);
+  } else {
+    photoCards[currentPhotoIndex].style.transition = 'transform 0.3s ease';
+    photoCards[currentPhotoIndex].style.transform = '';
+  }
+  
+  currentX = 0;
+  currentY = 0;
+}
+
+function swipeCard(card, direction){
+  const moveX = direction === 'right' ? 500 : -500;
+  card.style.transition = 'all 0.5s ease';
+  card.style.transform = `translateX(${moveX}px) rotate(${direction === 'right' ? 30 : -30}deg)`;
+  card.style.opacity = 0;
+  card.classList.add('swiped');
+  
+  currentPhotoIndex++;
+  
+  if(currentPhotoIndex < photoCards.length){
+    setTimeout(() => {
+      initPhotoSwipe();
+    }, 200);
+  } else {
+    // All photos done - ready for next screen
+    setTimeout(() => {
+      console.log('All photos swiped - ready for next screen');
+      // showScreen(5);
+    }, 600);
+  }
+}
+
+// ========== CONFETTI ANIMATION ==========
+function createConfetti(){
+  const colors = ['#ffd700','#ff6b9d','#4facfe','#00f2fe','#ff8c00','#c44569'];
+  
+  for(let i=0; i<80; i++){
+    const confetti = document.createElement('div');
+    confetti.className = 'confetti';
+    confetti.style.left = Math.random() * 100 + 'vw';
+    confetti.style.top = Math.random() * 20 + 'vh';
+    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.width = (Math.random() * 8 + 5) + 'px';
+    confetti.style.height = confetti.style.width;
+    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+    confetti.style.animation = `confettiFall ${Math.random() * 2 + 2}s linear forwards`;
+    confetti.style.animationDelay = Math.random() * 0.3 + 's';
+    
+    document.body.appendChild(confetti);
+    
+    setTimeout(() => {
+      confetti.remove();
+    }, 4000);
+  }
+}
+
+// ========== SCREEN SWITCHER ==========
+function showScreen(num){
+  document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+  document.getElementById('screen' + num).classList.remove('hidden');
+}
+
+// ========== STARS ==========
+for(let i=0;i<14;i++){
+  const s=document.createElement('div');
+  s.className='star';
+  s.style.left=Math.random()*100+'%';
+  s.style.top=Math.random()*100+'%';
+  s.style.animationDelay=(Math.random()*4)+'s';
+  s.style.opacity=Math.random()*0.9+0.1;
+  document.body.appendChild(s);
+}
+</script>
+</body>
+</html>
