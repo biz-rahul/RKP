@@ -6,6 +6,33 @@
       .wf-force-outline-none[tabindex="-1"]:focus {
         outline: none;
       }
+
+/* Footer Styles */
+    .site-footer {
+      background:linear-gradient(180deg, rgba(8,16,30,0.85), rgba(7,10,18,1));
+      padding:3rem 1rem; color:var(--muted);
+    }
+    .site-footer .container {
+      max-width:var(--maxw); margin:auto;
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem;
+    }
+
+    h4 {color:#fff; margin:0 0 .5rem;}
+    p, li, a {color:var(--muted); font-size:.95rem; line-height:1.5;}
+    a {color:var(--accent); text-decoration:none;}
+    a:hover {text-decoration:underline;}
+
+    .brand-logo {display:flex; align-items:center; gap:.8rem;}
+    .brand-logo svg {width:44px; height:44px; flex-shrink:0;}
+    ul {list-style:none; padding:0; margin:0;}
+
+    .footer-bottom {
+      border-top:1px solid rgba(255,255,255,0.04);
+      margin-top:2rem; padding-top:1rem;
+      display:flex; justify-content:space-between; flex-wrap:wrap;
+      font-size:.85rem; color:var(--muted);
+	}
+
     </style>
     <meta charset="utf-8">
     <title>ExpenseHome</title>
