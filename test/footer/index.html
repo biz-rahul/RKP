@@ -43,6 +43,7 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 80px;
+            gap: 60px;
         }
 
         /* Left side - Logo and branding */
@@ -67,62 +68,104 @@
             margin-top: 5px;
         }
 
-        .audacious-box {
-            background-color: #2d3748;
-            color: white;
-            padding: 15px 20px;
-            max-width: 200px;
-            text-align: center;
-            font-weight: 700;
-            font-size: 16px;
-            margin-top: 20px;
+        .contact-info {
+            margin-top: 30px;
         }
 
-        /* Center - Navigation Links */
+        .contact-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .contact-info address {
+            font-style: normal;
+            color: #4a5568;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .contact-info a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-info a:hover {
+            color: #4c51bf;
+        }
+
+        /* Center - Main Navigation Links */
         .footer-nav {
-            flex: 2;
+            flex: 1.5;
             display: flex;
             flex-direction: column;
             gap: 15px;
-            padding-left: 100px;
+        }
+
+        .footer-nav h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .footer-nav a {
             color: #2d3748;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
             transition: color 0.3s ease;
+            display: block;
         }
 
         .footer-nav a:hover {
             color: #667eea;
         }
 
-        /* Right side - Social Links */
-        .footer-social {
+        /* Right side - Social Links & Resources */
+        .footer-right {
+            flex: 1.5;
+            display: flex;
+            gap: 50px;
+        }
+
+        .footer-section {
             flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
         }
 
-        .social-column {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .footer-social a {
+        .footer-section h4 {
+            font-size: 14px;
+            font-weight: 700;
             color: #2d3748;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section a {
+            color: #4a5568;
             text-decoration: none;
             font-size: 14px;
             transition: color 0.3s ease;
         }
 
-        .footer-social a:hover {
+        .footer-section a:hover {
             color: #667eea;
         }
 
@@ -169,7 +212,7 @@
             }
         }
 
-        /* Bottom small branding */
+        /* Bottom branding */
         .bottom-brand {
             position: absolute;
             bottom: 20px;
@@ -180,17 +223,37 @@
             letter-spacing: 2px;
         }
 
+        /* Footer bottom */
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid #d1d5db;
+            margin-top: 40px;
+        }
+
+        .footer-bottom p {
+            color: #4a5568;
+            font-size: 13px;
+        }
+
         /* Responsive Design */
-        @media (max-width: 768px) {
+        @media (max-width: 968px) {
             .footer-content {
                 flex-direction: column;
                 gap: 40px;
             }
 
-            .footer-nav {
-                padding-left: 0;
+            .footer-right {
+                flex-direction: column;
+                gap: 30px;
             }
 
+            .large-text {
+                font-size: 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
             .large-text {
                 font-size: 80px;
             }
@@ -205,6 +268,14 @@
                 font-size: 50px;
                 letter-spacing: -2px;
             }
+
+            .footer-content {
+                padding: 40px 20px;
+            }
+
+            .bottom-brand {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -217,19 +288,25 @@
     <!-- Footer section -->
     <footer class="footer-container">
         <div class="footer-content">
-            <!-- Left side -->
+            <!-- Left side - Logo and Contact -->
             <div class="footer-left">
                 <div class="logo-section">
-                    <div class="logo-text">canopy</div>
-                    <div class="logo-subtext">supercharged by</div>
+                    <div class="logo-text">Rahul Kumar Puri</div>
+                    <div class="logo-subtext">Developer & Entrepreneur</div>
                 </div>
-                <div class="audacious-box">
-                    AUDACIOUS<br>PROJECT
+                
+                <div class="contact-info">
+                    <h4>Contact</h4>
+                    <address>
+                        Madhubani Ghat Road, Motihari, Bihar<br>
+                        <a href="mailto:rahulpuribiz@gmail.com">rahulpuribiz@gmail.com</a>
+                    </address>
                 </div>
             </div>
 
-            <!-- Center navigation -->
+            <!-- Center - Main Navigation -->
             <nav class="footer-nav">
+                <h4>Quick Links</h4>
                 <a href="#">Our Mission</a>
                 <a href="#">10 Years Next Gen Transition</a>
                 <a href="#">Our Solutions</a>
@@ -238,22 +315,35 @@
                 <a href="#">Case Studies / Partners</a>
             </nav>
 
-            <!-- Right side social links -->
-            <div class="footer-social">
-                <div class="social-column">
-                    <a href="#">Instagram</a>
-                    <a href="#">Twitter</a>
-                    <a href="#">Vimeo</a>
+            <!-- Right side - Social & Resources -->
+            <div class="footer-right">
+                <div class="footer-section">
+                    <h4>Social Media</h4>
+                    <ul>
+                        <li><a href="https://instagram.com/rahulkumarpuri_" target="_blank">Instagram</a></li>
+                        <li><a href="https://www.linkedin.com/in/rahulkumarpuri/" target="_blank">LinkedIn</a></li>
+                        <li><a href="https://www.snapchat.com/add/rahulkumarpurix" target="_blank">Snapchat</a></li>
+                        <li><a href="https://pin.it/2wuGwjrUb" target="_blank">Pinterest</a></li>
+                        <li><a href="https://www.reddit.com/r/rahulkumarpuri/" target="_blank">Reddit</a></li>
+                    </ul>
                 </div>
-                <div class="social-column">
-                    <a href="#">LinkedIn</a>
-                    <a href="#">Facebook</a>
-                    <a href="#">Youtube</a>
+
+                <div class="footer-section">
+                    <h4>Helpful Resources</h4>
+                    <ul>
+                        <li><a href="/sitemap.xml">Sitemap (XML)</a></li>
+                        <li><a href="/robots.txt">Robots.txt</a></li>
+                        <li><a href="/humans.txt">humans.txt</a></li>
+                        <li><a href="/privacy-policy">Privacy Policy</a></li>
+                        <li><a href="/terms">Terms & Conditions</a></li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <a href="#" class="privacy-link">Privacy Policy</a>
+        <div class="footer-bottom">
+            <p>© 2026 Rahul Kumar Puri — All rights reserved. | Made by RKP</p>
+        </div>
     </footer>
 
     <!-- Large text section -->
