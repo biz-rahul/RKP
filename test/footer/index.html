@@ -3,35 +3,47 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Retro Footer – RKP</title>
+<title>Retro Animated Footer – RKP</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:#f3e5c8;
   min-height:100vh;
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;
 }
 
-/* ===== FOOTER WRAPPER ===== */
+/* ===== FOOTER WRAPPER – REUSABLE ===== */
 .site-footer{
+  margin-top:auto;                 /* always bottom of page */
   background:#f8f1de;
   border-radius:18px 18px 0 0;
-  margin:0 auto;
   width:100%;
   max-width:1100px;
+  margin-inline:auto;
   box-shadow:0 -8px 0 #141414,0 -18px 40px rgba(0,0,0,0.25);
   overflow:hidden;
+  position:relative;
+}
+
+/* fade in on load */
+.site-footer{
+  opacity:0;
+  transform:translateY(40px);
+  animation:footer-in .7s ease-out forwards .15s;
+}
+@keyframes footer-in{
+  to{opacity:1;transform:translateY(0)}
 }
 
 /* ===== TOP BANNER (RED TILES + CTA) ===== */
 .footer-banner{
   background:#f5482f;
-  padding:40px 50px 32px;
+  padding:40px 50px 34px;
   position:relative;
+  overflow:hidden;
 }
 
 /* tile grid lines */
@@ -40,47 +52,51 @@ body{
   position:absolute;
   inset:0;
   background-image:
-    linear-gradient(#33110b 1px, transparent 1px),
-    linear-gradient(90deg,#33110b 1px, transparent 1px);
+    linear-gradient(#33110b 1px,transparent 1px),
+    linear-gradient(90deg,#33110b 1px,transparent 1px);
   background-size:60px 60px;
   mix-blend-mode:multiply;
   opacity:.55;
   pointer-events:none;
 }
 
-/* wavy bottom edge */
+/* animated wavy bottom edge */
 .footer-banner::after{
   content:"";
   position:absolute;
   left:0;right:0;bottom:-18px;
   height:36px;
   background:
-    radial-gradient(circle at 15px 15px,#f8f1de 18px,transparent 18px) repeat-x;
+   radial-gradient(circle at 15px 15px,#f8f1de 18px,transparent 18px) repeat-x;
   background-size:60px 36px;
+  animation:wave-slide 4s linear infinite;
+}
+@keyframes wave-slide{
+  from{background-position-x:0}
+  to{background-position-x:-60px}
 }
 
 /* left green ticket */
 .ticket{
   position:absolute;
-  left:40px;
-  top:36px;
+  left:40px;top:34px;
   background:#31c56b;
   padding:10px 18px;
   border-radius:10px;
   box-shadow:0 4px 0 #146033;
-  transform:rotate(-10deg);
+  transform:rotate(-9deg);
   font-size:.78rem;
   font-weight:600;
   text-transform:uppercase;
   letter-spacing:.07em;
   border:2px solid #141414;
+  animation:float 4s ease-in-out infinite;
 }
 
 /* right blue burst */
 .burst{
   position:absolute;
-  right:40px;
-  top:36px;
+  right:40px;top:32px;
   background:#2459ff;
   color:#fff;
   padding:16px 26px;
@@ -90,10 +106,15 @@ body{
   border:2px solid #141414;
   box-shadow:0 4px 0 #10236a;
   clip-path:polygon(
-    50% 0%,63% 10%,78% 4%,86% 18%,100% 21%,94% 35%,100% 50%,
-    94% 63%,100% 79%,86% 82%,78% 96%,63% 90%,50% 100%,
-    37% 90%,22% 96%,14% 82%,0% 79%,6% 63%,0% 50%,6% 35%,0% 21%,14% 18%,22% 4%,37% 10%
+   50% 0%,63% 10%,78% 4%,86% 18%,100% 21%,94% 35%,100% 50%,
+   94% 63%,100% 79%,86% 82%,78% 96%,63% 90%,50% 100%,
+   37% 90%,22% 96%,14% 82%,0% 79%,6% 63%,0% 50%,6% 35%,0% 21%,14% 18%,22% 4%,37% 10%
   );
+  animation:spin-slow 14s linear infinite;
+}
+@keyframes spin-slow{
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
 }
 
 /* main yellow pill CTA */
@@ -115,38 +136,70 @@ body{
 
 .cta-pill-inner{
   background:#ffc53a;
-  padding:18px 80px;
+  padding:18px 78px;
   border-radius:26px;
   border:3px solid #141414;
-  font-size:1.4rem;
+  font-size:1.35rem;
   font-weight:700;
   letter-spacing:.04em;
   text-align:center;
   cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  transform:translateY(0);
   transition:transform .18s ease, box-shadow .18s ease;
 }
-
 .cta-pill-inner span{
   display:inline-block;
   transform:skewX(-6deg);
 }
 
-/* hover press effect */
+/* shine + bounce on hover */
+.cta-pill-inner::after{
+  content:"";
+  position:absolute;
+  top:0;left:-40%;
+  width:40%;height:100%;
+  background:linear-gradient(120deg,rgba(255,255,255,.7),transparent 60%);
+  transform:skewX(-20deg);
+  opacity:0;
+}
 .cta-pill-inner:hover{
   transform:translateY(3px);
   box-shadow:0 0 0 #000;
+  animation:bounce .6s ease-out;
+}
+.cta-pill-inner:hover::after{
+  animation:shine .7s ease-out;
+}
+@keyframes bounce{
+  0%{transform:translateY(0)}
+  40%{transform:translateY(4px)}
+  70%{transform:translateY(1px)}
+  100%{transform:translateY(3px)}
+}
+@keyframes shine{
+  0%{left:-40%;opacity:0}
+  30%{opacity:1}
+  100%{left:120%;opacity:0}
+}
+
+/* floating ticket animation */
+@keyframes float{
+  0%,100%{transform:translateY(0) rotate(-9deg)}
+  50%{transform:translateY(-6px) rotate(-9deg)}
 }
 
 /* ===== MIDDLE TEXT ROW ===== */
 .footer-mid{
-  padding:34px 56px 18px;
+  padding:32px 56px 18px;
   font-size:.95rem;
   line-height:1.5;
   text-align:center;
   color:#171717;
 }
 
-/* ===== BOTTOM BRAND ROW (YOUR CONTENT) ===== */
+/* ===== BOTTOM BRAND ROW ===== */
 .footer-bottom{
   padding:0 56px 30px;
   display:flex;
@@ -156,7 +209,6 @@ body{
   flex-wrap:wrap;
 }
 
-/* brand name similar to bitesized */
 .brand{
   font-size:2.6rem;
   font-weight:800;
@@ -164,8 +216,6 @@ body{
   letter-spacing:.02em;
   color:#141414;
 }
-
-/* simple mascot circle */
 .mascot{
   display:flex;
   align-items:center;
@@ -173,7 +223,7 @@ body{
   font-size:.8rem;
 }
 
-/* right area: your icons/links */
+/* right column */
 .footer-right{
   display:flex;
   flex-direction:column;
@@ -182,42 +232,16 @@ body{
   font-size:.85rem;
 }
 
-/* inline icon row for socials */
-.social-row{
-  display:flex;
-  gap:10px;
+/* contact + links */
+.contact-line{
+  font-size:.82rem;
 }
-
-/* minimal icon buttons */
-.icon-btn{
-  width:32px;height:32px;
-  border-radius:50%;
-  border:2px solid #141414;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:1rem;
-  background:#f8f1de;
-  color:#141414;
-  text-decoration:none;
-  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
-  box-shadow:0 3px 0 #141414;
-}
-
-.icon-btn:hover{
-  transform:translateY(2px);
-  box-shadow:0 0 0 #141414;
-  background:#ffe6a0;
-}
-
-/* small nav for sitemap/resources */
 .footer-links{
   display:flex;
   flex-wrap:wrap;
-  gap:12px;
+  gap:10px;
   justify-content:flex-end;
 }
-
 .footer-links a{
   color:#141414;
   text-decoration:none;
@@ -228,30 +252,73 @@ body{
   padding:4px 8px;
 }
 
-/* contact line */
-.contact-line{
-  font-size:.82rem;
+/* ===== STYLISH SOCIAL ICONS ===== */
+.social-row{
+  display:flex;
+  gap:10px;
 }
+
+/* circular neon-ish icon buttons */
+.icon-btn{
+  width:34px;height:34px;
+  border-radius:50%;
+  border:2px solid #141414;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.1rem;
+  text-decoration:none;
+  background:#f8f1de;
+  color:#141414;
+  box-shadow:0 3px 0 #141414,0 0 0 rgba(0,0,0,0);
+  position:relative;
+  overflow:hidden;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.icon-btn::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background:radial-gradient(circle at 30% 0,rgba(255,255,255,.9),transparent 55%);
+  opacity:0;
+  transition:opacity .3s ease;
+}
+.icon-btn:hover{
+  transform:translateY(2px) scale(1.05);
+  box-shadow:0 0 0 #141414,0 0 18px rgba(0,0,0,.18);
+  background:#ffe6a0;
+}
+.icon-btn:hover::after{opacity:1}
+
+/* brand colors via classes (optional) */
+.icon-instagram{background:#fbd6b8;}
+.icon-linkedin{background:#bfe1ff;}
+.icon-snapchat{background:#fff6a3;}
+.icon-pinterest{background:#ffb7ba;}
+.icon-reddit{background:#ffd1a5;}
 
 /* ===== RESPONSIVE ===== */
 @media (max-width:720px){
-  .footer-banner{padding:34px 24px 26px}
-  .footer-mid{padding:26px 20px 14px}
+  .footer-banner{padding:32px 22px 26px}
+  .footer-mid{padding:24px 18px 16px}
   .footer-bottom{
     padding:0 20px 26px;
     flex-direction:column;
     align-items:flex-start;
   }
-  .ticket{left:18px;top:24px}
-  .burst{right:18px;top:24px}
-  .cta-pill-inner{padding:16px 40px;font-size:1.15rem}
-  .brand{font-size:2.2rem}
+  .ticket{left:18px;top:22px}
+  .burst{right:18px;top:20px}
+  .cta-pill-inner{padding:16px 40px;font-size:1.1rem}
+  .brand{font-size:2.1rem}
   .footer-right{align-items:flex-start}
+  .social-row{justify-content:flex-start}
 }
 </style>
 </head>
 <body>
 
+<!-- ===== REUSABLE FOOTER – paste from here into any page ===== -->
 <footer class="site-footer">
   <!-- red tiles + CTA -->
   <div class="footer-banner">
@@ -259,11 +326,9 @@ body{
     <div class="burst">Sale!</div>
 
     <div class="cta-wrapper">
-      <div class="cta-pill">
-        <div class="cta-pill-inner">
-          <span>Book a Call</span>
-        </div>
-      </div>
+      <button class="cta-pill-inner cta-pill">
+        <span>Book a Call</span>
+      </button>
     </div>
   </div>
 
@@ -274,8 +339,8 @@ body{
 
   <!-- bottom row – your real footer content -->
   <div class="footer-bottom">
-    <div class="brand">
-      rahulkumarpuri
+    <div>
+      <div class="brand">rahulkumarpuri</div>
       <div class="mascot">
         <span>✨</span>
         <span>Made with intent, crafted with love.</span>
@@ -284,7 +349,7 @@ body{
 
     <div class="footer-right">
       <div class="contact-line">
-        Madhubani Ghat Road, Motihari, Bihar · 
+        Madhubani Ghat Road, Motihari, Bihar ·
         <a href="mailto:rahulpuribiz@gmail.com">rahulpuribiz@gmail.com</a>
       </div>
 
@@ -297,11 +362,11 @@ body{
       </div>
 
       <div class="social-row">
-        <a class="icon-btn" href="https://instagram.com/rahulkumarpuri_" target="_blank">IG</a>
-        <a class="icon-btn" href="https://www.linkedin.com/in/rahulkumarpuri/" target="_blank">in</a>
-        <a class="icon-btn" href="https://www.snapchat.com/add/rahulkumarpurix" target="_blank">SC</a>
-        <a class="icon-btn" href="https://pin.it/2wuGwjrUb" target="_blank">P</a>
-        <a class="icon-btn" href="https://www.reddit.com/r/rahulkumarpuri/" target="_blank">R</a>
+        <a class="icon-btn icon-instagram" href="https://instagram.com/rahulkumarpuri_" target="_blank" aria-label="Instagram">IG</a>
+        <a class="icon-btn icon-linkedin" href="https://www.linkedin.com/in/rahulkumarpuri/" target="_blank" aria-label="LinkedIn">in</a>
+        <a class="icon-btn icon-snapchat" href="https://www.snapchat.com/add/rahulkumarpurix" target="_blank" aria-label="Snapchat">SC</a>
+        <a class="icon-btn icon-pinterest" href="https://pin.it/2wuGwjrUb" target="_blank" aria-label="Pinterest">P</a>
+        <a class="icon-btn icon-reddit" href="https://www.reddit.com/r/rahulkumarpuri/" target="_blank" aria-label="Reddit">R</a>
       </div>
 
       <div class="contact-line">
@@ -310,6 +375,7 @@ body{
     </div>
   </div>
 </footer>
+<!-- ===== FOOTER END ===== -->
 
 </body>
 </html>
