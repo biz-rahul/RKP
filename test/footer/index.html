@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Retro Animated Footer – RKP</title>
+<title>Ultra 3D Retro Footer – RKP</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -15,38 +15,34 @@ body{
   flex-direction:column;
 }
 
-/* ===== FOOTER WRAPPER – REUSABLE ===== */
+/* ===== REUSABLE FOOTER ===== */
 .site-footer{
-  margin-top:auto;                 /* always bottom of page */
+  margin-top:auto;
   background:#f8f1de;
-  border-radius:18px 18px 0 0;
+  border-radius:22px 22px 0 0;
   width:100%;
-  max-width:1100px;
+  max-width:1180px;
   margin-inline:auto;
-  box-shadow:0 -8px 0 #141414,0 -18px 40px rgba(0,0,0,0.25);
+  box-shadow:0 -10px 0 #111,0 -22px 44px rgba(0,0,0,.28);
   overflow:hidden;
   position:relative;
-}
-
-/* fade in on load */
-.site-footer{
   opacity:0;
-  transform:translateY(40px);
-  animation:footer-in .7s ease-out forwards .15s;
+  transform:translateY(45px);
+  animation:footer-in .8s ease-out forwards .15s;
 }
 @keyframes footer-in{
   to{opacity:1;transform:translateY(0)}
 }
 
-/* ===== TOP BANNER (RED TILES + CTA) ===== */
+/* ===== TOP RED TILE STRIP ONLY (NO CTA) ===== */
 .footer-banner{
   background:#f5482f;
-  padding:40px 50px 34px;
+  padding:32px 44px 30px;
   position:relative;
   overflow:hidden;
 }
 
-/* tile grid lines */
+/* tile grid */
 .footer-banner::before{
   content:"";
   position:absolute;
@@ -64,163 +60,52 @@ body{
 .footer-banner::after{
   content:"";
   position:absolute;
-  left:0;right:0;bottom:-18px;
-  height:36px;
+  left:0;right:0;bottom:-20px;
+  height:38px;
   background:
-   radial-gradient(circle at 15px 15px,#f8f1de 18px,transparent 18px) repeat-x;
-  background-size:60px 36px;
+   radial-gradient(circle at 18px 18px,#f8f1de 20px,transparent 20px) repeat-x;
+  background-size:70px 38px;
   animation:wave-slide 4s linear infinite;
 }
 @keyframes wave-slide{
   from{background-position-x:0}
-  to{background-position-x:-60px}
+  to{background-position-x:-70px}
 }
 
-/* left green ticket */
-.ticket{
-  position:absolute;
-  left:40px;top:34px;
-  background:#31c56b;
-  padding:10px 18px;
-  border-radius:10px;
-  box-shadow:0 4px 0 #146033;
-  transform:rotate(-9deg);
-  font-size:.78rem;
-  font-weight:600;
-  text-transform:uppercase;
-  letter-spacing:.07em;
-  border:2px solid #141414;
-  animation:float 4s ease-in-out infinite;
-}
-
-/* right blue burst */
-.burst{
-  position:absolute;
-  right:40px;top:32px;
-  background:#2459ff;
-  color:#fff;
-  padding:16px 26px;
-  font-weight:700;
-  font-size:.95rem;
-  border-radius:50%;
-  border:2px solid #141414;
-  box-shadow:0 4px 0 #10236a;
-  clip-path:polygon(
-   50% 0%,63% 10%,78% 4%,86% 18%,100% 21%,94% 35%,100% 50%,
-   94% 63%,100% 79%,86% 82%,78% 96%,63% 90%,50% 100%,
-   37% 90%,22% 96%,14% 82%,0% 79%,6% 63%,0% 50%,6% 35%,0% 21%,14% 18%,22% 4%,37% 10%
-  );
-  animation:spin-slow 14s linear infinite;
-}
-@keyframes spin-slow{
-  from{transform:rotate(0deg)}
-  to{transform:rotate(360deg)}
-}
-
-/* main yellow pill CTA */
-.cta-wrapper{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-
-.cta-pill{
-  position:relative;
-  margin-top:32px;
-  background:#141414;
-  padding:14px;
-  border-radius:36px;
-  display:inline-block;
-  box-shadow:0 10px 0 #000;
-}
-
-.cta-pill-inner{
-  background:#ffc53a;
-  padding:18px 78px;
-  border-radius:26px;
-  border:3px solid #141414;
-  font-size:1.35rem;
-  font-weight:700;
-  letter-spacing:.04em;
-  text-align:center;
-  cursor:pointer;
-  position:relative;
-  overflow:hidden;
-  transform:translateY(0);
-  transition:transform .18s ease, box-shadow .18s ease;
-}
-.cta-pill-inner span{
-  display:inline-block;
-  transform:skewX(-6deg);
-}
-
-/* shine + bounce on hover */
-.cta-pill-inner::after{
-  content:"";
-  position:absolute;
-  top:0;left:-40%;
-  width:40%;height:100%;
-  background:linear-gradient(120deg,rgba(255,255,255,.7),transparent 60%);
-  transform:skewX(-20deg);
-  opacity:0;
-}
-.cta-pill-inner:hover{
-  transform:translateY(3px);
-  box-shadow:0 0 0 #000;
-  animation:bounce .6s ease-out;
-}
-.cta-pill-inner:hover::after{
-  animation:shine .7s ease-out;
-}
-@keyframes bounce{
-  0%{transform:translateY(0)}
-  40%{transform:translateY(4px)}
-  70%{transform:translateY(1px)}
-  100%{transform:translateY(3px)}
-}
-@keyframes shine{
-  0%{left:-40%;opacity:0}
-  30%{opacity:1}
-  100%{left:120%;opacity:0}
-}
-
-/* floating ticket animation */
-@keyframes float{
-  0%,100%{transform:translateY(0) rotate(-9deg)}
-  50%{transform:translateY(-6px) rotate(-9deg)}
-}
-
-/* ===== MIDDLE TEXT ROW ===== */
+/* ===== MID SHORT TAGLINE ===== */
 .footer-mid{
-  padding:32px 56px 18px;
-  font-size:.95rem;
+  padding:26px 56px 14px;
+  font-size:.96rem;
   line-height:1.5;
   text-align:center;
   color:#171717;
 }
 
-/* ===== BOTTOM BRAND ROW ===== */
+/* ===== BOTTOM SECTION ===== */
 .footer-bottom{
-  padding:0 56px 30px;
+  padding:0 40px 26px;
   display:flex;
   align-items:flex-end;
   justify-content:space-between;
-  gap:24px;
+  gap:28px;
   flex-wrap:wrap;
 }
 
+/* brand block */
 .brand{
-  font-size:2.6rem;
-  font-weight:800;
+  font-size:2.8rem;
+  font-weight:900;
   text-transform:lowercase;
-  letter-spacing:.02em;
-  color:#141414;
+  letter-spacing:.01em;
+  color:#111;
+  text-shadow:0 4px 0 #f3e5c8,0 8px 0 #111;
 }
 .mascot{
   display:flex;
   align-items:center;
   gap:8px;
-  font-size:.8rem;
+  font-size:.82rem;
+  margin-top:4px;
 }
 
 /* right column */
@@ -229,115 +114,157 @@ body{
   flex-direction:column;
   align-items:flex-end;
   gap:10px;
-  font-size:.85rem;
+  font-size:.86rem;
 }
 
 /* contact + links */
 .contact-line{
-  font-size:.82rem;
+  font-size:.84rem;
 }
+.contact-line a{
+  color:#111;
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+
 .footer-links{
   display:flex;
   flex-wrap:wrap;
-  gap:10px;
+  gap:12px;
   justify-content:flex-end;
 }
 .footer-links a{
   color:#141414;
   text-decoration:none;
-  font-weight:600;
-  font-size:.8rem;
+  font-weight:650;
+  font-size:.78rem;
   text-transform:uppercase;
   letter-spacing:.06em;
   padding:4px 8px;
 }
 
-/* ===== STYLISH SOCIAL ICONS ===== */
+/* ===== 3D BUBBLE SOCIAL ICONS ===== */
+/* container */
 .social-row{
   display:flex;
-  gap:10px;
+  flex-wrap:wrap;
+  gap:14px;
 }
 
-/* circular neon-ish icon buttons */
-.icon-btn{
-  width:34px;height:34px;
-  border-radius:50%;
-  border:2px solid #141414;
+/* base bubble */
+.icon-bubble{
+  width:52px;height:52px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#ffffff,#d9e4ff);
   display:flex;
   align-items:center;
   justify-content:center;
-  font-size:1.1rem;
-  text-decoration:none;
-  background:#f8f1de;
-  color:#141414;
-  box-shadow:0 3px 0 #141414,0 0 0 rgba(0,0,0,0);
   position:relative;
+  box-shadow:
+    0 10px 0 #c1c7e0,
+    0 20px 30px rgba(0,0,0,.35);
+  transform:translateY(0) translateZ(0);
+  transition:transform .22s ease, box-shadow .22s ease;
   overflow:hidden;
-  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
 }
-.icon-btn::after{
+
+/* glossy overlay */
+.icon-bubble::before{
   content:"";
   position:absolute;
   inset:0;
-  border-radius:inherit;
-  background:radial-gradient(circle at 30% 0,rgba(255,255,255,.9),transparent 55%);
-  opacity:0;
-  transition:opacity .3s ease;
+  background:
+    radial-gradient(circle at 20% 15%,rgba(255,255,255,.85) 0,transparent 60%);
+  mix-blend-mode:screen;
+  opacity:.9;
 }
-.icon-btn:hover{
-  transform:translateY(2px) scale(1.05);
-  box-shadow:0 0 0 #141414,0 0 18px rgba(0,0,0,.18);
-  background:#ffe6a0;
-}
-.icon-btn:hover::after{opacity:1}
 
-/* brand colors via classes (optional) */
-.icon-instagram{background:#fbd6b8;}
-.icon-linkedin{background:#bfe1ff;}
-.icon-snapchat{background:#fff6a3;}
-.icon-pinterest{background:#ffb7ba;}
-.icon-reddit{background:#ffd1a5;}
+/* depth */
+.icon-bubble::after{
+  content:"";
+  position:absolute;
+  bottom:-26px;
+  left:12px;
+  width:70%;
+  height:40px;
+  background:radial-gradient(ellipse at center,rgba(0,0,0,.3),transparent 70%);
+  z-index:-1;
+}
+
+/* inner circle to mimic app icon */
+.icon-inner{
+  width:70%;
+  height:70%;
+  border-radius:18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-weight:800;
+  font-size:1.2rem;
+  border:2px solid rgba(255,255,255,.9);
+  text-shadow:0 2px 4px rgba(0,0,0,.45);
+}
+
+/* brand gradients */
+.icon-ig{background:conic-gradient(from 200deg,#feda75,#fa7e1e,#d62976,#962fbf,#4f5bd5);}
+.icon-ln{background:#0077b5;}
+.icon-sc{background:#fffc00;color:#111;border-color:#fff;}
+.icon-pin{background:#bd081c;}
+.icon-rd{background:#ff4500;}
+
+/* hover – lift + tilt */
+.social-link{
+  text-decoration:none;
+}
+.social-link:hover .icon-bubble{
+  transform:translateY(-6px) scale(1.04) rotateX(6deg);
+  box-shadow:
+    0 4px 0 #c1c7e0,
+    0 30px 40px rgba(0,0,0,.45);
+}
+
+/* small pulse animation loop */
+.icon-bubble{
+  animation:float-soft 6s ease-in-out infinite;
+}
+@keyframes float-soft{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-4px)}
+}
+
+/* ===== COPYRIGHT ===== */
+.copyright{
+  font-size:.8rem;
+  opacity:.7;
+}
 
 /* ===== RESPONSIVE ===== */
 @media (max-width:720px){
-  .footer-banner{padding:32px 22px 26px}
-  .footer-mid{padding:24px 18px 16px}
+  .footer-banner{padding:26px 20px 24px}
+  .footer-mid{padding:22px 20px 10px}
   .footer-bottom{
-    padding:0 20px 26px;
+    padding:0 20px 22px;
     flex-direction:column;
     align-items:flex-start;
   }
-  .ticket{left:18px;top:22px}
-  .burst{right:18px;top:20px}
-  .cta-pill-inner{padding:16px 40px;font-size:1.1rem}
-  .brand{font-size:2.1rem}
+  .brand{font-size:2.2rem}
   .footer-right{align-items:flex-start}
-  .social-row{justify-content:flex-start}
 }
 </style>
 </head>
 <body>
 
-<!-- ===== REUSABLE FOOTER – paste from here into any page ===== -->
 <footer class="site-footer">
-  <!-- red tiles + CTA -->
-  <div class="footer-banner">
-    <div class="ticket">Reserve your seat</div>
-    <div class="burst">Sale!</div>
+  <!-- red tile bar only -->
+  <div class="footer-banner"></div>
 
-    <div class="cta-wrapper">
-      <button class="cta-pill-inner cta-pill">
-        <span>Book a Call</span>
-      </button>
-    </div>
-  </div>
-
-  <!-- mid text line -->
+  <!-- tagline -->
   <div class="footer-mid">
     From smashed ideas to polished products, there’s a little something for everyone in Rahul Kumar Puri’s digital world.
   </div>
 
-  <!-- bottom row – your real footer content -->
+  <!-- bottom content -->
   <div class="footer-bottom">
     <div>
       <div class="brand">rahulkumarpuri</div>
@@ -361,22 +288,41 @@ body{
         <a href="/terms">Terms</a>
       </div>
 
+      <!-- 3D social media icons -->
       <div class="social-row">
-        <a class="icon-btn icon-instagram" href="https://instagram.com/rahulkumarpuri_" target="_blank" aria-label="Instagram">IG</a>
-        <a class="icon-btn icon-linkedin" href="https://www.linkedin.com/in/rahulkumarpuri/" target="_blank" aria-label="LinkedIn">in</a>
-        <a class="icon-btn icon-snapchat" href="https://www.snapchat.com/add/rahulkumarpurix" target="_blank" aria-label="Snapchat">SC</a>
-        <a class="icon-btn icon-pinterest" href="https://pin.it/2wuGwjrUb" target="_blank" aria-label="Pinterest">P</a>
-        <a class="icon-btn icon-reddit" href="https://www.reddit.com/r/rahulkumarpuri/" target="_blank" aria-label="Reddit">R</a>
+        <a class="social-link" href="https://instagram.com/rahulkumarpuri_" target="_blank" aria-label="Instagram">
+          <div class="icon-bubble">
+            <div class="icon-inner icon-ig">IG</div>
+          </div>
+        </a>
+        <a class="social-link" href="https://www.linkedin.com/in/rahulkumarpuri/" target="_blank" aria-label="LinkedIn">
+          <div class="icon-bubble">
+            <div class="icon-inner icon-ln">in</div>
+          </div>
+        </a>
+        <a class="social-link" href="https://www.snapchat.com/add/rahulkumarpurix" target="_blank" aria-label="Snapchat">
+          <div class="icon-bubble">
+            <div class="icon-inner icon-sc">SC</div>
+          </div>
+        </a>
+        <a class="social-link" href="https://pin.it/2wuGwjrUb" target="_blank" aria-label="Pinterest">
+          <div class="icon-bubble">
+            <div class="icon-inner icon-pin">P</div>
+          </div>
+        </a>
+        <a class="social-link" href="https://www.reddit.com/r/rahulkumarpuri/" target="_blank" aria-label="Reddit">
+          <div class="icon-bubble">
+            <div class="icon-inner icon-rd">R</div>
+          </div>
+        </a>
       </div>
 
-      <div class="contact-line">
+      <div class="copyright">
         © 2026 Rahul Kumar Puri — All rights reserved.
       </div>
     </div>
   </div>
 </footer>
-<!-- ===== FOOTER END ===== -->
 
 </body>
 </html>
-
