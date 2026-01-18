@@ -198,35 +198,41 @@
   </section>
   <header>
   <h1>Advanced Secret Code Encoder / Decoder</h1>
-</header><main>
-  <div class="panel">
-    <h2>Input</h2>
-    <textarea id="inputText" placeholder="Enter text here..."></textarea>
-    <div class="controls">
-      <button onclick="encodeText()">Encode</button>
-      <button onclick="decodeText()">Decode</button>
-      <button class="secondary" onclick="clearText()">Clear</button>
+<!-- MAIN CONTENT -->
+  <main>
+    <div class="panel">
+      <h2>Input</h2>
+      <textarea placeholder="Enter text here..."></textarea>
+      <div class="controls">
+        <button>Encode</button>
+        <button>Decode</button>
+        <button class="secondary">Clear</button>
+      </div>
+      <div class="info">
+        • Capital and small letters are preserved<br>
+        • Spaces are encoded as ␣ for visibility
+      </div>
     </div>
-    <div class="info">
-      • Capital and small letters are preserved<br>
-      • Spaces are encoded as ␣ for visibility
+
+    <div class="panel">
+      <h2>Output</h2>
+      <textarea readonly></textarea>
+      <div class="controls">
+        <button>Copy</button>
+        <button>Share</button>
+        <button>Export TXT</button>
+      </div>
+      <div class="info">
+        • Encoding and decoding are strictly separated<br>
+        • Output is fully reversible using the decoder
+      </div>
     </div>
-  </div>  <div class="panel">
-    <h2>Output</h2>
-    <textarea id="outputText" readonly></textarea>
-    <div class="controls">
-      <button onclick="copyOutput()">Copy</button>
-      <button onclick="shareOutput()">Share</button>
-      <button onclick="exportTxt()">Export TXT</button>
-    </div>
-    <div class="info">
-      • Encoding and decoding are strictly separated<br>
-      • Output is fully reversible using the decoder
-    </div>
-  </div>
-</main><footer>
-  Secret Code Language System | Advanced Encoder & Decoder
-</footer><script>
+  </main>
+    <!-- FOOTER -->
+  <footer>
+    Secret Code Language System • Designed & Developed by <span>Rahul Kumar Puri</span>
+  </footer>
+    <script>
   // ===== ENCODE MAP (FIXED: NO SELF-MAPPING SYMBOLS) =====
   const encodeMap = {
     'A':'T','B':'Z','C':'F','D':'R','E':'Y','F':'B','G':'L',
