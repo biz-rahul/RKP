@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rahlex - Secret Language Encoder</title>
+<title>Rahlex Encoder - Encode Secret Messages</title>
 
 <style>
 :root {
@@ -16,6 +16,8 @@
   --accent: #4f46e5;
   --accent-hover: #3730a3;
   --success: #10b981;
+  --decode-btn: #ec4899;
+  --decode-hover: #be185d;
 }
 
 * {
@@ -35,7 +37,7 @@ body {
 
 /* ===== CONTAINER ===== */
 .container {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -49,40 +51,69 @@ body {
 }
 
 .header h1 {
-  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
   font-weight: 700;
   background: linear-gradient(135deg, var(--accent), #6366f1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .header p {
   color: var(--text-secondary);
   font-size: 1.1rem;
   max-width: 600px;
-  margin: 0 auto;
+  margin: 0 auto 20px;
 }
 
-/* ===== MAIN GRID ===== */
-.main-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 30px;
+.decode-nav {
+  display: inline-block;
+  margin-top: 20px;
+}
+
+.decode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, var(--decode-btn), var(--decode-hover));
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 25px rgba(236, 72, 153, 0.3);
+}
+
+.decode-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 35px rgba(236, 72, 153, 0.4);
+}
+
+/* ===== MAIN ENCODER ===== */
+.encoder-section {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 40px;
   margin-bottom: 60px;
 }
 
 @media (min-width: 768px) {
-  .main-grid {
+  .encoder-grid {
+    display: grid;
     grid-template-columns: 1fr 1fr;
+    gap: 40px;
   }
 }
 
-/* ===== CARD ===== */
+/* ===== CARD STYLE ===== */
 .card {
-  background: var(--glass);
-  backdrop-filter: blur(12px);
+  background: rgba(255,255,255,0.03);
   border: 1px solid var(--border);
   border-radius: 20px;
   padding: 30px;
@@ -102,22 +133,22 @@ body {
 }
 
 .card-header h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
   margin: 0;
 }
 
-.icon-input { color: #4f46e5; }
-.icon-output { color: #10b981; }
+.icon-input { color: var(--accent); }
+.icon-output { color: var(--success); }
 
 .textarea {
   width: 100%;
-  min-height: 200px;
-  background: rgba(0,0,0,0.3);
+  min-height: 220px;
+  background: rgba(0,0,0,0.4);
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 16px;
+  padding: 20px;
   font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 15px;
   color: var(--text-primary);
@@ -144,7 +175,7 @@ body {
 }
 
 .btn {
-  padding: 12px 24px;
+  padding: 14px 24px;
   border: none;
   border-radius: 12px;
   font-weight: 600;
@@ -154,7 +185,9 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  text-decoration: none;
+  flex: 1;
+  min-width: 120px;
+  justify-content: center;
 }
 
 .btn-primary {
@@ -181,20 +214,19 @@ body {
 /* ===== INFO ===== */
 .info {
   background: rgba(255,255,255,0.03);
-  border-left: 3px solid var(--accent);
-  padding: 16px;
-  border-radius: 8px;
-  font-size: 13px;
+  border-left: 4px solid var(--accent);
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 14px;
   color: var(--text-secondary);
 }
 
 .info ul {
-  margin: 8px 0 0;
-  padding-left: 20px;
+  margin: 12px 0 0 20px;
 }
 
 .info li {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
 /* ===== PROFILE ===== */
@@ -202,20 +234,21 @@ body {
   background: var(--glass);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 40px;
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 
 .profile-avatar {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   object-fit: cover;
-  border: 3px solid var(--accent);
-  margin-bottom: 24px;
+  border: 4px solid var(--accent);
+  margin: 0 auto 24px;
   transition: transform 0.2s ease;
+  box-shadow: 0 10px 30px rgba(79, 70, 229, 0.3);
 }
 
 .profile:hover .profile-avatar {
@@ -223,21 +256,18 @@ body {
 }
 
 .profile h2 {
-  font-size: 1.8rem;
-  margin-bottom: 8px;
+  font-size: 2rem;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--accent), #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .profile-subtitle {
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-}
-
-.profile-bio {
-  max-width: 600px;
-  margin: 0 auto;
-  color: var(--text-primary);
   font-size: 1rem;
+  margin-bottom: 24px;
 }
 
 /* ===== FOOTER ===== */
@@ -270,169 +300,139 @@ body {
   max-width: 350px;
 }
 
-.toast.success {
-  background: var(--success);
-}
+.toast.success { background: var(--success); }
+.toast.show { transform: translateX(0); }
 
-.toast.show {
-  transform: translateX(0);
-}
-
-/* ===== MOBILE OPTIMIZATIONS ===== */
+/* ===== MOBILE ===== */
 @media (max-width: 768px) {
-  .container {
-    padding: 16px;
-  }
-  
-  .card {
-    padding: 24px;
-  }
-  
-  .btn-group {
-    flex-direction: column;
-  }
-  
-  .btn {
-    justify-content: center;
-  }
-  
-  .profile {
-    padding: 24px;
-  }
-  
-  .profile-avatar {
-    width: 100px;
-    height: 100px;
-  }
+  .container { padding: 16px; }
+  .encoder-section { padding: 24px; }
+  .encoder-grid { grid-template-columns: 1fr; gap: 30px; }
+  .card { padding: 24px; }
+  .btn-group { flex-direction: column; }
+  .btn { justify-content: center; }
+  .profile { padding: 24px; }
+  .profile-avatar { width: 100px; height: 100px; }
 }
 
 @media (max-width: 480px) {
-  .header h1 {
-    font-size: 1.8rem;
+  .header h1 { font-size: 1.8rem; }
+  .decode-btn { 
+    padding: 12px 20px; 
+    font-size: 14px;
+    width: 100%;
+    justify-content: center;
   }
-  
-  .main-grid {
-    gap: 20px;
-  }
-}
-
-/* ===== UTILITY ===== */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0,0,0,0);
-  white-space: nowrap;
-  border: 0;
 }
 </style>
 </head>
 
 <body>
 <div class="container">
-  <!-- Profile Section -->
+  <!-- Profile -->
   <section class="profile" role="banner">
     <img src="RKP.webp" alt="Rahul Kumar Puri" class="profile-avatar" loading="lazy">
     <h2>Rahul Kumar Puri</h2>
-    <p class="profile-subtitle">Web Developer | Poet | Researcher</p>
-    <p class="profile-bio">
-      Rahlex encodes your messages into a secret language that looks like random symbols.
-      Perfect for secure notes, hidden messages, and private data storage.
-    </p>
+    <p class="profile-subtitle">Secret Language Creator</p>
   </section>
 
-  <!-- Main Content -->
-  <main class="main-grid" role="main">
-    <!-- Input Panel -->
-    <article class="card">
-      <header class="card-header">
-        <span class="icon-input" aria-hidden="true">🔐</span>
-        <h2>Input Message</h2>
-      </header>
-      
-      <textarea 
-        id="inputText" 
-        class="textarea"
-        placeholder="Type your secret message here...
-• Supports all letters, numbers, and symbols
-• Case sensitive encoding
-• Press Ctrl+Enter to encode/decode"
-        rows="6"
-        aria-label="Message to encode or decode"
-      ></textarea>
-      
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="encodeText()">
-          ✨ Encode
-        </button>
-        <button class="btn btn-primary" onclick="decodeText()">
-          🔓 Decode
-        </button>
-        <button class="btn btn-secondary" onclick="clearText()">
-          🗑️ Clear All
-        </button>
-      </div>
-      
-      <div class="info">
-        <strong>Features:</strong>
-        <ul>
-          <li>✅ Preserves uppercase/lowercase</li>
-          <li>✅ Spaces shown as ␣</li>
-          <li>✅ 100% reversible</li>
-        </ul>
-      </div>
-    </article>
+  <!-- Header with Decode Button -->
+  <header class="header" role="banner">
+    <h1>🔐 Rahlex Encoder</h1>
+    <p>Transform your messages into unreadable secret code. Perfect for secure notes & hidden data.</p>
+    <nav class="decode-nav" role="navigation">
+      <a href="decoder.html" class="decode-btn" aria-label="Go to Rahlex Decoder">
+        🔓 Decode Messages
+      </a>
+    </nav>
+  </header>
 
-    <!-- Output Panel -->
-    <article class="card">
-      <header class="card-header">
-        <span class="icon-output" aria-hidden="true">📤</span>
-        <h2>Output</h2>
-      </header>
-      
-      <textarea 
-        id="outputText" 
-        class="textarea"
-        readonly
-        placeholder="Encoded/Decoded result appears here...
-Ready to copy, share, or save securely."
-        rows="6"
-        aria-label="Encoded or decoded output"
-      ></textarea>
-      
-      <div class="btn-group">
-        <button class="btn btn-primary" onclick="copyOutput()">
-          📋 Copy to Clipboard
-        </button>
-        <button class="btn btn-primary" onclick="shareOutput()">
-          ↗️ Share
-        </button>
-        <button class="btn btn-secondary" onclick="exportTxt()">
-          💾 Save TXT
-        </button>
-      </div>
-      
-      <div class="info">
-        <strong>Safe & Secure:</strong>
-        <ul>
-          <li>🔒 Perfectly reversible</li>
-          <li>📱 Works on all devices</li>
-          <li>💾 Safe for storage</li>
-        </ul>
-      </div>
-    </article>
-  </main>
+  <!-- Encoder Section -->
+  <section class="encoder-section" role="main">
+    <div class="encoder-grid">
+      <!-- Input Card -->
+      <article class="card">
+        <header class="card-header">
+          <span class="icon-input" aria-hidden="true">📝</span>
+          <h2>Input Message</h2>
+        </header>
+        
+        <textarea 
+          id="inputText" 
+          class="textarea"
+          placeholder="Type your secret message here...
+• All letters, numbers & symbols supported
+• Case sensitive (A ≠ a)
+• Press Ctrl+Enter to encode instantly"
+          rows="8"
+          aria-label="Message to encode"
+        ></textarea>
+        
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="encodeText()">
+            ✨ Encode Message
+          </button>
+          <button class="btn btn-secondary" onclick="clearText()">
+            🗑️ Clear Input
+          </button>
+        </div>
+        
+        <div class="info">
+          <strong>How it works:</strong>
+          <ul>
+            <li>✅ Converts letters to symbols</li>
+            <li>✅ Preserves case sensitivity</li>
+            <li>✅ Spaces become ␣ (visible)</li>
+            <li>✅ 100% reversible</li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Output Card -->
+      <article class="card">
+        <header class="card-header">
+          <span class="icon-output" aria-hidden="true">📤</span>
+          <h2>Encoded Output</h2>
+        </header>
+        
+        <textarea 
+          id="outputText" 
+          class="textarea"
+          readonly
+          placeholder="Your encoded secret message will appear here...
+Ready to copy, save, or share securely."
+          rows="8"
+          aria-label="Encoded output"
+        ></textarea>
+        
+        <div class="btn-group">
+          <button class="btn btn-primary" onclick="copyOutput()">
+            📋 Copy to Clipboard
+          </button>
+          <button class="btn btn-primary" onclick="exportTxt()">
+            💾 Save as TXT
+          </button>
+        </div>
+        
+        <div class="info">
+          <strong>Ready to use:</strong>
+          <ul>
+            <li>📱 Works everywhere</li>
+            <li>🔒 Nobody can read it</li>
+            <li>⚡ Use <a href="decoder.html" class="decode-btn">Decoder</a> to reveal</li>
+          </ul>
+        </div>
+      </article>
+    </div>
+  </section>
 
   <!-- Footer -->
   <footer class="footer" role="contentinfo">
-    <p>Rahlex Secret Language System • Created by <span>Rahul Kumar Puri</span> • 2026</p>
+    <p>Rahlex Encoder • Created by <span>Rahul Kumar Puri</span> • 2026</p>
   </footer>
 </div>
 
-<!-- Toast Notification -->
+<!-- Toast -->
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -446,9 +446,6 @@ const encodeMap = {
   ',':'`','|':'!','~':'[','`':'_',']':'#','{':'&','}':'*','=':'/',
   '<':'>','>':'<','[':'₹'
 };
-
-const decodeMap = {};
-Object.entries(encodeMap).forEach(([k, v]) => decodeMap[v] = k);
 
 function encodeText() {
   const input = document.getElementById('inputText').value;
@@ -468,40 +465,19 @@ function encodeText() {
   }
   
   document.getElementById('outputText').value = result;
-  showToast('Encoded successfully! ✨');
-}
-
-function decodeText() {
-  const input = document.getElementById('inputText').value;
-  let result = '';
-  
-  for (let char of input) {
-    if (char === '␣') {
-      result += ' ';
-    } else {
-      const upper = char.toUpperCase();
-      if (decodeMap[upper]) {
-        result += char.toLowerCase() === char ? decodeMap[upper].toLowerCase() : decodeMap[upper];
-      } else {
-        result += char;
-      }
-    }
-  }
-  
-  document.getElementById('outputText').value = result;
-  showToast('Decoded successfully! 🔓');
+  showToast('✅ Encoded successfully!');
 }
 
 function clearText() {
   document.getElementById('inputText').value = '';
   document.getElementById('outputText').value = '';
-  showToast('Cleared! 🗑️');
+  showToast('🗑️ Cleared!');
 }
 
 async function copyOutput() {
   try {
     await navigator.clipboard.writeText(document.getElementById('outputText').value);
-    showToast('Copied to clipboard! 📋');
+    showToast('📋 Copied to clipboard!');
   } catch {
     fallbackCopy();
   }
@@ -514,52 +490,44 @@ function fallbackCopy() {
   textArea.select();
   document.execCommand('copy');
   document.body.removeChild(textArea);
-  showToast('Copied! 📋');
-}
-
-function shareOutput() {
-  const text = document.getElementById('outputText').value;
-  if (navigator.share) {
-    navigator.share({ title: 'Rahlex Message', text });
-  } else {
-    copyOutput();
-  }
+  showToast('📋 Copied!');
 }
 
 function exportTxt() {
   const text = document.getElementById('outputText').value;
+  if (!text.trim()) {
+    showToast('⚠️ Nothing to save!');
+    return;
+  }
   const blob = new Blob([text], { type: 'text/plain' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = `rahlex-${Date.now()}.txt`;
+  a.download = `rahlex-encoded-${Date.now()}.txt`;
   a.click();
   URL.revokeObjectURL(url);
-  showToast('File saved! 💾');
+  showToast('💾 File saved!');
 }
 
 function showToast(message) {
   const toast = document.getElementById('toast');
   toast.textContent = message;
-  toast.className = 'toast show';
+  toast.className = 'toast success show';
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// Keyboard shortcuts
+// Keyboard shortcuts & resize
 document.addEventListener('keydown', (e) => {
-  if (e.ctrlKey || e.metaKey) {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      document.activeElement.id === 'inputText' ? encodeText() : decodeText();
-    }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    encodeText();
   }
 });
 
-// Auto-resize textareas
 function resizeTextareas() {
   document.querySelectorAll('.textarea').forEach(el => {
     el.style.height = 'auto';
-    el.style.height = Math.min(el.scrollHeight, 300) + 'px';
+    el.style.height = Math.min(el.scrollHeight, 350) + 'px';
   });
 }
 
