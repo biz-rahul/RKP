@@ -113,7 +113,6 @@ body {
   }
 }
 
-/* ===== Rest of styles same as encoder but pink theme ===== */
 .card {
   background: rgba(255,255,255,0.03);
   border: 1px solid var(--border);
@@ -222,23 +221,6 @@ body {
   transform: translateY(-1px);
 }
 
-.info {
-  background: rgba(255,255,255,0.03);
-  border-left: 4px solid var(--accent);
-  padding: 20px;
-  border-radius: 12px;
-  font-size: 14px;
-  color: var(--text-secondary);
-}
-
-.info ul {
-  margin: 12px 0 0 20px;
-}
-
-.info li {
-  margin-bottom: 6px;
-}
-
 .profile {
   background: var(--glass);
   backdrop-filter: blur(12px);
@@ -331,7 +313,6 @@ body {
 
 <body>
 <div class="container">
-  <!-- Header with Encode Button -->
   <header class="header" role="banner">
     <h1>🔓 Rahlex Decoder</h1>
     <p>Reveal hidden messages encoded with Rahlex. Paste your secret code here!</p>
@@ -341,17 +322,15 @@ body {
       </a>
     </nav>
   </header>
-  <!-- Profile -->
+  
   <section class="profile" role="banner">
     <img src="../RKP.webp" alt="Rahul Kumar Puri" class="profile-avatar" loading="lazy">
     <h2>Rahul Kumar Puri</h2>
     <p class="profile-subtitle">Secret Language Master</p>
   </section>
 
-  <!-- Decoder Section -->
   <section class="decoder-section" role="main">
     <div class="decoder-grid">
-      <!-- Input Card -->
       <article class="card">
         <header class="card-header">
           <span class="icon-input" aria-hidden="true">🔍</span>
@@ -374,10 +353,8 @@ body {
             🗑️ Clear Input
           </button>
         </div>
-        
       </article>
 
-      <!-- Output Card -->
       <article class="card">
         <header class="card-header">
           <span class="icon-output" aria-hidden="true">✨</span>
@@ -408,13 +385,11 @@ body {
     </div>
   </section>
 
-  <!-- Footer -->
   <footer class="footer" role="contentinfo">
     <p>Rahlex Decoder • Created by <span>Rahul Kumar Puri</span> • 2026</p>
   </footer>
 </div>
 
-<!-- Toast -->
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -476,30 +451,39 @@ function fallbackCopy() {
 }
 
 async function shareOutput() {
-  const text = document.getElementById('outputText').value.trim();
+  const decodedText = document.getElementById('outputText').value.trim();
   
-  if (!text) {
+  if (!decodedText) {
     showToast('⚠️ No decoded message to share!');
     return;
   }
 
   if (navigator.share) {
     try {
-      await navigator.share({
-        title: 'Rahlex Decoded Message',
-        text: text,
-        url: window.location.href
-      });
-      showToast('📱 Shared successfully!');
+      // FIXED: Only send text, no URL - this ensures decoded text is primary content
+      const shareData = {
+        title: '🔓 Rahlex Decoded',
+        text: decodedText
+        // Removed URL completely - this was causing the website link to share instead
+      };
+      
+      await navigator.share(shareData);
+      showToast('📱 Shared decoded message!');
     } catch (err) {
       if (err.name !== 'AbortError') {
-        showToast('⚠️ Share cancelled');
+        // Fallback to copy if share fails
+        try {
+          await navigator.clipboard.writeText(decodedText);
+          showToast('📋 Copied! Paste to share.');
+        } catch {
+          fallbackCopy();
+        }
       }
     }
   } else {
-    // Fallback: Copy to clipboard
+    // Desktop fallback - copy to clipboard
     try {
-      await navigator.clipboard.writeText(text);
+      await navigator.clipboard.writeText(decodedText);
       showToast('📋 Copied! Paste anywhere to share.');
     } catch {
       fallbackCopy();
@@ -530,7 +514,6 @@ function showToast(message) {
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// Keyboard shortcuts & resize
 document.addEventListener('keydown', (e) => {
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
     e.preventDefault();
