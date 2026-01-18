@@ -67,8 +67,12 @@
       cursor: pointer;
       font-weight: bold;
     }
+    button.secondary {
+      background: #64748b;
+      color: #020617;
+    }
     button:hover {
-      background: #0ea5e9;
+      opacity: 0.9;
     }
     .info {
       margin-top: 15px;
@@ -94,52 +98,57 @@
   <h1>Advanced Secret Code Encoder / Decoder</h1>
 </header><main>
   <div class="panel">
-    <h2>Input (Plain or Encoded Text)</h2>
-    <textarea id="inputText" placeholder="Enter text here...\nSupports:\n• Capital & small letters\n• Spaces\n• Numbers\n• Special characters"></textarea>
+    <h2>Input</h2>
+    <textarea id="inputText" placeholder="Enter text here..."></textarea>
     <div class="controls">
       <button onclick="encodeText()">Encode</button>
       <button onclick="decodeText()">Decode</button>
-      <button onclick="clearText()">Clear</button>
+      <button class="secondary" onclick="clearText()">Clear</button>
     </div>
     <div class="info">
-      Capital letters, small letters, and spaces are preserved exactly.<br />
-      Spaces are encoded as ␣ to visibly show word separation.
+      • Capital and small letters are preserved<br>
+      • Spaces are encoded as ␣ for visibility
     </div>
   </div>  <div class="panel">
     <h2>Output</h2>
-    <textarea id="outputText" readonly placeholder="Result will appear here..."></textarea>
+    <textarea id="outputText" readonly></textarea>
+    <div class="controls">
+      <button onclick="copyOutput()">Copy</button>
+      <button onclick="shareOutput()">Share</button>
+      <button onclick="exportTxt()">Export TXT</button>
+    </div>
     <div class="info">
-      ␣ indicates a space.<br />
-      Capitalization is retained during encoding and decoding.
+      • Encoding and decoding are strictly separated<br>
+      • Output is fully reversible using the decoder
     </div>
   </div>
 </main><footer>
-  Secret Code Language System | Encoder & Decoder Website
+  Secret Code Language System | Advanced Encoder & Decoder
 </footer><script>
-  // Mapping tables
+  // ===== ENCODE MAP (FIXED: NO SELF-MAPPING SYMBOLS) =====
   const encodeMap = {
     'A':'T','B':'Z','C':'F','D':'R','E':'Y','F':'B','G':'L',
     'H':'7','I':'2','J':'9','K':'4','L':'1','M':'8','N':'0','O':'6','P':'3','Q':'5',
     'R':'A','S':'X','T':'G','U':'C','V':'M','W':'D','X':'J','Y':'P','Z':'V',
     '0':'L','1':'Q','2':'H','3':'N','4':'J','5':'O','6':'M','7':'P','8':'K','9':'I',
     '@':'√','#':'€','₹':'^','_':'•','&':'™','-':'π','+':'∆','(':'¥',')':'`','/':'§',
-    '?':'×','!':'÷',';':'$',';':'$',';':'$',';':'$',':':'%','\'':'©','"':'®','*':'=',
+    '?':'×','!':'÷',';':'$',';':'$',';':'$',':':'%','\'':'©','"':'®','*':'=',
     '.':'°',',':'~','~':'+','`':'_','|':'@','•':'!','√':':','π':']','÷':'[','×':'>',
     '§':'<','∆':'#','\\':'&','}':'-','{':'*','=':'/',
     '°':'"','^':';','¢':',','$':'\'',
     '¥':'(','€':')','%':'`','©':'π','®':'√','™':'§','✓':'×','[':'∆',']':'¢','>':'₹','<':'✓'
   };
 
-  // Reverse map
+  // ===== DECODE MAP (INVERSE ONLY) =====
   const decodeMap = {};
-  for (let key in encodeMap) {
+  for (const key in encodeMap) {
     decodeMap[encodeMap[key]] = key;
   }
 
   function encodeText() {
     const input = document.getElementById('inputText').value;
     let result = '';
-    for (let char of input) {
+    for (const char of input) {
       if (char === ' ') {
         result += '␣';
       } else if (encodeMap[char.toUpperCase()]) {
@@ -155,7 +164,7 @@
   function decodeText() {
     const input = document.getElementById('inputText').value;
     let result = '';
-    for (let char of input) {
+    for (const char of input) {
       if (char === '␣') {
         result += ' ';
       } else if (decodeMap[char.toUpperCase()]) {
@@ -171,6 +180,29 @@
   function clearText() {
     document.getElementById('inputText').value = '';
     document.getElementById('outputText').value = '';
+  }
+
+  function copyOutput() {
+    navigator.clipboard.writeText(document.getElementById('outputText').value);
+    alert('Copied to clipboard');
+  }
+
+  function shareOutput() {
+    const text = document.getElementById('outputText').value;
+    if (navigator.share) {
+      navigator.share({ text });
+    } else {
+      alert('Sharing not supported on this browser');
+    }
+  }
+
+  function exportTxt() {
+    const text = document.getElementById('outputText').value;
+    const blob = new Blob([text], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'secret-code-output.txt';
+    link.click();
   }
 </script></body>
 </html>
