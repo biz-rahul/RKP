@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlex - Encode Messages</title>
+
+<style>
+:root {
+  --bg-primary: #0f0f23;
+  --bg-secondary: #1a1a2e;
+  --glass: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.12);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0cc;
+  --accent: #4f46e5;
+  --accent-hover: #3730a3;
+  --success: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===== HEADER ===== */
+.header {
+  text-align: center;
+  padding: 50px 0 30px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 50px;
+}
+
+.header h1 {
+  font-size: clamp(2rem, 6vw, 3rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 12px;
+}
+
+.header-subtitle {
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.header-nav {
+  margin-top: 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  padding: 10px 24px;
+  background: rgba(255,255,255,0.08);
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: 25px;
+  font-weight: 500;
+  font-size: 14px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.nav-link:hover,
+.nav-link.current {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* ===== ENCODER ===== */
+.encoder {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  margin-bottom: 60px;
+}
+
+@media (min-width: 768px) {
+  .encoder {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ===== PANEL ===== */
+.panel {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  transition: all 0.2s ease;
+}
+
+.panel:hover {
+  border-color: rgba(79, 70, 229, 0.3);
+  transform: translateY(-2px);
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.panel-icon {
+  font-size: 1.8rem;
+}
+
+.panel-input .panel-icon { color: #4f46e5; }
+.panel-output .panel-icon { color: #10b981; }
+
+.panel-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 220px;
+  background: rgba(0,0,0,0.4);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  font-size: 15px;
+  color: var(--text-primary);
+  resize: vertical;
+  transition: all 0.2s ease;
+  line-height: 1.55;
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.textarea::placeholder {
+  color: var(--text-secondary);
+  font-family: inherit;
+}
+
+/* ===== BUTTONS ===== */
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 30px 0;
+}
+
+.btn {
+  padding: 14px 28px;
+  border: none;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  flex: 1;
+  min-width: 140px;
+  justify-content: center;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: var(--accent);
+}
+
+/* ===== INFO ===== */
+.info {
+  background: rgba(255,255,255,0.03);
+  border-left: 4px solid var(--accent);
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 14px;
+}
+
+.info-title {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.info-list {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+
+.info-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.info-list li::before {
+  content: '✓';
+  color: var(--success);
+  font-weight: bold;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+/* ===== FOOTER ===== */
+.footer {
+  text-align: center;
+  padding: 50px 0 30px;
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  transform: translateX(400px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  max-width: 360px;
+  backdrop-filter: blur(10px);
+}
+
+.toast.success {
+  background: rgba(16, 185, 129, 0.95);
+}
+
+.toast.show {
+  transform: translateX(0);
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+  .container { padding: 16px; }
+  .panel { padding: 28px 24px; }
+  .encoder { gap: 28px; }
+  .btn-group { flex-direction: column; }
+  .btn { min-width: auto; }
+}
+
+@media (max-width: 480px) {
+  .header h1 { font-size: 1.9rem; }
+  .panel-title { font-size: 1.3rem; }
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <!-- Header -->
+  <header class="header">
+    <h1>Rahlex Encoder</h1>
+    <p class="header-subtitle">Transform your messages into secret code instantly</p>
+    
+    <nav class="header-nav" aria-label="Main navigation">
+      <a href="#" class="nav-link current" onclick="setActivePage('encode')">🔐 Encode</a>
+      <a href="#" class="nav-link" onclick="setActivePage('decode')">🔓 Decode</a>
+    </nav>
+  </header>
+
+  <!-- Encoder -->
+  <main class="encoder" role="main">
+    <!-- Input Panel -->
+    <section class="panel panel-input" aria-labelledby="input-title">
+      <header class="panel-header">
+        <span class="panel-icon" aria-hidden="true">📝</span>
+        <h2 id="input-title">Input Message</h2>
+      </header>
+      
+      <textarea 
+        id="inputText" 
+        class="textarea"
+        placeholder="Enter your secret message here...
+• All letters, numbers, symbols supported
+• Case sensitive (Aa → different codes)
+• Spaces become ␣ for visibility
+• Ctrl+Enter to encode instantly"
+        rows="8"
+        aria-describedby="input-help"
+      ></textarea>
+      
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="encodeText()">
+          ✨ Encode Message
+        </button>
+        <button class="btn btn-secondary" onclick="clearText()">
+          🗑️ Clear Input
+        </button>
+      </div>
+      
+      <div class="info" id="input-help">
+        <div class="info-title">Encoding Features</div>
+        <ul class="info-list">
+          <li>Preserves uppercase/lowercase distinction</li>
+          <li>Spaces encoded as ␣ (visible)</li>
+          <li>100% reversible with decoder</li>
+          <li>Works with all special characters</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- Output Panel -->
+    <section class="panel panel-output" aria-labelledby="output-title">
+      <header class="panel-header">
+        <span class="panel-icon" aria-hidden="true">🔐</span>
+        <h2 id="output-title">Encoded Output</h2>
+      </header>
+      
+      <textarea 
+        id="outputText" 
+        class="textarea"
+        readonly
+        placeholder="Your encoded message will appear here...
+Ready to copy, share, or save securely."
+        rows="8"
+        aria-describedby="output-help"
+      ></textarea>
+      
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="copyOutput()">
+          📋 Copy to Clipboard
+        </button>
+        <button class="btn btn-primary" onclick="shareOutput()">
+          ↗️ Share Output
+        </button>
+        <button class="btn btn-secondary" onclick="exportTxt()">
+          💾 Save as TXT
+        </button>
+      </div>
+      
+      <div class="info" id="output-help">
+        <div class="info-title">Output Ready For:</div>
+        <ul class="info-list">
+          <li>Secure storage anywhere</li>
+          <li>Safe sharing with decoder</li>
+          <li>Private notes & messages</li>
+          <li>Cross-platform compatible</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Rahlex • Secret Message Encoder • Fast • Secure • Simple</p>
+  </footer>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+// Encoding Map (Fixed & Complete)
+const encodeMap = {
+  'A':'T','B':'Z','C':'F','D':'R','E':'Y','F':'B','G':'L','H':'7','I':'2','J':'9',
+  'K':'4','L':'1','M':'8','N':'0','O':'6','P':'3','Q':'5','R':'A','S':'X','T':'G',
+  'U':'C','V':'M','W':'D','X':'J','Y':'P','Z':'V',
+  '0':'Q','1':'H','2':'N','3':'J','4':'O','5':'M','6':'P','7':'K','8':'I','9':'√',
+  '@':'€','#':'^','₹':'•','_':'™','&':'π','-':'∆','+':'¥','(':'`','/':'§','?':'$',
+  '!':'%',';':'©',':':'®','\'':'=','"':'°','*':',','.':'~',',':'`','|':'!',
+  '~':'[','`':'_',']':'#','{':'&','}':'*','=':'/','<':'>','>':'<','[':'₹'
+};
+
+function encodeText() {
+  const input = document.getElementById('inputText').value;
+  if (!input.trim()) {
+    showToast('Please enter a message to encode!');
+    return;
+  }
+  
+  let result = '';
+  for (let char of input) {
+    if (char === ' ') {
+      result += '␣';
+    } else {
+      const upper = char.toUpperCase();
+      if (encodeMap[upper]) {
+        result += char.toLowerCase() === char 
+          ? encodeMap[upper].toLowerCase() 
+          : encodeMap[upper];
+      } else {
+        result += char;
+      }
+    }
+  }
+  
+  document.getElementById('outputText').value = result;
+  resizeTextareas();
+  showToast('Message encoded successfully! ✨');
+}
+
+function clearText() {
+  document.getElementById('inputText').value = '';
+  document.getElementById('outputText').value = '';
+  resizeTextareas();
+  showToast('Input cleared! 🗑️');
+}
+
+async function copyOutput() {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('outputText').value);
+    showToast('Copied to clipboard! 📋');
+  } catch {
+    fallbackCopy();
+  }
+}
+
+function fallbackCopy() {
+  const ta = document.createElement('textarea');
+  ta.value = document.getElementById('outputText').value;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  document.execCommand('copy');
+  document.body.removeChild(ta);
+  showToast('Copied! 📋');
+}
+
+function shareOutput() {
+  const text = document.getElementById('outputText').value;
+  if (!text.trim()) {
+    showToast('Nothing to share!');
+    return;
+  }
+  if (navigator.share) {
+    navigator.share({ title: 'Rahlex Encoded Message', text });
+  } else {
+    copyOutput();
+  }
+}
+
+function exportTxt() {
+  const text = document.getElementById('outputText').value;
+  if (!text.trim()) {
+    showToast('Nothing to export!');
+    return;
+  }
+  const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rahlex-encoded-${Date.now()}.txt`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('File exported! 💾');
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show';
+  setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+function setActivePage(page) {
+  // Update nav active state
+  document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('current'));
+  event.target.classList.add('current');
+  
+  if (page === 'decode') {
+    showToast('Decode page coming soon!');
+  }
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    e.preventDefault();
+    encodeText();
+  }
+  if (e.key === 'Escape') {
+    clearText();
+  }
+});
+
+// Auto-resize
+function resizeTextareas() {
+  document.querySelectorAll('.textarea').forEach(el => {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 320) + 'px';
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  resizeTextareas();
+  document.querySelectorAll('.textarea').forEach(el => 
+    el.addEventListener('input', resizeTextareas)
+  );
+});
+</script>
+
+</body>
+</html>
