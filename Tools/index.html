@@ -1,11 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+<!-- index.html --><!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>My Tools</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><style>
 :root{
   --bg:#1a0b14;
   --card:#2a0f1f;
@@ -97,30 +94,21 @@ h1{
   transform:translateY(-2px);
   box-shadow:0 10px 25px rgba(255,95,162,.45);
 }
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<header>
+</style></head><body><div class="container"><header>
   <h1>🩷 My Tools</h1>
-</header>
-
-<div class="tools-grid" id="toolsGrid"></div>
-
-</div>
-
-<script>
+</header><div class="tools-grid" id="toolsGrid"></div></div><script>
 const tools = [
   {
     name:"Precise Location Finder",
     link:"https://rahulpuri.fun/Tools/LocationFinder"
-  }
+  },
   {
     name:"Bookmarks",
     link:"https://rahulpuri.fun/Tools/Bookmarks"
+  },
+  {
+    name:"Secret Code",
+    link:"/SecretCode"
   }
 ];
 
@@ -147,7 +135,82 @@ function renderTools(){
 }
 
 renderTools();
-</script>
+</script></body>
+</html><!-- =============================== --><!-- SecretCode/index.html          --><!-- =============================== --><!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Secret Code</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><style>
+body{
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:radial-gradient(circle at top, #2b0c1d, #12050c);
+  font-family:system-ui, -apple-system, Segoe UI, sans-serif;
+  color:#ffe6f2;
+}
 
-</body>
-</html>    
+.card{
+  background:linear-gradient(145deg, #2a0f1f, #3a1230);
+  padding:30px;
+  border-radius:20px;
+  width:100%;
+  max-width:380px;
+  box-shadow:0 30px 70px rgba(0,0,0,.6);
+  text-align:center;
+}
+
+h2{
+  margin-top:0;
+  color:#ff7ab8;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  outline:none;
+  font-size:1rem;
+  margin-top:15px;
+}
+
+button{
+  margin-top:18px;
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:linear-gradient(135deg,#ff5fa2,#ff8fc4);
+  font-size:1rem;
+  font-weight:700;
+  cursor:pointer;
+}
+
+.result{
+  margin-top:18px;
+  font-weight:600;
+}
+</style></head><body><div class="card">
+  <h2>🔐 Secret Code</h2>
+  <p>Enter the secret code to unlock the message.</p>
+  <input type="password" id="codeInput" placeholder="Enter code" />
+  <button onclick="checkCode()">Unlock</button>
+  <div class="result" id="result"></div>
+</div><script>
+function checkCode(){
+  const code = document.getElementById('codeInput').value;
+  const result = document.getElementById('result');
+
+  if(code === 'RAHUL123'){
+    result.textContent = 'Access Granted. Welcome to the hidden zone.';
+    result.style.color = '#9dffb3';
+  } else {
+    result.textContent = 'Invalid Code.';
+    result.style.color = '#ff9da6';
+  }
+}
+</script></body>
+</html>
