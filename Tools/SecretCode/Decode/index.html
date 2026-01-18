@@ -18,6 +18,8 @@
   --success: #10b981;
   --encode-btn: #4f46e5;
   --encode-hover: #3730a3;
+  --share: #f59e0b;
+  --share-hover: #d97706;
 }
 
 * {
@@ -210,6 +212,16 @@ body {
   border-color: var(--accent);
 }
 
+.btn-share {
+  background: var(--share);
+  color: white;
+}
+
+.btn-share:hover {
+  background: var(--share-hover);
+  transform: translateY(-1px);
+}
+
 .info {
   background: rgba(255,255,255,0.03);
   border-left: 4px solid var(--accent);
@@ -351,6 +363,7 @@ body {
           class="textarea"
           rows="8"
           aria-label="Encoded message to decode"
+          placeholder="Paste your Rahlex encoded message here..."
         ></textarea>
         
         <div class="btn-group">
@@ -375,21 +388,22 @@ body {
           id="outputText" 
           class="textarea"
           readonly
-        
           rows="8"
           aria-label="Decoded output"
+          placeholder="Decoded message will appear here..."
         ></textarea>
         
         <div class="btn-group">
           <button class="btn btn-primary" onclick="copyOutput()">
             📋 Copy Decoded Text
           </button>
+          <button class="btn btn-share" onclick="shareOutput()">
+            📱 Share Message
+          </button>
           <button class="btn btn-primary" onclick="exportTxt()">
             💾 Save as TXT
           </button>
         </div>
-        
-        
       </article>
     </div>
   </section>
@@ -459,6 +473,38 @@ function fallbackCopy() {
   document.execCommand('copy');
   document.body.removeChild(textArea);
   showToast('📋 Copied!');
+}
+
+async function shareOutput() {
+  const text = document.getElementById('outputText').value.trim();
+  
+  if (!text) {
+    showToast('⚠️ No decoded message to share!');
+    return;
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Rahlex Decoded Message',
+        text: text,
+        url: window.location.href
+      });
+      showToast('📱 Shared successfully!');
+    } catch (err) {
+      if (err.name !== 'AbortError') {
+        showToast('⚠️ Share cancelled');
+      }
+    }
+  } else {
+    // Fallback: Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('📋 Copied! Paste anywhere to share.');
+    } catch {
+      fallbackCopy();
+    }
+  }
 }
 
 function exportTxt() {
