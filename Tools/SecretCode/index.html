@@ -1,724 +1,572 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Rahlex - Rahul Kumar Puri's Secret Language</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rahlex - Secret Language Encoder</title>
 
 <style>
-:root{
-  --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-  --dark: #0a0a0f;
-  --glass: rgba(255,255,255,0.05);
-  --glow: rgba(255,255,255,0.1);
+:root {
+  --bg-primary: #0f0f23;
+  --bg-secondary: #1a1a2e;
+  --glass: rgba(255,255,255,0.08);
+  --border: rgba(255,255,255,0.12);
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0cc;
+  --accent: #4f46e5;
+  --accent-hover: #3730a3;
+  --success: #10b981;
 }
 
-/* ===== RESET ===== */
-*, *::before, *::after {box-sizing:border-box}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* ===== BODY ===== */
-body{
-  margin:0;
-  font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  color:#e2e8f0;
-  background: radial-gradient(ellipse at center, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
-  background-attachment: fixed;
-  overflow-x: hidden;
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-body::before {
-  content: '';
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: 
-    radial-gradient(circle at 20% 80%, rgba(120,119,198,0.3) 0%, transparent 50%),
-    radial-gradient(circle at 80% 20%, rgba(255,119,198,0.3) 0%, transparent 50%),
-    radial-gradient(circle at 40% 40%, rgba(120,219,255,0.2) 0%, transparent 50%);
-  animation: float 20s ease-in-out infinite;
-  z-index: -1;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  33% { transform: translateY(-20px) rotate(1deg); }
-  66% { transform: translateY(10px) rotate(-1deg); }
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
 /* ===== HEADER ===== */
-header {
+.header {
   text-align: center;
-  padding: 60px 20px;
-  position: relative;
+  padding: 40px 0 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 40px;
 }
 
-header::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--glow), transparent);
-}
-
-header h1 {
-  margin: 0;
-  font-size: clamp(2.2rem, 5vw, 4rem);
-  background: var(--primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 0.05em;
-  position: relative;
-  animation: titleGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes titleGlow {
-  from { filter: drop-shadow(0 0 20px rgba(102,126,234,0.6)); text-shadow: 0 0 30px rgba(102,126,234,0.4); }
-  to { filter: drop-shadow(0 0 40px rgba(102,126,234,0.9)); text-shadow: 0 0 50px rgba(102,126,234,0.7); }
-}
-
-header h1::after {
-  content: '✦ SECRET LANGUAGE ✦';
-  position: absolute;
-  bottom: -30px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 0.8em;
-  color: rgba(255,255,255,0.4);
-  font-weight: 300;
-  animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
-
-/* ===== PROFILE ===== */
-.profile {
-  max-width: 1000px;
-  margin: 80px auto;
-  padding: 40px;
-  background: var(--glass);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 30px;
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 40px;
-  position: relative;
-  overflow: hidden;
-  animation: slideUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.profile::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--accent);
-  box-shadow: 0 0 20px rgba(79,172,254,0.3);
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(50px) scale(0.95); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.profile img {
-  width: 220px;
-  height: 220px;
-  border-radius: 25px;
-  object-fit: cover;
-  border: 3px solid transparent;
-  background: linear-gradient(var(--primary), var(--secondary)) border-box;
-  -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
-  mask-composite: exclude;
-  box-shadow: 
-    0 0 0 1px rgba(255,255,255,0.2),
-    0 25px 50px rgba(0,0,0,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.2);
-  transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.profile img:hover {
-  transform: scale(1.08) rotate(2deg);
-  box-shadow: 
-    0 0 0 1px rgba(255,255,255,0.3),
-    0 35px 70px rgba(102,126,234,0.4),
-    inset 0 1px 0 rgba(255,255,255,0.3);
-}
-
-.profile h2 {
-  margin: 0 0 15px;
-  font-size: clamp(1.8rem, 3vw, 2.5rem);
-  background: var(--secondary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  position: relative;
-}
-
-.profile h3 {
-  margin: 0 0 25px;
-  font-size: 1rem;
-  color: rgba(226,232,240,0.8);
-  font-weight: 400;
-  letter-spacing: 0.025em;
-}
-
-.profile p {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: rgba(226,232,240,0.9);
-  position: relative;
-  z-index: 2;
-}
-
-/* ===== MAIN ===== */
-main {
-  max-width: 1200px;
-  margin: 80px auto;
-  padding: 0 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-  gap: 40px;
-}
-
-/* ===== PANELS ===== */
-.panel {
-  background: var(--glass);
-  backdrop-filter: blur(25px);
-  border-radius: 25px;
-  padding: 35px;
-  border: 1px solid rgba(255,255,255,0.08);
-  position: relative;
-  overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.panel::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--glow);
-}
-
-.panel:hover {
-  transform: translateY(-15px) scale(1.02);
-  box-shadow: 
-    0 35px 80px rgba(0,0,0,0.5),
-    0 0 0 1px rgba(255,255,255,0.1),
-    inset 0 1px 0 rgba(255,255,255,0.1);
-}
-
-.panel h2 {
-  margin: 0 0 25px;
-  font-size: 1.6rem;
-  color: #fff;
-  position: relative;
+.header h1 {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
   font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), #6366f1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
 }
 
-.panel h2::after {
-  content: '';
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 40px;
-  height: 3px;
-  background: var(--accent);
-  border-radius: 2px;
-  box-shadow: 0 0 15px rgba(79,172,254,0.5);
+.header p {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-/* ===== TEXTAREA ===== */
-textarea {
+/* ===== MAIN GRID ===== */
+.main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+@media (min-width: 768px) {
+  .main-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ===== CARD ===== */
+.card {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 30px;
+  transition: all 0.2s ease;
+}
+
+.card:hover {
+  border-color: rgba(79, 70, 229, 0.3);
+  transform: translateY(-2px);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.card-header h2 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.icon-input { color: #4f46e5; }
+.icon-output { color: #10b981; }
+
+.textarea {
   width: 100%;
-  min-height: 240px;
-  max-height: 400px;
-  background: rgba(10,10,15,0.8);
-  color: #e2e8f0;
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 18px;
-  padding: 20px;
+  min-height: 200px;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
   font-size: 15px;
-  font-family: 'Monaco', 'Menlo', monospace;
+  color: var(--text-primary);
   resize: vertical;
-  transition: all 0.3s ease;
-  line-height: 1.6;
+  transition: border-color 0.2s ease;
 }
 
-textarea:focus {
+.textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 
-    0 0 0 3px rgba(79,172,254,0.2),
-    0 0 20px rgba(79,172,254,0.1);
-  transform: scale(1.01);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.textarea::placeholder {
+  color: var(--text-secondary);
 }
 
 /* ===== BUTTONS ===== */
-.controls {
-  margin-top: 25px;
+.btn-group {
   display: flex;
-  gap: 15px;
   flex-wrap: wrap;
+  gap: 12px;
+  margin: 24px 0;
 }
 
-button {
-  position: relative;
-  overflow: hidden;
+.btn {
+  padding: 12px 24px;
   border: none;
-  padding: 14px 28px;
-  font-size: 14px;
+  border-radius: 12px;
   font-weight: 600;
-  border-radius: 15px;
+  font-size: 14px;
   cursor: pointer;
-  color: #fff;
-  background: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  box-shadow: 0 8px 25px rgba(102,126,234,0.3);
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
 }
 
-button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-  transition: left 0.6s;
+.btn-primary {
+  background: var(--accent);
+  color: white;
 }
 
-button:hover::before {
-  left: 100%;
+.btn-primary:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
-button:hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 15px 40px rgba(102,126,234,0.5);
+.btn-secondary {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
 }
 
-button:active {
-  transform: translateY(-1px) scale(1.02);
-}
-
-button.secondary {
-  background: linear-gradient(135deg, #66748b, #475569);
-  box-shadow: 0 8px 25px rgba(102,116,139,0.3);
-}
-
-button.secondary:hover {
-  box-shadow: 0 15px 40px rgba(102,116,139,0.5);
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.12);
+  border-color: var(--accent);
 }
 
 /* ===== INFO ===== */
 .info {
-  margin-top: 20px;
-  font-size: 13px;
-  color: rgba(226,232,240,0.7);
-  line-height: 1.7;
-  padding: 15px;
-  background: rgba(255,255,255,0.02);
-  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
   border-left: 3px solid var(--accent);
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.info ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+}
+
+.info li {
+  margin-bottom: 4px;
+}
+
+/* ===== PROFILE ===== */
+.profile {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.profile-avatar {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--accent);
+  margin-bottom: 24px;
+  transition: transform 0.2s ease;
+}
+
+.profile:hover .profile-avatar {
+  transform: scale(1.05);
+}
+
+.profile h2 {
+  font-size: 1.8rem;
+  margin-bottom: 8px;
+}
+
+.profile-subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+}
+
+.profile-bio {
+  max-width: 600px;
+  margin: 0 auto;
+  color: var(--text-primary);
+  font-size: 1rem;
 }
 
 /* ===== FOOTER ===== */
-footer {
-  margin: 100px 0 40px;
-  padding: 30px 20px;
+.footer {
   text-align: center;
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
   font-size: 14px;
-  color: rgba(226,232,240,0.6);
-  position: relative;
 }
 
-footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100vw;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--glow), transparent);
+.footer span {
+  color: var(--accent);
+  font-weight: 600;
 }
 
-footer span {
-  background: var(--primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 700;
-}
-
-/* ===== PARTICLES ===== */
-@keyframes particles {
-  0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(-120vh) rotate(360deg); opacity: 0; }
-}
-
-.particle {
+/* ===== TOAST ===== */
+.toast {
   position: fixed;
-  width: 4px;
-  height: 4px;
-  background: var(--accent);
-  border-radius: 50%;
-  pointer-events: none;
-  animation: particles 12s linear infinite;
-  box-shadow: 0 0 10px var(--accent);
+  top: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 600;
+  z-index: 1000;
+  transform: translateX(400px);
+  transition: transform 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  max-width: 350px;
 }
 
-.particle:nth-child(2) { left: 20%; animation-delay: -2s; }
-.particle:nth-child(3) { left: 60%; animation-delay: -5s; }
-.particle:nth-child(4) { left: 80%; animation-delay: -8s; }
+.toast.success {
+  background: var(--success);
+}
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 900px) {
-  main { 
-    grid-template-columns: 1fr; 
-    gap: 30px;
-    margin: 60px auto;
+.toast.show {
+  transform: translateX(0);
+}
+
+/* ===== MOBILE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+  .container {
+    padding: 16px;
   }
   
-  .profile { 
-    grid-template-columns: 1fr; 
-    text-align: center;
-    margin: 60px auto;
-    padding: 30px;
+  .card {
+    padding: 24px;
   }
   
-  .profile img { 
-    margin: 0 auto 30px;
-    width: 180px;
-    height: 180px;
+  .btn-group {
+    flex-direction: column;
   }
   
-  .controls { justify-content: center; }
+  .btn {
+    justify-content: center;
+  }
+  
+  .profile {
+    padding: 24px;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+  }
 }
 
 @media (max-width: 480px) {
-  .panel { padding: 25px 20px; }
-  button { padding: 12px 20px; font-size: 13px; }
+  .header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .main-grid {
+    gap: 20px;
+  }
 }
 
-/* ===== LOADING ANIMATION ===== */
-@keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
-}
-
-.loading {
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+/* ===== UTILITY ===== */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>
 </head>
 
 <body>
-<!-- Floating Particles -->
-<div class="particle" style="top: 10%; animation-delay: 0s;"></div>
-<div class="particle" style="top: 30%; animation-delay: -3s;"></div>
-<div class="particle" style="top: 60%; animation-delay: -7s;"></div>
-<div class="particle" style="top: 80%; animation-delay: -10s;"></div>
-
-<header>
-  <h1>Rahlex</h1>
-</header>
-
-<section class="profile">
-  <img src="RKP.webp" alt="Rahul Kumar Puri" loading="lazy">
-  <div>
+<div class="container">
+  <!-- Profile Section -->
+  <section class="profile" role="banner">
+    <img src="RKP.webp" alt="Rahul Kumar Puri" class="profile-avatar" loading="lazy">
     <h2>Rahul Kumar Puri</h2>
-    <h3>Web Developer | Poet | Writer | Researcher | Men's Activist | Guanxi Enthusiast</h3>
-    <p>
-      Rahlex is designed for those who want to securely store their data anywhere, 
-      ensuring no one can read or understand it without the key...
+    <p class="profile-subtitle">Web Developer | Poet | Researcher</p>
+    <p class="profile-bio">
+      Rahlex encodes your messages into a secret language that looks like random symbols.
+      Perfect for secure notes, hidden messages, and private data storage.
     </p>
-  </div>
-</section>
+  </section>
 
-<main>
-  <div class="panel">
-    <h2>🔐 Input</h2>
-    <textarea id="inputText" placeholder="Enter your secret message here... 
-Press Encode to transform it into Rahlex language
-Press Decode to reveal hidden messages"></textarea>
-    <div class="controls">
-      <button onclick="encodeText()">✨ Encode</button>
-      <button onclick="decodeText()">🔓 Decode</button>
-      <button class="secondary" onclick="clearText()">🗑️ Clear</button>
-    </div>
-    <div class="info">
-      • Preserves capital & small letters distinction<br>
-      • Spaces shown as ␣ for clarity<br>
-      • 100% reversible encoding
-    </div>
-  </div>
+  <!-- Main Content -->
+  <main class="main-grid" role="main">
+    <!-- Input Panel -->
+    <article class="card">
+      <header class="card-header">
+        <span class="icon-input" aria-hidden="true">🔐</span>
+        <h2>Input Message</h2>
+      </header>
+      
+      <textarea 
+        id="inputText" 
+        class="textarea"
+        placeholder="Type your secret message here...
+• Supports all letters, numbers, and symbols
+• Case sensitive encoding
+• Press Ctrl+Enter to encode/decode"
+        rows="6"
+        aria-label="Message to encode or decode"
+      ></textarea>
+      
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="encodeText()">
+          ✨ Encode
+        </button>
+        <button class="btn btn-primary" onclick="decodeText()">
+          🔓 Decode
+        </button>
+        <button class="btn btn-secondary" onclick="clearText()">
+          🗑️ Clear All
+        </button>
+      </div>
+      
+      <div class="info">
+        <strong>Features:</strong>
+        <ul>
+          <li>✅ Preserves uppercase/lowercase</li>
+          <li>✅ Spaces shown as ␣</li>
+          <li>✅ 100% reversible</li>
+        </ul>
+      </div>
+    </article>
 
-  <div class="panel">
-    <h2>📤 Output</h2>
-    <textarea id="outputText" readonly placeholder="Result appears here..."></textarea>
-    <div class="controls">
-      <button onclick="copyOutput()">📋 Copy</button>
-      <button onclick="shareOutput()">↗️ Share</button>
-      <button onclick="exportTxt()">💾 Export TXT</button>
-    </div>
-    <div class="info">
-      • Perfectly reversible with decoder<br>
-      • Safe for storage & sharing<br>
-      • Works across all devices
-    </div>
+    <!-- Output Panel -->
+    <article class="card">
+      <header class="card-header">
+        <span class="icon-output" aria-hidden="true">📤</span>
+        <h2>Output</h2>
+      </header>
+      
+      <textarea 
+        id="outputText" 
+        class="textarea"
+        readonly
+        placeholder="Encoded/Decoded result appears here...
+Ready to copy, share, or save securely."
+        rows="6"
+        aria-label="Encoded or decoded output"
+      ></textarea>
+      
+      <div class="btn-group">
+        <button class="btn btn-primary" onclick="copyOutput()">
+          📋 Copy to Clipboard
+        </button>
+        <button class="btn btn-primary" onclick="shareOutput()">
+          ↗️ Share
+        </button>
+        <button class="btn btn-secondary" onclick="exportTxt()">
+          💾 Save TXT
+        </button>
+      </div>
+      
+      <div class="info">
+        <strong>Safe & Secure:</strong>
+        <ul>
+          <li>🔒 Perfectly reversible</li>
+          <li>📱 Works on all devices</li>
+          <li>💾 Safe for storage</li>
+        </ul>
+      </div>
+    </article>
   </main>
 
-<footer>
-  Secret Code Language System • Designed & Developed by <span>Rahul Kumar Puri</span> • 2026
-</footer>
+  <!-- Footer -->
+  <footer class="footer" role="contentinfo">
+    <p>Rahlex Secret Language System • Created by <span>Rahul Kumar Puri</span> • 2026</p>
+  </footer>
+</div>
+
+<!-- Toast Notification -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script>
-  // ===== FIXED ENCODE MAP (Removed duplicate/conflicting mappings) =====
-  const encodeMap = {
-    // Letters A-Z
-    'A':'T','B':'Z','C':'F','D':'R','E':'Y','F':'B','G':'L','H':'7','I':'2','J':'9',
-    'K':'4','L':'1','M':'8','N':'0','O':'6','P':'3','Q':'5','R':'A','S':'X','T':'G',
-    'U':'C','V':'M','W':'D','X':'J','Y':'P','Z':'V',
-    
-    // Numbers 0-9
-    '0':'Q','1':'H','2':'N','3':'J','4':'O','5':'M','6':'P','7':'K','8':'I','9':'√',
-    
-    // Common symbols (unique mappings only)
-    '@':'€','#' :'^','₹':'•','_':'™','&':'π','-':'∆','+':'¥','(':'`','/':'§',
-    '?':'$','!' :'%',';':'©',':':'®','\'':'=','"':'°','*':',','.':'~',
-    
-    // Extended symbols (no conflicts)
-    ',':'`','|':'!','~':'[','`':'_',']':'#','{':'&','}':'*','=':'/', 
-    '<':'>','>':'<','[':'₹',']':'✓','(':')',')':'('
-  };
+const encodeMap = {
+  'A':'T','B':'Z','C':'F','D':'R','E':'Y','F':'B','G':'L','H':'7','I':'2','J':'9',
+  'K':'4','L':'1','M':'8','N':'0','O':'6','P':'3','Q':'5','R':'A','S':'X','T':'G',
+  'U':'C','V':'M','W':'D','X':'J','Y':'P','Z':'V',
+  '0':'Q','1':'H','2':'N','3':'J','4':'O','5':'M','6':'P','7':'K','8':'I','9':'√',
+  '@':'€','#':'^','₹':'•','_':'™','&':'π','-':'∆','+':'¥','(':'`','/':'§',
+  '?':'$','!':'%',';':'©',':':'®','\'':'=','"':'°','*':',','.':'~',
+  ',':'`','|':'!','~':'[','`':'_',']':'#','{':'&','}':'*','=':'/',
+  '<':'>','>':'<','[':'₹'
+};
 
-  // ===== DECODE MAP (Perfect inverse) =====
-  const decodeMap = {};
-  for (const [key, value] of Object.entries(encodeMap)) {
-    decodeMap[value] = key;
-  }
+const decodeMap = {};
+Object.entries(encodeMap).forEach(([k, v]) => decodeMap[v] = k);
 
-  // ===== ENCODE FUNCTION (Fixed case preservation) =====
-  function encodeText() {
-    const input = document.getElementById('inputText').value;
-    let result = '';
-    
-    for (let i = 0; i < input.length; i++) {
-      const char = input[i];
-      
-      if (char === ' ') {
-        result += '␣';
-      } else {
-        const upperChar = char.toUpperCase();
-        if (encodeMap[upperChar]) {
-          const encoded = encodeMap[upperChar];
-          // Preserve case: if original was lowercase, make encoded lowercase
-          result += char === char.toLowerCase() ? encoded.toLowerCase() : encoded;
-        } else {
-          result += char; // Keep unknown chars unchanged
-        }
-      }
-    }
-    
-    document.getElementById('outputText').value = result;
-    animateSuccess('Encoded successfully!');
-  }
-
-  // ===== DECODE FUNCTION (Fixed case preservation) =====
-  function decodeText() {
-    const input = document.getElementById('inputText').value;
-    let result = '';
-    
-    for (let i = 0; i < input.length; i++) {
-      const char = input[i];
-      
-      if (char === '␣') {
-        result += ' ';
-      } else {
-        const upperChar = char.toUpperCase();
-        if (decodeMap[upperChar]) {
-          const decoded = decodeMap[upperChar];
-          // Preserve case: if encoded char was lowercase, make decoded lowercase
-          result += char === char.toLowerCase() ? decoded.toLowerCase() : decoded;
-        } else {
-          result += char; // Keep unknown chars unchanged
-        }
-      }
-    }
-    
-    document.getElementById('outputText').value = result;
-    animateSuccess('Decoded successfully!');
-  }
-
-  // ===== UTILITY FUNCTIONS =====
-  function clearText() {
-    document.getElementById('inputText').value = '';
-    document.getElementById('outputText').value = '';
-  }
-
-  async function copyOutput() {
-    try {
-      const text = document.getElementById('outputText').value;
-      await navigator.clipboard.writeText(text);
-      animateSuccess('Copied to clipboard! 📋');
-    } catch (err) {
-      fallbackCopyTextToClipboard(document.getElementById('outputText').value);
-    }
-  }
-
-  function fallbackCopyTextToClipboard(text) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    try {
-      document.execCommand('copy');
-      animateSuccess('Copied to clipboard! 📋');
-    } finally {
-      document.body.removeChild(textArea);
-    }
-  }
-
-  function shareOutput() {
-    const text = document.getElementById('outputText').value;
-    if (navigator.share) {
-      navigator.share({ 
-        title: 'Rahlex Secret Message',
-        text: text 
-      }).catch(() => animateSuccess('Share cancelled'));
+function encodeText() {
+  const input = document.getElementById('inputText').value;
+  let result = '';
+  
+  for (let char of input) {
+    if (char === ' ') {
+      result += '␣';
     } else {
-      copyOutput();
-    }
-  }
-
-  function exportTxt() {
-    const text = document.getElementById('outputText').value;
-    if (!text.trim()) {
-      animateError('Nothing to export!');
-      return;
-    }
-    
-    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = `rahlex-${Date.now()}.txt`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    animateSuccess('Exported successfully! 💾');
-  }
-
-  // ===== ANIMATIONS =====
-  function animateSuccess(message) {
-    showToast(message, 'success');
-  }
-
-  function animateError(message) {
-    showToast(message, 'error');
-  }
-
-  function showToast(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.textContent = message;
-    toast.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      padding: 15px 25px;
-      border-radius: 12px;
-      color: white;
-      font-weight: 600;
-      z-index: 10000;
-      transform: translateX(400px);
-      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-    `;
-    
-    if (type === 'success') {
-      toast.style.background = 'linear-gradient(135deg, #10b981, #059669)';
-    } else if (type === 'error') {
-      toast.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
-    }
-    
-    document.body.appendChild(toast);
-    
-    requestAnimationFrame(() => {
-      toast.style.transform = 'translateX(0)';
-    });
-    
-    setTimeout(() => {
-      toast.style.transform = 'translateX(400px)';
-      setTimeout(() => document.body.removeChild(toast), 400);
-    }, 3000);
-  }
-
-  // ===== ENHANCED INTERACTIONS =====
-  document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('inputText');
-    const output = document.getElementById('outputText');
-    
-    // Auto-resize textareas
-    function autoResize() {
-      this.style.height = 'auto';
-      this.style.height = Math.min(this.scrollHeight, 400) + 'px';
-    }
-    
-    input.addEventListener('input', autoResize);
-    output.addEventListener('input', autoResize);
-    
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-      if (e.ctrlKey || e.metaKey) {
-        switch(e.key) {
-          case 'Enter':
-            e.preventDefault();
-            document.activeElement.id === 'inputText' ? encodeText() : decodeText();
-            break;
-          case 'e':
-          case 'E':
-            e.preventDefault();
-            encodeText();
-            break;
-          case 'd':
-          case 'D':
-            e.preventDefault();
-            decodeText();
-            break;
-        }
+      const upper = char.toUpperCase();
+      if (encodeMap[upper]) {
+        result += char.toLowerCase() === char ? encodeMap[upper].toLowerCase() : encodeMap[upper];
+      } else {
+        result += char;
       }
-    });
-    
-    // Smooth scroll
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-      anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelector(this.getAttribute('href')).scrollIntoView({
-          behavior: 'smooth'
-        });
-      });
-    });
+    }
+  }
+  
+  document.getElementById('outputText').value = result;
+  showToast('Encoded successfully! ✨');
+}
+
+function decodeText() {
+  const input = document.getElementById('inputText').value;
+  let result = '';
+  
+  for (let char of input) {
+    if (char === '␣') {
+      result += ' ';
+    } else {
+      const upper = char.toUpperCase();
+      if (decodeMap[upper]) {
+        result += char.toLowerCase() === char ? decodeMap[upper].toLowerCase() : decodeMap[upper];
+      } else {
+        result += char;
+      }
+    }
+  }
+  
+  document.getElementById('outputText').value = result;
+  showToast('Decoded successfully! 🔓');
+}
+
+function clearText() {
+  document.getElementById('inputText').value = '';
+  document.getElementById('outputText').value = '';
+  showToast('Cleared! 🗑️');
+}
+
+async function copyOutput() {
+  try {
+    await navigator.clipboard.writeText(document.getElementById('outputText').value);
+    showToast('Copied to clipboard! 📋');
+  } catch {
+    fallbackCopy();
+  }
+}
+
+function fallbackCopy() {
+  const textArea = document.createElement('textarea');
+  textArea.value = document.getElementById('outputText').value;
+  document.body.appendChild(textArea);
+  textArea.select();
+  document.execCommand('copy');
+  document.body.removeChild(textArea);
+  showToast('Copied! 📋');
+}
+
+function shareOutput() {
+  const text = document.getElementById('outputText').value;
+  if (navigator.share) {
+    navigator.share({ title: 'Rahlex Message', text });
+  } else {
+    copyOutput();
+  }
+}
+
+function exportTxt() {
+  const text = document.getElementById('outputText').value;
+  const blob = new Blob([text], { type: 'text/plain' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `rahlex-${Date.now()}.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('File saved! 💾');
+}
+
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.className = 'toast show';
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Keyboard shortcuts
+document.addEventListener('keydown', (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      document.activeElement.id === 'inputText' ? encodeText() : decodeText();
+    }
+  }
+});
+
+// Auto-resize textareas
+function resizeTextareas() {
+  document.querySelectorAll('.textarea').forEach(el => {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 300) + 'px';
   });
+}
+
+document.addEventListener('DOMContentLoaded', resizeTextareas);
+document.querySelectorAll('.textarea').forEach(el => 
+  el.addEventListener('input', resizeTextareas)
+);
 </script>
 
 </body>
