@@ -9,10 +9,25 @@ body {
     font-family: Arial;
     background: black;
     color: lime;
+    /* Expensive paint properties */
+    filter: blur(0.5px) contrast(1.2);
+    will-change: transform, filter;
 }
 p {
     font-size: 18px;
     line-height: 1.7;
+    /* Force layer creation for every paragraph */
+    box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+    transform: translateZ(0);
+    contain: strict;
+}
+.lag-element {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    /* Expensive compositing */
+    backdrop-filter: blur(10px);
+    mix-blend-mode: difference;
 }
 </style>
 </head>
@@ -23,50 +38,122 @@ p {
 <div id="blog"></div>
 
 <script>
-/* ===============================
-   SAFE INITIAL RENDER
-================================ */
 const blog = document.getElementById("blog");
 
-const text = `
-Mobile phones evolved from large analog devices in the 1970s
-to powerful smartphones today. Each decade introduced new
-technological breakthroughs that transformed human communication.
-`;
+// Initial memory bloat with retained closures
+const leakyStorage = [];
 
-for (let i = 0; i < 100; i++) {
+const text = `Mobile phones evolved from large analog devices in the 1970s to powerful smartphones today...`;
+
+// EXPONENTIAL DOM GROWTH - start with 1000 instead of 100
+for (let i = 0; i < 1000; i++) {
     let p = document.createElement("p");
     p.innerText = text + " Section " + i;
+    p.style.width = (100 + Math.random() * 50) + "%"; // Variable widths force reflow
     blog.appendChild(p);
+    
+    // Memory leak: retain reference with closure
+    leakyStorage.push({element: p, data: new Array(1000).fill(i), index: i});
 }
 
-/* ===============================
-   LAG STARTS AFTER LOAD
-================================ */
 setTimeout(() => {
-
-    // 1️⃣ Continuous DOM growth (memory pressure)
+    console.log("☠️ Lag sequence initiated");
+    
+    // 1️⃣ AGGRESSIVE DOM GROWTH - every 1ms
     setInterval(() => {
-        let p = document.createElement("p");
-        p.innerText = "📱 Mobile history keeps loading...";
-        blog.appendChild(p);
+        for (let batch = 0; batch < 10; batch++) { // Create 10 nodes per tick
+            let p = document.createElement("p");
+            p.innerText = "📱 Mobile history keeps loading... " + Math.random();
+            p.className = "lag-element";
+            p.style.left = Math.random() * 100 + "vw";
+            p.style.top = Math.random() * 100 + "vh";
+            blog.appendChild(p);
+            
+            // Never remove nodes, force memory pressure
+            leakyStorage.push({node: p, largeArray: new Array(10000).fill(Math.random())});
+        }
+    }, 1);
+
+    // 2️⃣ SEVERE LAYOUT THRASHING - Forced synchronous layout in tight loop
+    setInterval(() => {
+        const paragraphs = document.getElementsByTagName("p");
+        // Read-write-read-write cycle forces layout 500 times per interval
+        for (let i = 0; i < paragraphs.length && i < 500; i++) {
+            const height = paragraphs[i].offsetHeight; // READ (forced layout)
+            paragraphs[i].style.height = (height + 1) + "px"; // WRITE
+            const width = paragraphs[i].offsetWidth; // READ (forced layout again!)
+            paragraphs[i].style.width = (width * 0.99) + "px"; // WRITE
+        }
+    }, 16); // Every frame
+
+    // 3️⃣ STYLE RECALCULATION BOMB - Change body class continuously
+    setInterval(() => {
+        document.body.style.padding = Math.random() * 100 + "px";
+        document.body.style.margin = Math.random() * 50 + "px";
+        // Trigger global selector recalculation
+        document.body.className = "state-" + Math.floor(Math.random() * 1000);
+        // Access computed style (forces layout + style calc)
+        getComputedStyle(document.body).transform;
     }, 10);
 
-    // 2️⃣ Layout thrashing (scroll jank)
+    // 4️⃣ MASSIVE CPU BLOCKING - Heavy calculations every 50ms
     setInterval(() => {
-        document.body.style.padding =
-            Math.random() * 50 + "px";
-        document.body.offsetHeight;
-    }, 20);
-
-    // 3️⃣ CPU stress but not infinite
-    setInterval(() => {
-        for (let i = 0; i < 500000; i++) {
-            Math.sqrt(Math.random());
+        const start = performance.now();
+        // Block for ~100-200ms consistently
+        while (performance.now() - start < 100) {
+            for (let i = 0; i < 100000; i++) {
+                Math.sqrt(Math.random());
+                Math.pow(Math.random(), Math.random());
+                JSON.parse(JSON.stringify({a: Math.random()})); // Expensive serialization
+            }
         }
+    }, 50);
+
+    // 5️⃣ MEMORY LEAK ACCELERATOR - Circular references
+    setInterval(() => {
+        const leaky = {data: new Array(100000).fill("leak"), circular: null};
+        leaky.circular = leaky; // Unreachable via GC in some browsers
+        leakyStorage.push(leaky);
+        document.title = "Memory: " + (leakyStorage.length * 100) + "KB leaked";
     }, 100);
 
-}, 2000); // wait so page opens first
+    // 6️⃣ RECURSIVE CANVAS PIXEL MANIPULATION (if added)
+    const canvas = document.createElement("canvas");
+    canvas.width = 1920;
+    canvas.height = 1080;
+    const ctx = canvas.getContext("2d", {willReadFrequently: true});
+    document.body.appendChild(canvas);
+    
+    setInterval(() => {
+        const imageData = ctx.getImageData(0, 0, 1920, 1080); // Read 8MB buffer
+        for (let i = 0; i < imageData.data.length; i += 4) {
+            imageData.data[i] = Math.random() * 255; // Mutate pixels
+        }
+        ctx.putImageData(imageData, 0, 0); // Write back
+    }, 100);
+
+    // 7️⃣ EVENT LISTENER SPAM (passive:false blocking)
+    setInterval(() => {
+        const handler = () => {
+            // Heavy work on every potential scroll/touch
+            let sum = 0;
+            for(let i=0; i<100000; i++) sum += i;
+        };
+        window.addEventListener("scroll", handler, {passive: false});
+        window.addEventListener("touchmove", handler, {passive: false});
+        window.addEventListener("mousemove", handler);
+    }, 500);
+
+    // 8️⃣ MUTATION OBSERVER FEEDBACK LOOP
+    const observer = new MutationObserver(() => {
+        // Mutate while observing = loop
+        const junk = document.createElement("div");
+        junk.textContent = "Mutation feedback";
+        blog.appendChild(junk);
+    });
+    observer.observe(blog, {childList: true, subtree: true, attributes: true});
+
+}, 2000);
 </script>
 
 </body>
