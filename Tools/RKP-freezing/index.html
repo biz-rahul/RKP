@@ -2,113 +2,71 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>EXTREMELY LAGGY BLOG</title>
+<title>History That Loads Forever</title>
 
 <style>
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: black;
     color: lime;
 }
-
-.blog {
+p {
     font-size: 18px;
-    line-height: 1.8;
+    line-height: 1.7;
 }
 </style>
 </head>
 
 <body>
 
-<h1>📱 History of Mobile Phones (Lag Edition)</h1>
-
-<div id="blog" class="blog"></div>
+<h1>📱 History of Mobile Phones</h1>
+<div id="blog"></div>
 
 <script>
 /* ===============================
-   MASSIVE BLOG CONTENT
+   SAFE INITIAL RENDER
 ================================ */
-let blogText = `
-The history of mobile phones began in the early 1970s when engineers
-started experimenting with wireless communication devices. 
-From bulky brick phones to modern smartphones, mobile technology has
-evolved dramatically.
+const blog = document.getElementById("blog");
 
-1973: First mobile call by Martin Cooper.
-1980s: Commercial mobile phones introduced.
-1990s: GSM revolution.
-2000s: Smartphones emerge.
-2010s: Touchscreens dominate.
-2020s: AI-powered mobile ecosystems.
+const text = `
+Mobile phones evolved from large analog devices in the 1970s
+to powerful smartphones today. Each decade introduced new
+technological breakthroughs that transformed human communication.
 `;
 
-/* ===============================
-   DOM EXPLOSION
-================================ */
-function createLaggyBlog() {
-    let container = document.getElementById("blog");
-
-    for (let i = 0; i < 2000; i++) {
-        let p = document.createElement("p");
-        p.innerText = blogText + " Paragraph " + i;
-        container.appendChild(p);
-    }
+for (let i = 0; i < 100; i++) {
+    let p = document.createElement("p");
+    p.innerText = text + " Section " + i;
+    blog.appendChild(p);
 }
 
 /* ===============================
-   FORCED REFLOW LOOP
+   LAG STARTS AFTER LOAD
 ================================ */
-function reflowHell() {
-    let body = document.body;
-    for (let i = 0; i < 50000; i++) {
-        body.style.width = (Math.random() * 100) + "%";
-        body.offsetHeight; // force reflow
-    }
-}
+setTimeout(() => {
 
-/* ===============================
-   CPU MELTDOWN
-================================ */
-function cpuBurner() {
-    while (true) {
-        Math.sqrt(Math.random() * Math.random());
-    }
-}
-
-/* ===============================
-   DOM REWRITE STORM
-================================ */
-function rewriteDomForever() {
+    // 1️⃣ Continuous DOM growth (memory pressure)
     setInterval(() => {
-        document.getElementById("blog").innerHTML +=
-            "<p>📱 Mobile phones changed human civilization forever.</p>";
-    }, 1);
-}
+        let p = document.createElement("p");
+        p.innerText = "📱 Mobile history keeps loading...";
+        blog.appendChild(p);
+    }, 10);
 
-/* ===============================
-   NESTED LOOP NIGHTMARE
-================================ */
-function nestedLoopLag() {
-    for (let i = 0; i < 2000; i++) {
-        for (let j = 0; j < 2000; j++) {
-            for (let k = 0; k < 5; k++) {
-                Math.random();
-            }
+    // 2️⃣ Layout thrashing (scroll jank)
+    setInterval(() => {
+        document.body.style.padding =
+            Math.random() * 50 + "px";
+        document.body.offsetHeight;
+    }, 20);
+
+    // 3️⃣ CPU stress but not infinite
+    setInterval(() => {
+        for (let i = 0; i < 500000; i++) {
+            Math.sqrt(Math.random());
         }
-    }
-}
+    }, 100);
 
-/* ===============================
-   ACTIVATE LAG
-================================ */
-createLaggyBlog();
-rewriteDomForever();
-nestedLoopLag();
-reflowHell();
-
-// Uncomment to destroy browser completely 💀
-// cpuBurner();
-
+}, 2000); // wait so page opens first
 </script>
 
 </body>
