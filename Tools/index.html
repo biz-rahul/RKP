@@ -6,16 +6,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --bg: #0f0a12;
-      --bg-gradient: radial-gradient(circle at top, #2a1220 0%, var(--bg) 70%);
-      --card: rgba(255, 255, 255, 0.08);
-      --card-glow: rgba(255, 95, 162, 0.3);
-      --accent: #ff5fa2;
-      --accent-glow: #ff8fc4;
-      --text: #ffe6f2;
-      --text-muted: #ffb3d9;
-      --border: rgba(255, 95, 162, 0.2);
-      --blur: blur(20px);
+      --bg-primary: #0a0015;
+      --bg-secondary: radial-gradient(ellipse at top, #1a0a2e 0%, #0a0015 60%);
+      --neon-pink: #ff00ff;
+      --neon-purple: #8a2be2;
+      --neon-glow: #ff69b4;
+      --glass: rgba(255, 255, 255, 0.1);
+      --glass-border: rgba(255, 0, 255, 0.3);
+      --text-glow: #ffffff;
+      --text-primary: #e6d9ff;
+      --text-secondary: #b8a7d4;
+      --blur-soft: blur(25px);
+      --blur-heavy: blur(40px);
     }
 
     * {
@@ -25,161 +27,292 @@
     }
 
     body {
-      font-family: system-ui, -apple-system, sans-serif;
+      font-family: 'Segoe UI', -apple-system, sans-serif;
       min-height: 100vh;
-      background: var(--bg-gradient);
-      color: var(--text);
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(255,0,255,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(138,43,226,0.1) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255,105,180,0.05) 0%, transparent 50%);
+      z-index: -1;
+      animation: bgShift 20s ease-in-out infinite alternate;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      padding: 20px;
-      overflow-x: hidden;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 1000px;
+      position: relative;
     }
 
     header {
       text-align: center;
-      margin-bottom: 40px;
-      animation: fadeInUp 1s ease-out;
+      margin-bottom: 50px;
+      animation: glowPulse 3s ease-in-out infinite alternate;
     }
 
     h1 {
-      font-size: clamp(2rem, 5vw, 3.5rem);
-      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 900;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple), var(--neon-glow), var(--neon-pink));
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      margin: 0;
+      text-shadow: 
+        0 0 10px var(--neon-glow),
+        0 0 20px var(--neon-pink),
+        0 0 40px var(--neon-purple);
+      animation: gradientShift 4s ease infinite;
+      position: relative;
+    }
+
+    h1::after {
+      content: '✨';
+      position: absolute;
+      top: -10px;
+      right: -40px;
+      font-size: 2rem;
+      animation: sparkle 2s ease-in-out infinite;
     }
 
     .tools-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 25px;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px;
       width: 100%;
+      max-width: 1000px;
     }
 
     .tool-card {
-      background: var(--card);
-      backdrop-filter: var(--blur);
-      border: 1px solid var(--border);
-      border-radius: 24px;
-      padding: 28px;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       position: relative;
+      background: var(--glass);
+      backdrop-filter: var(--blur-soft);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 36px 28px;
+      transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
       overflow: hidden;
-      animation: fadeInUp 0.8s ease-out forwards;
-      opacity: 0;
-      transform: translateY(30px);
+      transform-origin: center;
     }
-
-    .tool-card:nth-child(1) { animation-delay: 0.1s; }
-    .tool-card:nth-child(2) { animation-delay: 0.2s; }
 
     .tool-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-      transition: left 0.6s;
-    }
-
-    .tool-card:hover::before {
-      left: 100%;
+      inset: 0;
+      background: linear-gradient(45deg, transparent 30%, var(--neon-glow) 50%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.6s;
+      transform: translateX(-100%) translateY(-100%) rotate(45deg);
     }
 
     .tool-card:hover {
-      transform: translateY(-12px) scale(1.02);
-      box-shadow: 0 32px 64px var(--card-glow);
-      border-color: var(--accent-glow);
+      transform: translateY(-20px) rotateX(5deg) rotateY(5deg);
+      box-shadow: 
+        0 40px 80px rgba(255, 0, 255, 0.4),
+        0 0 60px var(--neon-glow),
+        inset 0 0 40px rgba(255, 105, 180, 0.2);
+      border-color: var(--neon-pink);
+    }
+
+    .tool-card:hover::before {
+      opacity: 1;
+      animation: shimmer 1.5s infinite;
     }
 
     .tool-title {
-      font-size: 1.4rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      color: var(--text);
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+      position: relative;
+      z-index: 2;
+    }
+
+    .tool-title::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+      transition: width 0.4s ease;
+    }
+
+    .tool-card:hover .tool-title::after {
+      width: 100%;
     }
 
     .tool-link {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+      font-size: 0.95rem;
+      color: var(--text-secondary);
       word-break: break-all;
-      margin-bottom: 24px;
+      margin-bottom: 28px;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+
+    .tool-card:hover .tool-link {
+      opacity: 1;
     }
 
     .open-btn {
-      width: 100%;
-      padding: 14px 20px;
-      border: none;
-      border-radius: 16px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-glow));
-      color: #1a0010;
-      font-weight: 700;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: all 0.3s ease;
       position: relative;
+      width: 100%;
+      padding: 18px 24px;
+      border: 2px solid transparent;
+      border-radius: 20px;
+      background: linear-gradient(var(--glass), var(--glass));
+      backdrop-filter: var(--blur-heavy);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
       overflow: hidden;
+      z-index: 2;
+    }
+
+    .open-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+      opacity: 0;
+      transition: opacity 0.4s;
     }
 
     .open-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 12px 28px var(--card-glow);
+      border-color: var(--neon-glow);
+      color: #1a0010;
+      transform: scale(1.05);
+      box-shadow: 0 15px 35px rgba(255, 0, 255, 0.4);
     }
 
-    .open-btn:active {
-      transform: translateY(-1px);
+    .open-btn:hover::before {
+      opacity: 0.9;
     }
 
     .watermark {
       text-align: center;
-      margin-top: 40px;
-      padding: 16px 24px;
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: var(--blur);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      font-size: 0.95rem;
-      color: var(--text-muted);
-      animation: fadeInUp 1.2s ease-out;
-      max-width: 300px;
-      margin: 40px auto 0;
+      margin-top: 60px;
+      padding: 20px 32px;
+      background: var(--glass);
+      backdrop-filter: var(--blur-soft);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      position: relative;
+      animation: float 6s ease-in-out infinite;
     }
 
-    @keyframes fadeInUp {
+    .watermark::before {
+      content: '👨‍💻';
+      margin-right: 12px;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bgShift {
+      0% { transform: scale(1) rotate(0deg); }
+      100% { transform: scale(1.05) rotate(1deg); }
+    }
+
+    @keyframes glowPulse {
+      0% { filter: drop-shadow(0 0 20px var(--neon-glow)); }
+      100% { filter: drop-shadow(0 0 40px var(--neon-pink)); }
+    }
+
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes sparkle {
+      0%, 100% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.3) rotate(180deg); }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+      100% { transform: translateX(200%) translateY(200%) rotate(45deg); }
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .tool-card {
+      animation: cardSlideIn 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      opacity: 0;
+      transform: translateY(50px) scale(0.9);
+    }
+
+    .tool-card:nth-child(1) { animation-delay: 0.2s; }
+    .tool-card:nth-child(2) { animation-delay: 0.4s; }
+
+    @keyframes cardSlideIn {
       to {
         opacity: 1;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
       }
     }
 
     @media (max-width: 768px) {
-      body {
+      .container {
         padding: 15px;
+        justify-content: flex-start;
+        padding-top: 40px;
+        gap: 30px;
       }
 
       .tools-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 25px;
       }
 
-      .tool-card {
-        padding: 24px;
+      h1 {
+        margin-bottom: 20px;
       }
 
       .watermark {
-        margin-top: 30px;
-        padding: 14px 20px;
-        font-size: 0.9rem;
+        margin-top: 40px;
+        padding: 16px 24px;
+        font-size: 1rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -187,7 +320,7 @@
 <body>
   <div class="container">
     <header>
-      <h1>🩷 My Tools</h1>
+      <h1>My Tools</h1>
     </header>
     <div class="tools-grid" id="toolsGrid"></div>
     <div class="watermark">
@@ -201,7 +334,6 @@
         name: "Precise Location Finder",
         link: "https://rahulpuri.fun/Tools/LocationFinder"
       }
-      // Secret Code removed as requested
     ];
 
     function renderTools() {
@@ -211,13 +343,13 @@
       tools.forEach((tool, index) => {
         const card = document.createElement("div");
         card.className = "tool-card";
-        card.style.animationDelay = `${index * 0.1 + 0.3}s`;
+        card.style.animationDelay = `${index * 0.2 + 0.1}s`;
 
         card.innerHTML = `
           <div class="tool-title">${tool.name}</div>
           <div class="tool-link">${tool.link}</div>
-          <button class="open-btn" onclick="window.open('${tool.link}', '_blank')">
-            Open →
+          <button class="open-btn" onclick="window.open('${tool.link}', '_blank'); event.stopPropagation();">
+            🚀 Launch Tool
           </button>
         `;
 
@@ -226,94 +358,24 @@
     }
 
     renderTools();
+
+    // 3D tilt effect on mouse move
+    document.querySelectorAll('.tool-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-20px) scale(1.02)`;
+      });
+
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0) scale(1)';
+      });
+    });
   </script>
-</body>
-</html>    name:"Secret Code",
-    link:"https://rahulpuri.fun/Tools/SecretCode"
-  }
-];
-
-function renderTools(){
-  const grid = document.getElementById("toolsGrid");
-  grid.innerHTML = "";
-
-  tools.forEach(tool=>{
-    const card = document.createElement("div");
-    card.className = "tool-card";
-
-    card.innerHTML = `
-      <div>
-        <div class="tool-title">${tool.name}</div>
-        <div class="tool-link">${tool.link}</div>
-      </div>
-      <button class="open-btn" onclick="window.open('${tool.link}','_blank')">
-        Open
-      </button>
-    `;
-
-    grid.appendChild(card);
-  });
-}
-
-renderTools();
-</script></body>
-</html><!-- =============================== --><!-- SecretCode/index.html          --><!-- =============================== --><!DOCTYPE html><html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Secret Code</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"><style>
-body{
-  margin:0;
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:radial-gradient(circle at top, #2b0c1d, #12050c);
-  font-family:system-ui, -apple-system, Segoe UI, sans-serif;
-  color:#ffe6f2;
-}
-
-.card{
-  background:linear-gradient(145deg, #2a0f1f, #3a1230);
-  padding:30px;
-  border-radius:20px;
-  width:100%;
-  max-width:380px;
-  box-shadow:0 30px 70px rgba(0,0,0,.6);
-  text-align:center;
-}
-
-h2{
-  margin-top:0;
-  color:#ff7ab8;
-}
-
-input{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:none;
-  outline:none;
-  font-size:1rem;
-  margin-top:15px;
-}
-
-button{
-  margin-top:18px;
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:12px;
-  background:linear-gradient(135deg,#ff5fa2,#ff8fc4);
-  font-size:1rem;
-  font-weight:700;
-  cursor:pointer;
-}
-
-.result{
-  margin-top:18px;
-  font-weight:600;
-}
-</style></head><body><div class="card">
 </body>
 </html>
