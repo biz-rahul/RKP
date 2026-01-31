@@ -1,6 +1,6 @@
 <?php
 // ===== BASIC SECURITY =====
-$SECRET_TOKEN = "MY_SECRET_KEY";
+$SECRET_TOKEN = "fuckyou";
 
 // Read raw POST body
 $raw = file_get_contents("php://input");
