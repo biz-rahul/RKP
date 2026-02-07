@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Information Collector</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, Arial, sans-serif;
+            background: #020617;
+            color: #e5e7eb;
+        }
+        .container {
+            max-width: 900px;
+            margin: 80px auto;
+            padding: 40px;
+            background: #020617;
+            border-radius: 14px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.6);
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        p {
+            line-height: 1.7;
+            font-size: 16px;
+            color: #cbd5f5;
+        }
+        button {
+            margin-top: 30px;
+            padding: 14px 26px;
+            font-size: 16px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            background: #22c55e;
+            color: #022c22;
+        }
+        button:hover {
+            background: #16a34a;
+        }
+        .note {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>Device Information Analysis</h1>
+
+    <p>
+        This website is designed for you to know about your phone and browser environment.
+        Please wait — a <strong>.json</strong> file is being prepared and will be downloaded
+        to your device after permission.
+    </p>
+
+    <p>
+        The file contains technical information such as battery status, system metadata,
+        browser capabilities, screen properties, network hints, performance data, and
+        environment configuration.
+    </p>
+
+    <p class="note">
+        No information is uploaded anywhere.  
+        All data remains on your device and is generated using standard browser APIs.
+    </p>
+
+    <button onclick="generateJSON()">Allow & Download JSON</button>
+</div>
+
+<script>
+async function generateJSON() {
+
+    const info = {};
+
+    /* =========================
+       BROWSER INFORMATION
+    ========================== */
+    info.browser = {
+        userAgent: navigator.userAgent,
+        appName: navigator.appName,
+        appVersion: navigator.appVersion,
+        vendor: navigator.vendor,
+        platform: navigator.platform,
+        language: navigator.language,
+        languages: navigator.languages,
+        cookieEnabled: navigator.cookieEnabled,
+        online: navigator.onLine,
+        doNotTrack: navigator.doNotTrack
+    };
+
+    /* =========================
+       OPERATING ENVIRONMENT
+    ========================== */
+    info.environment = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        localTime: new Date().toString(),
+        utcTime: new Date().toUTCString(),
+        locale: Intl.DateTimeFormat().resolvedOptions().locale
+    };
+
+    /* =========================
+       HARDWARE (APPROXIMATE)
+    ========================== */
+    info.hardware = {
+        deviceMemoryGB: navigator.deviceMemory || null,
+        hardwareConcurrency: navigator.hardwareConcurrency || null,
+        maxTouchPoints: navigator.maxTouchPoints
+    };
+
+    /* =========================
+       SCREEN & DISPLAY
+    ========================== */
+    info.screen = {
+        width: screen.width,
+        height: screen.height,
+        availableWidth: screen.availWidth,
+        availableHeight: screen.availHeight,
+        colorDepth: screen.colorDepth,
+        pixelDepth: screen.pixelDepth,
+        orientation: screen.orientation ? screen.orientation.type : null
+    };
+
+    /* =========================
+       NETWORK INFORMATION
+    ========================== */
+    if (navigator.connection) {
+        info.network = {
+            effectiveType: navigator.connection.effectiveType,
+            downlinkMbps: navigator.connection.downlink,
+            rttMs: navigator.connection.rtt,
+            saveData: navigator.connection.saveData
+        };
+    }
+
+    /* =========================
+       BATTERY INFORMATION
+    ========================== */
+    if (navigator.getBattery) {
+        const battery = await navigator.getBattery();
+        info.battery = {
+            charging: battery.charging,
+            level: battery.level,
+            chargingTimeSeconds: battery.chargingTime,
+            dischargingTimeSeconds: battery.dischargingTime
+        };
+    }
+
+    /* =========================
+       STORAGE ESTIMATION
+    ========================== */
+    if (navigator.storage && navigator.storage.estimate) {
+        const storage = await navigator.storage.estimate();
+        info.storage = {
+            quotaBytes: storage.quota,
+            usageBytes: storage.usage,
+            usageDetails: storage.usageDetails || null
+        };
+    }
+
+    /* =========================
+       PERFORMANCE METRICS
+    ========================== */
+    if (performance && performance.timing) {
+        info.performance = {
+            navigationStart: performance.timing.navigationStart,
+            domContentLoaded: performance.timing.domContentLoadedEventEnd,
+            loadEventEnd: performance.timing.loadEventEnd,
+            totalLoadTimeMs:
+                performance.timing.loadEventEnd -
+                performance.timing.navigationStart
+        };
+    }
+
+    /* =========================
+       FEATURE & SENSOR SUPPORT
+    ========================== */
+    info.capabilities = {
+        webGL: !!window.WebGLRenderingContext,
+        webRTC: !!window.RTCPeerConnection,
+        bluetooth: !!navigator.bluetooth,
+        usb: !!navigator.usb,
+        mediaDevices: !!navigator.mediaDevices,
+        accelerometer: "Accelerometer" in window,
+        gyroscope: "Gyroscope" in window,
+        magnetometer: "Magnetometer" in window
+    };
+
+    /* =========================
+       FINAL JSON DOWNLOAD
+    ========================== */
+    const jsonBlob = new Blob(
+        [JSON.stringify(info, null, 4)],
+        { type: "application/json" }
+    );
+
+    const url = URL.createObjectURL(jsonBlob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "device_information.json";
+
+    document.body.appendChild(link);
+    link.click();
+
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
