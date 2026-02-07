@@ -1,217 +1,293 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Device Information Collector</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Advanced Device & Environment Analyzer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, Arial, sans-serif;
-            background: #020617;
-            color: #e5e7eb;
-        }
-        .container {
-            max-width: 900px;
-            margin: 80px auto;
-            padding: 40px;
-            background: #020617;
-            border-radius: 14px;
-            box-shadow: 0 0 30px rgba(0,0,0,0.6);
-        }
-        h1 {
-            font-size: 28px;
-            margin-bottom: 20px;
-        }
-        p {
-            line-height: 1.7;
-            font-size: 16px;
-            color: #cbd5f5;
-        }
-        button {
-            margin-top: 30px;
-            padding: 14px 26px;
-            font-size: 16px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            background: #22c55e;
-            color: #022c22;
-        }
-        button:hover {
-            background: #16a34a;
-        }
-        .note {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #94a3b8;
-        }
-    </style>
+<style>
+body {
+    background: #020617;
+    color: #e5e7eb;
+    font-family: system-ui, Arial, sans-serif;
+}
+.container {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 40px;
+    background: #020617;
+    border-radius: 14px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.7);
+}
+h1 { font-size: 30px; }
+p { line-height: 1.8; color: #cbd5f5; }
+button {
+    margin-top: 30px;
+    padding: 14px 30px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
+    background: #22c55e;
+    color: #022c22;
+}
+button:hover { background: #16a34a; }
+.note { font-size: 14px; color: #94a3b8; margin-top: 15px; }
+</style>
 </head>
 
 <body>
 
 <div class="container">
-    <h1>Device Information Analysis</h1>
+<h1>Advanced Device Information System</h1>
 
-    <p>
-        This website is designed for you to know about your phone and browser environment.
-        Please wait — a <strong>.json</strong> file is being prepared and will be downloaded
-        to your device after permission.
-    </p>
+<p>
+This website is designed for you to know about your phone, browser, system environment,
+and hardware capabilities. Please wait — a highly detailed <strong>.json</strong> file
+will be generated and downloaded locally on your device.
+</p>
 
-    <p>
-        The file contains technical information such as battery status, system metadata,
-        browser capabilities, screen properties, network hints, performance data, and
-        environment configuration.
-    </p>
+<p class="note">
+No data is transmitted externally. All analysis is executed locally using standardized browser APIs.
+</p>
 
-    <p class="note">
-        No information is uploaded anywhere.  
-        All data remains on your device and is generated using standard browser APIs.
-    </p>
-
-    <button onclick="generateJSON()">Allow & Download JSON</button>
+<button onclick="analyze()">Allow & Download JSON</button>
 </div>
 
 <script>
-async function generateJSON() {
+async function analyze() {
 
-    const info = {};
+const data = {};
 
-    /* =========================
-       BROWSER INFORMATION
-    ========================== */
-    info.browser = {
-        userAgent: navigator.userAgent,
-        appName: navigator.appName,
-        appVersion: navigator.appVersion,
-        vendor: navigator.vendor,
-        platform: navigator.platform,
-        language: navigator.language,
-        languages: navigator.languages,
-        cookieEnabled: navigator.cookieEnabled,
-        online: navigator.onLine,
-        doNotTrack: navigator.doNotTrack
+/* ==================================================
+   META & SESSION
+================================================== */
+data.meta = {
+    generatedAtLocal: new Date().toString(),
+    generatedAtUTC: new Date().toUTCString(),
+    unixTimestamp: Date.now(),
+    secureContext: window.isSecureContext,
+    pageVisibility: document.visibilityState,
+    referrer: document.referrer || null
+};
+
+/* ==================================================
+   NAVIGATOR CORE
+================================================== */
+data.navigator = {
+    userAgent: navigator.userAgent,
+    appName: navigator.appName,
+    appVersion: navigator.appVersion,
+    vendor: navigator.vendor,
+    platform: navigator.platform,
+    product: navigator.product,
+    language: navigator.language,
+    languages: navigator.languages,
+    doNotTrack: navigator.doNotTrack,
+    cookieEnabled: navigator.cookieEnabled,
+    onLine: navigator.onLine,
+    maxTouchPoints: navigator.maxTouchPoints,
+    hardwareConcurrency: navigator.hardwareConcurrency || null,
+    deviceMemoryGB: navigator.deviceMemory || null
+};
+
+/* ==================================================
+   LOCALE & INTERNATIONALIZATION
+================================================== */
+const intl = Intl.DateTimeFormat().resolvedOptions();
+data.internationalization = {
+    locale: intl.locale,
+    calendar: intl.calendar,
+    numberingSystem: intl.numberingSystem,
+    timeZone: intl.timeZone,
+    hourCycle: intl.hourCycle
+};
+
+/* ==================================================
+   SCREEN & DISPLAY
+================================================== */
+data.display = {
+    width: screen.width,
+    height: screen.height,
+    availableWidth: screen.availWidth,
+    availableHeight: screen.availHeight,
+    colorDepth: screen.colorDepth,
+    pixelDepth: screen.pixelDepth,
+    devicePixelRatio: window.devicePixelRatio,
+    orientation: screen.orientation ? screen.orientation.type : null
+};
+
+/* ==================================================
+   NETWORK INFORMATION
+================================================== */
+if (navigator.connection) {
+    data.network = {
+        effectiveType: navigator.connection.effectiveType,
+        downlinkMbps: navigator.connection.downlink,
+        rttMs: navigator.connection.rtt,
+        saveData: navigator.connection.saveData
     };
+}
 
-    /* =========================
-       OPERATING ENVIRONMENT
-    ========================== */
-    info.environment = {
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        localTime: new Date().toString(),
-        utcTime: new Date().toUTCString(),
-        locale: Intl.DateTimeFormat().resolvedOptions().locale
+/* ==================================================
+   BATTERY
+================================================== */
+if (navigator.getBattery) {
+    const b = await navigator.getBattery();
+    data.battery = {
+        charging: b.charging,
+        level: b.level,
+        chargingTimeSec: b.chargingTime,
+        dischargingTimeSec: b.dischargingTime
     };
+}
 
-    /* =========================
-       HARDWARE (APPROXIMATE)
-    ========================== */
-    info.hardware = {
-        deviceMemoryGB: navigator.deviceMemory || null,
-        hardwareConcurrency: navigator.hardwareConcurrency || null,
-        maxTouchPoints: navigator.maxTouchPoints
+/* ==================================================
+   STORAGE
+================================================== */
+if (navigator.storage && navigator.storage.estimate) {
+    const s = await navigator.storage.estimate();
+    data.storage = {
+        quotaBytes: s.quota,
+        usedBytes: s.usage,
+        persistent: navigator.storage.persisted
+            ? await navigator.storage.persisted()
+            : null
     };
+}
 
-    /* =========================
-       SCREEN & DISPLAY
-    ========================== */
-    info.screen = {
-        width: screen.width,
-        height: screen.height,
-        availableWidth: screen.availWidth,
-        availableHeight: screen.availHeight,
-        colorDepth: screen.colorDepth,
-        pixelDepth: screen.pixelDepth,
-        orientation: screen.orientation ? screen.orientation.type : null
+/* ==================================================
+   PERFORMANCE
+================================================== */
+if (performance && performance.timing) {
+    data.performance = {
+        navigationStart: performance.timing.navigationStart,
+        domInteractive: performance.timing.domInteractive,
+        domComplete: performance.timing.domComplete,
+        loadEventEnd: performance.timing.loadEventEnd,
+        totalLoadTimeMs:
+            performance.timing.loadEventEnd -
+            performance.timing.navigationStart
     };
+}
 
-    /* =========================
-       NETWORK INFORMATION
-    ========================== */
-    if (navigator.connection) {
-        info.network = {
-            effectiveType: navigator.connection.effectiveType,
-            downlinkMbps: navigator.connection.downlink,
-            rttMs: navigator.connection.rtt,
-            saveData: navigator.connection.saveData
-        };
+/* ==================================================
+   PERMISSIONS MATRIX
+================================================== */
+data.permissions = {};
+if (navigator.permissions) {
+    const perms = [
+        "geolocation","notifications","camera","microphone",
+        "clipboard-read","clipboard-write","accelerometer",
+        "gyroscope","magnetometer"
+    ];
+    for (const p of perms) {
+        try {
+            const r = await navigator.permissions.query({ name: p });
+            data.permissions[p] = r.state;
+        } catch {
+            data.permissions[p] = "unsupported";
+        }
     }
+}
 
-    /* =========================
-       BATTERY INFORMATION
-    ========================== */
-    if (navigator.getBattery) {
-        const battery = await navigator.getBattery();
-        info.battery = {
-            charging: battery.charging,
-            level: battery.level,
-            chargingTimeSeconds: battery.chargingTime,
-            dischargingTimeSeconds: battery.dischargingTime
+/* ==================================================
+   WEBGL GPU FINGERPRINT
+================================================== */
+(function(){
+    try {
+        const canvas = document.createElement("canvas");
+        const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+        if (!gl) return;
+
+        const dbg = gl.getExtension("WEBGL_debug_renderer_info");
+        data.webgl = {
+            vendor: dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : null,
+            renderer: dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : null,
+            version: gl.getParameter(gl.VERSION),
+            shadingLanguage: gl.getParameter(gl.SHADING_LANGUAGE_VERSION)
         };
+    } catch {}
+})();
+
+/* ==================================================
+   MEDIA CAPABILITIES
+================================================== */
+data.mediaSupport = {
+    audio: {
+        mp3: !!document.createElement("audio").canPlayType("audio/mpeg"),
+        wav: !!document.createElement("audio").canPlayType("audio/wav"),
+        ogg: !!document.createElement("audio").canPlayType("audio/ogg")
+    },
+    video: {
+        mp4: !!document.createElement("video").canPlayType("video/mp4"),
+        webm: !!document.createElement("video").canPlayType("video/webm"),
+        ogg: !!document.createElement("video").canPlayType("video/ogg")
     }
+};
 
-    /* =========================
-       STORAGE ESTIMATION
-    ========================== */
-    if (navigator.storage && navigator.storage.estimate) {
-        const storage = await navigator.storage.estimate();
-        info.storage = {
-            quotaBytes: storage.quota,
-            usageBytes: storage.usage,
-            usageDetails: storage.usageDetails || null
-        };
+/* ==================================================
+   PLUGINS & MIME TYPES (LEGACY SUPPORT)
+================================================== */
+data.plugins = [];
+if (navigator.plugins) {
+    for (let p of navigator.plugins) {
+        data.plugins.push({
+            name: p.name,
+            description: p.description,
+            filename: p.filename
+        });
     }
+}
 
-    /* =========================
-       PERFORMANCE METRICS
-    ========================== */
-    if (performance && performance.timing) {
-        info.performance = {
-            navigationStart: performance.timing.navigationStart,
-            domContentLoaded: performance.timing.domContentLoadedEventEnd,
-            loadEventEnd: performance.timing.loadEventEnd,
-            totalLoadTimeMs:
-                performance.timing.loadEventEnd -
-                performance.timing.navigationStart
-        };
+data.mimeTypes = [];
+if (navigator.mimeTypes) {
+    for (let m of navigator.mimeTypes) {
+        data.mimeTypes.push({
+            type: m.type,
+            description: m.description,
+            suffixes: m.suffixes
+        });
     }
+}
 
-    /* =========================
-       FEATURE & SENSOR SUPPORT
-    ========================== */
-    info.capabilities = {
-        webGL: !!window.WebGLRenderingContext,
-        webRTC: !!window.RTCPeerConnection,
-        bluetooth: !!navigator.bluetooth,
-        usb: !!navigator.usb,
-        mediaDevices: !!navigator.mediaDevices,
-        accelerometer: "Accelerometer" in window,
-        gyroscope: "Gyroscope" in window,
-        magnetometer: "Magnetometer" in window
-    };
+/* ==================================================
+   GEOLOCATION (ONLY IF USER ALLOWS)
+================================================== */
+data.geolocation = "not_requested";
+if (navigator.geolocation) {
+    await new Promise(resolve => {
+        navigator.geolocation.getCurrentPosition(
+            pos => {
+                data.geolocation = {
+                    latitude: pos.coords.latitude,
+                    longitude: pos.coords.longitude,
+                    accuracyMeters: pos.coords.accuracy
+                };
+                resolve();
+            },
+            () => resolve(),
+            { timeout: 3000 }
+        );
+    });
+}
 
-    /* =========================
-       FINAL JSON DOWNLOAD
-    ========================== */
-    const jsonBlob = new Blob(
-        [JSON.stringify(info, null, 4)],
-        { type: "application/json" }
-    );
+/* ==================================================
+   FINAL DOWNLOAD
+================================================== */
+const blob = new Blob(
+    [JSON.stringify(data, null, 4)],
+    { type: "application/json" }
+);
 
-    const url = URL.createObjectURL(jsonBlob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "device_information.json";
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
+const url = URL.createObjectURL(blob);
+const a = document.createElement("a");
+a.href = url;
+a.download = "advanced_device_information.json";
+document.body.appendChild(a);
+a.click();
+document.body.removeChild(a);
+URL.revokeObjectURL(url);
 }
 </script>
 
