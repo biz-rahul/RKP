@@ -84,61 +84,24 @@ h1 {
     }
 }
 
-/* ===== REGULAR VIEWER STYLE ===== */
+/* ===== REGULAR VIEWER ===== */
 
 .regular-viewer pre {
     background: #1e293b;
-    padding: 10px;
+    padding: 12px;
     border-radius: 6px;
     overflow-x: auto;
 }
 
-/* ===== CONTACTS VIEWER STYLE ===== */
-
-.contacts-viewer .contact-card {
-    background: #1e293b;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-}
-
-/* ===== SMS VIEWER STYLE ===== */
-
-.sms-viewer .message {
-    background: #334155;
-    padding: 10px;
-    border-radius: 15px;
-    margin-bottom: 8px;
-}
-
-/* ===== CALL VIEWER STYLE ===== */
-
-.call-viewer .call-item {
-    background: #1e293b;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-}
-
-/* ===== DEVICE VIEWER STYLE ===== */
-
-.device-viewer .device-item {
-    background: #1e293b;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-}
-
-/* ===== NOTIFICATION VIEWER STYLE ===== */
-
-.notification-viewer .notification-item {
-    background: #1e293b;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-}
-
 </style>
+
+<!-- ===== EXTERNAL VIEWER CSS FILES ===== -->
+
+<link rel="stylesheet" href="Contact/contacts-viewer.css">
+<link rel="stylesheet" href="Call/call-viewer.css">
+<link rel="stylesheet" href="Sms/sms-viewer.css">
+<link rel="stylesheet" href="Device/device-viewer.css">
+
 </head>
 <body>
 
@@ -149,13 +112,13 @@ h1 {
     </div>
 
     <div class="content">
+
         <div id="viewerOptions" class="viewer-options">
             <button onclick="openViewer('regular')">Open in Regular Viewer</button>
             <button onclick="openViewer('sms')">Open in SMS Viewer</button>
             <button onclick="openViewer('call')">Open in Call Viewer</button>
             <button onclick="openViewer('contacts')">Open in Contacts Viewer</button>
             <button onclick="openViewer('device')">Open in Device Viewer</button>
-            <button onclick="openViewer('notification')">Open in Notification Viewer</button>
         </div>
 
         <div id="viewerContainer"></div>
@@ -163,6 +126,8 @@ h1 {
 </div>
 
 <script>
+
+/* ===== CORE CONFIG ===== */
 
 const owner = "MOFO-UG";
 const repo = "ControlTheWorld";
@@ -238,13 +203,10 @@ function openViewer(type) {
         case "device":
             renderDevice(container);
             break;
-        case "notification":
-            renderNotification(container);
-            break;
     }
 }
 
-/* ===== REGULAR VIEWER JS ===== */
+/* ===== REGULAR VIEWER ===== */
 
 function renderRegular(container) {
     const pre = document.createElement("pre");
@@ -252,68 +214,16 @@ function renderRegular(container) {
     container.appendChild(pre);
 }
 
-/* ===== CONTACTS VIEWER JS ===== */
-
-function renderContacts(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(contact => {
-        const card = document.createElement("div");
-        card.className = "contact-card";
-        card.innerHTML = `<strong>${contact.name || "Unknown"}</strong><br>${contact.phone || ""}`;
-        container.appendChild(card);
-    });
-}
-
-/* ===== SMS VIEWER JS ===== */
-
-function renderSMS(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(msg => {
-        const div = document.createElement("div");
-        div.className = "message";
-        div.innerText = msg.message || JSON.stringify(msg);
-        container.appendChild(div);
-    });
-}
-
-/* ===== CALL VIEWER JS ===== */
-
-function renderCall(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(call => {
-        const div = document.createElement("div");
-        div.className = "call-item";
-        div.innerHTML = `${call.name || "Unknown"} - ${call.duration || ""}`;
-        container.appendChild(div);
-    });
-}
-
-/* ===== DEVICE VIEWER JS ===== */
-
-function renderDevice(container) {
-    for (let key in currentJSON) {
-        const div = document.createElement("div");
-        div.className = "device-item";
-        div.innerHTML = `<strong>${key}</strong>: ${currentJSON[key]}`;
-        container.appendChild(div);
-    }
-}
-
-/* ===== NOTIFICATION VIEWER JS ===== */
-
-function renderNotification(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(notif => {
-        const div = document.createElement("div");
-        div.className = "notification-item";
-        div.innerText = notif.title || JSON.stringify(notif);
-        container.appendChild(div);
-    });
-}
-
 init();
 
 </script>
+
+<!-- ===== EXTERNAL VIEWER JS FILES ===== -->
+
+<script src="Contact/contacts-viewer.js"></script>
+<script src="Call/call-viewer.js"></script>
+<script src="Sms/sms-viewer.js"></script>
+<script src="Device/device-viewer.js"></script>
 
 </body>
 </html>
