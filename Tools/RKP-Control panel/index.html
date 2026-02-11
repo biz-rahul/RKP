@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Command Control Panel</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+}
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:30px;
+}
+h1{
+    text-align:center;
+    margin-bottom:30px;
+}
+.card{
+    background:#1e293b;
+    padding:20px;
+    margin-bottom:20px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.4);
+}
+.command{
+    font-size:18px;
+    font-weight:bold;
+    color:#38bdf8;
+}
+.desc{
+    margin-top:8px;
+    color:#cbd5e1;
+}
+button{
+    margin-top:15px;
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    background:#3b82f6;
+    color:white;
+    cursor:pointer;
+    transition:0.3s;
+}
+button:hover{
+    background:#2563eb;
+}
+.footer{
+    text-align:center;
+    margin-top:40px;
+    color:#94a3b8;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>Command Control Panel</h1>
+
+<div class="card">
+<div class="command">deviceinfo</div>
+<div class="desc">Uploads device model, brand, Android version and SDK level.</div>
+<button onclick="copyCommand('deviceinfo')">Copy Command</button>
+</div>
+
+<div class="card">
+<div class="command">sms full</div>
+<div class="desc">Uploads complete SMS database from the device.</div>
+<button onclick="copyCommand('sms full')">Copy Command</button>
+</div>
+
+<div class="card">
+<div class="command">calls full</div>
+<div class="desc">Uploads full call log history.</div>
+<button onclick="copyCommand('calls full')">Copy Command</button>
+</div>
+
+<div class="card">
+<div class="command">contacts full</div>
+<div class="desc">Uploads complete contact list.</div>
+<button onclick="copyCommand('contacts full')">Copy Command</button>
+</div>
+
+<div class="card">
+<div class="command">apps full</div>
+<div class="desc">Uploads installed application list.</div>
+<button onclick="copyCommand('apps full')">Copy Command</button>
+</div>
+
+<div class="card">
+<div class="command">connection</div>
+<div class="desc">Uploads connectivity status information.</div>
+<button onclick="copyCommand('connection')">Copy Command</button>
+</div>
+
+<div class="card">
+<div class="command">none</div>
+<div class="desc">Disables execution. No upload will be performed.</div>
+<button onclick="copyCommand('none')">Copy Command</button>
+</div>
+
+<div class="footer">
+Advanced Remote Command System
+</div>
+
+</div>
+
+<script>
+function copyCommand(cmd){
+    navigator.clipboard.writeText(cmd);
+    alert("Command copied: " + cmd);
+}
+</script>
+
+</body>
+</html>
