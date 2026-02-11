@@ -121,7 +121,9 @@ h1 {
 
 <script>
 
-/* ===== CORE CONFIG ===== */
+/* ================================
+   CONFIG
+================================ */
 
 const owner = "MOFO-UG";
 const repo = "ControlTheWorld";
@@ -131,70 +133,109 @@ let currentJSON = null;
 let currentPath = "";
 let currentFileName = "";
 
-/* ===== INIT ===== */
+/* ================================
+   INIT
+================================ */
+
+document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-    const repoInfo = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-    const repoData = await repoInfo.json();
-    defaultBranch = repoData.default_branch;
-    loadContents("");
+    try {
+        const repoInfo = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
+        const repoData = await repoInfo.json();
+
+        if (!repoData.default_branch) {
+            console.error("Repository not found or API limit exceeded.");
+            return;
+        }
+
+        defaultBranch = repoData.default_branch;
+        loadContents("");
+    } catch (err) {
+        console.error("Initialization error:", err);
+    }
 }
 
-/* ===== LOAD DIRECTORY ===== */
+/* ================================
+   LOAD DIRECTORY
+================================ */
 
 async function loadContents(path) {
     currentPath = path;
 
-    const response = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${defaultBranch}`
-    );
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${defaultBranch}`
+        );
 
-    const data = await response.json();
-    const fileList = document.getElementById("fileList");
-    fileList.innerHTML = "";
+        const data = await response.json();
 
-    if (path !== "") {
-        const backDiv = document.createElement("div");
-        backDiv.className = "folder";
-        backDiv.innerText = ".. (Back)";
-        backDiv.onclick = () => {
-            const parts = path.split("/");
-            parts.pop();
-            loadContents(parts.join("/"));
-        };
-        fileList.appendChild(backDiv);
-    }
+        const fileList = document.getElementById("fileList");
+        fileList.innerHTML = "";
 
-    data.forEach(item => {
-        const div = document.createElement("div");
-        div.className = item.type === "dir" ? "folder" : "file";
-        div.innerText = item.name;
-
-        if (item.type === "dir") {
-            div.onclick = () => loadContents(item.path);
-        } else if (item.name.endsWith(".json")) {
-            div.onclick = () => loadJSON(item.path, item.name);
+        /* Handle API errors */
+        if (!Array.isArray(data)) {
+            fileList.innerHTML = "<div style='color:red'>Unable to load directory (API error or rate limit).</div>";
+            console.error("API response:", data);
+            return;
         }
 
-        fileList.appendChild(div);
-    });
+        /* Back button */
+        if (path !== "") {
+            const backDiv = document.createElement("div");
+            backDiv.className = "folder";
+            backDiv.innerText = ".. (Back)";
+            backDiv.onclick = () => {
+                const parts = path.split("/");
+                parts.pop();
+                loadContents(parts.join("/"));
+            };
+            fileList.appendChild(backDiv);
+        }
+
+        data.forEach(item => {
+            const div = document.createElement("div");
+            div.className = item.type === "dir" ? "folder" : "file";
+            div.innerText = item.name;
+
+            if (item.type === "dir") {
+                div.onclick = () => loadContents(item.path);
+            } else if (item.name.endsWith(".json")) {
+                div.onclick = () => loadJSON(item.path, item.name);
+            }
+
+            fileList.appendChild(div);
+        });
+
+    } catch (err) {
+        console.error("Directory load error:", err);
+    }
 }
 
-/* ===== LOAD JSON ===== */
+/* ================================
+   LOAD JSON
+================================ */
 
 async function loadJSON(path, filename) {
-    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${defaultBranch}/${path}`;
-    const response = await fetch(rawUrl);
-    const text = await response.text();
+    try {
+        const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${defaultBranch}/${path}`;
+        const response = await fetch(rawUrl);
+        const text = await response.text();
 
-    currentJSON = JSON.parse(text);
-    currentFileName = filename;
+        currentJSON = JSON.parse(text);
+        currentFileName = filename;
 
-    generateViewerButtons(filename);
-    document.getElementById("viewerContainer").innerHTML = "";
+        generateViewerButtons(filename);
+        document.getElementById("viewerContainer").innerHTML = "";
+
+    } catch (err) {
+        console.error("JSON load error:", err);
+    }
 }
 
-/* ===== SMART VIEWER DETECTION ===== */
+/* ================================
+   SMART DETECTION
+================================ */
 
 function detectViewerType(filename) {
     const lower = filename.toLowerCase();
@@ -204,10 +245,8 @@ function detectViewerType(filename) {
     if (lower.startsWith("contact") || lower.startsWith("contacts")) return "contacts";
     if (lower.startsWith("device")) return "device";
 
-    return null; // fallback
+    return null;
 }
-
-/* ===== GENERATE BUTTONS ===== */
 
 function generateViewerButtons(filename) {
 
@@ -217,21 +256,17 @@ function generateViewerButtons(filename) {
 
     const detected = detectViewerType(filename);
 
-    // Always include Regular Viewer
     addViewerButton("regular", "Open in Regular Viewer");
 
     if (detected) {
         addViewerButton(detected, `Open in ${capitalize(detected)} Viewer`);
     } else {
-        // Detection failed → show all
         addViewerButton("sms", "Open in SMS Viewer");
         addViewerButton("call", "Open in Call Viewer");
         addViewerButton("contacts", "Open in Contacts Viewer");
         addViewerButton("device", "Open in Device Viewer");
     }
 }
-
-/* ===== ADD BUTTON HELPER ===== */
 
 function addViewerButton(type, label) {
     const btn = document.createElement("button");
@@ -240,7 +275,9 @@ function addViewerButton(type, label) {
     document.getElementById("viewerOptions").appendChild(btn);
 }
 
-/* ===== VIEWER ENGINE ===== */
+/* ================================
+   VIEWER ENGINE
+================================ */
 
 function openViewer(type) {
     const container = document.getElementById("viewerContainer");
@@ -268,7 +305,9 @@ function openViewer(type) {
     }
 }
 
-/* ===== REGULAR VIEWER ===== */
+/* ================================
+   REGULAR VIEWER
+================================ */
 
 function renderRegular(container) {
 
@@ -315,15 +354,16 @@ function renderRegular(container) {
     container.appendChild(wrapper);
 }
 
-/* ===== UTIL ===== */
+/* ================================
+   UTIL
+================================ */
 
 function capitalize(text) {
     return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-init();
-
 </script>
+
 
 
 
