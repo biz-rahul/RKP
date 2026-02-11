@@ -1,111 +1,55 @@
-
 /* =========================================
    CONFIGURATION
 ========================================= */
 
 const CONFIG = {
-    password: "fuckyou",
     redirectURL: "https://example.com",          // Change this
     contactURL: "https://example.com/contact"    // Change this
 };
 
 
 /* =========================================
-   ELEMENT REFERENCES
+   BOOT SCREEN AUTO TRANSITION
 ========================================= */
 
-const loginScreen = document.getElementById("loginScreen");
+const bootScreen = document.getElementById("bootScreen");
 const mainContent = document.getElementById("mainContent");
 const bootOutput = document.getElementById("bootOutput");
-const typedPassword = document.getElementById("typedPassword");
-const mobileInput = document.getElementById("mobileInput");
-const contactBtn = document.getElementById("contactOwnerBtn");
-
-let enteredPassword = "";
-let unlocked = false;
-
-
-/* =========================================
-   BOOT SEQUENCE
-========================================= */
 
 const bootText = `
 Booting Kali Linux 6.1.0-amd64...
 Loading kernel modules...
-Starting secure terminal services...
 Mounting encrypted partitions...
-Establishing secure shell...
-Bypassing firewall...
-Accessing root privileges...
+Starting secure services...
+Initializing remote command interface...
+Establishing encrypted channel...
+Firewall bypass successful.
+Root privileges granted.
 
-Authentication Required.
-
-Enter root password:
+Access Granted.
+Launching Control Panel...
 `;
 
 function typeBootText(text, speed = 18) {
     let i = 0;
+
     const interval = setInterval(() => {
         bootOutput.innerHTML += text.charAt(i);
         i++;
-        if (i >= text.length) clearInterval(interval);
+
+        if (i >= text.length) {
+            clearInterval(interval);
+
+            setTimeout(() => {
+                bootScreen.style.display = "none";
+                mainContent.classList.remove("hidden");
+            }, 1200);
+        }
+
     }, speed);
 }
 
 typeBootText(bootText);
-
-
-/* =========================================
-   MOBILE + DESKTOP PASSWORD SYSTEM
-========================================= */
-
-/* Focus input when screen tapped (mobile keyboard fix) */
-loginScreen.addEventListener("click", () => {
-    if (!unlocked) mobileInput.focus();
-});
-
-/* Keep focus active */
-setInterval(() => {
-    if (!unlocked) mobileInput.focus();
-}, 800);
-
-
-/* Sync typed characters */
-mobileInput.addEventListener("input", function () {
-    enteredPassword = mobileInput.value;
-    typedPassword.textContent = "*".repeat(enteredPassword.length);
-});
-
-
-/* Handle Enter key */
-mobileInput.addEventListener("keydown", function (e) {
-    if (e.key === "Enter") {
-        validatePassword();
-    }
-});
-
-
-function validatePassword() {
-
-    if (enteredPassword === CONFIG.password) {
-
-        bootOutput.innerHTML += "\n\nAccess Granted.\nLaunching Control Panel...\n";
-
-        setTimeout(() => {
-            loginScreen.style.display = "none";
-            mainContent.classList.remove("hidden");
-            unlocked = true;
-            mobileInput.blur();
-        }, 1500);
-
-    } else {
-
-        bootOutput.innerHTML += "\n\nAccess Denied.\nTry Again.\n\n";
-        enteredPassword = "";
-        mobileInput.value = "";
-        typedPassword.textContent = "";
-    }
-}
 
 
 /* =========================================
@@ -178,6 +122,8 @@ runButtons.forEach(btn => {
 /* =========================================
    CONTACT OWNER BUTTON
 ========================================= */
+
+const contactBtn = document.getElementById("contactOwnerBtn");
 
 if (contactBtn) {
     contactBtn.addEventListener("click", function () {
