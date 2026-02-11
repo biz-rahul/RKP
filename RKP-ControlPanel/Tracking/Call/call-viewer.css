@@ -1,0 +1,165 @@
+/* =========================================
+   GOOGLE PHONE APP INSPIRED UI
+========================================= */
+
+.call-app {
+    background: #121212;
+    color: white;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* ===== HEADER ===== */
+
+.call-header {
+    padding: 16px;
+    background: #1f1f1f;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+/* ===== SEARCH BAR ===== */
+
+.call-search {
+    padding: 12px 16px;
+    background: #1f1f1f;
+}
+
+.call-search input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 24px;
+    border: none;
+    background: #2c2c2c;
+    color: white;
+    font-size: 14px;
+}
+
+.call-search input::placeholder {
+    color: #aaaaaa;
+}
+
+/* ===== CALL LIST ===== */
+
+.call-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* ===== CALL ITEM ===== */
+
+.call-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #1f1f1f;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.call-item:hover {
+    background: #1e1e1e;
+}
+
+/* ===== CALL ICON ===== */
+
+.call-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    font-size: 16px;
+}
+
+.call-incoming {
+    background: #065f46;
+}
+
+.call-outgoing {
+    background: #1d4ed8;
+}
+
+.call-missed {
+    background: #7f1d1d;
+}
+
+/* ===== DETAILS ===== */
+
+.call-details {
+    flex: 1;
+}
+
+.call-number {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.call-meta {
+    font-size: 13px;
+    color: #bbbbbb;
+}
+
+/* ===== EXPANDED PANEL ===== */
+
+.call-expanded {
+    background: #1e1e1e;
+    padding: 14px 16px;
+    display: none;
+    font-size: 13px;
+}
+
+.call-expanded.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.call-actions {
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
+}
+
+.call-actions button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 20px;
+    border: none;
+    background: #3b82f6;
+    color: white;
+    cursor: pointer;
+}
+
+.call-actions button:hover {
+    background: #2563eb;
+}
+
+/* ===== SCROLLBAR ===== */
+
+.call-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.call-list::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
+
+/* ===== ANIMATION ===== */
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== MOBILE OPTIMIZATION ===== */
+
+@media (max-width: 768px) {
+    .call-header {
+        font-size: 18px;
+    }
+}
