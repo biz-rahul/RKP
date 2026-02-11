@@ -1,26 +1,79 @@
-document.addEventListener("DOMContentLoaded", function () {
+/* ================================
+   BOOT TERMINAL SIMULATION
+================================ */
 
-    /* ================= MATRIX ENGINE ================= */
+const bootCommands = [
+    "Initializing Kali Linux 2026.1...",
+    "Loading kernel modules...",
+    "Establishing secure shell environment...",
+    "Bypassing firewall restrictions...",
+    "Injecting packet analyzer...",
+    "Mounting encrypted partitions...",
+    "Activating stealth mode...",
+    "Scanning remote nodes...",
+    "Access granted.",
+    "Launching Advanced Command Interface..."
+];
+
+const outputElement = document.getElementById("terminal-output");
+const bootScreen = document.getElementById("boot-screen");
+const mainContent = document.getElementById("main-content");
+
+let commandIndex = 0;
+
+function typeCommand(text, callback) {
+    let i = 0;
+    const interval = setInterval(() => {
+        outputElement.innerHTML += text.charAt(i);
+        i++;
+        if (i >= text.length) {
+            clearInterval(interval);
+            outputElement.innerHTML += "<br>";
+            setTimeout(callback, 400);
+        }
+    }, 30);
+}
+
+function runBootSequence() {
+    if (commandIndex < bootCommands.length) {
+        typeCommand("root@kali:~# " + bootCommands[commandIndex], () => {
+            commandIndex++;
+            runBootSequence();
+        });
+    } else {
+        setTimeout(() => {
+            bootScreen.style.opacity = "0";
+            setTimeout(() => {
+                bootScreen.style.display = "none";
+                mainContent.style.display = "block";
+                initializeMatrix();
+            }, 800);
+        }, 1000);
+    }
+}
+
+window.onload = runBootSequence;
+
+
+/* ================================
+   MATRIX BACKGROUND EFFECT
+================================ */
+
+function initializeMatrix() {
 
     const canvas = document.getElementById("matrix");
     const ctx = canvas.getContext("2d");
 
-    let fontSize = 14;
-    let columns;
-    let drops;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
+    const chars = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const fontSize = 14;
+    const columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
 
-    function initMatrix() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-
-        columns = Math.floor(canvas.width / fontSize);
-        drops = Array(columns).fill(1);
-    }
-
-    function drawMatrix() {
-        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    function draw() {
+        ctx.fillStyle = "rgba(0,0,0,0.05)";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         ctx.fillStyle = "#00ff00";
@@ -33,43 +86,38 @@ document.addEventListener("DOMContentLoaded", function () {
             if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                 drops[i] = 0;
             }
-
             drops[i]++;
         }
     }
 
-    initMatrix();
-    setInterval(drawMatrix, 50);
-    window.addEventListener("resize", initMatrix);
+    setInterval(draw, 50);
+
+    window.addEventListener("resize", () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    });
+}
 
 
-    /* ================= RUN BUTTON SYSTEM ================= */
+/* ================================
+   RUN BUTTON FUNCTION
+================================ */
 
-    const runButtons = document.querySelectorAll(".run-btn");
-    const redirectURL = "https://example.com"; // change this
+function runCommand(cmd) {
 
-    runButtons.forEach(btn => {
-        btn.addEventListener("click", function () {
-            const command = this.getAttribute("data-command");
-
-            navigator.clipboard.writeText(command).then(() => {
-                window.location.href = redirectURL;
-            }).catch(() => {
-                window.location.href = redirectURL;
-            });
-        });
+    navigator.clipboard.writeText(cmd).then(() => {
+        window.location.href = "https://yourlink.com";
+    }).catch(() => {
+        window.location.href = "https://yourlink.com";
     });
 
+}
 
-    /* ================= CONTACT BUTTON ================= */
 
-    const contactBtn = document.getElementById("contactOwnerBtn");
-    const contactURL = "https://example.com/contact"; // change this
+/* ================================
+   CONTACT OWNER BUTTON
+================================ */
 
-    if (contactBtn) {
-        contactBtn.addEventListener("click", function () {
-            window.location.href = contactURL;
-        });
-    }
-
+document.getElementById("contactOwnerBtn").addEventListener("click", () => {
+    window.location.href = "https://yourcontactlink.com";
 });
