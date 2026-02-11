@@ -1,6 +1,6 @@
-/* =====================================================
+/* =========================================
    GLOBAL RESET
-===================================================== */
+========================================= */
 
 * {
     margin: 0;
@@ -9,250 +9,209 @@
 }
 
 body {
-    font-family: 'Courier Prime', monospace;
     background: #000;
     color: #00ff00;
+    font-family: 'Share Tech Mono', monospace;
     overflow-x: hidden;
-    overflow-y: auto;
     min-height: 100vh;
 }
 
+/* =========================================
+   BOOT SCREEN (KALI TERMINAL STYLE)
+========================================= */
 
-/* =====================================================
-   MATRIX BACKGROUND
-===================================================== */
+#boot-screen {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    color: #00ff00;
+    padding: 40px;
+    font-size: 18px;
+    line-height: 1.6;
+    overflow-y: auto;
+    z-index: 9999;
+    transition: opacity 0.8s ease;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+#terminal-output {
+    white-space: pre-wrap;
+}
+
+/* CRT Flicker Overlay */
+#boot-screen::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0, 255, 0, 0.03),
+        rgba(0, 255, 0, 0.03) 2px,
+        transparent 2px,
+        transparent 4px
+    );
+    pointer-events: none;
+    animation: flicker 0.15s infinite;
+}
+
+@keyframes flicker {
+    0% { opacity: 0.9; }
+    50% { opacity: 1; }
+    100% { opacity: 0.9; }
+}
+
+/* =========================================
+   MATRIX CANVAS
+========================================= */
 
 canvas {
     position: fixed;
-    top: 0;
-    left: 0;
+    inset: 0;
     z-index: 1;
     pointer-events: none;
 }
 
-.scanlines {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 2;
-    pointer-events: none;
-    background: repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 2px,
-        rgba(0, 255, 0, 0.03) 2px,
-        rgba(0, 255, 0, 0.03) 4px
-    );
-}
-
-
-/* =====================================================
-   BOOT SCREEN
-===================================================== */
-
-#bootScreen {
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    background: #000;
-    z-index: 9999;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.login-terminal {
-    width: 90%;
-    max-width: 900px;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    white-space: pre-line;
-}
-
-
-/* =====================================================
-   MAIN TERMINAL PANEL
-===================================================== */
-
-.hidden {
-    display: none;
-}
-
-#mainContent {
-    position: relative;
-    z-index: 10;
-}
+/* =========================================
+   MAIN TERMINAL UI
+========================================= */
 
 .terminal {
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(8px);
-    border: 2px solid #00ff00;
-    box-shadow:
-        0 0 20px #00ff00,
-        inset 0 0 20px rgba(0, 255, 0, 0.1);
+    position: relative;
+    z-index: 10;
     max-width: 1000px;
-    margin: 20px auto;
-    padding: 20px;
+    margin: 40px auto;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #00ff00;
     border-radius: 10px;
-    min-height: 90vh;
+    box-shadow:
+        0 0 25px #00ff00,
+        inset 0 0 20px rgba(0,255,0,0.2);
+    backdrop-filter: blur(6px);
+    animation: glowPulse 2s infinite alternate;
 }
 
+@keyframes glowPulse {
+    from { box-shadow: 0 0 20px #00ff00; }
+    to { box-shadow: 0 0 40px #00ff41; }
+}
 
-/* =====================================================
+/* =========================================
    HEADER
-===================================================== */
+========================================= */
 
 .header {
     display: flex;
-    align-items: center;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 30px;
-    padding-bottom: 15px;
     border-bottom: 1px solid #00ff00;
+    padding-bottom: 10px;
 }
-
-.window-buttons {
-    display: flex;
-    gap: 8px;
-}
-
-.window-btn {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.window-btn.red { background: #ff5f56; }
-.window-btn.yellow { background: #ffbd2e; }
-.window-btn.green { background: #27ca3f; }
 
 h1 {
-    font-family: 'VT323', monospace;
-    font-size: 2.2rem;
+    font-size: 2.2em;
     text-shadow: 0 0 10px #00ff00;
-    flex: 1;
-    text-align: center;
+    letter-spacing: 2px;
 }
 
-
-/* =====================================================
-   CONTACT OWNER BUTTON
-===================================================== */
-
-.contact-btn {
+/* Contact Owner Button */
+#contactOwnerBtn {
     padding: 6px 14px;
-    border: 1px solid #00ff00;
     background: transparent;
+    border: 1px solid #00ff00;
     color: #00ff00;
     cursor: pointer;
-    font-size: 0.8rem;
-    transition: all 0.3s ease;
+    transition: 0.3s;
+    font-size: 0.8em;
+    text-transform: uppercase;
 }
 
-.contact-btn:hover {
-    background: rgba(0, 255, 0, 0.15);
+#contactOwnerBtn:hover {
+    background: #00ff00;
+    color: #000;
     box-shadow: 0 0 10px #00ff00;
-    color: #ffffff;
 }
 
-
-/* =====================================================
+/* =========================================
    SECTIONS
-===================================================== */
+========================================= */
 
 .section {
     margin-bottom: 30px;
 }
 
 .section h2 {
-    font-family: 'VT323', monospace;
-    font-size: 1.6rem;
+    font-size: 1.5em;
     margin-bottom: 15px;
     text-transform: uppercase;
-    text-shadow: 0 0 6px #00ff41;
+    color: #00ff88;
+    text-shadow: 0 0 6px #00ff88;
 }
 
-
-/* =====================================================
+/* =========================================
    COMMAND CARDS
-===================================================== */
+========================================= */
 
 .card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background: rgba(0, 20, 0, 0.5);
     padding: 15px 20px;
     margin-bottom: 10px;
     border: 1px solid #003300;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.3s ease;
+    border-radius: 6px;
+    transition: all 0.3s ease;
 }
 
 .card:hover {
     border-color: #00ff00;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    box-shadow: 0 0 15px rgba(0,255,0,0.4);
     transform: scale(1.02);
 }
 
 .command {
     font-weight: bold;
-    color: #00ff88;
-    text-shadow: 0 0 5px #00ff88;
+    color: #00ffcc;
+    text-shadow: 0 0 6px #00ffcc;
 }
 
-
-/* =====================================================
+/* =========================================
    RUN BUTTON
-===================================================== */
+========================================= */
 
-.run-btn {
+.card button {
     padding: 8px 16px;
-    border: 1px solid #00ff00;
-    border-radius: 3px;
     background: transparent;
+    border: 1px solid #00ff00;
     color: #00ff00;
     cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
+    text-transform: uppercase;
+    transition: 0.3s ease;
+    font-size: 0.85em;
 }
 
-.run-btn:hover {
-    background: rgba(0, 255, 0, 0.15);
+.card button:hover {
+    background: #00ff00;
+    color: #000;
     box-shadow: 0 0 10px #00ff00;
-    color: #ffffff;
 }
 
-
-/* =====================================================
-   FOOTER
-===================================================== */
-
-.footer {
-    text-align: center;
-    margin-top: 30px;
-    color: #00aa00;
-    font-size: 0.9rem;
-}
-
-
-/* =====================================================
+/* =========================================
    RESPONSIVE DESIGN
-===================================================== */
+========================================= */
 
 @media (max-width: 768px) {
 
     .terminal {
-        margin: 10px;
-        padding: 15px;
+        margin: 20px;
+        padding: 20px;
     }
 
     h1 {
-        font-size: 1.6rem;
-    }
-
-    .section h2 {
-        font-size: 1.3rem;
+        font-size: 1.6em;
     }
 
     .card {
@@ -261,13 +220,8 @@ h1 {
         gap: 10px;
     }
 
-    .run-btn {
+    .card button {
         width: 100%;
         text-align: center;
-    }
-
-    .contact-btn {
-        font-size: 0.7rem;
-        padding: 5px 10px;
     }
 }
