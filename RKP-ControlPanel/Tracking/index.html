@@ -3,153 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ControlTheWorld Advanced Viewer</title>
+<title>ControlTheWorld Viewer</title>
 
-<style>
-
-/* ===== GLOBAL STYLE ===== */
-
-body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #0f172a;
-    color: white;
-}
-
-.container {
-    display: flex;
-    height: 100vh;
-}
-
-.sidebar {
-    width: 280px;
-    background: #1e293b;
-    overflow-y: auto;
-    padding: 15px;
-}
-
-.content {
-    flex: 1;
-    padding: 15px;
-    overflow-y: auto;
-}
-
-h1 {
-    font-size: 18px;
-    margin: 0 0 15px 0;
-}
-
-.file, .folder {
-    padding: 8px;
-    border-radius: 6px;
-    margin-bottom: 5px;
-    cursor: pointer;
-}
-
-.file:hover, .folder:hover {
-    background: #334155;
-}
-
-.folder::before { content: "📂 "; }
-.file::before { content: "📄 "; }
-
-.viewer-options {
-    display: none;
-    margin-bottom: 15px;
-}
-
-.viewer-options button {
-    width: 100%;
-    margin-bottom: 8px;
-    padding: 10px;
-    border-radius: 6px;
-    border: none;
-    background: #6366f1;
-    color: white;
-    cursor: pointer;
-}
-
-/* ===== MOBILE RESPONSIVE ===== */
-
-@media (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
-    .sidebar {
-        width: 100%;
-        height: 40%;
-    }
-    .content {
-        height: 60%;
-    }
-}
-
-/* ===== REGULAR VIEWER STYLE ===== */
-
-.regular-viewer pre {
-    background: #1e293b;
-    padding: 10px;
-    border-radius: 6px;
-    overflow-x: auto;
-}
-
-/* ===== CONTACTS VIEWER STYLE ===== */
-
-.contacts-viewer .contact-card {
-    background: #1e293b;
-    padding: 12px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-}
-
-/* ===== SMS VIEWER STYLE ===== */
-
-.sms-viewer .message {
-    background: #334155;
-    padding: 10px;
-    border-radius: 15px;
-    margin-bottom: 8px;
-}
-
-/* ===== CALL VIEWER STYLE ===== */
-
-.call-viewer .call-item {
-    background: #1e293b;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-}
-
-/* ===== DEVICE VIEWER STYLE ===== */
-
-.device-viewer .device-item {
-    background: #1e293b;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-}
-
-/* ===== NOTIFICATION VIEWER STYLE ===== */
-
-.notification-viewer .notification-item {
-    background: #1e293b;
-    padding: 10px;
-    margin-bottom: 8px;
-    border-radius: 6px;
-}
-
-</style>
+<!-- External CSS -->
+<link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
 
-<div class="container">
-    <div class="sidebar">
-        <h1>ControlTheWorld</h1>
-        <div id="fileList"></div>
-    </div>
+<div class="app-container">
 
-    <div class="content">
-        <div id="viewerOptions" class="viewer-options">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <h1 class="app-title">ControlTheWorld</h1>
+        <div id="fileList" class="file-list"></div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Breadcrumb -->
+        <div id="breadcrumb" class="breadcrumb"></div>
+
+        <!-- JSON Action Bar -->
+        <div id="jsonActions" class="json-actions hidden">
+            <button id="copyJsonBtn" class="action-btn">Copy Full JSON</button>
+            <button id="downloadJsonBtn" class="action-btn">Download JSON</button>
+        </div>
+
+        <!-- Viewer Selection -->
+        <div id="viewerOptions" class="viewer-options hidden">
             <button onclick="openViewer('regular')">Open in Regular Viewer</button>
             <button onclick="openViewer('sms')">Open in SMS Viewer</button>
             <button onclick="openViewer('call')">Open in Call Viewer</button>
@@ -158,162 +41,15 @@ h1 {
             <button onclick="openViewer('notification')">Open in Notification Viewer</button>
         </div>
 
-        <div id="viewerContainer"></div>
-    </div>
+        <!-- Viewer Container -->
+        <div id="viewerContainer" class="viewer-container"></div>
+
+    </main>
+
 </div>
 
-<script>
-
-const owner = "MOFO-UG";
-const repo = "ControlTheWorld";
-let defaultBranch = "";
-let currentJSON = null;
-
-/* ===== INIT ===== */
-
-async function init() {
-    const repoInfo = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-    const repoData = await repoInfo.json();
-    defaultBranch = repoData.default_branch;
-    loadContents("");
-}
-
-async function loadContents(path) {
-    const response = await fetch(
-        `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${defaultBranch}`
-    );
-    const data = await response.json();
-    const fileList = document.getElementById("fileList");
-    fileList.innerHTML = "";
-
-    data.forEach(item => {
-        const div = document.createElement("div");
-        div.className = item.type === "dir" ? "folder" : "file";
-        div.innerText = item.name;
-
-        if (item.type === "dir") {
-            div.onclick = () => loadContents(item.path);
-        } else if (item.name.endsWith(".json")) {
-            div.onclick = () => loadJSON(item.path);
-        }
-
-        fileList.appendChild(div);
-    });
-}
-
-/* ===== LOAD JSON ===== */
-
-async function loadJSON(path) {
-    const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${defaultBranch}/${path}`;
-    const response = await fetch(rawUrl);
-    const text = await response.text();
-    currentJSON = JSON.parse(text);
-
-    document.getElementById("viewerOptions").style.display = "block";
-    document.getElementById("viewerContainer").innerHTML = "";
-}
-
-/* ===== VIEWER ENGINE ===== */
-
-function openViewer(type) {
-    const container = document.getElementById("viewerContainer");
-    container.className = type + "-viewer";
-    container.innerHTML = "";
-
-    if (!currentJSON) return;
-
-    switch(type) {
-        case "regular":
-            renderRegular(container);
-            break;
-        case "sms":
-            renderSMS(container);
-            break;
-        case "call":
-            renderCall(container);
-            break;
-        case "contacts":
-            renderContacts(container);
-            break;
-        case "device":
-            renderDevice(container);
-            break;
-        case "notification":
-            renderNotification(container);
-            break;
-    }
-}
-
-/* ===== REGULAR VIEWER JS ===== */
-
-function renderRegular(container) {
-    const pre = document.createElement("pre");
-    pre.textContent = JSON.stringify(currentJSON, null, 2);
-    container.appendChild(pre);
-}
-
-/* ===== CONTACTS VIEWER JS ===== */
-
-function renderContacts(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(contact => {
-        const card = document.createElement("div");
-        card.className = "contact-card";
-        card.innerHTML = `<strong>${contact.name || "Unknown"}</strong><br>${contact.phone || ""}`;
-        container.appendChild(card);
-    });
-}
-
-/* ===== SMS VIEWER JS ===== */
-
-function renderSMS(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(msg => {
-        const div = document.createElement("div");
-        div.className = "message";
-        div.innerText = msg.message || JSON.stringify(msg);
-        container.appendChild(div);
-    });
-}
-
-/* ===== CALL VIEWER JS ===== */
-
-function renderCall(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(call => {
-        const div = document.createElement("div");
-        div.className = "call-item";
-        div.innerHTML = `${call.name || "Unknown"} - ${call.duration || ""}`;
-        container.appendChild(div);
-    });
-}
-
-/* ===== DEVICE VIEWER JS ===== */
-
-function renderDevice(container) {
-    for (let key in currentJSON) {
-        const div = document.createElement("div");
-        div.className = "device-item";
-        div.innerHTML = `<strong>${key}</strong>: ${currentJSON[key]}`;
-        container.appendChild(div);
-    }
-}
-
-/* ===== NOTIFICATION VIEWER JS ===== */
-
-function renderNotification(container) {
-    if (!Array.isArray(currentJSON)) return;
-    currentJSON.forEach(notif => {
-        const div = document.createElement("div");
-        div.className = "notification-item";
-        div.innerText = notif.title || JSON.stringify(notif);
-        container.appendChild(div);
-    });
-}
-
-init();
-
-</script>
+<!-- External JS -->
+<script src="script.js"></script>
 
 </body>
 </html>
