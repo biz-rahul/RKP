@@ -1,0 +1,179 @@
+/* ===============================
+   GLOBAL RESET
+=================================*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0f172a;
+    color: #f1f5f9;
+}
+
+/* ===============================
+   LAYOUT
+=================================*/
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 280px;
+    background: #1e293b;
+    padding: 15px;
+    overflow-y: auto;
+    border-right: 1px solid #334155;
+}
+
+.main-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.app-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #60a5fa;
+}
+
+/* ===============================
+   FILE LIST
+=================================*/
+
+.file-list div {
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.file-list div:hover {
+    background: #334155;
+}
+
+.folder::before {
+    content: "📂 ";
+}
+
+.file::before {
+    content: "📄 ";
+}
+
+/* ===============================
+   BREADCRUMB
+=================================*/
+
+.breadcrumb {
+    font-size: 13px;
+    margin-bottom: 15px;
+    color: #94a3b8;
+    word-break: break-word;
+}
+
+/* ===============================
+   ACTION BUTTONS
+=================================*/
+
+.json-actions {
+    margin-bottom: 15px;
+}
+
+.action-btn {
+    padding: 8px 12px;
+    margin-right: 8px;
+    border: none;
+    border-radius: 6px;
+    background: #6366f1;
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    transition: 0.2s;
+}
+
+.action-btn:hover {
+    background: #4f46e5;
+}
+
+/* ===============================
+   VIEWER OPTIONS
+=================================*/
+
+.viewer-options {
+    margin-bottom: 15px;
+}
+
+.viewer-options button {
+    display: block;
+    width: 100%;
+    margin-bottom: 8px;
+    padding: 10px;
+    border-radius: 6px;
+    border: none;
+    background: #0ea5e9;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.viewer-options button:hover {
+    background: #0284c7;
+}
+
+/* ===============================
+   VIEWER CONTAINER
+=================================*/
+
+.viewer-container {
+    background: #1e293b;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 200px;
+    overflow-x: auto;
+}
+
+/* ===============================
+   REGULAR VIEWER
+=================================*/
+
+.viewer-container pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 13px;
+}
+
+/* ===============================
+   UTILITY
+=================================*/
+
+.hidden {
+    display: none;
+}
+
+/* ===============================
+   MOBILE RESPONSIVE
+=================================*/
+
+@media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 40%;
+    }
+
+    .main-content {
+        height: 60%;
+    }
+}
