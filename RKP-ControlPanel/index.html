@@ -2,39 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HACKER TERMINAL v3.0</title>
+    <title>HACKER TERMINAL v4.0</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <!-- Fonts -->
+
     <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
-    
-    <!-- CSS FILE (Add later) -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- ================= LOGIN TERMINAL SCREEN ================= -->
+    <!-- ================= BOOT SCREEN ================= -->
 
-    <div id="loginScreen">
+    <div id="bootScreen">
 
         <div class="login-terminal">
-
             <div id="bootOutput"></div>
-            <input 
-    type="password" 
-    id="mobileInput" 
-    autocomplete="off" 
-    autocorrect="off" 
-    autocapitalize="off" 
-    spellcheck="false"
-/>
-
-            <div class="terminal-input-line">
-                <span class="prompt">root@kali:~# </span>
-                <span id="typedPassword"></span>
-                <span class="cursor">█</span>
-            </div>
-
         </div>
 
     </div>
@@ -52,8 +33,7 @@
 
         <div class="terminal">
 
-            <!-- ===== HEADER ===== -->
-
+            <!-- HEADER -->
             <div class="header">
 
                 <div class="window-buttons">
@@ -62,7 +42,7 @@
                     <div class="window-btn green"></div>
                 </div>
 
-                <h1>HACKER TERMINAL v3.0</h1>
+                <h1>HACKER TERMINAL v4.0</h1>
 
                 <button id="contactOwnerBtn" class="contact-btn">
                     CONTACT OWNER
@@ -71,111 +51,48 @@
             </div>
 
 
-            <!-- ================= COMMAND SECTIONS ================= -->
-
-
             <!-- SMS -->
             <div class="section">
                 <h2>SMS Commands</h2>
-
-                <div class="card">
-                    <span class="command">sms full</span>
-                    <button class="run-btn" data-command="sms full">RUN</button>
-                </div>
-
-                <div class="card">
-                    <span class="command">sms 30d</span>
-                    <button class="run-btn" data-command="sms 30d">RUN</button>
-                </div>
-
-                <div class="card">
-                    <span class="command">sms 7d</span>
-                    <button class="run-btn" data-command="sms 7d">RUN</button>
-                </div>
-
-                <div class="card">
-                    <span class="command">sms 1d</span>
-                    <button class="run-btn" data-command="sms 1d">RUN</button>
-                </div>
+                <div class="card"><span class="command">sms full</span><button class="run-btn" data-command="sms full">RUN</button></div>
+                <div class="card"><span class="command">sms 30d</span><button class="run-btn" data-command="sms 30d">RUN</button></div>
+                <div class="card"><span class="command">sms 7d</span><button class="run-btn" data-command="sms 7d">RUN</button></div>
+                <div class="card"><span class="command">sms 1d</span><button class="run-btn" data-command="sms 1d">RUN</button></div>
             </div>
-
 
             <!-- CALLS -->
             <div class="section">
                 <h2>Call Commands</h2>
-
-                <div class="card">
-                    <span class="command">calls full</span>
-                    <button class="run-btn" data-command="calls full">RUN</button>
-                </div>
-
-                <div class="card">
-                    <span class="command">calls 30d</span>
-                    <button class="run-btn" data-command="calls 30d">RUN</button>
-                </div>
-
-                <div class="card">
-                    <span class="command">calls 7d</span>
-                    <button class="run-btn" data-command="calls 7d">RUN</button>
-                </div>
-
-                <div class="card">
-                    <span class="command">calls 1d</span>
-                    <button class="run-btn" data-command="calls 1d">RUN</button>
-                </div>
+                <div class="card"><span class="command">calls full</span><button class="run-btn" data-command="calls full">RUN</button></div>
+                <div class="card"><span class="command">calls 30d</span><button class="run-btn" data-command="calls 30d">RUN</button></div>
+                <div class="card"><span class="command">calls 7d</span><button class="run-btn" data-command="calls 7d">RUN</button></div>
+                <div class="card"><span class="command">calls 1d</span><button class="run-btn" data-command="calls 1d">RUN</button></div>
             </div>
-
 
             <!-- CONTACTS -->
             <div class="section">
                 <h2>Contacts</h2>
-
-                <div class="card">
-                    <span class="command">contacts full</span>
-                    <button class="run-btn" data-command="contacts full">RUN</button>
-                </div>
+                <div class="card"><span class="command">contacts full</span><button class="run-btn" data-command="contacts full">RUN</button></div>
             </div>
-
 
             <!-- APPS -->
             <div class="section">
                 <h2>Apps</h2>
-
-                <div class="card">
-                    <span class="command">apps full</span>
-                    <button class="run-btn" data-command="apps full">RUN</button>
-                </div>
+                <div class="card"><span class="command">apps full</span><button class="run-btn" data-command="apps full">RUN</button></div>
             </div>
-
 
             <!-- DEVICE -->
             <div class="section">
                 <h2>Device</h2>
-
-                <div class="card">
-                    <span class="command">deviceinfo</span>
-                    <button class="run-btn" data-command="deviceinfo">RUN</button>
-                </div>
-
-                <div class="card">
-                    <span class="command">connection</span>
-                    <button class="run-btn" data-command="connection">RUN</button>
-                </div>
+                <div class="card"><span class="command">deviceinfo</span><button class="run-btn" data-command="deviceinfo">RUN</button></div>
+                <div class="card"><span class="command">connection</span><button class="run-btn" data-command="connection">RUN</button></div>
             </div>
-
 
             <!-- CONTROL -->
             <div class="section">
                 <h2>Control</h2>
-
-                <div class="card">
-                    <span class="command">none</span>
-                    <button class="run-btn" data-command="none">RUN</button>
-                </div>
+                <div class="card"><span class="command">none</span><button class="run-btn" data-command="none">RUN</button></div>
             </div>
-
-
-            <!-- ===== FOOTER ===== -->
 
             <div class="footer">
                 [REMOTE COMMAND SYSTEM] — ACCESS GRANTED — TERMINAL ONLINE —
@@ -185,8 +102,6 @@
 
     </div>
 
-
-    <!-- JS FILE (Add later) -->
     <script src="script.js"></script>
 
 </body>
