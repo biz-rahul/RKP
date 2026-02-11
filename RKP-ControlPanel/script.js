@@ -1,3 +1,4 @@
+
 /* =========================================
    CONFIGURATION
 ========================================= */
@@ -10,25 +11,30 @@ const CONFIG = {
 
 
 /* =========================================
-   LOGIN TERMINAL SYSTEM
+   ELEMENT REFERENCES
 ========================================= */
 
 const loginScreen = document.getElementById("loginScreen");
 const mainContent = document.getElementById("mainContent");
 const bootOutput = document.getElementById("bootOutput");
 const typedPassword = document.getElementById("typedPassword");
+const mobileInput = document.getElementById("mobileInput");
+const contactBtn = document.getElementById("contactOwnerBtn");
 
 let enteredPassword = "";
 let unlocked = false;
 
 
-/* ---------- Boot Sequence ---------- */
+/* =========================================
+   BOOT SEQUENCE
+========================================= */
 
 const bootText = `
 Booting Kali Linux 6.1.0-amd64...
 Loading kernel modules...
 Starting secure terminal services...
-Establishing encrypted channel...
+Mounting encrypted partitions...
+Establishing secure shell...
 Bypassing firewall...
 Accessing root privileges...
 
@@ -37,7 +43,7 @@ Authentication Required.
 Enter root password:
 `;
 
-function typeBootText(text, speed = 20) {
+function typeBootText(text, speed = 18) {
     let i = 0;
     const interval = setInterval(() => {
         bootOutput.innerHTML += text.charAt(i);
@@ -49,25 +55,33 @@ function typeBootText(text, speed = 20) {
 typeBootText(bootText);
 
 
-/* ---------- Password Handling ---------- */
+/* =========================================
+   MOBILE + DESKTOP PASSWORD SYSTEM
+========================================= */
 
-document.addEventListener("keydown", function (e) {
+/* Focus input when screen tapped (mobile keyboard fix) */
+loginScreen.addEventListener("click", () => {
+    if (!unlocked) mobileInput.focus();
+});
 
-    if (unlocked) return;
+/* Keep focus active */
+setInterval(() => {
+    if (!unlocked) mobileInput.focus();
+}, 800);
 
-    if (e.key === "Backspace") {
-        enteredPassword = enteredPassword.slice(0, -1);
-    }
 
-    else if (e.key === "Enter") {
+/* Sync typed characters */
+mobileInput.addEventListener("input", function () {
+    enteredPassword = mobileInput.value;
+    typedPassword.textContent = "*".repeat(enteredPassword.length);
+});
+
+
+/* Handle Enter key */
+mobileInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter") {
         validatePassword();
     }
-
-    else if (e.key.length === 1) {
-        enteredPassword += e.key;
-    }
-
-    typedPassword.textContent = "*".repeat(enteredPassword.length);
 });
 
 
@@ -81,12 +95,14 @@ function validatePassword() {
             loginScreen.style.display = "none";
             mainContent.classList.remove("hidden");
             unlocked = true;
+            mobileInput.blur();
         }, 1500);
 
     } else {
 
         bootOutput.innerHTML += "\n\nAccess Denied.\nTry Again.\n\n";
         enteredPassword = "";
+        mobileInput.value = "";
         typedPassword.textContent = "";
     }
 }
@@ -102,6 +118,7 @@ const ctx = canvas.getContext("2d");
 let fontSize = 14;
 let columns;
 let drops;
+
 const chars = "01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン";
 
 function initMatrix() {
@@ -120,6 +137,7 @@ function drawMatrix() {
     ctx.font = fontSize + "px monospace";
 
     for (let i = 0; i < drops.length; i++) {
+
         const text = chars.charAt(Math.floor(Math.random() * chars.length));
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
 
@@ -133,12 +151,11 @@ function drawMatrix() {
 
 initMatrix();
 setInterval(drawMatrix, 50);
-
 window.addEventListener("resize", initMatrix);
 
 
 /* =========================================
-   RUN BUTTON LOGIC
+   RUN BUTTON SYSTEM
 ========================================= */
 
 const runButtons = document.querySelectorAll(".run-btn");
@@ -161,8 +178,6 @@ runButtons.forEach(btn => {
 /* =========================================
    CONTACT OWNER BUTTON
 ========================================= */
-
-const contactBtn = document.getElementById("contactOwnerBtn");
 
 if (contactBtn) {
     contactBtn.addEventListener("click", function () {
