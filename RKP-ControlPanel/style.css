@@ -1,0 +1,295 @@
+/* =========================
+   GLOBAL RESET
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier Prime', monospace;
+    background: #000;
+    color: #00ff00;
+    overflow-x: hidden;
+    overflow-y: auto;
+    min-height: 100vh;
+}
+
+
+/* =========================
+   MATRIX CANVAS
+========================= */
+
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.scanlines {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0, 255, 0, 0.03) 2px,
+        rgba(0, 255, 0, 0.03) 4px
+    );
+}
+
+
+/* =========================
+   LOGIN TERMINAL SCREEN
+========================= */
+
+#loginScreen {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    background: #000;
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-terminal {
+    width: 90%;
+    max-width: 900px;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+#bootOutput {
+    margin-bottom: 10px;
+    white-space: pre-line;
+}
+
+.terminal-input-line {
+    display: flex;
+    align-items: center;
+}
+
+.prompt {
+    margin-right: 5px;
+}
+
+.cursor {
+    animation: blinkCursor 1s infinite;
+}
+
+@keyframes blinkCursor {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+
+/* =========================
+   MAIN TERMINAL PANEL
+========================= */
+
+.hidden {
+    display: none;
+}
+
+#mainContent {
+    position: relative;
+    z-index: 10;
+}
+
+.terminal {
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    border: 2px solid #00ff00;
+    box-shadow:
+        0 0 20px #00ff00,
+        inset 0 0 20px rgba(0, 255, 0, 0.1);
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 10px;
+    min-height: 90vh;
+}
+
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #00ff00;
+}
+
+.window-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.window-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.window-btn.red { background: #ff5f56; }
+.window-btn.yellow { background: #ffbd2e; }
+.window-btn.green { background: #27ca3f; }
+
+h1 {
+    font-family: 'VT323', monospace;
+    font-size: 2.2rem;
+    text-shadow: 0 0 10px #00ff00;
+    flex: 1;
+    text-align: center;
+}
+
+
+/* =========================
+   CONTACT OWNER BUTTON
+========================= */
+
+.contact-btn {
+    padding: 6px 14px;
+    border: 1px solid #00ff00;
+    background: transparent;
+    color: #00ff00;
+    cursor: pointer;
+    font-size: 0.8rem;
+    transition: 0.3s ease;
+}
+
+.contact-btn:hover {
+    background: rgba(0, 255, 0, 0.15);
+    box-shadow: 0 0 10px #00ff00;
+    color: #fff;
+}
+
+
+/* =========================
+   SECTIONS
+========================= */
+
+.section {
+    margin-bottom: 30px;
+}
+
+.section h2 {
+    font-family: 'VT323', monospace;
+    font-size: 1.6rem;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    text-shadow: 0 0 6px #00ff41;
+}
+
+
+/* =========================
+   COMMAND CARDS
+========================= */
+
+.card {
+    background: rgba(0, 20, 0, 0.5);
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border: 1px solid #003300;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.3s ease;
+}
+
+.card:hover {
+    border-color: #00ff00;
+    box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
+    transform: scale(1.02);
+}
+
+.command {
+    font-weight: bold;
+    color: #00ff88;
+    text-shadow: 0 0 5px #00ff88;
+}
+
+
+/* =========================
+   RUN BUTTON
+========================= */
+
+.run-btn {
+    padding: 8px 16px;
+    border: 1px solid #00ff00;
+    border-radius: 3px;
+    background: transparent;
+    color: #00ff00;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.3s ease;
+}
+
+.run-btn:hover {
+    background: rgba(0, 255, 0, 0.15);
+    box-shadow: 0 0 10px #00ff00;
+    color: #fff;
+}
+
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+    text-align: center;
+    margin-top: 30px;
+    color: #00aa00;
+    font-size: 0.9rem;
+}
+
+
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+
+@media (max-width: 768px) {
+
+    .terminal {
+        margin: 10px;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.6rem;
+    }
+
+    .section h2 {
+        font-size: 1.3rem;
+    }
+
+    .card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .run-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .contact-btn {
+        font-size: 0.7rem;
+        padding: 5px 10px;
+    }
+}
