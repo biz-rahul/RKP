@@ -121,75 +121,48 @@ h1 {
 
 <script>
 
-/* ===============================
+/* ==========================================
    CONFIG
-================================ */
+========================================== */
 
 const owner = "MOFO-UG";
 const repo = "ControlTheWorld";
 
-let defaultBranch = "main"; // fallback
+let defaultBranch = "main";
 let currentJSON = null;
 let currentFileName = "";
 
-/* ===============================
-   DEBUG LOGGER
-================================ */
-
-function logToScreen(message, isError = false) {
-    const fileList = document.getElementById("fileList");
-    const div = document.createElement("div");
-    div.style.color = isError ? "red" : "#60a5fa";
-    div.style.fontSize = "12px";
-    div.textContent = message;
-    fileList.appendChild(div);
-}
-
-/* ===============================
+/* ==========================================
    INIT
-================================ */
+========================================== */
 
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-
-    const fileList = document.getElementById("fileList");
-    fileList.innerHTML = "";
-
     try {
-
-        logToScreen("Connecting to GitHub API...");
-
         const repoResponse = await fetch(
             `https://api.github.com/repos/${owner}/${repo}`
         );
 
         if (!repoResponse.ok) {
-            logToScreen("Repo API failed: " + repoResponse.status, true);
-            return;
+            throw new Error("Repository API failed");
         }
 
         const repoData = await repoResponse.json();
-
         defaultBranch = repoData.default_branch || "main";
 
-        logToScreen("Default branch: " + defaultBranch);
-
-        loadContents("");
+        await loadContents("");
 
     } catch (error) {
-        logToScreen("Initialization error: " + error.message, true);
+        showFallbackUI("Unable to connect to GitHub API.");
     }
 }
 
-/* ===============================
+/* ==========================================
    LOAD DIRECTORY
-================================ */
+========================================== */
 
 async function loadContents(path) {
-
-    const fileList = document.getElementById("fileList");
-    fileList.innerHTML = "";
 
     try {
 
@@ -198,20 +171,28 @@ async function loadContents(path) {
         );
 
         if (!response.ok) {
-            logToScreen("Directory load failed: " + response.status, true);
-            return;
+            throw new Error("Directory load failed");
         }
 
         const data = await response.json();
 
         if (!Array.isArray(data)) {
-            logToScreen("Unexpected API response", true);
-            console.log(data);
-            return;
+            throw new Error("Invalid directory structure");
         }
 
-        if (data.length === 0) {
-            logToScreen("Directory is empty.");
+        const fileList = document.getElementById("fileList");
+        fileList.innerHTML = "";
+
+        if (path !== "") {
+            const backDiv = document.createElement("div");
+            backDiv.className = "folder";
+            backDiv.textContent = ".. (Back)";
+            backDiv.onclick = () => {
+                const parts = path.split("/");
+                parts.pop();
+                loadContents(parts.join("/"));
+            };
+            fileList.appendChild(backDiv);
         }
 
         data.forEach(item => {
@@ -232,16 +213,15 @@ async function loadContents(path) {
         });
 
     } catch (error) {
-        logToScreen("Directory error: " + error.message, true);
+        showFallbackUI(error.message);
     }
 }
 
-/* ===============================
-   LOAD JSON
-================================ */
+/* ==========================================
+   LOAD JSON FROM GITHUB
+========================================== */
 
 async function loadJSON(path, filename) {
-
     try {
 
         const rawUrl =
@@ -250,8 +230,7 @@ async function loadJSON(path, filename) {
         const response = await fetch(rawUrl);
 
         if (!response.ok) {
-            alert("Failed to load JSON file.");
-            return;
+            throw new Error("JSON file load failed");
         }
 
         const text = await response.text();
@@ -259,15 +238,238 @@ async function loadJSON(path, filename) {
         currentJSON = JSON.parse(text);
         currentFileName = filename;
 
-        alert("JSON loaded successfully.");
+        generateViewerButtons(filename);
+        document.getElementById("viewerContainer").innerHTML = "";
 
     } catch (error) {
-        alert("JSON parse error: " + error.message);
+        alert("Invalid JSON file.");
     }
 }
 
-</script>
+/* ==========================================
+   FALLBACK UI
+========================================== */
 
+function showFallbackUI(reason) {
+
+    const fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
+
+    const errorDiv = document.createElement("div");
+    errorDiv.style.color = "red";
+    errorDiv.style.marginBottom = "10px";
+    errorDiv.textContent = "GitHub Load Failed: " + reason;
+
+    const goBtn = document.createElement("button");
+    goBtn.textContent = "Go to GitHub";
+    goBtn.onclick = () => {
+        window.open(`https://github.com/${owner}/${repo}`, "_blank");
+    };
+
+    const readBtn = document.createElement("button");
+    readBtn.textContent = "Read JSON";
+    readBtn.style.marginTop = "10px";
+    readBtn.onclick = showManualJSONReader;
+
+    fileList.appendChild(errorDiv);
+    fileList.appendChild(goBtn);
+    fileList.appendChild(readBtn);
+}
+
+/* ==========================================
+   MANUAL JSON READER
+========================================== */
+
+function showManualJSONReader() {
+
+    const fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
+
+    const textarea = document.createElement("textarea");
+    textarea.placeholder = "Paste JSON here...";
+    textarea.style.width = "100%";
+    textarea.style.height = "120px";
+    textarea.style.marginBottom = "10px";
+
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept = ".json";
+    fileInput.style.marginBottom = "10px";
+
+    const loadBtn = document.createElement("button");
+    loadBtn.textContent = "Load JSON";
+
+    loadBtn.onclick = () => {
+        try {
+            const text = textarea.value.trim();
+            if (!text) {
+                alert("Paste JSON first.");
+                return;
+            }
+            currentJSON = JSON.parse(text);
+            currentFileName = "manual.json";
+            generateViewerButtons(currentFileName);
+        } catch {
+            alert("Invalid JSON format.");
+        }
+    };
+
+    fileInput.onchange = (event) => {
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = function(e) {
+            try {
+                currentJSON = JSON.parse(e.target.result);
+                currentFileName = file.name;
+                generateViewerButtons(currentFileName);
+            } catch {
+                alert("Invalid JSON file.");
+            }
+        };
+
+        reader.readAsText(file);
+    };
+
+    fileList.appendChild(textarea);
+    fileList.appendChild(fileInput);
+    fileList.appendChild(loadBtn);
+}
+
+/* ==========================================
+   SMART VIEWER DETECTION
+========================================== */
+
+function detectViewerType(filename) {
+
+    const lower = filename.toLowerCase();
+
+    if (lower.startsWith("sms")) return "sms";
+    if (lower.startsWith("call") || lower.startsWith("calls")) return "call";
+    if (lower.startsWith("contact") || lower.startsWith("contacts")) return "contacts";
+    if (lower.startsWith("device")) return "device";
+
+    return null;
+}
+
+/* ==========================================
+   GENERATE VIEWER BUTTONS
+========================================== */
+
+function generateViewerButtons(filename) {
+
+    const viewerOptions = document.getElementById("viewerOptions");
+    viewerOptions.innerHTML = "";
+    viewerOptions.style.display = "block";
+
+    const detected = detectViewerType(filename);
+
+    addViewerButton("regular", "Open in Regular Viewer");
+
+    if (detected) {
+        addViewerButton(detected, `Open in ${capitalize(detected)} Viewer`);
+    } else {
+        addViewerButton("sms", "Open in SMS Viewer");
+        addViewerButton("call", "Open in Call Viewer");
+        addViewerButton("contacts", "Open in Contacts Viewer");
+        addViewerButton("device", "Open in Device Viewer");
+    }
+}
+
+/* ==========================================
+   ADD BUTTON
+========================================== */
+
+function addViewerButton(type, label) {
+    const btn = document.createElement("button");
+    btn.textContent = label;
+    btn.onclick = () => openViewer(type);
+    document.getElementById("viewerOptions").appendChild(btn);
+}
+
+/* ==========================================
+   VIEWER ENGINE
+========================================== */
+
+function openViewer(type) {
+
+    const container = document.getElementById("viewerContainer");
+    container.className = type + "-viewer";
+    container.innerHTML = "";
+
+    if (!currentJSON) return;
+
+    switch(type) {
+        case "regular":
+            renderRegular(container);
+            break;
+        case "sms":
+            renderSMS(container);
+            break;
+        case "call":
+            renderCall(container);
+            break;
+        case "contacts":
+            renderContacts(container);
+            break;
+        case "device":
+            renderDevice(container);
+            break;
+    }
+}
+
+/* ==========================================
+   REGULAR VIEWER
+========================================== */
+
+function renderRegular(container) {
+
+    const actionBar = document.createElement("div");
+    actionBar.style.marginBottom = "10px";
+
+    const copyBtn = document.createElement("button");
+    copyBtn.textContent = "Copy Full JSON";
+    copyBtn.onclick = () => {
+        navigator.clipboard.writeText(JSON.stringify(currentJSON, null, 2));
+    };
+
+    const downloadBtn = document.createElement("button");
+    downloadBtn.textContent = "Download JSON";
+    downloadBtn.onclick = () => {
+        const blob = new Blob(
+            [JSON.stringify(currentJSON, null, 2)],
+            { type: "application/json" }
+        );
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = currentFileName;
+        a.click();
+        URL.revokeObjectURL(url);
+    };
+
+    actionBar.appendChild(copyBtn);
+    actionBar.appendChild(downloadBtn);
+
+    const pre = document.createElement("pre");
+    pre.textContent = JSON.stringify(currentJSON, null, 2);
+    pre.style.background = "#1e293b";
+    pre.style.padding = "10px";
+    pre.style.borderRadius = "6px";
+
+    container.appendChild(actionBar);
+    container.appendChild(pre);
+}
+
+/* ==========================================
+   UTIL
+========================================== */
+
+function capitalize(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+</script>
 
 
 
