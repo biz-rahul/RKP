@@ -2,79 +2,76 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>HACKER TERMINAL v5.0</title>
+    <title>Advanced Hacker Terminal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <!-- External CSS -->
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <!-- MATRIX BACKGROUND -->
-    <canvas id="matrix"></canvas>
-    <div class="scanlines"></div>
-
-    <!-- MAIN TERMINAL -->
-    <div class="terminal">
-
-        <div class="header">
-            <div class="window-buttons">
-                <div class="window-btn red"></div>
-                <div class="window-btn yellow"></div>
-                <div class="window-btn green"></div>
-            </div>
-
-            <h1>HACKER TERMINAL v5.0</h1>
-
-            <button id="contactOwnerBtn" class="contact-btn">
-                CONTACT OWNER
-            </button>
-        </div>
-
-        <!-- SMS -->
-        <div class="section">
-            <h2>SMS Commands</h2>
-            <div class="card"><span class="command">sms full</span><button class="run-btn" data-command="sms full">RUN</button></div>
-            <div class="card"><span class="command">sms 30d</span><button class="run-btn" data-command="sms 30d">RUN</button></div>
-            <div class="card"><span class="command">sms 7d</span><button class="run-btn" data-command="sms 7d">RUN</button></div>
-            <div class="card"><span class="command">sms 1d</span><button class="run-btn" data-command="sms 1d">RUN</button></div>
-        </div>
-
-        <!-- CALLS -->
-        <div class="section">
-            <h2>Call Commands</h2>
-            <div class="card"><span class="command">calls full</span><button class="run-btn" data-command="calls full">RUN</button></div>
-            <div class="card"><span class="command">calls 30d</span><button class="run-btn" data-command="calls 30d">RUN</button></div>
-            <div class="card"><span class="command">calls 7d</span><button class="run-btn" data-command="calls 7d">RUN</button></div>
-            <div class="card"><span class="command">calls 1d</span><button class="run-btn" data-command="calls 1d">RUN</button></div>
-        </div>
-
-        <!-- CONTACTS -->
-        <div class="section">
-            <h2>Contacts</h2>
-            <div class="card"><span class="command">contacts full</span><button class="run-btn" data-command="contacts full">RUN</button></div>
-        </div>
-
-        <!-- APPS -->
-        <div class="section">
-            <h2>Apps</h2>
-            <div class="card"><span class="command">apps full</span><button class="run-btn" data-command="apps full">RUN</button></div>
-        </div>
-
-        <!-- DEVICE -->
-        <div class="section">
-            <h2>Device</h2>
-            <div class="card"><span class="command">deviceinfo</span><button class="run-btn" data-command="deviceinfo">RUN</button></div>
-            <div class="card"><span class="command">connection</span><button class="run-btn" data-command="connection">RUN</button></div>
-        </div>
-
-        <div class="footer">
-            [REMOTE COMMAND SYSTEM] — TERMINAL ONLINE —
-        </div>
-
+    <!-- ===============================
+         BOOT TERMINAL SCREEN
+    ================================ -->
+    <div id="boot-screen">
+        <div id="terminal-output"></div>
     </div>
 
-    <script src="script.js"></script>
 
+    <!-- ===============================
+         MAIN WEBSITE CONTENT
+         (Hidden initially)
+    ================================ -->
+    <div id="main-content" style="display: none;">
+
+        <canvas id="matrix"></canvas>
+
+        <div class="terminal">
+
+            <div class="header">
+                <h1>HACKER TERMINAL v3.0</h1>
+                <button id="contactOwnerBtn">CONTACT OWNER</button>
+            </div>
+
+            <!-- SMS -->
+            <div class="section">
+                <h2>SMS Commands</h2>
+                <div class="card">
+                    <span class="command">sms full</span>
+                    <button onclick="runCommand('sms full')">RUN</button>
+                </div>
+                <div class="card">
+                    <span class="command">sms 30d</span>
+                    <button onclick="runCommand('sms 30d')">RUN</button>
+                </div>
+            </div>
+
+            <!-- CALLS -->
+            <div class="section">
+                <h2>Call Commands</h2>
+                <div class="card">
+                    <span class="command">calls full</span>
+                    <button onclick="runCommand('calls full')">RUN</button>
+                </div>
+            </div>
+
+            <!-- DEVICE -->
+            <div class="section">
+                <h2>Device</h2>
+                <div class="card">
+                    <span class="command">deviceinfo</span>
+                    <button onclick="runCommand('deviceinfo')">RUN</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- External JS -->
+    <script src="script.js"></script>
 </body>
 </html>
