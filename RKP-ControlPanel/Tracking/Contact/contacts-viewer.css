@@ -1,0 +1,175 @@
+/* =========================================
+   GOOGLE CONTACTS INSPIRED UI
+========================================= */
+
+.contacts-app {
+    background: #121212;
+    color: #ffffff;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+
+.contacts-header {
+    padding: 16px;
+    background: #1f1f1f;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+/* ===== SEARCH BAR ===== */
+
+.contacts-search {
+    padding: 12px 16px;
+    background: #1f1f1f;
+}
+
+.contacts-search input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 24px;
+    border: none;
+    outline: none;
+    background: #2c2c2c;
+    color: white;
+    font-size: 14px;
+}
+
+.contacts-search input::placeholder {
+    color: #aaaaaa;
+}
+
+/* ===== CONTACT LIST ===== */
+
+.contacts-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+}
+
+/* ===== LETTER SECTION ===== */
+
+.contact-section {
+    margin-bottom: 10px;
+}
+
+.section-letter {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #bbbbbb;
+}
+
+/* ===== CONTACT ITEM ===== */
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.contact-item:hover {
+    background: #1f1f1f;
+}
+
+/* ===== AVATAR ===== */
+
+.contact-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 16px;
+    margin-right: 14px;
+}
+
+/* ===== CONTACT DETAILS ===== */
+
+.contact-details {
+    flex: 1;
+}
+
+.contact-name {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.contact-number {
+    font-size: 13px;
+    color: #bbbbbb;
+}
+
+/* ===== EXPANDED CARD ===== */
+
+.contact-expanded {
+    background: #1e1e1e;
+    padding: 16px;
+    border-top: 1px solid #333;
+    display: none;
+}
+
+.contact-expanded.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.contact-actions {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.contact-actions button {
+    flex: 1;
+    padding: 8px;
+    border-radius: 20px;
+    border: none;
+    font-size: 13px;
+    cursor: pointer;
+    background: #3b82f6;
+    color: white;
+}
+
+.contact-actions button:hover {
+    background: #2563eb;
+}
+
+/* ===== SCROLLBAR ===== */
+
+.contacts-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.contacts-list::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
+
+/* ===== ANIMATION ===== */
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* ===== MOBILE OPTIMIZATION ===== */
+
+@media (max-width: 768px) {
+    .contacts-header {
+        font-size: 18px;
+    }
+
+    .contact-name {
+        font-size: 14px;
+    }
+}
