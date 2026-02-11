@@ -1,2 +1,0 @@
-change social media links in footer and contact page
-remove footers in all pages
