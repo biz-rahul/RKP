@@ -121,248 +121,153 @@ h1 {
 
 <script>
 
-/* ================================
+/* ===============================
    CONFIG
 ================================ */
 
 const owner = "MOFO-UG";
 const repo = "ControlTheWorld";
 
-let defaultBranch = "";
+let defaultBranch = "main"; // fallback
 let currentJSON = null;
-let currentPath = "";
 let currentFileName = "";
 
-/* ================================
+/* ===============================
+   DEBUG LOGGER
+================================ */
+
+function logToScreen(message, isError = false) {
+    const fileList = document.getElementById("fileList");
+    const div = document.createElement("div");
+    div.style.color = isError ? "red" : "#60a5fa";
+    div.style.fontSize = "12px";
+    div.textContent = message;
+    fileList.appendChild(div);
+}
+
+/* ===============================
    INIT
 ================================ */
 
 document.addEventListener("DOMContentLoaded", init);
 
 async function init() {
-    try {
-        const repoInfo = await fetch(`https://api.github.com/repos/${owner}/${repo}`);
-        const repoData = await repoInfo.json();
 
-        if (!repoData.default_branch) {
-            console.error("Repository not found or API limit exceeded.");
+    const fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
+
+    try {
+
+        logToScreen("Connecting to GitHub API...");
+
+        const repoResponse = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}`
+        );
+
+        if (!repoResponse.ok) {
+            logToScreen("Repo API failed: " + repoResponse.status, true);
             return;
         }
 
-        defaultBranch = repoData.default_branch;
+        const repoData = await repoResponse.json();
+
+        defaultBranch = repoData.default_branch || "main";
+
+        logToScreen("Default branch: " + defaultBranch);
+
         loadContents("");
-    } catch (err) {
-        console.error("Initialization error:", err);
+
+    } catch (error) {
+        logToScreen("Initialization error: " + error.message, true);
     }
 }
 
-/* ================================
+/* ===============================
    LOAD DIRECTORY
 ================================ */
 
 async function loadContents(path) {
-    currentPath = path;
+
+    const fileList = document.getElementById("fileList");
+    fileList.innerHTML = "";
 
     try {
+
         const response = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${defaultBranch}`
         );
 
-        const data = await response.json();
-
-        const fileList = document.getElementById("fileList");
-        fileList.innerHTML = "";
-
-        /* Handle API errors */
-        if (!Array.isArray(data)) {
-            fileList.innerHTML = "<div style='color:red'>Unable to load directory (API error or rate limit).</div>";
-            console.error("API response:", data);
+        if (!response.ok) {
+            logToScreen("Directory load failed: " + response.status, true);
             return;
         }
 
-        /* Back button */
-        if (path !== "") {
-            const backDiv = document.createElement("div");
-            backDiv.className = "folder";
-            backDiv.innerText = ".. (Back)";
-            backDiv.onclick = () => {
-                const parts = path.split("/");
-                parts.pop();
-                loadContents(parts.join("/"));
-            };
-            fileList.appendChild(backDiv);
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+            logToScreen("Unexpected API response", true);
+            console.log(data);
+            return;
+        }
+
+        if (data.length === 0) {
+            logToScreen("Directory is empty.");
         }
 
         data.forEach(item => {
+
             const div = document.createElement("div");
             div.className = item.type === "dir" ? "folder" : "file";
-            div.innerText = item.name;
+            div.textContent = item.name;
 
             if (item.type === "dir") {
                 div.onclick = () => loadContents(item.path);
-            } else if (item.name.endsWith(".json")) {
+            }
+
+            if (item.name.endsWith(".json")) {
                 div.onclick = () => loadJSON(item.path, item.name);
             }
 
             fileList.appendChild(div);
         });
 
-    } catch (err) {
-        console.error("Directory load error:", err);
+    } catch (error) {
+        logToScreen("Directory error: " + error.message, true);
     }
 }
 
-/* ================================
+/* ===============================
    LOAD JSON
 ================================ */
 
 async function loadJSON(path, filename) {
+
     try {
-        const rawUrl = `https://raw.githubusercontent.com/${owner}/${repo}/${defaultBranch}/${path}`;
+
+        const rawUrl =
+            `https://raw.githubusercontent.com/${owner}/${repo}/${defaultBranch}/${path}`;
+
         const response = await fetch(rawUrl);
+
+        if (!response.ok) {
+            alert("Failed to load JSON file.");
+            return;
+        }
+
         const text = await response.text();
 
         currentJSON = JSON.parse(text);
         currentFileName = filename;
 
-        generateViewerButtons(filename);
-        document.getElementById("viewerContainer").innerHTML = "";
+        alert("JSON loaded successfully.");
 
-    } catch (err) {
-        console.error("JSON load error:", err);
+    } catch (error) {
+        alert("JSON parse error: " + error.message);
     }
-}
-
-/* ================================
-   SMART DETECTION
-================================ */
-
-function detectViewerType(filename) {
-    const lower = filename.toLowerCase();
-
-    if (lower.startsWith("sms")) return "sms";
-    if (lower.startsWith("call") || lower.startsWith("calls")) return "call";
-    if (lower.startsWith("contact") || lower.startsWith("contacts")) return "contacts";
-    if (lower.startsWith("device")) return "device";
-
-    return null;
-}
-
-function generateViewerButtons(filename) {
-
-    const viewerOptions = document.getElementById("viewerOptions");
-    viewerOptions.innerHTML = "";
-    viewerOptions.style.display = "block";
-
-    const detected = detectViewerType(filename);
-
-    addViewerButton("regular", "Open in Regular Viewer");
-
-    if (detected) {
-        addViewerButton(detected, `Open in ${capitalize(detected)} Viewer`);
-    } else {
-        addViewerButton("sms", "Open in SMS Viewer");
-        addViewerButton("call", "Open in Call Viewer");
-        addViewerButton("contacts", "Open in Contacts Viewer");
-        addViewerButton("device", "Open in Device Viewer");
-    }
-}
-
-function addViewerButton(type, label) {
-    const btn = document.createElement("button");
-    btn.textContent = label;
-    btn.onclick = () => openViewer(type);
-    document.getElementById("viewerOptions").appendChild(btn);
-}
-
-/* ================================
-   VIEWER ENGINE
-================================ */
-
-function openViewer(type) {
-    const container = document.getElementById("viewerContainer");
-    container.className = type + "-viewer";
-    container.innerHTML = "";
-
-    if (!currentJSON) return;
-
-    switch(type) {
-        case "regular":
-            renderRegular(container);
-            break;
-        case "sms":
-            renderSMS(container);
-            break;
-        case "call":
-            renderCall(container);
-            break;
-        case "contacts":
-            renderContacts(container);
-            break;
-        case "device":
-            renderDevice(container);
-            break;
-    }
-}
-
-/* ================================
-   REGULAR VIEWER
-================================ */
-
-function renderRegular(container) {
-
-    const wrapper = document.createElement("div");
-
-    const actionBar = document.createElement("div");
-    actionBar.style.marginBottom = "12px";
-
-    const copyBtn = document.createElement("button");
-    copyBtn.textContent = "Copy Full JSON";
-    copyBtn.style.marginRight = "8px";
-    copyBtn.onclick = () => {
-        navigator.clipboard.writeText(JSON.stringify(currentJSON, null, 2));
-        alert("JSON copied.");
-    };
-
-    const downloadBtn = document.createElement("button");
-    downloadBtn.textContent = "Download JSON";
-    downloadBtn.onclick = () => {
-        const blob = new Blob(
-            [JSON.stringify(currentJSON, null, 2)],
-            { type: "application/json" }
-        );
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = currentFileName;
-        a.click();
-        URL.revokeObjectURL(url);
-    };
-
-    actionBar.appendChild(copyBtn);
-    actionBar.appendChild(downloadBtn);
-
-    const pre = document.createElement("pre");
-    pre.textContent = JSON.stringify(currentJSON, null, 2);
-    pre.style.background = "#1e293b";
-    pre.style.padding = "12px";
-    pre.style.borderRadius = "6px";
-    pre.style.overflowX = "auto";
-
-    wrapper.appendChild(actionBar);
-    wrapper.appendChild(pre);
-    container.appendChild(wrapper);
-}
-
-/* ================================
-   UTIL
-================================ */
-
-function capitalize(text) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 </script>
+
 
 
 
