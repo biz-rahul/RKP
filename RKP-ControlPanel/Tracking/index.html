@@ -113,13 +113,7 @@ h1 {
 
     <div class="content">
 
-        <div id="viewerOptions" class="viewer-options">
-            <button onclick="openViewer('regular')">Open in Regular Viewer</button>
-            <button onclick="openViewer('sms')">Open in SMS Viewer</button>
-            <button onclick="openViewer('call')">Open in Call Viewer</button>
-            <button onclick="openViewer('contacts')">Open in Contacts Viewer</button>
-            <button onclick="openViewer('device')">Open in Device Viewer</button>
-        </div>
+        <div id="viewerOptions" class="viewer-options"></div>
 
         <div id="viewerContainer"></div>
     </div>
@@ -131,6 +125,7 @@ h1 {
 
 const owner = "MOFO-UG";
 const repo = "ControlTheWorld";
+
 let defaultBranch = "";
 let currentJSON = null;
 let currentPath = "";
@@ -158,7 +153,6 @@ async function loadContents(path) {
     const fileList = document.getElementById("fileList");
     fileList.innerHTML = "";
 
-    /* ===== BACK BUTTON ===== */
     if (path !== "") {
         const backDiv = document.createElement("div");
         backDiv.className = "folder";
@@ -196,8 +190,54 @@ async function loadJSON(path, filename) {
     currentJSON = JSON.parse(text);
     currentFileName = filename;
 
-    document.getElementById("viewerOptions").style.display = "block";
+    generateViewerButtons(filename);
     document.getElementById("viewerContainer").innerHTML = "";
+}
+
+/* ===== SMART VIEWER DETECTION ===== */
+
+function detectViewerType(filename) {
+    const lower = filename.toLowerCase();
+
+    if (lower.startsWith("sms")) return "sms";
+    if (lower.startsWith("call") || lower.startsWith("calls")) return "call";
+    if (lower.startsWith("contact") || lower.startsWith("contacts")) return "contacts";
+    if (lower.startsWith("device")) return "device";
+
+    return null; // fallback
+}
+
+/* ===== GENERATE BUTTONS ===== */
+
+function generateViewerButtons(filename) {
+
+    const viewerOptions = document.getElementById("viewerOptions");
+    viewerOptions.innerHTML = "";
+    viewerOptions.style.display = "block";
+
+    const detected = detectViewerType(filename);
+
+    // Always include Regular Viewer
+    addViewerButton("regular", "Open in Regular Viewer");
+
+    if (detected) {
+        addViewerButton(detected, `Open in ${capitalize(detected)} Viewer`);
+    } else {
+        // Detection failed → show all
+        addViewerButton("sms", "Open in SMS Viewer");
+        addViewerButton("call", "Open in Call Viewer");
+        addViewerButton("contacts", "Open in Contacts Viewer");
+        addViewerButton("device", "Open in Device Viewer");
+    }
+}
+
+/* ===== ADD BUTTON HELPER ===== */
+
+function addViewerButton(type, label) {
+    const btn = document.createElement("button");
+    btn.textContent = label;
+    btn.onclick = () => openViewer(type);
+    document.getElementById("viewerOptions").appendChild(btn);
 }
 
 /* ===== VIEWER ENGINE ===== */
@@ -228,13 +268,11 @@ function openViewer(type) {
     }
 }
 
-/* ===== REGULAR VIEWER (UPDATED) ===== */
+/* ===== REGULAR VIEWER ===== */
 
 function renderRegular(container) {
 
     const wrapper = document.createElement("div");
-
-    /* ===== ACTION BUTTONS ===== */
 
     const actionBar = document.createElement("div");
     actionBar.style.marginBottom = "12px";
@@ -243,9 +281,8 @@ function renderRegular(container) {
     copyBtn.textContent = "Copy Full JSON";
     copyBtn.style.marginRight = "8px";
     copyBtn.onclick = () => {
-        const formatted = JSON.stringify(currentJSON, null, 2);
-        navigator.clipboard.writeText(formatted);
-        alert("JSON copied successfully.");
+        navigator.clipboard.writeText(JSON.stringify(currentJSON, null, 2));
+        alert("JSON copied.");
     };
 
     const downloadBtn = document.createElement("button");
@@ -255,19 +292,16 @@ function renderRegular(container) {
             [JSON.stringify(currentJSON, null, 2)],
             { type: "application/json" }
         );
-
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = currentFileName || "data.json";
+        a.download = currentFileName;
         a.click();
         URL.revokeObjectURL(url);
     };
 
     actionBar.appendChild(copyBtn);
     actionBar.appendChild(downloadBtn);
-
-    /* ===== JSON DISPLAY ===== */
 
     const pre = document.createElement("pre");
     pre.textContent = JSON.stringify(currentJSON, null, 2);
@@ -278,13 +312,19 @@ function renderRegular(container) {
 
     wrapper.appendChild(actionBar);
     wrapper.appendChild(pre);
-
     container.appendChild(wrapper);
+}
+
+/* ===== UTIL ===== */
+
+function capitalize(text) {
+    return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 init();
 
 </script>
+
 
 
 <!-- ===== EXTERNAL VIEWER JS FILES ===== -->
