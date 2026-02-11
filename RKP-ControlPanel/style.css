@@ -50,6 +50,12 @@ canvas {
    LOGIN TERMINAL SCREEN
 ========================= */
 
+#mobileInput {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
 #loginScreen {
     position: fixed;
     width: 100%;
