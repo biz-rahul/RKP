@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Advanced Device Information Terminal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+
+/* =====================================================
+   GLOBAL BACKGROUND — FUTURISTIC HACKER GRID
+===================================================== */
+
+body {
+
+    margin: 0;
+    height: 100vh;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(0,150,255,0.15), transparent 40%),
+        radial-gradient(circle at 80% 80%, rgba(0,255,150,0.1), transparent 40%),
+        #05080c;
+
+    font-family: "Roboto", sans-serif;
+    color: #e6edf3;
+
+    overflow: hidden;
+
+}
+
+/* grid overlay */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+
+    background-size: 40px 40px;
+
+    pointer-events: none;
+
+}
+
+/* =====================================================
+   APP CONTAINER
+===================================================== */
+
+.deviceviewer-app {
+
+    height: 100vh;
+
+    display: flex;
+    flex-direction: column;
+
+    backdrop-filter: blur(20px);
+
+}
+
+/* =====================================================
+   HEADER — TERMINAL STYLE
+===================================================== */
+
+.deviceviewer-header {
+
+    padding: 16px;
+
+    font-family: "Orbitron", monospace;
+
+    font-size: 18px;
+
+    display: flex;
+    justify-content: space-between;
+
+    background:
+        linear-gradient(90deg,
+            rgba(0,0,0,0.6),
+            rgba(0,50,120,0.3)
+        );
+
+    border-bottom: 1px solid rgba(88,166,255,0.4);
+
+    box-shadow:
+        0 0 10px rgba(88,166,255,0.3);
+
+}
+
+/* clock */
+
+.clock {
+
+    color: #58a6ff;
+    font-size: 14px;
+
+}
+
+/* =====================================================
+   MAIN CONTAINER
+===================================================== */
+
+.deviceviewer-container {
+
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding: 16px;
+
+}
+
+/* =====================================================
+   SECTION CARD — GLASS + NEON
+===================================================== */
+
+.deviceviewer-section {
+
+    position: relative;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(22,27,34,0.85),
+            rgba(13,17,23,0.85)
+        );
+
+    border-radius: 12px;
+
+    margin-bottom: 14px;
+
+    border:
+        1px solid rgba(88,166,255,0.25);
+
+    backdrop-filter: blur(12px);
+
+    transition: 0.3s;
+
+    overflow: hidden;
+
+}
+
+/* glow border */
+
+.deviceviewer-section:hover {
+
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 0 15px rgba(88,166,255,0.4);
+
+}
+
+/* =====================================================
+   SECTION TITLE
+===================================================== */
+
+.deviceviewer-section-title {
+
+    padding: 12px 14px;
+
+    font-family: "Orbitron";
+
+    font-size: 13px;
+
+    letter-spacing: 1px;
+
+    color: #58a6ff;
+
+    border-bottom:
+        1px solid rgba(88,166,255,0.2);
+
+}
+
+/* =====================================================
+   ROW
+===================================================== */
+
+.deviceviewer-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    padding: 10px 14px;
+
+    border-bottom:
+        1px solid rgba(255,255,255,0.05);
+
+}
+
+.deviceviewer-row:last-child {
+
+    border-bottom: none;
+
+}
+
+/* =====================================================
+   LABEL
+===================================================== */
+
+.deviceviewer-label {
+
+    color: #8b949e;
+    font-size: 13px;
+
+}
+
+/* =====================================================
+   VALUE
+===================================================== */
+
+.deviceviewer-value {
+
+    font-weight: 500;
+    font-size: 13px;
+
+}
+
+/* =====================================================
+   STATUS COLORS
+===================================================== */
+
+.status-good {
+
+    color: #00ffa6;
+
+    text-shadow: 0 0 8px rgba(0,255,166,0.6);
+
+}
+
+.status-warning {
+
+    color: #ffcc00;
+
+}
+
+.status-bad {
+
+    color: #ff4d4d;
+
+    text-shadow: 0 0 8px rgba(255,0,0,0.6);
+
+}
+
+/* =====================================================
+   SCROLLBAR
+===================================================== */
+
+.deviceviewer-container::-webkit-scrollbar {
+
+    width: 6px;
+
+}
+
+.deviceviewer-container::-webkit-scrollbar-thumb {
+
+    background: #58a6ff;
+
+    border-radius: 3px;
+
+}
+
+/* =====================================================
+   EMPTY STATE
+===================================================== */
+
+.deviceviewer-empty {
+
+    padding: 40px;
+
+    text-align: center;
+
+    color: #8b949e;
+
+}
+
+/* =====================================================
+   MOBILE OPTIMIZATION
+===================================================== */
+
+@media(max-width:768px){
+
+.deviceviewer-label,
+.deviceviewer-value{
+
+font-size:12px;
+
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+
+/* =====================================================
+   SAMPLE JSON DATA
+   Replace with real device JSON
+===================================================== */
+
+const currentJSON = {
+
+device:{
+
+model:"Pixel 7 Pro",
+device_name:"cheetah",
+manufacturer:"google",
+brand:"google",
+hardware:"Tensor G2"
+
+},
+
+system:{
+
+android_version:"14",
+api_level:"34",
+build_display:"UPB5.230623.005",
+security_patch:"2025-10-05"
+
+},
+
+cpu:{
+
+processor:"Google Tensor G2",
+cpu_architecture:"arm64-v8a",
+cores:"8"
+
+},
+
+battery:{
+
+level_percent:72,
+status:"charging"
+
+},
+
+network:{
+
+ipv4:"192.168.1.25",
+ipv6:"fe80::1234"
+
+},
+
+connectivity:{
+
+wifi_connected:true,
+mobile_connected:false
+
+},
+
+display:{
+
+resolution:"1440 x 3120",
+density:"560dpi",
+density_dpi:"560",
+brightness_level:82,
+screen_timeout_ms:600000
+
+}
+
+};
+
+/* =====================================================
+   MAIN RENDER
+===================================================== */
+
+function renderDevice(container){
+
+if(!currentJSON){
+
+container.innerHTML="<div class='deviceviewer-empty'>No data</div>";
+return;
+
+}
+
+container.className="deviceviewer-app";
+
+container.innerHTML=`
+
+<div class="deviceviewer-header">
+
+<span>DEVICE INFORMATION TERMINAL</span>
+
+<span class="clock" id="clock"></span>
+
+</div>
+
+<div class="deviceviewer-container" id="deviceContainer"></div>
+
+`;
+
+const root=document.getElementById("deviceContainer");
+
+renderSection(root,"Device",[
+
+["Model",currentJSON.device.model],
+["Device Name",currentJSON.device.device_name],
+["Manufacturer",capitalize(currentJSON.device.manufacturer)],
+["Brand",capitalize(currentJSON.device.brand)],
+["Hardware",currentJSON.device.hardware]
+
+]);
+
+renderSection(root,"System",[
+
+["Android Version",currentJSON.system.android_version],
+["API Level",currentJSON.system.api_level],
+["Build",currentJSON.system.build_display],
+["Security Patch",currentJSON.system.security_patch]
+
+]);
+
+renderSection(root,"CPU",[
+
+["Processor",currentJSON.cpu.processor],
+["Architecture",currentJSON.cpu.cpu_architecture],
+["Cores",currentJSON.cpu.cores]
+
+]);
+
+renderSection(root,"Battery",[
+
+["Level",formatBattery(currentJSON.battery.level_percent),getBatteryClass(currentJSON.battery.level_percent)],
+["Status",capitalize(currentJSON.battery.status),getBatteryStatusClass(currentJSON.battery.status)]
+
+]);
+
+renderSection(root,"Network",[
+
+["IPv4",currentJSON.network.ipv4],
+["IPv6",currentJSON.network.ipv6]
+
+]);
+
+renderSection(root,"Connectivity",[
+
+["WiFi",formatConnection(currentJSON.connectivity.wifi_connected),getConnectionClass(currentJSON.connectivity.wifi_connected)],
+["Mobile Data",formatConnection(currentJSON.connectivity.mobile_connected),getConnectionClass(currentJSON.connectivity.mobile_connected)]
+
+]);
+
+renderSection(root,"Display",[
+
+["Resolution",currentJSON.display.resolution],
+["Density",currentJSON.display.density],
+["Brightness",currentJSON.display.brightness_level+"%"],
+["Timeout",formatTimeout(currentJSON.display.screen_timeout_ms)]
+
+]);
+
+}
+
+/* =====================================================
+   SECTION ENGINE
+===================================================== */
+
+function renderSection(container,title,rows){
+
+const section=document.createElement("div");
+
+section.className="deviceviewer-section";
+
+section.innerHTML=`
+<div class="deviceviewer-section-title">${title}</div>
+`;
+
+rows.forEach(row=>{
+
+if(!row[1])return;
+
+const div=document.createElement("div");
+
+div.className="deviceviewer-row";
+
+div.innerHTML=`
+<div class="deviceviewer-label">${row[0]}</div>
+<div class="deviceviewer-value ${row[2]||""}">${row[1]}</div>
+`;
+
+section.appendChild(div);
+
+});
+
+container.appendChild(section);
+
+}
+
+/* =====================================================
+   HELPERS
+===================================================== */
+
+function capitalize(t){
+
+return t?t.charAt(0).toUpperCase()+t.slice(1):"Unknown";
+
+}
+
+function formatBattery(l){
+
+return l+"%";
+
+}
+
+function getBatteryClass(l){
+
+if(l>=60)return"status-good";
+if(l>=30)return"status-warning";
+return"status-bad";
+
+}
+
+function getBatteryStatusClass(s){
+
+if(s==="charging")return"status-good";
+return"status-warning";
+
+}
+
+function formatConnection(c){
+
+return c?"Connected":"Disconnected";
+
+}
+
+function getConnectionClass(c){
+
+return c?"status-good":"status-bad";
+
+}
+
+function formatTimeout(ms){
+
+return Math.floor(ms/60000)+" minutes";
+
+}
+
+/* =====================================================
+   CLOCK
+===================================================== */
+
+setInterval(()=>{
+
+const now=new Date();
+
+document.getElementById("clock").innerText=
+now.toLocaleTimeString();
+
+},1000);
+
+/* =====================================================
+   INIT
+===================================================== */
+
+renderDevice(document.getElementById("app"));
+
+</script>
+
+</body>
+</html>
