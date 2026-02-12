@@ -351,34 +351,47 @@ function addViewerButton(type, label) {
 function openViewer(type) {
 
     const container = document.getElementById("viewerContainer");
+
     container.className = type + "-viewer";
+
     container.innerHTML = "";
 
-    if (!currentJSON) return;
+    if (!currentJSON) {
+        console.log("No JSON loaded");
+        return;
+    }
 
     switch(type) {
+
         case "regular":
             renderRegular(container);
             break;
-            case "notification":
-renderNotification(container);
-break;
+
         case "sms":
             renderSMS(container);
             break;
+
         case "call":
             renderCall(container);
             break;
+
         case "contacts":
             renderContacts(container);
             break;
-        case "app":
- renderApp(container);
-    break;
+
         case "device":
             renderDevice(container);
             break;
+
+        case "app":
+            renderApp(container);
+            break;
+
+        case "notification":
+            renderNotification(container);
+            break;
     }
+
 }
 
 /* ==========================================
