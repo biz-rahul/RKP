@@ -109,14 +109,13 @@ canvas{
     color:#000;
 }
 
-/* COMMAND GRID FIXED */
+/* COMMAND GRID */
 .commands{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
     gap:25px;
 }
 
-/* BUTTON SIZE SLIGHTLY INCREASED */
 .command{
     padding:22px;
     font-size:1.05em;
@@ -151,7 +150,7 @@ canvas{
     font-size:1em;
 }
 
-/* RUN */
+/* RUN BUTTON */
 .run-panel{
     text-align:center;
     margin-top:30px;
@@ -172,11 +171,14 @@ canvas{
     color:#000;
 }
 
-/* MOBILE = 2 PER ROW */
+/* MOBILE FIX — SCROLL ISSUE FIXED HERE */
 @media(max-width:768px){
 
     body{
         padding:20px;
+        align-items:flex-start;   /* FIX: allows scrolling to top */
+        justify-content:center;
+        min-height:100vh;
     }
 
     .terminal{
@@ -211,9 +213,7 @@ canvas{
 <div class="commands">
 
 <div class="command" data-cmd="deviceinfo">deviceinfo</div>
-
 <div class="command" data-cmd="apps full">apps full</div>
-
 <div class="command" data-cmd="contacts full">contacts full</div>
 
 <div class="command" data-cmd="sms full">sms full</div>
@@ -232,7 +232,6 @@ canvas{
 <div class="command" data-cmd="notification 30d">notification 30d</div>
 
 <div class="command" data-cmd="connection">connection</div>
-
 <div class="command" data-cmd="none">none</div>
 
 </div>
