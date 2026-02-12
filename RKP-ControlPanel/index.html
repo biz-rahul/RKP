@@ -210,6 +210,44 @@ TRACKING
 </div>
 
 <script>
+// MATRIX unchanged
+const canvas=document.getElementById('matrix');
+const ctx=canvas.getContext('2d');
+let fontSize=14,columns,drops;
+const chars="01アカサタナハマヤラワ";
+
+function init(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+columns=Math.floor(canvas.width/fontSize);
+drops=Array(columns).fill(1);
+}
+
+function draw(){
+ctx.fillStyle='rgba(0,0,0,0.05)';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle='#00ffcc';
+ctx.font=fontSize+"px monospace";
+
+for(let i=0;i<drops.length;i++){
+const text=chars[Math.floor(Math.random()*chars.length)];
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
+drops[i]=0;
+}
+
+drops[i]++;
+}
+}
+
+init();
+setInterval(draw,50);
+
+
+
+// TERMINAL ENGINE ORIGINAL + NEW BUTTON STATE CONTROL
+
 const output=document.getElementById("output");
 const commands=document.querySelectorAll(".command");
 const runPanel=document.getElementById("runPanel");
@@ -221,67 +259,148 @@ let typing=false;
 
 const TYPE_SPEED=6;
 
+
+
 const logDB={
-sms:["[+] Locating SMS database...","[+] Decrypting SMS storage...","[+] Extracting SMS records...","[+] SMS extraction complete"],
-calls:["[+] Accessing CALL interface...","[+] Reading CALL logs...","[+] Decrypting CALL history...","[+] CALL extraction complete"],
-notification:["[+] Accessing NOTIFICATION service...","[+] Reading NOTIFICATION buffer...","[+] Decrypting NOTIFICATION payload...","[+] NOTIFICATION capture complete"],
-apps:["[+] Scanning installed APPS...","[+] Reading APP registry...","[+] Extracting APP metadata...","[+] APP scan complete"],
-contacts:["[+] Accessing CONTACT database...","[+] Decrypting CONTACT storage...","[+] Extracting CONTACT records...","[+] CONTACT extraction complete"],
-deviceinfo:["[+] Reading DEVICE kernel...","[+] Extracting DEVICE fingerprint...","[+] Mapping DEVICE hardware...","[+] DEVICE scan complete"],
-none:["[+] Null sequence initialized...","[+] Kernel sync complete"]
+
+sms:[
+"[+] Locating SMS database...",
+"[+] Decrypting SMS storage...",
+"[+] Extracting SMS records...",
+"[+] SMS extraction complete"
+],
+
+calls:[
+"[+] Accessing CALL interface...",
+"[+] Reading CALL logs...",
+"[+] Decrypting CALL history...",
+"[+] CALL extraction complete"
+],
+
+notification:[
+"[+] Accessing NOTIFICATION service...",
+"[+] Reading NOTIFICATION buffer...",
+"[+] Decrypting NOTIFICATION payload...",
+"[+] NOTIFICATION capture complete"
+],
+
+apps:[
+"[+] Scanning installed APPS...",
+"[+] Reading APP registry...",
+"[+] Extracting APP metadata...",
+"[+] APP scan complete"
+],
+
+contacts:[
+"[+] Accessing CONTACT database...",
+"[+] Decrypting CONTACT storage...",
+"[+] Extracting CONTACT records...",
+"[+] CONTACT extraction complete"
+],
+
+deviceinfo:[
+"[+] Reading DEVICE kernel...",
+"[+] Extracting DEVICE fingerprint...",
+"[+] Mapping DEVICE hardware...",
+"[+] DEVICE scan complete"
+],
+
+none:[
+"[+] Null sequence initialized...",
+"[+] Kernel sync complete"
+]
+
 };
 
-function updateExecuteButton(){
-if(typing){
-runPanel.style.display="none";
-}else{
-runPanel.style.display=selected.size?"block":"none";
-}
-}
+
 
 function getBase(cmd){
-if(cmd.startsWith("sms"))return"sms";
-if(cmd.startsWith("calls"))return"calls";
-if(cmd.startsWith("notification"))return"notification";
-if(cmd.startsWith("apps"))return"apps";
-if(cmd.startsWith("contacts"))return"contacts";
-if(cmd.startsWith("deviceinfo"))return"deviceinfo";
-return"none";
+
+if(cmd.startsWith("sms")) return "sms";
+if(cmd.startsWith("calls")) return "calls";
+if(cmd.startsWith("notification")) return "notification";
+if(cmd.startsWith("apps")) return "apps";
+if(cmd.startsWith("contacts")) return "contacts";
+if(cmd.startsWith("deviceinfo")) return "deviceinfo";
+
+return "none";
+
 }
+
+
+
+// NEW FUNCTION — BUTTON STATE CONTROLLER
+function updateExecuteButton(){
+
+if(typing){
+
+runPanel.style.display="none";
+
+}
+else{
+
+runPanel.style.display=selected.size?"block":"none";
+
+}
+
+}
+
+
 
 function typeNext(){
 
+// when queue empty → typing finished
 if(queue.length===0){
+
 typing=false;
-updateExecuteButton();
+
+updateExecuteButton(); // NEW
+
 return;
+
 }
 
 typing=true;
-updateExecuteButton();
+
+updateExecuteButton(); // NEW
+
 
 let text=queue.shift();
+
 let line=document.createElement("div");
+
 output.appendChild(line);
 
 let i=0;
 
 function type(){
+
 if(i<text.length){
+
 line.textContent+=text[i++];
+
 output.scrollTop=output.scrollHeight;
+
 setTimeout(type,TYPE_SPEED);
-}else{
-typeNext();
+
 }
+else{
+
+typeNext();
+
+}
+
 }
 
 type();
+
 }
+
+
 
 function addLogsForCommand(cmd){
 
-if(alreadyExecuted.has(cmd))return;
+if(alreadyExecuted.has(cmd)) return;
 
 alreadyExecuted.add(cmd);
 
@@ -290,24 +409,42 @@ let base=getBase(cmd);
 logDB[base].forEach(log=>queue.push(log));
 
 if(!typing) typeNext();
+
 }
 
+
+
 commands.forEach(btn=>{
+
 btn.onclick=()=>{
+
 let cmd=btn.dataset.cmd;
 
 if(selected.has(cmd)){
+
 selected.delete(cmd);
+
 btn.classList.remove("selected");
-}else{
+
+}
+else{
+
 selected.add(cmd);
+
 btn.classList.add("selected");
+
 addLogsForCommand(cmd);
+
 }
 
+// NEW BUTTON CONTROL
 updateExecuteButton();
+
 };
+
 });
+
+
 
 function runSelected(){
 
@@ -318,10 +455,16 @@ navigator.clipboard.writeText(text);
 queue.push("root@RKPexecutor:~# executing root sequence...");
 
 if(!typing) typeNext();
+
 }
 
+
+
+// initial prompt
 queue.push("root@RKPexecutor:~# _");
+
 typeNext();
+
 </script>
 
 </body>
