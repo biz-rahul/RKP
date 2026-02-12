@@ -1,61 +1,228 @@
 /* =========================================
-   DEVICE INFO VIEWER ENGINE
+   FINAL DEVICE INFO VIEWER JS
+   SUPPORTS NEW STRUCTURED JSON
 ========================================= */
 
 function renderDevice(container) {
+
     if (!currentJSON || typeof currentJSON !== "object") {
-        container.innerHTML = "<p>Invalid device info format.</p>";
+
+        container.innerHTML =
+            "<div class='deviceviewer-empty'>Invalid device info format</div>";
+
         return;
     }
 
-    container.className = "device-app fade-in";
+    const data = currentJSON;
 
-    const model = currentJSON.model || "Unknown";
-    const brand = capitalize(currentJSON.brand || "Unknown");
-    const android = currentJSON.android || "Unknown";
-    const sdk = currentJSON.sdk || "Unknown";
+    container.className = "deviceviewer-app";
 
     container.innerHTML = `
-        <div class="device-header">About Phone</div>
-
-        <div class="device-hero">
-            <div class="device-icon">📱</div>
-            <div class="device-name">${brand} ${model}</div>
-            <div class="device-subtitle">Android ${android}</div>
+        <div class="deviceviewer-header">
+            Device Information Terminal
         </div>
 
-        <div class="divider"></div>
-
-        <div class="device-list">
-
-            <div class="device-section-title">Device Information</div>
-
-            ${createRow("Model", model)}
-            ${createRow("Brand", brand)}
-            ${createRow("Android Version", android)}
-            ${createRow("SDK Level", sdk)}
-
+        <div class="deviceviewer-container" id="deviceContainer">
         </div>
     `;
+
+    const root = document.getElementById("deviceContainer");
+
+    /* =========================================
+       RENDER ALL SECTIONS
+    ========================================= */
+
+    renderSection(root, "Device", [
+
+        ["Model", data.device?.model],
+        ["Device Name", data.device?.device_name],
+        ["Manufacturer", capitalize(data.device?.manufacturer)],
+        ["Brand", capitalize(data.device?.brand)],
+        ["Hardware", data.device?.hardware]
+
+    ]);
+
+    renderSection(root, "System", [
+
+        ["Android Version", data.system?.android_version],
+        ["API Level", data.system?.api_level],
+        ["Build", data.system?.build_display],
+        ["Security Patch", data.system?.security_patch]
+
+    ]);
+
+    renderSection(root, "CPU", [
+
+        ["Processor", data.cpu?.processor],
+        ["Architecture", data.cpu?.cpu_architecture],
+        ["Cores", data.cpu?.cores]
+
+    ]);
+
+    renderSection(root, "Battery", [
+
+        [
+            "Level",
+            formatBatteryLevel(data.battery?.level_percent),
+            getBatteryClass(data.battery?.level_percent)
+        ],
+
+        [
+            "Status",
+            capitalize(data.battery?.status),
+            getBatteryStatusClass(data.battery?.status)
+        ]
+
+    ]);
+
+    renderSection(root, "Network", [
+
+        ["IPv4", data.network?.ipv4],
+        ["IPv6", data.network?.ipv6]
+
+    ]);
+
+    renderSection(root, "Connectivity", [
+
+        [
+            "WiFi",
+            formatConnection(data.connectivity?.wifi_connected),
+            getConnectionClass(data.connectivity?.wifi_connected)
+        ],
+
+        [
+            "Mobile Data",
+            formatConnection(data.connectivity?.mobile_connected),
+            getConnectionClass(data.connectivity?.mobile_connected)
+        ]
+
+    ]);
+
+    renderSection(root, "Display", [
+
+        ["Resolution", data.display?.resolution],
+        ["Density", data.display?.density],
+        ["Density DPI", data.display?.density_dpi],
+        ["Brightness", data.display?.brightness_level + "%"],
+        ["Screen Timeout", formatTimeout(data.display?.screen_timeout_ms)]
+
+    ]);
+
 }
 
 /* =========================================
-   CREATE ROW TEMPLATE
+   SECTION RENDER ENGINE
 ========================================= */
 
-function createRow(label, value) {
-    return `
-        <div class="device-row">
-            <div class="device-label">${label}</div>
-            <div class="device-value">${value}</div>
+function renderSection(container, title, rows) {
+
+    const section = document.createElement("div");
+
+    section.className = "deviceviewer-section";
+
+    section.innerHTML = `
+        <div class="deviceviewer-section-title">
+            ${title}
         </div>
     `;
+
+    rows.forEach(row => {
+
+        if (!row[1]) return;
+
+        const label = row[0];
+        const value = row[1];
+        const cssClass = row[2] || "";
+
+        const div = document.createElement("div");
+
+        div.className = "deviceviewer-row";
+
+        div.innerHTML = `
+            <div class="deviceviewer-label">
+                ${label}
+            </div>
+
+            <div class="deviceviewer-value ${cssClass}">
+                ${value}
+            </div>
+        `;
+
+        section.appendChild(div);
+
+    });
+
+    container.appendChild(section);
 }
 
 /* =========================================
-   UTILITY
+   HELPERS
 ========================================= */
 
 function capitalize(text) {
-    return text.charAt(0).toUpperCase() + text.slice(1);
+
+    if (!text) return "Unknown";
+
+    return text.charAt(0).toUpperCase() +
+        text.slice(1);
+}
+
+/* =========================================
+   BATTERY HELPERS
+========================================= */
+
+function formatBatteryLevel(level) {
+
+    if (level === undefined) return "Unknown";
+
+    return level + "%";
+}
+
+function getBatteryClass(level) {
+
+    if (level >= 60) return "status-good";
+
+    if (level >= 30) return "status-warning";
+
+    return "status-bad";
+}
+
+function getBatteryStatusClass(status) {
+
+    if (!status) return "";
+
+    if (status === "charging")
+        return "status-good";
+
+    if (status === "discharging")
+        return "status-warning";
+
+    return "";
+}
+
+/* =========================================
+   CONNECTION HELPERS
+========================================= */
+
+function formatConnection(state) {
+
+    return state ? "Connected" : "Disconnected";
+}
+
+function getConnectionClass(state) {
+
+    return state ? "status-good" : "status-bad";
+}
+
+/* =========================================
+   TIMEOUT FORMAT
+========================================= */
+
+function formatTimeout(ms) {
+
+    if (!ms) return "Unknown";
+
+    const minutes = Math.floor(ms / 60000);
+
+    return minutes + " minutes";
 }
