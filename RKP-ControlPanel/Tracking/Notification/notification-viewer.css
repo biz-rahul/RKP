@@ -1,37 +1,37 @@
 /* =========================================
-   ADVANCED NOTIFICATION VIEWER CSS
-   Android Notification Panel + Hacker UI
+   ANDROID REAL NOTIFICATION VIEWER CSS
+   Samsung One UI + Pixel Material Design
 ========================================= */
 
 .notificationviewer-app {
 
-    background: #030a12;
-    color: #00ffd0;
+    background: #f1f3f4;
 
-    font-family: "Courier New", monospace;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
 
     height: 100%;
+
     display: flex;
     flex-direction: column;
 
-    position: relative;
+    color: #202124;
 
 }
 
 /* =========================================
-   HEADER
+   HEADER (Notification Shade Header)
 ========================================= */
 
 .notificationviewer-header {
 
-    padding: 14px;
+    padding: 16px;
 
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 20px;
+    font-weight: 500;
 
-    background: #031926;
+    background: white;
 
-    border-bottom: 1px solid #00ffd0;
+    border-bottom: 1px solid #e0e0e0;
 
 }
 
@@ -43,29 +43,32 @@
 
     padding: 10px;
 
-    background: #031926;
+    background: white;
+
+    border-bottom: 1px solid #e0e0e0;
 
 }
 
 .notificationviewer-search input {
 
     width: 100%;
-    padding: 8px;
 
-    background: black;
+    padding: 10px 14px;
 
-    border: 1px solid #00ffd0;
+    border-radius: 24px;
 
-    color: #00ffd0;
+    border: none;
 
-    font-family: inherit;
+    background: #eef0f1;
+
+    font-size: 14px;
 
     outline: none;
 
 }
 
 /* =========================================
-   LIST
+   LIST CONTAINER
 ========================================= */
 
 .notificationviewer-list {
@@ -84,25 +87,63 @@
 
 .notificationviewer-item {
 
-    background: rgba(0,255,208,0.05);
+    display: flex;
 
-    border: 1px solid rgba(0,255,208,0.2);
-
-    border-radius: 6px;
+    align-items: flex-start;
 
     padding: 12px;
 
-    margin-bottom: 10px;
+    background: white;
 
-    transition: all 0.2s;
+    border-radius: 12px;
+
+    margin-bottom: 8px;
+
+    box-shadow:
+        0 1px 2px rgba(0,0,0,0.1);
+
+    transition: background 0.2s;
 
 }
 
 .notificationviewer-item:hover {
 
-    background: rgba(0,255,208,0.1);
+    background: #f8f9fa;
 
-    border-color: #00ffd0;
+}
+
+/* =========================================
+   APP ICON
+========================================= */
+
+.notificationviewer-icon {
+
+    width: 40px;
+    height: 40px;
+
+    border-radius: 10px;
+
+    background: #e8eaed;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-right: 12px;
+
+    font-size: 18px;
+
+    color: #5f6368;
+
+}
+
+/* =========================================
+   CONTENT CONTAINER
+========================================= */
+
+.notificationviewer-content {
+
+    flex: 1;
 
 }
 
@@ -124,9 +165,11 @@
 
 .notificationviewer-appname {
 
-    font-weight: bold;
+    font-size: 13px;
 
-    font-size: 14px;
+    font-weight: 500;
+
+    color: #5f6368;
 
 }
 
@@ -134,9 +177,9 @@
 
 .notificationviewer-time {
 
-    font-size: 11px;
+    font-size: 12px;
 
-    color: #00cfa5;
+    color: #9aa0a6;
 
 }
 
@@ -146,81 +189,95 @@
 
 .notificationviewer-title {
 
-    margin-top: 6px;
+    font-size: 15px;
 
-    font-size: 13px;
+    font-weight: 500;
 
-    font-weight: bold;
+    margin-top: 2px;
+
+    color: #202124;
 
 }
 
-/* TEXT */
+/* =========================================
+   TEXT
+========================================= */
 
 .notificationviewer-text {
 
-    margin-top: 4px;
+    font-size: 14px;
 
-    font-size: 12px;
+    margin-top: 2px;
 
-    color: #66ffe0;
+    color: #5f6368;
 
 }
 
-/* PACKAGE */
+/* =========================================
+   BIG TEXT (Expanded notification)
+========================================= */
+
+.notificationviewer-bigtext {
+
+    font-size: 14px;
+
+    margin-top: 6px;
+
+    color: #202124;
+
+}
+
+/* =========================================
+   PACKAGE NAME (Optional Debug Info)
+========================================= */
 
 .notificationviewer-package {
 
-    margin-top: 4px;
-
     font-size: 11px;
 
-    color: #009e7f;
+    margin-top: 6px;
+
+    color: #9aa0a6;
 
 }
 
-/* CATEGORY BADGE */
+/* =========================================
+   CATEGORY LABEL
+========================================= */
 
 .notificationviewer-category {
 
     display: inline-block;
 
-    margin-top: 6px;
+    font-size: 11px;
 
-    padding: 2px 6px;
+    margin-top: 4px;
 
-    border-radius: 4px;
-
-    font-size: 10px;
-
-    border: 1px solid #00ffd0;
-
-}
-
-/* CATEGORY COLORS */
-
-.category-call {
-
-    color: #00ff88;
-    border-color: #00ff88;
-
-}
-
-.category-sys {
-
-    color: #ffaa00;
-    border-color: #ffaa00;
+    color: #1a73e8;
 
 }
 
 /* =========================================
-   EMPTY
+   UNREAD NOTIFICATION INDICATOR
+========================================= */
+
+.notificationviewer-unread {
+
+    border-left: 3px solid #1a73e8;
+
+}
+
+/* =========================================
+   EMPTY STATE
 ========================================= */
 
 .notificationviewer-empty {
 
+    text-align: center;
+
     padding: 40px;
 
-    text-align: center;
+    color: #5f6368;
 
 }
 
@@ -236,19 +293,27 @@
 
 .notificationviewer-list::-webkit-scrollbar-thumb {
 
-    background: #00ffd0;
+    background: #dadce0;
+
+    border-radius: 3px;
 
 }
 
 /* =========================================
-   MOBILE
+   MOBILE OPTIMIZATION
 ========================================= */
 
 @media (max-width:768px) {
 
     .notificationviewer-title {
 
-        font-size: 12px;
+        font-size: 14px;
+
+    }
+
+    .notificationviewer-text {
+
+        font-size: 13px;
 
     }
 
