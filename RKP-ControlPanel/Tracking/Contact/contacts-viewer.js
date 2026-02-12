@@ -1,13 +1,12 @@
-
 /* =========================================
-   HACKING CONTACT VIEWER JS
-   Supports name + number JSON format
+   GOOGLE CONTACTS ANDROID VIEWER JS
+   Material Design Contacts Viewer
 ========================================= */
 
-let contactsData = [];
+let contactsList = [];
 
 /* =========================================
-   MAIN ENTRY
+   MAIN ENTRY POINT
 ========================================= */
 
 function renderContacts(container) {
@@ -20,13 +19,13 @@ function renderContacts(container) {
         return;
     }
 
-    /* CLEAN + NORMALIZE */
+    /* NORMALIZE AND SORT */
 
-    contactsData =
+    contactsList =
         currentJSON
         .map(contact => ({
             name: contact.name || "Unknown",
-            number: contact.number || "Unknown"
+            number: contact.number || ""
         }))
         .sort((a, b) =>
             a.name.localeCompare(b.name)
@@ -38,12 +37,12 @@ function renderContacts(container) {
     container.innerHTML = `
 
         <div class="contactsviewer-header">
-            CONTACT DATABASE TERMINAL
+            Contacts
         </div>
 
         <div class="contactsviewer-search">
             <input id="contactsSearch"
-                   placeholder="Search name or number">
+                   placeholder="Search contacts">
         </div>
 
         <div id="contactsList"
@@ -54,16 +53,15 @@ function renderContacts(container) {
 
     renderContactsList();
 
-    /* SEARCH */
+    /* SEARCH EVENT */
 
     document
         .getElementById("contactsSearch")
         .addEventListener("input", function() {
 
-            const query =
-                this.value.toLowerCase();
-
-            renderContactsList(query);
+            renderContactsList(
+                this.value.toLowerCase()
+            );
 
         });
 
@@ -75,15 +73,15 @@ function renderContacts(container) {
 
 function renderContactsList(search="") {
 
-    const list =
+    const container =
         document.getElementById("contactsList");
 
-    list.innerHTML = "";
+    container.innerHTML = "";
 
     /* FILTER */
 
     const filtered =
-        contactsData.filter(contact => {
+        contactsList.filter(contact => {
 
             if (!search) return true;
 
@@ -99,11 +97,10 @@ function renderContactsList(search="") {
 
     if (filtered.length === 0) {
 
-        list.innerHTML =
+        container.innerHTML =
             "<div class='contactsviewer-empty'>No contacts found</div>";
 
         return;
-
     }
 
     /* GROUP BY LETTER */
@@ -128,18 +125,17 @@ function renderContactsList(search="") {
         .sort()
         .forEach(letter => {
 
-            list.appendChild(
+            container.appendChild(
                 createLetterHeader(letter)
             );
 
-            groups[letter]
-                .forEach(contact => {
+            groups[letter].forEach(contact => {
 
-                    list.appendChild(
-                        createContactCard(contact)
-                    );
+                container.appendChild(
+                    createContactItem(contact)
+                );
 
-                });
+            });
 
         });
 
@@ -161,14 +157,13 @@ function createLetterHeader(letter) {
         letter;
 
     return div;
-
 }
 
 /* =========================================
-   CONTACT CARD
+   CONTACT ITEM
 ========================================= */
 
-function createContactCard(contact) {
+function createContactItem(contact) {
 
     const div =
         document.createElement("div");
@@ -176,31 +171,41 @@ function createContactCard(contact) {
     div.className =
         "contactsviewer-contact";
 
+    const avatarLetter =
+        contact.name.charAt(0).toUpperCase();
+
     div.innerHTML = `
 
-        <div class="contactsviewer-name">
-            ${escapeHTML(contact.name)}
+        <div class="contactsviewer-avatar">
+            ${avatarLetter}
         </div>
 
-        <div class="contactsviewer-number">
-            ${escapeHTML(contact.number)}
+        <div class="contactsviewer-info">
+
+            <div class="contactsviewer-name">
+                ${escapeHTML(contact.name)}
+            </div>
+
+            <div class="contactsviewer-number">
+                ${escapeHTML(contact.number)}
+            </div>
+
         </div>
 
     `;
 
     return div;
-
 }
 
 /* =========================================
-   SAFE HTML
+   SAFE HTML FUNCTION
 ========================================= */
 
-function escapeHTML(str) {
+function escapeHTML(text) {
 
-    if (!str) return "";
+    if (!text) return "";
 
-    return str
+    return text
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;");
