@@ -8,33 +8,23 @@
 <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
+/* BODY LAYOUT FIX */
 body{
-    background:#05070d;
+    background:#0d1117;
     font-family:'Share Tech Mono', monospace;
-    color:#00ffcc;
+    color:#00ff88;
     overflow-x:hidden;
-}
 
-/* ANIMATED GRID BACKGROUND */
-body::before{
-    content:'';
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:
-        linear-gradient(#00ffcc22 1px, transparent 1px),
-        linear-gradient(90deg,#00ffcc22 1px, transparent 1px);
-    background-size:40px 40px;
-    animation:gridMove 20s linear infinite;
-    z-index:0;
-}
-@keyframes gridMove{
-    from{background-position:0 0;}
-    to{background-position:40px 40px;}
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
 }
 
 /* MATRIX */
@@ -46,20 +36,29 @@ canvas{
     pointer-events:none;
 }
 
-/* TERMINAL */
+/* TERMINAL – FULLSCREEN IMMERSIVE */
 .terminal{
     position:relative;
-    z-index:5;
-    max-width:1100px;
-    margin:40px auto;
-    padding:30px;
-    background:rgba(10,10,20,0.85);
-    border-radius:15px;
-    border:1px solid #00ffcc;
+    z-index:10;
+
+    width:95vw;              /* nearly full width */
+    height:92vh;             /* nearly full height */
+    max-width:1800px;
+
+    padding:35px;
+    margin:0 auto;
+
+    background:rgba(0,0,0,0.88);
+    border:1px solid #00ff88;
+    border-radius:14px;
+
     box-shadow:
-        0 0 40px #00ffcc55,
-        inset 0 0 40px #00ffcc22;
-    backdrop-filter:blur(15px);
+        0 0 60px rgba(0,255,136,0.45),
+        inset 0 0 40px rgba(0,255,136,0.15);
+
+    display:flex;
+    flex-direction:column;
+    overflow:auto;
 }
 
 /* HEADER */
@@ -68,80 +67,86 @@ canvas{
     justify-content:space-between;
     align-items:center;
     margin-bottom:25px;
+    border-bottom:1px solid rgba(0,255,136,0.4);
+    padding-bottom:12px;
 }
 
 .title{
-    font-family:'Orbitron', sans-serif;
-    font-size:2em;
-    color:#00ffcc;
-    position:relative;
-    animation:glitch 2s infinite;
+    font-size:1.6em;
+    letter-spacing:1px;
+    text-shadow:0 0 10px #00ff88;
 }
 
-@keyframes glitch{
-    0%{text-shadow:2px 2px red,-2px -2px blue;}
-    20%{text-shadow:-2px -2px red,2px 2px blue;}
-    40%{text-shadow:2px -2px red,-2px 2px blue;}
-    60%{text-shadow:-2px 2px red,2px -2px blue;}
-    80%{text-shadow:0 0 10px #00ffcc;}
-    100%{text-shadow:2px 2px red,-2px -2px blue;}
-}
-
+/* CONTACT BUTTON */
 .contact-btn{
     padding:8px 18px;
-    border:1px solid #ff00ff;
     background:transparent;
+    border:1px solid #ff00ff;
     color:#ff00ff;
     cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 0 15px #ff00ff;
+    transition:0.3s ease;
+    box-shadow:0 0 15px rgba(255,0,255,0.5);
 }
+
 .contact-btn:hover{
     background:#ff00ff;
     color:#000;
+    box-shadow:0 0 25px #ff00ff;
+}
+
+/* BOOT */
+.boot{
+    margin-bottom:25px;
+    color:#00cc66;
+    font-size:0.95em;
+    line-height:1.6;
 }
 
 /* COMMAND GRID */
 .commands{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
     gap:15px;
+    margin-top:10px;
 }
 
 .command{
-    padding:14px;
-    text-align:center;
-    border:1px solid #003333;
-    background:#0a1418;
+    padding:12px;
+    border:1px solid #003322;
     cursor:pointer;
-    transition:0.3s;
+    transition:0.25s ease;
+    background:#0f1a14;
+    text-align:center;
     border-radius:6px;
+    font-size:0.95em;
 }
 
 .command:hover{
-    border-color:#00ffff;
-    box-shadow:0 0 15px #00ffff;
+    border-color:#00ff88;
+    box-shadow:0 0 15px #00ff88;
     transform:translateY(-3px);
 }
 
 .command.selected{
-    background:#00ffff;
+    background:#00ff88;
     color:#000;
-    box-shadow:0 0 25px #00ffff;
+    font-weight:bold;
+    box-shadow:0 0 25px #00ff88;
 }
 
 /* TERMINAL OUTPUT */
 .output{
     margin-top:25px;
-    padding:15px;
+    padding:18px;
     background:#000;
-    border:1px solid #00ffcc;
+    border:1px solid #00ff88;
+    border-radius:6px;
     min-height:70px;
-    border-radius:5px;
     font-size:0.95em;
+    overflow-x:auto;
 }
 
-/* RUN */
+/* RUN BUTTON */
 .run-panel{
     text-align:center;
     margin-top:20px;
@@ -149,22 +154,62 @@ canvas{
 }
 
 .run-btn{
-    padding:12px 40px;
-    border:1px solid #00ff00;
+    padding:10px 35px;
     background:transparent;
+    border:1px solid #00ff00;
     color:#00ff00;
     cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 0 20px #00ff00;
+    transition:0.3s ease;
+    box-shadow:0 0 20px rgba(0,255,0,0.4);
 }
+
 .run-btn:hover{
     background:#00ff00;
     color:#000;
+    box-shadow:0 0 35px #00ff00;
 }
 
-@media(max-width:600px){
-    .terminal{margin:15px;padding:20px;}
-    .title{font-size:1.5em;}
+/* SCROLLBAR STYLING */
+.terminal::-webkit-scrollbar{
+    width:8px;
+}
+
+.terminal::-webkit-scrollbar-thumb{
+    background:#00ff88;
+    border-radius:4px;
+}
+
+.terminal::-webkit-scrollbar-track{
+    background:#000;
+}
+
+/* MOBILE OPTIMIZATION */
+@media(max-width:768px){
+
+    body{
+        align-items:center;
+    }
+
+    .terminal{
+        width:95vw;
+        height:auto;
+        min-height:92vh;
+        padding:20px;
+        border-radius:12px;
+    }
+
+    .commands{
+        grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+        gap:12px;
+    }
+
+    .title{
+        font-size:1.2em;
+    }
+
+    .boot{
+        font-size:0.85em;
+    }
 }
 </style>
 </head>
