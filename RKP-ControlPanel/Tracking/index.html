@@ -279,16 +279,10 @@ function generateViewerButtons(filename) {
 
     viewerOptions.style.display = "block";
 
-
     const detected = detectViewerType(filename);
 
 
-    /* ALWAYS show Regular Viewer button */
-
-    addViewerButton("regular", "Open in Regular Viewer");
-
-
-    /* If detected viewer exists */
+    /* Always show detected viewer button FIRST (if exists) */
 
     if (detected) {
 
@@ -299,9 +293,18 @@ function generateViewerButtons(filename) {
 
     }
 
-    /* If NOT detected, show all viewers */
 
-    else {
+    /* Always show Regular Viewer button */
+
+    addViewerButton(
+        "regular",
+        "Open in Regular Viewer"
+    );
+
+
+    /* If no detection, show all viewers */
+
+    if (!detected) {
 
         addViewerButton("sms", "Open in SMS Viewer");
 
@@ -318,22 +321,18 @@ function generateViewerButtons(filename) {
     }
 
 
-    /* ===== NEW FEATURE: AUTO OPEN DETECTED VIEWER ===== */
+    /* ===== CRITICAL FIX: FORCE AUTO OPEN AFTER DOM READY ===== */
 
-    if (detected) {
+    const viewerToOpen = detected || "regular";
 
-        openViewer(detected);
 
-    }
+    setTimeout(() => {
 
-    else {
+        openViewer(viewerToOpen);
 
-        openViewer("regular");
-
-    }
+    }, 0);
 
 }
-
 /* ==========================================
    ADD BUTTON
 ========================================== */
