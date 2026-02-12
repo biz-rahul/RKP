@@ -371,11 +371,12 @@ function generateViewerButtons(filename) {
     if (detected) {
         addViewerButton(detected, `Open in ${capitalize(detected)} Viewer`);
     } else {
-        addViewerButton("sms", "Open in SMS Viewer");
-        addViewerButton("call", "Open in Call Viewer");
-        addViewerButton("contacts", "Open in Contacts Viewer");
-        addViewerButton("device", "Open in Device Viewer");
-    }
+    addViewerButton("sms", "Open in SMS Viewer");
+    addViewerButton("call", "Open in Call Viewer");
+    addViewerButton("contacts", "Open in Contacts Viewer");
+    addViewerButton("device", "Open in Device Viewer");
+    addViewerButton("app", "Open in App Viewer");
+}
 }
 
 /* ==========================================
