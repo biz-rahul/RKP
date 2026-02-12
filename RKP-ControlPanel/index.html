@@ -11,181 +11,181 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 
 html,body{
-    height:100%;
+height:100%;
 }
 
 body{
-    background:#05070d;
-    font-family:'Share Tech Mono', monospace;
-    color:#00ffcc;
-    overflow-x:hidden;
-
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    padding:40px;
+background:#05070d;
+font-family:'Share Tech Mono', monospace;
+color:#00ffcc;
+overflow-x:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:40px;
 }
 
 body::before{
-    content:'';
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    background:
-        linear-gradient(#00ffcc22 1px, transparent 1px),
-        linear-gradient(90deg,#00ffcc22 1px, transparent 1px);
-    background-size:40px 40px;
-    animation:gridMove 20s linear infinite;
-    z-index:0;
+content:'';
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:
+linear-gradient(#00ffcc22 1px, transparent 1px),
+linear-gradient(90deg,#00ffcc22 1px, transparent 1px);
+background-size:40px 40px;
+animation:gridMove 20s linear infinite;
+z-index:0;
 }
 @keyframes gridMove{
-    from{background-position:0 0;}
-    to{background-position:40px 40px;}
+from{background-position:0 0;}
+to{background-position:40px 40px;}
 }
 
 canvas{
-    position:fixed;
-    top:0;
-    left:0;
-    z-index:1;
-    pointer-events:none;
+position:fixed;
+top:0;
+left:0;
+z-index:1;
+pointer-events:none;
 }
 
 .terminal{
-    position:relative;
-    z-index:5;
-    width:100%;
-    max-width:1600px;
-    padding:40px;
-    background:rgba(10,10,20,0.85);
-    border-radius:15px;
-    border:1px solid #00ffcc;
-    box-shadow:
-        0 0 40px #00ffcc55,
-        inset 0 0 40px #00ffcc22;
-    backdrop-filter:blur(15px);
+position:relative;
+z-index:5;
+width:100%;
+max-width:1600px;
+padding:40px;
+background:rgba(10,10,20,0.85);
+border-radius:15px;
+border:1px solid #00ffcc;
+box-shadow:
+0 0 40px #00ffcc55,
+inset 0 0 40px #00ffcc22;
+backdrop-filter:blur(15px);
 }
 
 .header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
 }
 
 .title{
-    font-family:'Orbitron', sans-serif;
-    font-size:2em;
-    color:#00ffcc;
-    animation:glitch 2s infinite;
+font-family:'Orbitron', sans-serif;
+font-size:2em;
+color:#00ffcc;
+animation:glitch 2s infinite;
 }
 
 @keyframes glitch{
-    0%{text-shadow:2px 2px red,-2px -2px blue;}
-    20%{text-shadow:-2px -2px red,2px 2px blue;}
-    40%{text-shadow:2px -2px red,-2px 2px blue;}
-    60%{text-shadow:-2px 2px red,2px -2px blue;}
-    80%{text-shadow:0 0 10px #00ffcc;}
-    100%{text-shadow:2px 2px red,-2px -2px blue;}
+0%{text-shadow:2px 2px red,-2px -2px blue;}
+20%{text-shadow:-2px -2px red,2px 2px blue;}
+40%{text-shadow:2px -2px red,-2px 2px blue;}
+60%{text-shadow:-2px 2px red,2px -2px blue;}
+80%{text-shadow:0 0 10px #00ffcc;}
+100%{text-shadow:2px 2px red,-2px -2px blue;}
 }
 
 .contact-btn{
-    padding:8px 18px;
-    border:1px solid #ff00ff;
-    background:transparent;
-    color:#ff00ff;
-    cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 0 15px #ff00ff;
+padding:8px 18px;
+border:1px solid #ff00ff;
+background:transparent;
+color:#ff00ff;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 0 15px #ff00ff;
 }
 .contact-btn:hover{
-    background:#ff00ff;
-    color:#000;
+background:#ff00ff;
+color:#000;
 }
 
 .commands{
-    display:grid;
-    grid-template-columns:repeat(4, 1fr);
-    gap:25px;
+display:grid;
+grid-template-columns:repeat(4, 1fr);
+gap:25px;
 }
 
 .command{
-    padding:22px;
-    font-size:1.05em;
-    text-align:center;
-    border:1px solid #003333;
-    background:#0a1418;
-    cursor:pointer;
-    transition:0.3s;
-    border-radius:8px;
+padding:22px;
+font-size:1.05em;
+text-align:center;
+border:1px solid #003333;
+background:#0a1418;
+cursor:pointer;
+transition:0.3s;
+border-radius:8px;
 }
 
 .command:hover{
-    border-color:#00ffff;
-    box-shadow:0 0 15px #00ffff;
-    transform:translateY(-3px);
+border-color:#00ffff;
+box-shadow:0 0 15px #00ffff;
+transform:translateY(-3px);
 }
 
 .command.selected{
-    background:#00ffff;
-    color:#000;
-    box-shadow:0 0 25px #00ffff;
+background:#00ffff;
+color:#000;
+box-shadow:0 0 25px #00ffff;
 }
 
 .output{
-    margin-top:35px;
-    padding:20px;
-    background:#000;
-    border:1px solid #00ffcc;
-    min-height:90px;
-    border-radius:8px;
-    font-size:1em;
-    white-space:pre-line;
+margin-top:35px;
+padding:20px;
+background:#000;
+border:1px solid #00ffcc;
+height:160px;
+border-radius:8px;
+font-size:1em;
+white-space:pre-wrap;
+overflow-y:auto;
 }
 
 .run-panel{
-    text-align:center;
-    margin-top:30px;
-    display:none;
+text-align:center;
+margin-top:30px;
+display:none;
 }
 
 .run-btn{
-    padding:14px 50px;
-    border:1px solid #00ff00;
-    background:transparent;
-    color:#00ff00;
-    cursor:pointer;
-    transition:0.3s;
-    box-shadow:0 0 20px #00ff00;
+padding:14px 50px;
+border:1px solid #00ff00;
+background:transparent;
+color:#00ff00;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 0 20px #00ff00;
 }
 .run-btn:hover{
-    background:#00ff00;
-    color:#000;
+background:#00ff00;
+color:#000;
 }
 
 @media(max-width:768px){
 
-    body{
-        padding:20px;
-        align-items:flex-start;
-        justify-content:center;
-        min-height:100vh;
-    }
+body{
+padding:20px;
+align-items:flex-start;
+justify-content:center;
+min-height:100vh;
+}
 
-    .terminal{
-        padding:25px;
-    }
+.terminal{
+padding:25px;
+}
 
-    .commands{
-        grid-template-columns:repeat(2, 1fr);
-        gap:15px;
-    }
+.commands{
+grid-template-columns:repeat(2, 1fr);
+gap:15px;
+}
 
-    .title{
-        font-size:1.5em;
-    }
+.title{
+font-size:1.5em;
+}
 }
 </style>
 </head>
@@ -196,11 +196,11 @@ canvas{
 <div class="terminal">
 
 <div class="header">
-    <div class="title">ROOT ACCESS :: RKP EXECUTOR</div>
-    <button class="contact-btn"
-        onclick="window.open('https://rahulpuri.fun/RKP-ControlPanel/Tracking/','_blank')">
-        TRACKING
-    </button>
+<div class="title">ROOT ACCESS :: RKP EXECUTOR</div>
+<button class="contact-btn"
+onclick="window.open('https://rahulpuri.fun/RKP-ControlPanel/Tracking/','_blank')">
+TRACKING
+</button>
 </div>
 
 <div class="commands">
@@ -227,190 +227,175 @@ canvas{
 
 </div>
 
-<div class="output" id="output">
-root@RKPexecutor:~# _
-</div>
+<div class="output" id="output"></div>
 
 <div class="run-panel" id="runPanel">
-    <button class="run-btn" onclick="runSelected()">EXECUTE SEQUENCE</button>
+<button class="run-btn" onclick="runSelected()">EXECUTE SEQUENCE</button>
 </div>
 
 </div>
 
 <script>
+// MATRIX
 const canvas=document.getElementById('matrix');
 const ctx=canvas.getContext('2d');
 let fontSize=14,columns,drops;
 const chars="01アカサタナハマヤラワ";
-
 function init(){
-    canvas.width=window.innerWidth;
-    canvas.height=window.innerHeight;
-    columns=Math.floor(canvas.width/fontSize);
-    drops=Array(columns).fill(1);
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+columns=Math.floor(canvas.width/fontSize);
+drops=Array(columns).fill(1);
 }
 function draw(){
-    ctx.fillStyle='rgba(0,0,0,0.05)';
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00ffcc';
-    ctx.font=fontSize+"px monospace";
-    for(let i=0;i<drops.length;i++){
-        const text=chars[Math.floor(Math.random()*chars.length)];
-        ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-        if(drops[i]*fontSize>canvas.height && Math.random()>0.975){drops[i]=0;}
-        drops[i]++;
-    }
+ctx.fillStyle='rgba(0,0,0,0.05)';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+ctx.fillStyle='#00ffcc';
+ctx.font=fontSize+"px monospace";
+for(let i=0;i<drops.length;i++){
+const text=chars[Math.floor(Math.random()*chars.length)];
+ctx.fillText(text,i*fontSize,drops[i]*fontSize);
+if(drops[i]*fontSize>canvas.height && Math.random()>0.975){drops[i]=0;}
+drops[i]++;
+}
 }
 init();
 setInterval(draw,50);
 window.addEventListener('resize',init);
 
-const commands=document.querySelectorAll('.command');
-const output=document.getElementById('output');
-const runPanel=document.getElementById('runPanel');
-let selected=new Set();
+// TERMINAL LOGIC
+const output=document.getElementById("output");
+const runPanel=document.getElementById("runPanel");
+const commands=document.querySelectorAll(".command");
 
-/* PERSONALIZED LOG DATABASE */
+let selected=new Set();
+let logQueue=[];
+let typing=false;
+
+const MAX_VISIBLE_LINES=6;
+const TYPE_SPEED=18;
 
 const logDB={
-
-sms:[
-"[+] Locating SMS database...",
-"[+] Decrypting SMS storage layer...",
-"[+] Extracting SMS packets...",
+sms:["[+] Locating SMS database...",
+"[+] Decrypting SMS storage...",
+"[+] Extracting SMS records...",
 "[+] Parsing SMS metadata...",
-"[+] SMS dump completed successfully"
-],
-
-calls:[
-"[+] Connecting to CALL log interface...",
-"[+] Extracting CALL history records...",
-"[+] Decoding CALL routing data...",
+"[+] SMS extraction complete"],
+calls:["[+] Accessing CALL interface...",
+"[+] Reading CALL logs...",
+"[+] Decrypting CALL history...",
 "[+] Mapping CALL timestamps...",
-"[+] CALL log extraction complete"
-],
-
-notification:[
-"[+] Accessing NOTIFICATION manager...",
-"[+] Intercepting NOTIFICATION buffer...",
+"[+] CALL extraction complete"],
+notification:["[+] Connecting NOTIFICATION service...",
+"[+] Reading NOTIFICATION buffer...",
 "[+] Decrypting NOTIFICATION payload...",
-"[+] Reading NOTIFICATION channels...",
-"[+] NOTIFICATION capture complete"
-],
-
-apps:[
-"[+] Scanning installed APP registry...",
-"[+] Accessing APP sandbox environment...",
-"[+] Extracting APP package identifiers...",
+"[+] Extracting NOTIFICATION entries...",
+"[+] NOTIFICATION capture complete"],
+apps:["[+] Scanning installed APPS...",
+"[+] Reading APP registry...",
+"[+] Extracting APP metadata...",
 "[+] Mapping APP permissions...",
-"[+] APP enumeration complete"
-],
-
-contacts:[
-"[+] Accessing CONTACT database...",
-"[+] Decrypting CONTACT entries...",
-"[+] Extracting CONTACT identities...",
-"[+] Mapping CONTACT relationships...",
-"[+] CONTACT extraction complete"
-],
-
-deviceinfo:[
-"[+] Reading DEVICE kernel parameters...",
-"[+] Extracting DEVICE identifiers...",
-"[+] Mapping DEVICE hardware profile...",
-"[+] Accessing DEVICE firmware layer...",
-"[+] DEVICE fingerprint complete"
-],
-
-none:[
-"[+] Initializing null sequence...",
-"[+] Verifying empty execution block...",
-"[+] Syncing kernel state...",
-"[+] Null operation complete"
-]
-
+"[+] APP scan complete"],
+contacts:["[+] Accessing CONTACT database...",
+"[+] Decrypting CONTACT storage...",
+"[+] Extracting CONTACT records...",
+"[+] Mapping CONTACT links...",
+"[+] CONTACT extraction complete"],
+deviceinfo:["[+] Reading DEVICE kernel...",
+"[+] Extracting DEVICE fingerprint...",
+"[+] Mapping DEVICE hardware...",
+"[+] Reading DEVICE firmware...",
+"[+] DEVICE scan complete"],
+none:["[+] Initializing null sequence...",
+"[+] Kernel sync complete"]
 };
 
-function getBaseCommand(cmd){
-
-if(cmd.startsWith("sms")) return "sms";
-if(cmd.startsWith("calls")) return "calls";
-if(cmd.startsWith("notification")) return "notification";
-if(cmd.startsWith("apps")) return "apps";
-if(cmd.startsWith("contacts")) return "contacts";
-if(cmd.startsWith("deviceinfo")) return "deviceinfo";
-return "none";
-
+function getBase(cmd){
+if(cmd.startsWith("sms"))return"sms";
+if(cmd.startsWith("calls"))return"calls";
+if(cmd.startsWith("notification"))return"notification";
+if(cmd.startsWith("apps"))return"apps";
+if(cmd.startsWith("contacts"))return"contacts";
+if(cmd.startsWith("deviceinfo"))return"deviceinfo";
+return"none";
 }
 
-commands.forEach(cmd=>{
-cmd.onclick=()=>{
-const val=cmd.dataset.cmd;
+function typeLine(line,callback){
+typing=true;
+let i=0;
+let div=document.createElement("div");
+output.appendChild(div);
+
+function type(){
+if(i<line.length){
+div.textContent+=line.charAt(i);
+i++;
+output.scrollTop=output.scrollHeight;
+setTimeout(type,TYPE_SPEED);
+}else{
+typing=false;
+if(callback)callback();
+}
+}
+type();
+}
+
+function processQueue(){
+if(typing || logQueue.length===0)return;
+
+let line=logQueue.shift();
+
+if(output.children.length>=MAX_VISIBLE_LINES){
+output.removeChild(output.firstChild);
+}
+
+typeLine(line,processQueue);
+}
+
+function generateLogs(){
+selected.forEach(cmd=>{
+let base=getBase(cmd);
+logDB[base].forEach(l=>{
+logQueue.push(l);
+});
+});
+processQueue();
+}
+
+commands.forEach(btn=>{
+btn.onclick=()=>{
+let val=btn.dataset.cmd;
 
 if(selected.has(val)){
 selected.delete(val);
-cmd.classList.remove('selected');
+btn.classList.remove("selected");
 }else{
 selected.add(val);
-cmd.classList.add('selected');
+btn.classList.add("selected");
 }
 
-update();
+output.innerHTML="";
+logQueue=[];
+if(selected.size===0){
+typeLine("root@RKPexecutor:~# _");
+runPanel.style.display="none";
+}else{
+typeLine("root@RKPexecutor:~# initializing sequence...",()=>{
+generateLogs();
+});
+runPanel.style.display="block";
+}
 };
 });
 
-function generateLogs(){
-
-let text="root@RKPexecutor:~#\n";
-
-selected.forEach(cmd=>{
-
-let base=getBaseCommand(cmd);
-let logs=logDB[base];
-
-logs.forEach(line=>{
-text+=line+"\n";
-});
-
-});
-
-text+="_";
-
-return text;
-
-}
-
-function update(){
-
-if(selected.size===0){
-output.textContent="root@RKPexecutor:~# _";
-runPanel.style.display="none";
-}else{
-output.textContent=generateLogs();
-runPanel.style.display="block";
-}
-
-}
-
 function runSelected(){
-
-const redirectURL="https://github.com/MOFO-UG/ControlTheWorld/edit/main/command.txt";
-
-if(selected.size===0) return;
-
-const outputText=Array.from(selected).join(', ');
-
-navigator.clipboard.writeText(outputText).then(()=>{
-
-output.textContent="root@RKPexecutor:~# executing root sequence...";
-
-setTimeout(()=>{
-window.open(redirectURL,'_blank');
-},1000);
-
-});
-
+if(selected.size===0)return;
+let text=Array.from(selected).join(", ");
+navigator.clipboard.writeText(text);
+typeLine("root@RKPexecutor:~# executing root sequence...");
 }
+
+typeLine("root@RKPexecutor:~# _");
 </script>
 
 </body>
