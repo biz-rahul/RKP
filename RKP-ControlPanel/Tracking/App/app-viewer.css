@@ -1,0 +1,144 @@
+/* =========================================
+   ANDROID INSTALLED APPS VIEWER
+========================================= */
+
+.appviewer-app {
+    background: #121212;
+    color: white;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* HEADER */
+
+.appviewer-header {
+    padding: 16px;
+    font-size: 20px;
+    font-weight: 500;
+    background: #1f1f1f;
+    border-bottom: 1px solid #2a2a2a;
+}
+
+/* SEARCH */
+
+.appviewer-search {
+    padding: 12px 16px;
+    background: #1f1f1f;
+}
+
+.appviewer-search input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 24px;
+    border: none;
+    background: #2c2c2c;
+    color: white;
+    font-size: 14px;
+}
+
+.appviewer-search input::placeholder {
+    color: #aaa;
+}
+
+/* APP COUNT */
+
+.appviewer-count {
+    padding: 8px 16px;
+    font-size: 13px;
+    color: #aaa;
+}
+
+/* LIST */
+
+.appviewer-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+/* SECTION TITLE */
+
+.appviewer-section {
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+    background: #181818;
+}
+
+/* APP ITEM */
+
+.appviewer-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #1e1e1e;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.appviewer-item:hover {
+    background: #1f1f1f;
+}
+
+/* ICON */
+
+.appviewer-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #6366f1, #3b82f6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    font-weight: 600;
+}
+
+/* DETAILS */
+
+.appviewer-details {
+    flex: 1;
+}
+
+.appviewer-name {
+    font-size: 15px;
+    font-weight: 500;
+}
+
+.appviewer-package {
+    font-size: 12px;
+    color: #aaa;
+    word-break: break-all;
+}
+
+/* EXPANDED PANEL */
+
+.appviewer-expanded {
+    background: #1e1e1e;
+    padding: 14px 16px;
+    display: none;
+    font-size: 13px;
+}
+
+.appviewer-expanded.active {
+    display: block;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* SCROLLBAR */
+
+.appviewer-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.appviewer-list::-webkit-scrollbar-thumb {
+    background: #444;
+    border-radius: 3px;
+}
