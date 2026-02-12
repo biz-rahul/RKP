@@ -3,16 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HACKER TERMINAL - Advanced Command Control Panel</title>
+<title>Advanced Hacker Terminal</title>
 
 <link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
     font-family:'Courier Prime', monospace;
@@ -20,10 +16,9 @@ body{
     color:#00ff00;
     overflow-x:hidden;
     overflow-y:auto;
-    min-height:100vh;
 }
 
-/* MATRIX CANVAS */
+/* MATRIX */
 canvas{
     position:fixed;
     top:0;
@@ -32,223 +27,161 @@ canvas{
     pointer-events:none;
 }
 
-/* SCANLINES */
-.scanlines{
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    pointer-events:none;
-    z-index:5;
-    background:repeating-linear-gradient(
-        to bottom,
-        transparent 0px,
-        transparent 2px,
-        rgba(0,255,0,0.03) 2px,
-        rgba(0,255,0,0.03) 4px
-    );
-}
-
-/* TERMINAL */
+/* TERMINAL CONTAINER */
 .terminal{
     position:relative;
     z-index:10;
-    background:rgba(0,0,0,0.85);
-    backdrop-filter:blur(10px);
-    border:2px solid #00ff00;
-    box-shadow:0 0 20px #00ff00;
     max-width:1000px;
     margin:20px auto;
-    padding:20px;
+    padding:25px;
+    background:rgba(0,0,0,0.9);
+    border:2px solid #00ff00;
     border-radius:10px;
+    box-shadow:0 0 25px #00ff00;
 }
 
 /* HEADER */
 .header{
     display:flex;
-    align-items:center;
     justify-content:space-between;
-    margin-bottom:30px;
-    padding-bottom:15px;
-    border-bottom:1px solid #00ff00;
-}
-
-.left-header{
-    display:flex;
     align-items:center;
-    gap:15px;
+    margin-bottom:30px;
+    border-bottom:1px solid #00ff00;
+    padding-bottom:15px;
 }
-
-.window-buttons{
-    display:flex;
-    gap:8px;
-}
-
-.window-btn{
-    width:12px;
-    height:12px;
-    border-radius:50%;
-}
-
-.red{background:#ff5f56;}
-.yellow{background:#ffbd2e;}
-.green{background:#27ca3f;}
 
 h1{
     font-family:'VT323', monospace;
-    font-size:2.5em;
-    text-shadow:0 0 10px #00ff00;
+    font-size:2.8em;
+    text-shadow:0 0 15px #00ff00;
 }
 
-/* BUTTONS */
-button{
-    padding:8px 16px;
+.contact-btn{
+    padding:8px 14px;
     border:1px solid #00ff00;
     background:transparent;
     color:#00ff00;
     cursor:pointer;
-    font-family:'Courier Prime', monospace;
-    transition:0.3s;
-    font-size:0.9em;
 }
 
-button:hover{
-    background:rgba(0,255,0,0.15);
-    box-shadow:0 0 10px #00ff00;
-    color:#fff;
+.contact-btn:hover{
+    background:#00ff00;
+    color:#000;
 }
 
-.contact-btn{
-    font-size:0.8em;
-}
-
-/* SECTIONS */
-.section{
+/* COMMAND GRID */
+.commands{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    gap:15px;
     margin-bottom:30px;
 }
 
-.section h2{
-    font-family:'VT323', monospace;
-    font-size:1.8em;
-    margin-bottom:15px;
-    color:#00ff41;
-}
-
-/* CARD */
-.card{
-    background:rgba(0,20,0,0.5);
-    padding:15px 20px;
-    margin-bottom:10px;
+.command-card{
+    padding:15px;
     border:1px solid #003300;
-    border-radius:5px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+    border-radius:6px;
+    text-align:center;
+    cursor:pointer;
     transition:0.3s;
+    background:rgba(0,20,0,0.5);
 }
 
-.card:hover{
+.command-card:hover{
     border-color:#00ff00;
     box-shadow:0 0 15px rgba(0,255,0,0.5);
-    transform:scale(1.02);
 }
 
-.command{
+.command-card.selected{
+    background:#00ff00;
+    color:#000;
     font-weight:bold;
-    color:#00ff88;
+}
+
+/* RUN PANEL */
+.run-panel{
+    text-align:center;
+    display:none;
+}
+
+.run-btn{
+    padding:12px 25px;
+    font-size:1em;
+    border:2px solid #00ff00;
+    background:transparent;
+    color:#00ff00;
+    cursor:pointer;
+}
+
+.run-btn:hover{
+    background:#00ff00;
+    color:#000;
 }
 
 .footer{
-    text-align:center;
     margin-top:30px;
-    color:#00aa00;
+    text-align:center;
     font-size:0.9em;
+    color:#00aa00;
 }
 
-/* RESPONSIVE */
+/* Responsive */
 @media(max-width:768px){
     h1{font-size:2em;}
-    .terminal{margin:10px;padding:15px;}
 }
 </style>
 </head>
 <body>
 
 <canvas id="matrix"></canvas>
-<div class="scanlines"></div>
 
 <div class="terminal">
 
 <div class="header">
-    <div class="left-header">
-        <div class="window-buttons">
-            <div class="window-btn red"></div>
-            <div class="window-btn yellow"></div>
-            <div class="window-btn green"></div>
-        </div>
-        <h1>HACKER TERMINAL v2.0</h1>
-    </div>
-
-    <button class="contact-btn"
-        onclick="window.location.href='https://yourcontactlink.com'">
+    <h1>ADVANCED REMOTE TERMINAL</h1>
+    <button class="contact-btn" onclick="window.location.href='https://yourcontactlink.com'">
         CONTACT OWNER
     </button>
 </div>
 
-<!-- COMMAND SECTIONS -->
+<div class="commands" id="commands">
 
-<div class="section">
-<h2>SMS Commands</h2>
-<div class="card"><span class="command">sms full</span><button onclick="runCommand('sms full')">RUN</button></div>
-<div class="card"><span class="command">sms 30d</span><button onclick="runCommand('sms 30d')">RUN</button></div>
-<div class="card"><span class="command">sms 7d</span><button onclick="runCommand('sms 7d')">RUN</button></div>
-<div class="card"><span class="command">sms 1d</span><button onclick="runCommand('sms 1d')">RUN</button></div>
+<!-- 12 SELECTABLE COMMANDS -->
+<div class="command-card" data-cmd="sms full">sms full</div>
+<div class="command-card" data-cmd="sms 30d">sms 30d</div>
+<div class="command-card" data-cmd="sms 7d">sms 7d</div>
+<div class="command-card" data-cmd="sms 1d">sms 1d</div>
+
+<div class="command-card" data-cmd="calls full">calls full</div>
+<div class="command-card" data-cmd="calls 30d">calls 30d</div>
+<div class="command-card" data-cmd="calls 7d">calls 7d</div>
+<div class="command-card" data-cmd="calls 1d">calls 1d</div>
+
+<div class="command-card" data-cmd="contacts full">contacts full</div>
+<div class="command-card" data-cmd="apps full">apps full</div>
+<div class="command-card" data-cmd="deviceinfo">deviceinfo</div>
+<div class="command-card" data-cmd="connection">connection</div>
+
 </div>
 
-<div class="section">
-<h2>Call Commands</h2>
-<div class="card"><span class="command">calls full</span><button onclick="runCommand('calls full')">RUN</button></div>
-<div class="card"><span class="command">calls 30d</span><button onclick="runCommand('calls 30d')">RUN</button></div>
-<div class="card"><span class="command">calls 7d</span><button onclick="runCommand('calls 7d')">RUN</button></div>
-<div class="card"><span class="command">calls 1d</span><button onclick="runCommand('calls 1d')">RUN</button></div>
-</div>
-
-<div class="section">
-<h2>Contacts</h2>
-<div class="card"><span class="command">contacts full</span><button onclick="runCommand('contacts full')">RUN</button></div>
-</div>
-
-<div class="section">
-<h2>Apps</h2>
-<div class="card"><span class="command">apps full</span><button onclick="runCommand('apps full')">RUN</button></div>
-</div>
-
-<div class="section">
-<h2>Device</h2>
-<div class="card"><span class="command">deviceinfo</span><button onclick="runCommand('deviceinfo')">RUN</button></div>
-<div class="card"><span class="command">connection</span><button onclick="runCommand('connection')">RUN</button></div>
-</div>
-
-<div class="section">
-<h2>Control</h2>
-<div class="card"><span class="command">none</span><button onclick="runCommand('none')">RUN</button></div>
+<div class="run-panel" id="runPanel">
+    <button class="run-btn" onclick="runSelected()">RUN SELECTED</button>
 </div>
 
 <div class="footer">
-[REMOTE COMMAND SYSTEM] — ACCESS GRANTED — TERMINAL ONLINE —
+[ MULTI COMMAND EXECUTION SYSTEM ACTIVE ]
 </div>
 
 </div>
 
 <script>
-/* MATRIX EFFECT */
+/* MATRIX SYSTEM */
 const canvas=document.getElementById('matrix');
 const ctx=canvas.getContext('2d');
 let fontSize=14;
 let columns;
 let drops;
-const chars="01アイウエオカキクケコサシスセソタチツテトナニヌネノ";
+const chars="01アイウエオカキクケコサシスセソタチツテト";
 
 function initMatrix(){
     canvas.width=window.innerWidth;
@@ -274,20 +207,41 @@ function draw(){
 
 initMatrix();
 setInterval(draw,50);
-
 window.addEventListener('resize',initMatrix);
 
-/* RUN FUNCTION */
-function runCommand(cmd){
-    const redirectURL="https://yourredirectlink.com"; 
+/* MULTI COMMAND SYSTEM */
+const commandCards=document.querySelectorAll('.command-card');
+const runPanel=document.getElementById('runPanel');
+let selectedCommands=new Set();
 
-    if(navigator.clipboard){
-        navigator.clipboard.writeText(cmd)
-        .then(()=>{ window.location.href=redirectURL; })
-        .catch(()=>{ window.location.href=redirectURL; });
-    }else{
-        window.location.href=redirectURL;
-    }
+commandCards.forEach(card=>{
+    card.addEventListener('click',()=>{
+        const cmd=card.getAttribute('data-cmd');
+
+        if(selectedCommands.has(cmd)){
+            selectedCommands.delete(cmd);
+            card.classList.remove('selected');
+        }else{
+            selectedCommands.add(cmd);
+            card.classList.add('selected');
+        }
+
+        runPanel.style.display=selectedCommands.size>0?'block':'none';
+    });
+});
+
+function runSelected(){
+    if(selectedCommands.size===0) return;
+
+    const output=Array.from(selectedCommands).join(', ');
+
+    navigator.clipboard.writeText(output)
+    .then(()=>{
+        alert("Copied:\n"+output);
+    })
+    .catch(()=>{
+        alert(output);
+    });
 }
 </script>
 
