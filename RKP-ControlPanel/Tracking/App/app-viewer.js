@@ -1,6 +1,5 @@
 /* =========================================
-   ADVANCED APP VIEWER ENGINE
-   Connected to app-database.js
+   ADVANCED APP VIEWER (NO DATABASE VERSION)
 ========================================= */
 
 /* =========================================
@@ -14,35 +13,38 @@ function renderApp(container) {
         return;
     }
 
-    const apps = currentJSON
+    const processedApps = currentJSON
         .filter(app => app.package)
         .map(app => ({
             package: app.package,
-            name: resolveAppName(app.package),
-            category: resolveCategory(app.package),
-            icon: resolveIcon(app.package)
+            name: formatAppName(app.package),
+            type: detectAppType(app.package),
+            icon: detectIcon(app.package)
         }))
         .sort((a, b) =>
             a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
         );
 
+    const userApps = processedApps.filter(app => app.type === "user");
+    const systemApps = processedApps.filter(app => app.type === "system");
+
     container.className = "appviewer-app";
 
     container.innerHTML = `
-        <div class="appviewer-header">Installed Apps</div>
+        <div class="appviewer-header">Installed Applications</div>
 
         <div class="appviewer-search">
-            <input type="text" id="appSearch" placeholder="Search apps">
+            <input type="text" id="appSearch" placeholder="Search apps by name or package">
         </div>
 
         <div class="appviewer-stats">
-            ${apps.length} apps detected
+            ${userApps.length} User Apps • ${systemApps.length} System Apps
         </div>
 
         <div class="appviewer-list" id="appList"></div>
     `;
 
-    renderAppList(apps);
+    renderSections(userApps, systemApps);
 
     document.getElementById("appSearch")
         .addEventListener("input", function() {
@@ -51,28 +53,67 @@ function renderApp(container) {
 }
 
 /* =========================================
-   RENDER LIST GROUPED BY CATEGORY
+   STRICT SYSTEM DETECTION
 ========================================= */
 
-function renderAppList(apps) {
+function detectAppType(pkg) {
+
+    // Strict system prefixes
+    const systemPrefixes = [
+        "com.android",
+        "android",
+        "com.google.android",
+        "com.samsung",
+        "com.sec",
+        "com.qualcomm",
+        "com.mediatek",
+        "com.miui",
+        "com.oppo",
+        "com.vivo",
+        "com.huawei",
+        "com.transsion"
+    ];
+
+    for (let prefix of systemPrefixes) {
+        if (pkg.startsWith(prefix)) {
+            return "system";
+        }
+    }
+
+    // Everything else is USER
+    return "user";
+}
+
+/* =========================================
+   RENDER SECTIONS
+========================================= */
+
+function renderSections(userApps, systemApps) {
 
     const list = document.getElementById("appList");
     list.innerHTML = "";
 
-    const grouped = groupByCategory(apps);
+    if (userApps.length > 0) {
+        const userTitle = document.createElement("div");
+        userTitle.className = "appviewer-section";
+        userTitle.textContent = "User Applications";
+        list.appendChild(userTitle);
 
-    Object.keys(grouped).forEach(category => {
-
-        const section = document.createElement("div");
-        section.className = "appviewer-section";
-        section.textContent = category;
-
-        list.appendChild(section);
-
-        grouped[category].forEach(app => {
+        userApps.forEach(app => {
             list.appendChild(createAppItem(app));
         });
-    });
+    }
+
+    if (systemApps.length > 0) {
+        const systemTitle = document.createElement("div");
+        systemTitle.className = "appviewer-section";
+        systemTitle.textContent = "System Applications";
+        list.appendChild(systemTitle);
+
+        systemApps.forEach(app => {
+            list.appendChild(createAppItem(app));
+        });
+    }
 }
 
 /* =========================================
@@ -86,21 +127,17 @@ function createAppItem(app) {
     const item = document.createElement("div");
     item.className = "appviewer-item";
 
-    /* ===== ICON ===== */
+    /* ICON USING FONT AWESOME */
 
-    if (app.icon) {
-        const img = document.createElement("img");
-        img.src = app.icon;
-        img.className = "appviewer-icon";
-        item.appendChild(img);
-    } else {
-        const fallbackIcon = document.createElement("div");
-        fallbackIcon.className = "appviewer-icon";
-        fallbackIcon.textContent = app.name[0].toUpperCase();
-        item.appendChild(fallbackIcon);
-    }
+    const icon = document.createElement("div");
+    icon.className = "appviewer-icon";
 
-    /* ===== DETAILS ===== */
+    const i = document.createElement("i");
+    i.className = app.icon;
+
+    icon.appendChild(i);
+
+    /* DETAILS */
 
     const details = document.createElement("div");
     details.className = "appviewer-details";
@@ -116,15 +153,24 @@ function createAppItem(app) {
     details.appendChild(name);
     details.appendChild(pkg);
 
-    item.appendChild(details);
+    /* BADGE */
 
-    /* ===== EXPAND PANEL ===== */
+    const badge = document.createElement("div");
+    badge.className = "appviewer-badge " + 
+        (app.type === "system" ? "badge-system" : "badge-user");
+    badge.textContent = app.type === "system" ? "SYSTEM" : "USER";
+
+    item.appendChild(icon);
+    item.appendChild(details);
+    item.appendChild(badge);
+
+    /* EXPANDED PANEL */
 
     const expanded = document.createElement("div");
     expanded.className = "appviewer-expanded";
     expanded.innerHTML = `
         <strong>Package:</strong> ${app.package}<br>
-        <strong>Category:</strong> ${app.category}
+        <strong>Type:</strong> ${app.type === "system" ? "System Application" : "User Installed Application"}
     `;
 
     item.addEventListener("click", () => {
@@ -138,27 +184,50 @@ function createAppItem(app) {
 }
 
 /* =========================================
-   GROUP BY CATEGORY
+   FONT AWESOME ICON DETECTION
 ========================================= */
 
-function groupByCategory(apps) {
+function detectIcon(pkg) {
 
-    const grouped = {};
+    const lower = pkg.toLowerCase();
 
-    apps.forEach(app => {
+    if (lower.includes("whatsapp")) return "fa-brands fa-whatsapp";
+    if (lower.includes("instagram")) return "fa-brands fa-instagram";
+    if (lower.includes("facebook")) return "fa-brands fa-facebook";
+    if (lower.includes("chrome")) return "fa-brands fa-chrome";
+    if (lower.includes("youtube")) return "fa-brands fa-youtube";
+    if (lower.includes("spotify")) return "fa-brands fa-spotify";
+    if (lower.includes("twitter") || lower.includes("x")) return "fa-brands fa-x-twitter";
+    if (lower.includes("snapchat")) return "fa-brands fa-snapchat";
+    if (lower.includes("amazon")) return "fa-brands fa-amazon";
+    if (lower.includes("google")) return "fa-brands fa-google";
+    if (lower.includes("microsoft")) return "fa-brands fa-microsoft";
 
-        if (!grouped[app.category]) {
-            grouped[app.category] = [];
-        }
+    // SYSTEM DEFAULT
+    if (detectAppType(pkg) === "system") {
+        return "fa-solid fa-gear";
+    }
 
-        grouped[app.category].push(app);
-    });
-
-    return grouped;
+    // USER DEFAULT
+    return "fa-solid fa-mobile-screen";
 }
 
 /* =========================================
-   SEARCH FILTER
+   FORMAT APP NAME
+========================================= */
+
+function formatAppName(pkg) {
+
+    const parts = pkg.split(".");
+    const raw = parts[parts.length - 1];
+
+    return raw
+        .replace(/([A-Z])/g, " $1")
+        .replace(/^./, c => c.toUpperCase());
+}
+
+/* =========================================
+   SEARCH
 ========================================= */
 
 function filterApps(query) {
@@ -170,57 +239,4 @@ function filterApps(query) {
         item.parentElement.style.display =
             text.includes(query) ? "" : "none";
     });
-}
-
-/* =========================================
-   RESOLVE APP NAME
-========================================= */
-
-function resolveAppName(pkg) {
-
-    const db = getAppFromDatabase(pkg);
-
-    if (db && db.name) {
-        return db.name;
-    }
-
-    const parts = pkg.split(".");
-    return parts[parts.length - 1]
-        .replace(/([A-Z])/g, " $1")
-        .replace(/^./, c => c.toUpperCase());
-}
-
-/* =========================================
-   RESOLVE ICON
-========================================= */
-
-function resolveIcon(pkg) {
-
-    const db = getAppFromDatabase(pkg);
-
-    if (db && db.icon) {
-        return db.icon;
-    }
-
-    return null;
-}
-
-/* =========================================
-   RESOLVE CATEGORY
-========================================= */
-
-function resolveCategory(pkg) {
-
-    const db = getAppFromDatabase(pkg);
-
-    if (db && db.category) {
-        return db.category;
-    }
-
-    if (pkg.startsWith("com.google")) return "Google Apps";
-    if (pkg.startsWith("com.samsung")) return "Samsung Apps";
-    if (pkg.startsWith("com.android")) return "Android System";
-    if (pkg.startsWith("com.sec")) return "Samsung System";
-
-    return "User Installed";
 }
