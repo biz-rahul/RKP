@@ -1,141 +1,207 @@
 /* =========================================
-   CONTACTS VIEWER ENGINE
+   HACKING CONTACT VIEWER JS
+   Supports name + number JSON format
+========================================= */
+
+let contactsData = [];
+
+/* =========================================
+   MAIN ENTRY
 ========================================= */
 
 function renderContacts(container) {
+
     if (!Array.isArray(currentJSON)) {
-        container.innerHTML = "<p>Invalid contacts format.</p>";
+
+        container.innerHTML =
+            "<div class='contactsviewer-empty'>Invalid contacts format</div>";
+
         return;
     }
 
-    // Sort alphabetically
-    const contacts = [...currentJSON].sort((a, b) => {
-        return (a.name || "").localeCompare(b.name || "", undefined, { sensitivity: "base" });
-    });
+    /* CLEAN + NORMALIZE */
 
-    container.innerHTML = "";
-    container.className = "contacts-app";
+    contactsData =
+        currentJSON
+        .map(contact => ({
+            name: contact.name || "Unknown",
+            number: contact.number || "Unknown"
+        }))
+        .sort((a, b) =>
+            a.name.localeCompare(b.name)
+        );
+
+    container.className =
+        "contactsviewer-app";
 
     container.innerHTML = `
-        <div class="contacts-header">Contacts</div>
-        <div class="contacts-search">
-            <input type="text" id="contactSearch" placeholder="Search by name or number">
+
+        <div class="contactsviewer-header">
+            CONTACT DATABASE TERMINAL
         </div>
-        <div class="contacts-list" id="contactsList"></div>
+
+        <div class="contactsviewer-search">
+            <input id="contactsSearch"
+                   placeholder="Search name or number">
+        </div>
+
+        <div id="contactsList"
+             class="contactsviewer-list">
+        </div>
+
     `;
 
-    const listContainer = document.getElementById("contactsList");
+    renderContactsList();
 
-    // Group by first letter
-    const grouped = {};
+    /* SEARCH */
 
-    contacts.forEach(contact => {
-        const firstLetter = (contact.name || "#")[0].toUpperCase();
-        const letter = /^[A-Z]$/.test(firstLetter) ? firstLetter : "#";
+    document
+        .getElementById("contactsSearch")
+        .addEventListener("input", function() {
 
-        if (!grouped[letter]) grouped[letter] = [];
-        grouped[letter].push(contact);
-    });
+            const query =
+                this.value.toLowerCase();
 
-    Object.keys(grouped).sort().forEach(letter => {
-        const section = document.createElement("div");
-        section.className = "contact-section";
+            renderContactsList(query);
 
-        const letterHeader = document.createElement("div");
-        letterHeader.className = "section-letter";
-        letterHeader.textContent = letter;
-
-        section.appendChild(letterHeader);
-
-        grouped[letter].forEach(contact => {
-            const item = createContactItem(contact);
-            section.appendChild(item);
         });
 
-        listContainer.appendChild(section);
-    });
-
-    // Search Logic
-    document.getElementById("contactSearch").addEventListener("input", function () {
-        const query = this.value.toLowerCase();
-        filterContacts(query);
-    });
 }
 
 /* =========================================
-   CREATE CONTACT ITEM
+   RENDER CONTACT LIST
 ========================================= */
 
-function createContactItem(contact) {
-    const wrapper = document.createElement("div");
+function renderContactsList(search="") {
 
-    const item = document.createElement("div");
-    item.className = "contact-item";
+    const list =
+        document.getElementById("contactsList");
 
-    const avatar = document.createElement("div");
-    avatar.className = "contact-avatar";
-    avatar.textContent = (contact.name || "?")[0].toUpperCase();
+    list.innerHTML = "";
 
-    const details = document.createElement("div");
-    details.className = "contact-details";
+    /* FILTER */
 
-    const name = document.createElement("div");
-    name.className = "contact-name";
-    name.textContent = contact.name || "Unknown";
+    const filtered =
+        contactsData.filter(contact => {
 
-    const number = document.createElement("div");
-    number.className = "contact-number";
-    number.textContent = contact.number || "";
+            if (!search) return true;
 
-    details.appendChild(name);
-    details.appendChild(number);
+            return (
 
-    item.appendChild(avatar);
-    item.appendChild(details);
+                contact.name.toLowerCase().includes(search) ||
 
-    const expanded = document.createElement("div");
-    expanded.className = "contact-expanded";
+                contact.number.toLowerCase().includes(search)
 
-    expanded.innerHTML = `
-        <div><strong>${contact.name}</strong></div>
-        <div>${contact.number}</div>
-        <div class="contact-actions">
-            <button>Call</button>
-            <button>Message</button>
-        </div>
-    `;
+            );
 
-    item.addEventListener("click", () => {
-        expanded.classList.toggle("active");
+        });
+
+    if (filtered.length === 0) {
+
+        list.innerHTML =
+            "<div class='contactsviewer-empty'>No contacts found</div>";
+
+        return;
+
+    }
+
+    /* GROUP BY LETTER */
+
+    const groups = {};
+
+    filtered.forEach(contact => {
+
+        const letter =
+            contact.name.charAt(0).toUpperCase();
+
+        if (!groups[letter])
+            groups[letter] = [];
+
+        groups[letter].push(contact);
+
     });
 
-    wrapper.appendChild(item);
-    wrapper.appendChild(expanded);
+    /* RENDER GROUPS */
 
-    return wrapper;
+    Object.keys(groups)
+        .sort()
+        .forEach(letter => {
+
+            list.appendChild(
+                createLetterHeader(letter)
+            );
+
+            groups[letter]
+                .forEach(contact => {
+
+                    list.appendChild(
+                        createContactCard(contact)
+                    );
+
+                });
+
+        });
+
 }
 
 /* =========================================
-   SEARCH FILTER
+   LETTER HEADER
 ========================================= */
 
-function filterContacts(query) {
-    const sections = document.querySelectorAll(".contact-section");
+function createLetterHeader(letter) {
 
-    sections.forEach(section => {
-        let visibleCount = 0;
-        const items = section.querySelectorAll(".contact-item");
+    const div =
+        document.createElement("div");
 
-        items.forEach(item => {
-            const text = item.textContent.toLowerCase();
-            if (text.includes(query)) {
-                item.parentElement.style.display = "";
-                visibleCount++;
-            } else {
-                item.parentElement.style.display = "none";
-            }
-        });
+    div.className =
+        "contactsviewer-letter";
 
-        section.style.display = visibleCount > 0 ? "" : "none";
-    });
+    div.textContent =
+        letter;
+
+    return div;
+
+}
+
+/* =========================================
+   CONTACT CARD
+========================================= */
+
+function createContactCard(contact) {
+
+    const div =
+        document.createElement("div");
+
+    div.className =
+        "contactsviewer-contact";
+
+    div.innerHTML = `
+
+        <div class="contactsviewer-name">
+            ${escapeHTML(contact.name)}
+        </div>
+
+        <div class="contactsviewer-number">
+            ${escapeHTML(contact.number)}
+        </div>
+
+    `;
+
+    return div;
+
+}
+
+/* =========================================
+   SAFE HTML
+========================================= */
+
+function escapeHTML(str) {
+
+    if (!str) return "";
+
+    return str
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;");
+
 }
