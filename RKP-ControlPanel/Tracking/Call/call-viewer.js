@@ -1,156 +1,274 @@
 /* =========================================
-   CALL LOG VIEWER ENGINE
+   FINAL CALL VIEWER JS
+   SUPPORTS NEW JSON STRUCTURE
+========================================= */
+
+let callData = [];
+
+/* =========================================
+   MAIN ENTRY
 ========================================= */
 
 function renderCall(container) {
+
     if (!Array.isArray(currentJSON)) {
-        container.innerHTML = "<p>Invalid call log format.</p>";
+
+        container.innerHTML =
+            "<div class='callviewer-empty'>Invalid call log format</div>";
+
         return;
     }
 
-    // Sort by date (latest first)
-    const calls = [...currentJSON].sort((a, b) => b.date - a.date);
+    // Process contacts
+    callData = currentJSON.map(contact => {
 
-    container.className = "call-app";
+        const callsSorted = contact.calls
+            .sort((a, b) => b.date - a.date);
+
+        const latestCall = callsSorted[0];
+
+        return {
+
+            name: contact.name || "Unknown",
+            number: contact.number,
+            calls: callsSorted,
+            latestCall
+
+        };
+
+    }).sort((a, b) =>
+        b.latestCall.date - a.latestCall.date
+    );
+
+    container.className = "callviewer-app";
+
     container.innerHTML = `
-        <div class="call-header">Recent Calls</div>
-        <div class="call-search">
-            <input type="text" id="callSearch" placeholder="Search by number">
+        <div class="callviewer-header">Call Log Terminal</div>
+
+        <div class="callviewer-search">
+            <input type="text" id="callSearch"
+            placeholder="Search name or number">
         </div>
-        <div class="call-list" id="callList"></div>
+
+        <div class="callviewer-list" id="callList"></div>
     `;
+
+    renderCallList();
+
+    document.getElementById("callSearch")
+        .addEventListener("input", function() {
+
+            renderCallList(this.value.toLowerCase());
+
+        });
+}
+
+/* =========================================
+   RENDER LIST
+========================================= */
+
+function renderCallList(search = "") {
 
     const list = document.getElementById("callList");
 
-    calls.forEach(call => {
-        const item = createCallItem(call);
-        list.appendChild(item);
+    list.innerHTML = "";
+
+    const filtered = callData.filter(contact => {
+
+        if (!search) return true;
+
+        return (
+            contact.name.toLowerCase().includes(search) ||
+            contact.number.includes(search)
+        );
     });
 
-    // Search logic
-    document.getElementById("callSearch").addEventListener("input", function () {
-        const query = this.value.toLowerCase();
-        filterCalls(query);
+    if (filtered.length === 0) {
+
+        list.innerHTML =
+            "<div class='callviewer-empty'>No call logs found</div>";
+
+        return;
+    }
+
+    filtered.forEach(contact => {
+
+        list.appendChild(createContactItem(contact));
+
     });
 }
 
 /* =========================================
-   CREATE CALL ITEM
+   CREATE CONTACT ITEM
 ========================================= */
 
-function createCallItem(call) {
-
-    const wrapper = document.createElement("div");
+function createContactItem(contact) {
 
     const item = document.createElement("div");
-    item.className = "call-item";
 
-    const icon = document.createElement("div");
-    icon.className = "call-icon";
+    item.className = "callviewer-item";
 
-    const { label, className, symbol } = getCallType(call.type);
-    icon.classList.add(className);
-    icon.textContent = symbol;
+    const avatarLetter = contact.name[0].toUpperCase();
 
-    const details = document.createElement("div");
-    details.className = "call-details";
+    const latest = contact.latestCall;
 
-    const number = document.createElement("div");
-    number.className = "call-number";
-    number.textContent = call.number;
+    item.innerHTML = `
+        <div class="callviewer-contact">
 
-    const meta = document.createElement("div");
-    meta.className = "call-meta";
-    meta.textContent = `${label} • ${formatDate(call.date)} • ${formatDuration(call.duration)}`;
+            <div class="callviewer-avatar">
+                ${avatarLetter}
+            </div>
 
-    details.appendChild(number);
-    details.appendChild(meta);
+            <div class="callviewer-details">
 
-    item.appendChild(icon);
-    item.appendChild(details);
+                <div class="callviewer-name">
+                    ${contact.name}
+                </div>
 
-    const expanded = document.createElement("div");
-    expanded.className = "call-expanded";
+                <div class="callviewer-number">
+                    ${contact.number}
+                </div>
 
-    expanded.innerHTML = `
-        <div><strong>Number:</strong> ${call.number}</div>
-        <div><strong>Type:</strong> ${label}</div>
-        <div><strong>Date:</strong> ${formatFullDate(call.date)}</div>
-        <div><strong>Duration:</strong> ${formatDuration(call.duration)}</div>
-        <div class="call-actions">
-            <button>Call Back</button>
-            <button>Message</button>
+                <div class="callviewer-meta
+                    ${getCallTypeClass(latest.type)}">
+
+                    ${getCallTypeText(latest.type)}
+                    • ${formatDateTime(latest.date)}
+                    • ${formatDuration(latest.duration)}
+
+                </div>
+
+            </div>
+
+            <div class="callviewer-action"
+                 onclick="searchNumber('${contact.number}')">
+
+                🔍
+
+            </div>
+
+        </div>
+
+        <div class="callviewer-history">
+
+            ${contact.calls.map(call => `
+
+                <div class="callviewer-call">
+
+                    <div class="
+                        callviewer-call-type
+                        ${getCallTypeClass(call.type)}">
+
+                        ${getCallTypeText(call.type)}
+
+                    </div>
+
+                    <div class="callviewer-call-time">
+
+                        ${formatDateTime(call.date)}
+                        • ${formatDuration(call.duration)}
+
+                    </div>
+
+                </div>
+
+            `).join("")}
+
         </div>
     `;
 
-    item.addEventListener("click", () => {
-        expanded.classList.toggle("active");
-    });
+    // Toggle history
+    item.onclick = function(e) {
 
-    wrapper.appendChild(item);
-    wrapper.appendChild(expanded);
+        if (e.target.classList.contains("callviewer-action"))
+            return;
 
-    return wrapper;
+        const history =
+            item.querySelector(".callviewer-history");
+
+        history.classList.toggle("active");
+    };
+
+    return item;
 }
 
 /* =========================================
-   TYPE MAPPING
+   CALL TYPE TEXT
 ========================================= */
 
-function getCallType(type) {
-    switch (type) {
-        case 1:
-            return { label: "Incoming", className: "call-incoming", symbol: "⬇" };
-        case 2:
-            return { label: "Outgoing", className: "call-outgoing", symbol: "⬆" };
-        case 3:
-            return { label: "Missed", className: "call-missed", symbol: "✖" };
-        default:
-            return { label: "Unknown", className: "call-incoming", symbol: "?" };
+function getCallTypeText(type) {
+
+    switch(type) {
+
+        case 1: return "Incoming";
+
+        case 2: return "Outgoing";
+
+        case 3: return "Missed";
+
+        case 5: return "Rejected";
+
+        default: return "Unknown";
     }
 }
 
 /* =========================================
-   DATE FORMATTERS
+   CALL TYPE CLASS
 ========================================= */
 
-function formatDate(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleDateString();
-}
+function getCallTypeClass(type) {
 
-function formatFullDate(timestamp) {
-    const date = new Date(timestamp);
-    return date.toLocaleString();
+    switch(type) {
+
+        case 1: return "call-incoming";
+
+        case 2: return "call-outgoing";
+
+        case 3: return "call-missed";
+
+        case 5: return "call-rejected";
+
+        default: return "";
+    }
 }
 
 /* =========================================
-   DURATION FORMATTER
+   FORMAT DATE TIME
+========================================= */
+
+function formatDateTime(timestamp) {
+
+    const d = new Date(timestamp);
+
+    return d.toLocaleString();
+}
+
+/* =========================================
+   FORMAT DURATION
 ========================================= */
 
 function formatDuration(seconds) {
-    if (!seconds) return "0 sec";
 
-    const hrs = Math.floor(seconds / 3600);
-    const mins = Math.floor((seconds % 3600) / 60);
-    const secs = seconds % 60;
+    if (!seconds) return "0s";
 
-    return [
-        hrs > 0 ? hrs + "h" : null,
-        mins > 0 ? mins + "m" : null,
-        secs + "s"
-    ].filter(Boolean).join(" ");
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+
+    if (m > 0)
+        return `${m}m ${s}s`;
+
+    return `${s}s`;
 }
 
 /* =========================================
-   SEARCH FILTER
+   GOOGLE SEARCH
 ========================================= */
 
-function filterCalls(query) {
-    const items = document.querySelectorAll(".call-item");
+function searchNumber(number) {
 
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.parentElement.style.display = text.includes(query) ? "" : "none";
-    });
+    window.open(
+        "https://www.google.com/search?q=" +
+        encodeURIComponent(number),
+        "_blank"
+    );
 }
