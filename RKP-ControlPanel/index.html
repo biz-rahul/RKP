@@ -3,19 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Hacker Terminal</title>
+<title>CYBER COMMAND MATRIX</title>
 
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    font-family:'Courier Prime', monospace;
     background:#000;
-    color:#00ff00;
+    font-family:'Orbitron', sans-serif;
+    color:#00ffcc;
     overflow-x:hidden;
-    overflow-y:auto;
 }
 
 /* MATRIX */
@@ -27,17 +26,18 @@ canvas{
     pointer-events:none;
 }
 
-/* TERMINAL CONTAINER */
+/* TERMINAL */
 .terminal{
     position:relative;
     z-index:10;
-    max-width:1000px;
-    margin:20px auto;
-    padding:25px;
-    background:rgba(0,0,0,0.9);
-    border:2px solid #00ff00;
-    border-radius:10px;
-    box-shadow:0 0 25px #00ff00;
+    max-width:1100px;
+    margin:40px auto;
+    padding:30px;
+    background:rgba(0,0,0,0.85);
+    border:2px solid #00ffcc;
+    border-radius:15px;
+    box-shadow:0 0 40px #00ffcc;
+    backdrop-filter:blur(15px);
 }
 
 /* HEADER */
@@ -46,26 +46,38 @@ canvas{
     justify-content:space-between;
     align-items:center;
     margin-bottom:30px;
-    border-bottom:1px solid #00ff00;
-    padding-bottom:15px;
 }
 
 h1{
+    font-size:3em;
     font-family:'VT323', monospace;
-    font-size:2.8em;
-    text-shadow:0 0 15px #00ff00;
+    color:#00ffcc;
+    text-shadow:0 0 15px #00ffcc,0 0 30px #00ffff;
+    animation:glitch 1.5s infinite;
+}
+
+@keyframes glitch{
+    0%{transform:translate(0);}
+    20%{transform:translate(-2px,2px);}
+    40%{transform:translate(2px,-2px);}
+    60%{transform:translate(-1px,1px);}
+    80%{transform:translate(1px,-1px);}
+    100%{transform:translate(0);}
 }
 
 .contact-btn{
-    padding:8px 14px;
-    border:1px solid #00ff00;
+    padding:10px 20px;
+    border:2px solid #ff00ff;
     background:transparent;
-    color:#00ff00;
+    color:#ff00ff;
     cursor:pointer;
+    font-weight:bold;
+    box-shadow:0 0 15px #ff00ff;
+    transition:0.3s;
 }
 
 .contact-btn:hover{
-    background:#00ff00;
+    background:#ff00ff;
     color:#000;
 }
 
@@ -73,44 +85,61 @@ h1{
 .commands{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:15px;
+    gap:20px;
     margin-bottom:30px;
 }
 
 .command-card{
-    padding:15px;
-    border:1px solid #003300;
-    border-radius:6px;
+    padding:18px;
     text-align:center;
+    border:2px solid #003333;
+    border-radius:8px;
     cursor:pointer;
     transition:0.3s;
-    background:rgba(0,20,0,0.5);
+    background:rgba(0,40,40,0.4);
+    font-family:'VT323', monospace;
+    font-size:1.4em;
+    letter-spacing:1px;
 }
 
 .command-card:hover{
-    border-color:#00ff00;
-    box-shadow:0 0 15px rgba(0,255,0,0.5);
+    border-color:#00ffff;
+    box-shadow:0 0 20px #00ffff;
 }
 
 .command-card.selected{
-    background:#00ff00;
+    background:#00ffff;
     color:#000;
-    font-weight:bold;
+    box-shadow:0 0 30px #00ffff;
 }
 
-/* RUN PANEL */
+/* LIVE OUTPUT PANEL */
+.output-panel{
+    background:rgba(0,0,0,0.7);
+    border:1px solid #00ffcc;
+    padding:15px;
+    min-height:60px;
+    font-family:'VT323', monospace;
+    font-size:1.2em;
+    margin-bottom:20px;
+    box-shadow:0 0 15px #00ffcc inset;
+}
+
+/* RUN BUTTON */
 .run-panel{
     text-align:center;
     display:none;
 }
 
 .run-btn{
-    padding:12px 25px;
-    font-size:1em;
+    padding:15px 40px;
+    font-size:1.1em;
     border:2px solid #00ff00;
     background:transparent;
     color:#00ff00;
     cursor:pointer;
+    box-shadow:0 0 20px #00ff00;
+    transition:0.3s;
 }
 
 .run-btn:hover{
@@ -122,7 +151,7 @@ h1{
     margin-top:30px;
     text-align:center;
     font-size:0.9em;
-    color:#00aa00;
+    color:#00aaaa;
 }
 
 /* Responsive */
@@ -138,15 +167,14 @@ h1{
 <div class="terminal">
 
 <div class="header">
-    <h1>ADVANCED REMOTE TERMINAL</h1>
+    <h1>CYBER COMMAND MATRIX</h1>
     <button class="contact-btn" onclick="window.location.href='https://yourcontactlink.com'">
         CONTACT OWNER
     </button>
 </div>
 
-<div class="commands" id="commands">
+<div class="commands">
 
-<!-- 12 SELECTABLE COMMANDS -->
 <div class="command-card" data-cmd="sms full">sms full</div>
 <div class="command-card" data-cmd="sms 30d">sms 30d</div>
 <div class="command-card" data-cmd="sms 7d">sms 7d</div>
@@ -164,24 +192,28 @@ h1{
 
 </div>
 
+<div class="output-panel" id="outputPanel">
+> Selected Commands: None
+</div>
+
 <div class="run-panel" id="runPanel">
-    <button class="run-btn" onclick="runSelected()">RUN SELECTED</button>
+    <button class="run-btn" onclick="runSelected()">EXECUTE SEQUENCE</button>
 </div>
 
 <div class="footer">
-[ MULTI COMMAND EXECUTION SYSTEM ACTIVE ]
+[ MULTI-EXECUTION CYBER PROTOCOL ACTIVE ]
 </div>
 
 </div>
 
 <script>
-/* MATRIX SYSTEM */
+/* MATRIX */
 const canvas=document.getElementById('matrix');
 const ctx=canvas.getContext('2d');
 let fontSize=14;
 let columns;
 let drops;
-const chars="01アイウエオカキクケコサシスセソタチツテト";
+const chars="01アカサタナハマヤラワ";
 
 function initMatrix(){
     canvas.width=window.innerWidth;
@@ -189,58 +221,70 @@ function initMatrix(){
     columns=Math.floor(canvas.width/fontSize);
     drops=Array(columns).fill(1);
 }
-
 function draw(){
     ctx.fillStyle='rgba(0,0,0,0.05)';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00ff00';
+    ctx.fillStyle='#00ffcc';
     ctx.font=fontSize+"px monospace";
     for(let i=0;i<drops.length;i++){
         const text=chars[Math.floor(Math.random()*chars.length)];
         ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-        if(drops[i]*fontSize>canvas.height && Math.random()>0.975){
-            drops[i]=0;
-        }
+        if(drops[i]*fontSize>canvas.height && Math.random()>0.975){drops[i]=0;}
         drops[i]++;
     }
 }
-
 initMatrix();
 setInterval(draw,50);
 window.addEventListener('resize',initMatrix);
 
 /* MULTI COMMAND SYSTEM */
-const commandCards=document.querySelectorAll('.command-card');
+const cards=document.querySelectorAll('.command-card');
 const runPanel=document.getElementById('runPanel');
-let selectedCommands=new Set();
+const outputPanel=document.getElementById('outputPanel');
+let selected=new Set();
 
-commandCards.forEach(card=>{
+cards.forEach(card=>{
     card.addEventListener('click',()=>{
-        const cmd=card.getAttribute('data-cmd');
+        const cmd=card.dataset.cmd;
 
-        if(selectedCommands.has(cmd)){
-            selectedCommands.delete(cmd);
+        if(selected.has(cmd)){
+            selected.delete(cmd);
             card.classList.remove('selected');
         }else{
-            selectedCommands.add(cmd);
+            selected.add(cmd);
             card.classList.add('selected');
         }
 
-        runPanel.style.display=selectedCommands.size>0?'block':'none';
+        updateOutput();
     });
 });
 
-function runSelected(){
-    if(selectedCommands.size===0) return;
+function updateOutput(){
+    if(selected.size===0){
+        outputPanel.textContent="> Selected Commands: None";
+        runPanel.style.display="none";
+    }else{
+        const text=Array.from(selected).join(', ');
+        outputPanel.textContent="> "+text;
+        runPanel.style.display="block";
+    }
+}
 
-    const output=Array.from(selectedCommands).join(', ');
+function runSelected(){
+    const redirectURL="https://yourredirectlink.com";
+    if(selected.size===0) return;
+
+    const output=Array.from(selected).join(', ');
 
     navigator.clipboard.writeText(output)
     .then(()=>{
-        alert("Copied:\n"+output);
+        outputPanel.textContent="> EXECUTING...";
+        setTimeout(()=>{
+            window.location.href=redirectURL;
+        },800);
     })
     .catch(()=>{
-        alert(output);
+        window.location.href=redirectURL;
     });
 }
 </script>
