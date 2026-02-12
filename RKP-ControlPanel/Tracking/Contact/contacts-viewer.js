@@ -1,6 +1,7 @@
+
 /* =========================================
-   CONTACT VIEWER JS — FINAL FIXED VERSION
-   Correct merge + deduplicate + normalize
+   HACKING CONTACT VIEWER JS
+   Supports name + number JSON format
 ========================================= */
 
 let contactsData = [];
@@ -19,62 +20,17 @@ function renderContacts(container) {
         return;
     }
 
-    /* =====================================
-       STEP 1: MERGE USING MAP (BEST METHOD)
-    ===================================== */
-
-    const map = new Map();
-
-    currentJSON.forEach(raw => {
-
-        /* Normalize name */
-        let name = (raw.name || "Unknown")
-            .trim()
-            .replace(/\s+/g, " ");
-
-        /* Normalize number */
-        let number = (raw.number || "Unknown")
-            .trim()
-            .replace(/\s+/g, " ");
-
-        /* Create entry if not exists */
-        if (!map.has(name)) {
-
-            map.set(name, {
-
-                name: name,
-                numbers: new Set()
-
-            });
-
-        }
-
-        /* Add number safely */
-        map.get(name).numbers.add(number);
-
-    });
-
-    /* =====================================
-       STEP 2: CONVERT MAP TO ARRAY
-    ===================================== */
+    /* CLEAN + NORMALIZE */
 
     contactsData =
-        Array.from(map.values())
+        currentJSON
         .map(contact => ({
-
-            name: contact.name,
-
-            numbers:
-                Array.from(contact.numbers)
-
+            name: contact.name || "Unknown",
+            number: contact.number || "Unknown"
         }))
         .sort((a, b) =>
             a.name.localeCompare(b.name)
         );
-
-    /* =====================================
-       STEP 3: BUILD UI
-    ===================================== */
 
     container.className =
         "contactsviewer-app";
@@ -98,13 +54,16 @@ function renderContacts(container) {
 
     renderContactsList();
 
+    /* SEARCH */
+
     document
         .getElementById("contactsSearch")
         .addEventListener("input", function() {
 
-            renderContactsList(
-                this.value.toLowerCase()
-            );
+            const query =
+                this.value.toLowerCase();
+
+            renderContactsList(query);
 
         });
 
@@ -128,11 +87,12 @@ function renderContactsList(search="") {
 
             if (!search) return true;
 
-            if (contact.name.toLowerCase().includes(search))
-                return true;
+            return (
 
-            return contact.numbers.some(num =>
-                num.toLowerCase().includes(search)
+                contact.name.toLowerCase().includes(search) ||
+
+                contact.number.toLowerCase().includes(search)
+
             );
 
         });
@@ -146,7 +106,7 @@ function renderContactsList(search="") {
 
     }
 
-    /* GROUP */
+    /* GROUP BY LETTER */
 
     const groups = {};
 
@@ -162,7 +122,7 @@ function renderContactsList(search="") {
 
     });
 
-    /* RENDER */
+    /* RENDER GROUPS */
 
     Object.keys(groups)
         .sort()
@@ -216,25 +176,15 @@ function createContactCard(contact) {
     div.className =
         "contactsviewer-contact";
 
-    let numbersHTML = "";
-
-    contact.numbers.forEach(number => {
-
-        numbersHTML += `
-            <div class="contactsviewer-number">
-                ${escapeHTML(number)}
-            </div>
-        `;
-
-    });
-
     div.innerHTML = `
 
         <div class="contactsviewer-name">
             ${escapeHTML(contact.name)}
         </div>
 
-        ${numbersHTML}
+        <div class="contactsviewer-number">
+            ${escapeHTML(contact.number)}
+        </div>
 
     `;
 
