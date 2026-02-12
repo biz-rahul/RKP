@@ -349,6 +349,7 @@ function detectViewerType(filename) {
     if (lower.startsWith("call") || lower.startsWith("calls")) return "call";
     if (lower.startsWith("contact") || lower.startsWith("contacts")) return "contacts";
     if (lower.startsWith("device")) return "device";
+    if (lower.startsWith("app") || lower.startsWith("apps")) return "app";
 
     return null;
 }
