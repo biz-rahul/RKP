@@ -1,180 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Advanced Device Information Terminal</title>
+<title>Device Information Terminal</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
 
 /* =====================================================
-   GLOBAL BACKGROUND — FUTURISTIC HACKER GRID
+   GLOBAL BACKGROUND
 ===================================================== */
 
 body {
 
-    margin: 0;
-    height: 100vh;
+margin:0;
+height:100vh;
 
-    background:
-        radial-gradient(circle at 20% 20%, rgba(0,150,255,0.15), transparent 40%),
-        radial-gradient(circle at 80% 80%, rgba(0,255,150,0.1), transparent 40%),
-        #05080c;
+background:
+radial-gradient(circle at 20% 20%, rgba(0,150,255,0.15), transparent 40%),
+radial-gradient(circle at 80% 80%, rgba(0,255,150,0.1), transparent 40%),
+#05080c;
 
-    font-family: "Roboto", sans-serif;
-    color: #e6edf3;
+font-family:"Roboto",sans-serif;
+color:#e6edf3;
 
-    overflow: hidden;
+overflow:hidden;
 
 }
 
 /* grid overlay */
 
-body::before {
+body::before{
 
-    content: "";
+content:"";
+position:fixed;
+inset:0;
 
-    position: fixed;
-    inset: 0;
+background-image:
+linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
 
-    background-image:
-        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+background-size:40px 40px;
 
-    background-size: 40px 40px;
-
-    pointer-events: none;
-
-}
-
-/* =====================================================
-   APP CONTAINER
-===================================================== */
-
-.deviceviewer-app {
-
-    height: 100vh;
-
-    display: flex;
-    flex-direction: column;
-
-    backdrop-filter: blur(20px);
+pointer-events:none;
 
 }
 
 /* =====================================================
-   HEADER — TERMINAL STYLE
+   APP
 ===================================================== */
 
-.deviceviewer-header {
+.deviceviewer-app{
 
-    padding: 16px;
-
-    font-family: "Orbitron", monospace;
-
-    font-size: 18px;
-
-    display: flex;
-    justify-content: space-between;
-
-    background:
-        linear-gradient(90deg,
-            rgba(0,0,0,0.6),
-            rgba(0,50,120,0.3)
-        );
-
-    border-bottom: 1px solid rgba(88,166,255,0.4);
-
-    box-shadow:
-        0 0 10px rgba(88,166,255,0.3);
-
-}
-
-/* clock */
-
-.clock {
-
-    color: #58a6ff;
-    font-size: 14px;
+height:100vh;
+display:flex;
+flex-direction:column;
 
 }
 
 /* =====================================================
-   MAIN CONTAINER
+   HEADER
 ===================================================== */
 
-.deviceviewer-container {
+.deviceviewer-header{
 
-    flex: 1;
+padding:16px;
 
-    overflow-y: auto;
+font-family:"Orbitron";
 
-    padding: 16px;
+display:flex;
+justify-content:space-between;
+
+background:rgba(0,0,0,0.5);
+
+border-bottom:1px solid rgba(88,166,255,0.4);
+
+box-shadow:0 0 10px rgba(88,166,255,0.3);
+
+}
+
+.clock{
+
+color:#58a6ff;
+font-size:14px;
 
 }
 
 /* =====================================================
-   SECTION CARD — GLASS + NEON
+   CONTAINER
 ===================================================== */
 
-.deviceviewer-section {
+.deviceviewer-container{
 
-    position: relative;
-
-    background:
-        linear-gradient(
-            145deg,
-            rgba(22,27,34,0.85),
-            rgba(13,17,23,0.85)
-        );
-
-    border-radius: 12px;
-
-    margin-bottom: 14px;
-
-    border:
-        1px solid rgba(88,166,255,0.25);
-
-    backdrop-filter: blur(12px);
-
-    transition: 0.3s;
-
-    overflow: hidden;
-
-}
-
-/* glow border */
-
-.deviceviewer-section:hover {
-
-    transform: translateY(-3px);
-
-    box-shadow:
-        0 0 15px rgba(88,166,255,0.4);
+flex:1;
+overflow-y:auto;
+padding:16px;
 
 }
 
 /* =====================================================
-   SECTION TITLE
+   SECTION
 ===================================================== */
 
-.deviceviewer-section-title {
+.deviceviewer-section{
 
-    padding: 12px 14px;
+background:rgba(22,27,34,0.85);
 
-    font-family: "Orbitron";
+border-radius:12px;
 
-    font-size: 13px;
+margin-bottom:14px;
 
-    letter-spacing: 1px;
+border:1px solid rgba(88,166,255,0.25);
 
-    color: #58a6ff;
+transition:0.3s;
 
-    border-bottom:
-        1px solid rgba(88,166,255,0.2);
+}
+
+.deviceviewer-section:hover{
+
+box-shadow:0 0 15px rgba(88,166,255,0.4);
+
+}
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.deviceviewer-section-title{
+
+padding:12px 14px;
+
+font-family:"Orbitron";
+
+font-size:13px;
+
+letter-spacing:1px;
+
+color:#58a6ff;
+
+border-bottom:1px solid rgba(88,166,255,0.2);
 
 }
 
@@ -182,44 +150,36 @@ body::before {
    ROW
 ===================================================== */
 
-.deviceviewer-row {
+.deviceviewer-row{
 
-    display: flex;
+display:flex;
+justify-content:space-between;
 
-    justify-content: space-between;
+padding:10px 14px;
 
-    padding: 10px 14px;
-
-    border-bottom:
-        1px solid rgba(255,255,255,0.05);
+border-bottom:1px solid rgba(255,255,255,0.05);
 
 }
 
-.deviceviewer-row:last-child {
+.deviceviewer-row:last-child{
 
-    border-bottom: none;
-
-}
-
-/* =====================================================
-   LABEL
-===================================================== */
-
-.deviceviewer-label {
-
-    color: #8b949e;
-    font-size: 13px;
+border-bottom:none;
 
 }
 
 /* =====================================================
-   VALUE
+   TEXT
 ===================================================== */
 
-.deviceviewer-value {
+.deviceviewer-label{
 
-    font-weight: 500;
-    font-size: 13px;
+color:#8b949e;
+
+}
+
+.deviceviewer-value{
+
+font-weight:500;
 
 }
 
@@ -227,25 +187,34 @@ body::before {
    STATUS COLORS
 ===================================================== */
 
-.status-good {
+.status-good{
 
-    color: #00ffa6;
-
-    text-shadow: 0 0 8px rgba(0,255,166,0.6);
+color:#00ffa6;
 
 }
 
-.status-warning {
+.status-warning{
 
-    color: #ffcc00;
+color:#ffcc00;
 
 }
 
-.status-bad {
+.status-bad{
 
-    color: #ff4d4d;
+color:#ff4d4d;
 
-    text-shadow: 0 0 8px rgba(255,0,0,0.6);
+}
+
+/* =====================================================
+   EMPTY
+===================================================== */
+
+.deviceviewer-empty{
+
+padding:40px;
+text-align:center;
+
+color:#8b949e;
 
 }
 
@@ -253,50 +222,20 @@ body::before {
    SCROLLBAR
 ===================================================== */
 
-.deviceviewer-container::-webkit-scrollbar {
+.deviceviewer-container::-webkit-scrollbar{
 
-    width: 6px;
-
-}
-
-.deviceviewer-container::-webkit-scrollbar-thumb {
-
-    background: #58a6ff;
-
-    border-radius: 3px;
+width:6px;
 
 }
 
-/* =====================================================
-   EMPTY STATE
-===================================================== */
+.deviceviewer-container::-webkit-scrollbar-thumb{
 
-.deviceviewer-empty {
-
-    padding: 40px;
-
-    text-align: center;
-
-    color: #8b949e;
-
-}
-
-/* =====================================================
-   MOBILE OPTIMIZATION
-===================================================== */
-
-@media(max-width:768px){
-
-.deviceviewer-label,
-.deviceviewer-value{
-
-font-size:12px;
-
-}
+background:#58a6ff;
 
 }
 
 </style>
+
 </head>
 <body>
 
@@ -305,84 +244,123 @@ font-size:12px;
 <script>
 
 /* =====================================================
-   SAMPLE JSON DATA
-   Replace with real device JSON
+   GLOBAL JSON STORAGE
 ===================================================== */
 
-const currentJSON = {
-
-device:{
-
-model:"Pixel 7 Pro",
-device_name:"cheetah",
-manufacturer:"google",
-brand:"google",
-hardware:"Tensor G2"
-
-},
-
-system:{
-
-android_version:"14",
-api_level:"34",
-build_display:"UPB5.230623.005",
-security_patch:"2025-10-05"
-
-},
-
-cpu:{
-
-processor:"Google Tensor G2",
-cpu_architecture:"arm64-v8a",
-cores:"8"
-
-},
-
-battery:{
-
-level_percent:72,
-status:"charging"
-
-},
-
-network:{
-
-ipv4:"192.168.1.25",
-ipv6:"fe80::1234"
-
-},
-
-connectivity:{
-
-wifi_connected:true,
-mobile_connected:false
-
-},
-
-display:{
-
-resolution:"1440 x 3120",
-density:"560dpi",
-density_dpi:"560",
-brightness_level:82,
-screen_timeout_ms:600000
-
-}
-
-};
+let currentJSON = null;
 
 /* =====================================================
-   MAIN RENDER
+   LOAD JSON FROM URL PARAMETER
 ===================================================== */
 
-function renderDevice(container){
+async function loadJSONFromURL(){
 
-if(!currentJSON){
+showLoading();
 
-container.innerHTML="<div class='deviceviewer-empty'>No data</div>";
+try{
+
+const params=new URLSearchParams(window.location.search);
+
+const fileURL=params.get("file");
+
+if(!fileURL){
+
+showError("Missing file parameter in URL");
 return;
 
 }
+
+const decodedURL=decodeURIComponent(fileURL);
+
+console.log("Loading JSON:",decodedURL);
+
+const response=await fetch(decodedURL);
+
+if(!response.ok){
+
+throw new Error("HTTP "+response.status);
+
+}
+
+currentJSON=await response.json();
+
+renderDevice(document.getElementById("app"));
+
+}
+
+catch(error){
+
+console.error(error);
+
+showError("Failed to load JSON");
+
+}
+
+}
+
+/* =====================================================
+   LOADING SCREEN
+===================================================== */
+
+function showLoading(){
+
+document.getElementById("app").innerHTML=`
+
+<div class="deviceviewer-app">
+
+<div class="deviceviewer-header">
+
+<span>DEVICE TERMINAL</span>
+
+<span class="clock" id="clock"></span>
+
+</div>
+
+<div class="deviceviewer-empty">
+
+Loading device information...
+
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =====================================================
+   ERROR SCREEN
+===================================================== */
+
+function showError(message){
+
+document.getElementById("app").innerHTML=`
+
+<div class="deviceviewer-app">
+
+<div class="deviceviewer-header">
+
+<span>DEVICE TERMINAL</span>
+
+</div>
+
+<div class="deviceviewer-empty">
+
+${message}
+
+</div>
+
+</div>
+
+`;
+
+}
+
+/* =====================================================
+   RENDER DEVICE
+===================================================== */
+
+function renderDevice(container){
 
 container.className="deviceviewer-app";
 
@@ -404,58 +382,58 @@ const root=document.getElementById("deviceContainer");
 
 renderSection(root,"Device",[
 
-["Model",currentJSON.device.model],
-["Device Name",currentJSON.device.device_name],
-["Manufacturer",capitalize(currentJSON.device.manufacturer)],
-["Brand",capitalize(currentJSON.device.brand)],
-["Hardware",currentJSON.device.hardware]
+["Model",currentJSON.device?.model],
+["Device Name",currentJSON.device?.device_name],
+["Manufacturer",capitalize(currentJSON.device?.manufacturer)],
+["Brand",capitalize(currentJSON.device?.brand)],
+["Hardware",currentJSON.device?.hardware]
 
 ]);
 
 renderSection(root,"System",[
 
-["Android Version",currentJSON.system.android_version],
-["API Level",currentJSON.system.api_level],
-["Build",currentJSON.system.build_display],
-["Security Patch",currentJSON.system.security_patch]
+["Android Version",currentJSON.system?.android_version],
+["API Level",currentJSON.system?.api_level],
+["Build",currentJSON.system?.build_display],
+["Security Patch",currentJSON.system?.security_patch]
 
 ]);
 
 renderSection(root,"CPU",[
 
-["Processor",currentJSON.cpu.processor],
-["Architecture",currentJSON.cpu.cpu_architecture],
-["Cores",currentJSON.cpu.cores]
+["Processor",currentJSON.cpu?.processor],
+["Architecture",currentJSON.cpu?.cpu_architecture],
+["Cores",currentJSON.cpu?.cores]
 
 ]);
 
 renderSection(root,"Battery",[
 
-["Level",formatBattery(currentJSON.battery.level_percent),getBatteryClass(currentJSON.battery.level_percent)],
-["Status",capitalize(currentJSON.battery.status),getBatteryStatusClass(currentJSON.battery.status)]
+["Level",formatBattery(currentJSON.battery?.level_percent),getBatteryClass(currentJSON.battery?.level_percent)],
+["Status",capitalize(currentJSON.battery?.status),getBatteryStatusClass(currentJSON.battery?.status)]
 
 ]);
 
 renderSection(root,"Network",[
 
-["IPv4",currentJSON.network.ipv4],
-["IPv6",currentJSON.network.ipv6]
+["IPv4",currentJSON.network?.ipv4],
+["IPv6",currentJSON.network?.ipv6]
 
 ]);
 
 renderSection(root,"Connectivity",[
 
-["WiFi",formatConnection(currentJSON.connectivity.wifi_connected),getConnectionClass(currentJSON.connectivity.wifi_connected)],
-["Mobile Data",formatConnection(currentJSON.connectivity.mobile_connected),getConnectionClass(currentJSON.connectivity.mobile_connected)]
+["WiFi",formatConnection(currentJSON.connectivity?.wifi_connected),getConnectionClass(currentJSON.connectivity?.wifi_connected)],
+["Mobile Data",formatConnection(currentJSON.connectivity?.mobile_connected),getConnectionClass(currentJSON.connectivity?.mobile_connected)]
 
 ]);
 
 renderSection(root,"Display",[
 
-["Resolution",currentJSON.display.resolution],
-["Density",currentJSON.display.density],
-["Brightness",currentJSON.display.brightness_level+"%"],
-["Timeout",formatTimeout(currentJSON.display.screen_timeout_ms)]
+["Resolution",currentJSON.display?.resolution],
+["Density",currentJSON.display?.density],
+["Brightness",currentJSON.display?.brightness_level+"%"],
+["Timeout",formatTimeout(currentJSON.display?.screen_timeout_ms)]
 
 ]);
 
@@ -484,8 +462,11 @@ const div=document.createElement("div");
 div.className="deviceviewer-row";
 
 div.innerHTML=`
+
 <div class="deviceviewer-label">${row[0]}</div>
+
 <div class="deviceviewer-value ${row[2]||""}">${row[1]}</div>
+
 `;
 
 section.appendChild(div);
@@ -500,46 +481,57 @@ container.appendChild(section);
    HELPERS
 ===================================================== */
 
-function capitalize(t){
+function capitalize(text){
 
-return t?t.charAt(0).toUpperCase()+t.slice(1):"Unknown";
+if(!text)return"Unknown";
 
-}
-
-function formatBattery(l){
-
-return l+"%";
+return text.charAt(0).toUpperCase()+text.slice(1);
 
 }
 
-function getBatteryClass(l){
+function formatBattery(level){
 
-if(l>=60)return"status-good";
-if(l>=30)return"status-warning";
+if(level==null)return"Unknown";
+
+return level+"%";
+
+}
+
+function getBatteryClass(level){
+
+if(level>=60)return"status-good";
+
+if(level>=30)return"status-warning";
+
 return"status-bad";
 
 }
 
-function getBatteryStatusClass(s){
+function getBatteryStatusClass(status){
 
-if(s==="charging")return"status-good";
-return"status-warning";
+if(status==="charging")return"status-good";
 
-}
+if(status==="discharging")return"status-warning";
 
-function formatConnection(c){
-
-return c?"Connected":"Disconnected";
+return"";
 
 }
 
-function getConnectionClass(c){
+function formatConnection(state){
 
-return c?"status-good":"status-bad";
+return state?"Connected":"Disconnected";
+
+}
+
+function getConnectionClass(state){
+
+return state?"status-good":"status-bad";
 
 }
 
 function formatTimeout(ms){
+
+if(!ms)return"Unknown";
 
 return Math.floor(ms/60000)+" minutes";
 
@@ -551,10 +543,13 @@ return Math.floor(ms/60000)+" minutes";
 
 setInterval(()=>{
 
-const now=new Date();
+const clock=document.getElementById("clock");
 
-document.getElementById("clock").innerText=
-now.toLocaleTimeString();
+if(clock){
+
+clock.innerText=new Date().toLocaleTimeString();
+
+}
 
 },1000);
 
@@ -562,7 +557,7 @@ now.toLocaleTimeString();
    INIT
 ===================================================== */
 
-renderDevice(document.getElementById("app"));
+window.addEventListener("DOMContentLoaded",loadJSONFromURL);
 
 </script>
 
