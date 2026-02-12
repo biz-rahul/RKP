@@ -1,8 +1,8 @@
 /* =========================================
-   NOTIFICATION VIEWER ENGINE
+   ANDROID REAL NOTIFICATION VIEWER JS
 ========================================= */
 
-let notificationData = [];
+let notificationList = [];
 
 /* =========================================
    MAIN ENTRY
@@ -20,18 +20,17 @@ function renderNotification(container) {
 
     /* SORT newest first */
 
-    notificationData =
+    notificationList =
         currentJSON.sort(
             (a, b) => b.posted_time - a.posted_time
         );
 
-    container.className =
-        "notificationviewer-app";
+    container.className = "notificationviewer-app";
 
     container.innerHTML = `
 
         <div class="notificationviewer-header">
-            Notification Capture Terminal
+            Notifications
         </div>
 
         <div class="notificationviewer-search">
@@ -39,21 +38,24 @@ function renderNotification(container) {
                    placeholder="Search notifications">
         </div>
 
-        <div id="notificationList"
-             class="notificationviewer-list">
+        <div class="notificationviewer-list"
+             id="notificationList">
         </div>
 
     `;
 
-    renderNotificationList();
+    renderNotificationItems();
+
+    /* SEARCH */
 
     document
         .getElementById("notificationSearch")
         .addEventListener("input", function() {
 
-            renderNotificationList(
-                this.value.toLowerCase()
-            );
+            const query =
+                this.value.toLowerCase();
+
+            renderNotificationItems(query);
 
         });
 
@@ -63,17 +65,15 @@ function renderNotification(container) {
    RENDER LIST
 ========================================= */
 
-function renderNotificationList(search="") {
+function renderNotificationItems(search="") {
 
     const list =
-        document.getElementById(
-            "notificationList"
-        );
+        document.getElementById("notificationList");
 
     list.innerHTML = "";
 
     const filtered =
-        notificationData.filter(n => {
+        notificationList.filter(n => {
 
             if (!search) return true;
 
@@ -85,7 +85,9 @@ function renderNotificationList(search="") {
 
                 n.title?.toLowerCase().includes(search) ||
 
-                n.text?.toLowerCase().includes(search)
+                n.text?.toLowerCase().includes(search) ||
+
+                n.big_text?.toLowerCase().includes(search)
 
             );
 
@@ -94,16 +96,15 @@ function renderNotificationList(search="") {
     if (filtered.length === 0) {
 
         list.innerHTML =
-            "<div class='notificationviewer-empty'>No notifications found</div>";
+            "<div class='notificationviewer-empty'>No notifications</div>";
 
         return;
-
     }
 
     filtered.forEach(notification => {
 
         list.appendChild(
-            createNotificationItem(notification)
+            createNotificationCard(notification)
         );
 
     });
@@ -114,89 +115,153 @@ function renderNotificationList(search="") {
    CREATE CARD
 ========================================= */
 
-function createNotificationItem(n) {
+function createNotificationCard(n) {
 
-    const div =
+    const card =
         document.createElement("div");
 
-    div.className =
+    card.className =
         "notificationviewer-item";
 
-    const categoryClass =
-        getCategoryClass(n.category);
+    const icon =
+        getAppIcon(n.package, n.app_name);
 
-    div.innerHTML = `
+    const time =
+        formatRelativeTime(n.posted_time);
 
-        <div class="notificationviewer-top">
+    const text =
+        n.text ||
+        n.big_text ||
+        n.ticker ||
+        "";
 
-            <div class="notificationviewer-appname">
-                ${escapeHTML(n.app_name || "Unknown")}
-            </div>
+    card.innerHTML = `
 
-            <div class="notificationviewer-time">
-                ${formatTime(n.posted_time)}
-            </div>
-
+        <div class="notificationviewer-icon">
+            ${icon}
         </div>
 
-        <div class="notificationviewer-title">
-            ${escapeHTML(n.title || "")}
-        </div>
+        <div class="notificationviewer-content">
 
-        <div class="notificationviewer-text">
-            ${escapeHTML(
-                n.text ||
-                n.big_text ||
-                n.ticker ||
+            <div class="notificationviewer-top">
+
+                <div class="notificationviewer-appname">
+                    ${escapeHTML(n.app_name || "Unknown")}
+                </div>
+
+                <div class="notificationviewer-time">
+                    ${time}
+                </div>
+
+            </div>
+
+            <div class="notificationviewer-title">
+                ${escapeHTML(n.title || "")}
+            </div>
+
+            ${
+                text
+                ?
+                `<div class="notificationviewer-text">
+                    ${escapeHTML(text)}
+                 </div>`
+                :
                 ""
-            )}
-        </div>
+            }
 
-        <div class="notificationviewer-package">
-            ${escapeHTML(n.package)}
         </div>
-
-        ${
-            n.category
-            ? `<div class="notificationviewer-category ${categoryClass}">
-                ${n.category}
-               </div>`
-            : ""
-        }
 
     `;
 
-    return div;
+    return card;
+}
+
+/* =========================================
+   APP ICON GENERATOR
+========================================= */
+
+function getAppIcon(packageName, appName) {
+
+    const map = {
+
+        "com.whatsapp": "fab fa-whatsapp",
+        "com.whatsapp.w4b": "fab fa-whatsapp",
+
+        "com.instagram.android": "fab fa-instagram",
+
+        "com.snapchat.android": "fab fa-snapchat",
+
+        "com.google.android.gm": "fas fa-envelope",
+
+        "com.android.systemui": "fas fa-mobile-alt",
+
+        "com.samsung.android.incallui": "fas fa-phone",
+
+        "com.facebook.katana": "fab fa-facebook",
+
+        "com.google.android.youtube": "fab fa-youtube",
+
+        "com.android.chrome": "fab fa-chrome"
+
+    };
+
+    if (map[packageName]) {
+
+        return `<i class="${map[packageName]}"></i>`;
+
+    }
+
+    /* fallback: first letter */
+
+    return appName
+        ? appName.charAt(0).toUpperCase()
+        : "?";
 
 }
 
 /* =========================================
-   HELPERS
+   TIME FORMAT (Android style)
 ========================================= */
 
-function formatTime(timestamp) {
+function formatRelativeTime(timestamp) {
 
-    const d = new Date(timestamp);
+    const now =
+        Date.now();
 
-    return d.toLocaleString();
+    const diff =
+        now - timestamp;
+
+    const seconds =
+        Math.floor(diff / 1000);
+
+    const minutes =
+        Math.floor(seconds / 60);
+
+    const hours =
+        Math.floor(minutes / 60);
+
+    const days =
+        Math.floor(hours / 24);
+
+    if (seconds < 60)
+        return "now";
+
+    if (minutes < 60)
+        return minutes + " min ago";
+
+    if (hours < 24)
+        return hours + " hr ago";
+
+    if (days === 1)
+        return "Yesterday";
+
+    return days + " days ago";
 
 }
 
-function getCategoryClass(cat) {
-
-    if (!cat) return "";
-
-    if (cat === "call")
-        return "category-call";
-
-    if (cat === "sys")
-        return "category-sys";
-
-    return "";
-
-}
-
-/* Prevent HTML injection */
+/* =========================================
+   SAFE HTML
+========================================= */
 
 function escapeHTML(str) {
 
