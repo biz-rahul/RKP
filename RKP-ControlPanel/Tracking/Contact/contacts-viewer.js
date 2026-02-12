@@ -1,64 +1,35 @@
 /* =========================================
-   GOOGLE CONTACTS ANDROID VIEWER JS
-   FULLY FIXED + UNIVERSAL JSON SUPPORT
+   HACKING CONTACT VIEWER JS
+   Supports name + number JSON format
 ========================================= */
 
-let contactsList = [];
+let contactsData = [];
 
 /* =========================================
-   MAIN RENDER FUNCTION
+   MAIN ENTRY
 ========================================= */
 
 function renderContacts(container) {
 
-    if (!currentJSON) {
+    if (!Array.isArray(currentJSON)) {
 
         container.innerHTML =
-            "<div class='contactsviewer-empty'>No contacts data</div>";
+            "<div class='contactsviewer-empty'>Invalid contacts format</div>";
 
         return;
     }
 
-    /* =====================================
-       FIX: SUPPORT ARRAY OR OBJECT JSON
-    ===================================== */
+    /* CLEAN + NORMALIZE */
 
-    let data = currentJSON;
-
-    if (!Array.isArray(data)) {
-
-        if (typeof data === "object") {
-
-            data = Object.values(data);
-
-        } else {
-
-            container.innerHTML =
-                "<div class='contactsviewer-empty'>Invalid contacts format</div>";
-
-            return;
-        }
-    }
-
-    /* =====================================
-       NORMALIZE DATA
-    ===================================== */
-
-    contactsList = data
+    contactsData =
+        currentJSON
         .map(contact => ({
-            name: String(contact.name || "Unknown"),
-            number: String(contact.number || "")
+            name: contact.name || "Unknown",
+            number: contact.number || "Unknown"
         }))
-        .filter(contact =>
-            contact.name !== "" || contact.number !== ""
-        )
         .sort((a, b) =>
             a.name.localeCompare(b.name)
         );
-
-    /* =====================================
-       BUILD UI
-    ===================================== */
 
     container.className =
         "contactsviewer-app";
@@ -66,13 +37,12 @@ function renderContacts(container) {
     container.innerHTML = `
 
         <div class="contactsviewer-header">
-            Contacts
+            CONTACT DATABASE TERMINAL
         </div>
 
         <div class="contactsviewer-search">
             <input id="contactsSearch"
-                   type="text"
-                   placeholder="Search contacts">
+                   placeholder="Search name or number">
         </div>
 
         <div id="contactsList"
@@ -81,23 +51,20 @@ function renderContacts(container) {
 
     `;
 
-    renderContactsList("");
+    renderContactsList();
 
-    /* =====================================
-       SEARCH EVENT
-    ===================================== */
+    /* SEARCH */
 
-    const searchInput =
-        document.getElementById("contactsSearch");
+    document
+        .getElementById("contactsSearch")
+        .addEventListener("input", function() {
 
-    searchInput.addEventListener("input", function() {
+            const query =
+                this.value.toLowerCase();
 
-        const query =
-            this.value.toLowerCase().trim();
+            renderContactsList(query);
 
-        renderContactsList(query);
-
-    });
+        });
 
 }
 
@@ -105,55 +72,47 @@ function renderContacts(container) {
    RENDER CONTACT LIST
 ========================================= */
 
-function renderContactsList(searchQuery="") {
+function renderContactsList(search="") {
 
-    const container =
+    const list =
         document.getElementById("contactsList");
 
-    if (!container) return;
-
-    container.innerHTML = "";
+    list.innerHTML = "";
 
     /* FILTER */
 
     const filtered =
-        contactsList.filter(contact => {
+        contactsData.filter(contact => {
 
-            if (!searchQuery) return true;
+            if (!search) return true;
 
             return (
 
-                contact.name.toLowerCase().includes(searchQuery)
+                contact.name.toLowerCase().includes(search) ||
 
-                ||
-
-                contact.number.toLowerCase().includes(searchQuery)
+                contact.number.toLowerCase().includes(search)
 
             );
 
         });
 
-    /* EMPTY */
-
     if (filtered.length === 0) {
 
-        container.innerHTML =
+        list.innerHTML =
             "<div class='contactsviewer-empty'>No contacts found</div>";
 
         return;
+
     }
 
-    /* GROUP */
+    /* GROUP BY LETTER */
 
     const groups = {};
 
     filtered.forEach(contact => {
 
-        let letter =
+        const letter =
             contact.name.charAt(0).toUpperCase();
-
-        if (!letter.match(/[A-Z]/))
-            letter = "#";
 
         if (!groups[letter])
             groups[letter] = [];
@@ -162,30 +121,31 @@ function renderContactsList(searchQuery="") {
 
     });
 
-    /* RENDER */
+    /* RENDER GROUPS */
 
     Object.keys(groups)
         .sort()
         .forEach(letter => {
 
-            container.appendChild(
+            list.appendChild(
                 createLetterHeader(letter)
             );
 
-            groups[letter].forEach(contact => {
+            groups[letter]
+                .forEach(contact => {
 
-                container.appendChild(
-                    createContactItem(contact)
-                );
+                    list.appendChild(
+                        createContactCard(contact)
+                    );
 
-            });
+                });
 
         });
 
 }
 
 /* =========================================
-   CREATE LETTER HEADER
+   LETTER HEADER
 ========================================= */
 
 function createLetterHeader(letter) {
@@ -200,13 +160,14 @@ function createLetterHeader(letter) {
         letter;
 
     return div;
+
 }
 
 /* =========================================
-   CREATE CONTACT ITEM
+   CONTACT CARD
 ========================================= */
 
-function createContactItem(contact) {
+function createContactCard(contact) {
 
     const div =
         document.createElement("div");
@@ -214,42 +175,33 @@ function createContactItem(contact) {
     div.className =
         "contactsviewer-contact";
 
-    const avatarLetter =
-        contact.name.charAt(0).toUpperCase();
-
     div.innerHTML = `
 
-        <div class="contactsviewer-avatar">
-            ${escapeHTML(avatarLetter)}
+        <div class="contactsviewer-name">
+            ${escapeHTML(contact.name)}
         </div>
 
-        <div class="contactsviewer-info">
-
-            <div class="contactsviewer-name">
-                ${escapeHTML(contact.name)}
-            </div>
-
-            <div class="contactsviewer-number">
-                ${escapeHTML(contact.number)}
-            </div>
-
+        <div class="contactsviewer-number">
+            ${escapeHTML(contact.number)}
         </div>
 
     `;
 
     return div;
+
 }
 
 /* =========================================
    SAFE HTML
 ========================================= */
 
-function escapeHTML(text) {
+function escapeHTML(str) {
 
-    if (!text) return "";
+    if (!str) return "";
 
-    return text
+    return str
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;");
+
 }
