@@ -1,77 +1,91 @@
 /* =========================================
-   FINAL MATERIAL-STYLE APP VIEWER
+   ADVANCED ANDROID APP VIEWER FINAL CSS
+   Supports new JSON structure
 ========================================= */
 
 .appviewer-app {
-    background: #f2f2f2;
-    font-family: 'Roboto', sans-serif;
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: "Roboto", sans-serif;
     height: 100%;
     display: flex;
     flex-direction: column;
 }
 
-/* ================= HEADER ================= */
+/* =========================================
+   HEADER
+========================================= */
 
 .appviewer-header {
-    background: #e53935;
-    color: white;
-    padding: 18px 16px;
-    font-size: 22px;
+    background: linear-gradient(135deg, #161b22, #0d1117);
+    padding: 16px;
+    font-size: 20px;
     font-weight: 600;
-    letter-spacing: 0.5px;
+    border-bottom: 1px solid #30363d;
 }
 
-/* ================= TOP SEARCH ================= */
+/* =========================================
+   SEARCH BAR
+========================================= */
 
-.appviewer-top-search {
-    background: #e53935;
-    padding: 10px 16px 18px 16px;
+.appviewer-search {
+    padding: 12px 16px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
 }
 
-.appviewer-top-search input {
+.appviewer-search input {
     width: 100%;
-    padding: 10px 16px;
-    border-radius: 30px;
-    border: none;
-    outline: none;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    background: #0d1117;
+    color: #e6edf3;
     font-size: 14px;
 }
 
-/* ================= TABS ================= */
+.appviewer-search input:focus {
+    border-color: #58a6ff;
+    outline: none;
+}
+
+/* =========================================
+   TABS
+========================================= */
 
 .appviewer-tabs {
     display: flex;
-    background: #e53935;
-    color: white;
-    font-weight: 600;
-    font-size: 14px;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
 }
 
 .appviewer-tab {
     flex: 1;
     text-align: center;
-    padding: 14px 0;
+    padding: 12px;
     cursor: pointer;
+    font-size: 14px;
+    color: #8b949e;
     position: relative;
-    opacity: 0.8;
 }
 
 .appviewer-tab.active {
-    opacity: 1;
+    color: #58a6ff;
 }
 
 .appviewer-tab.active::after {
     content: "";
     position: absolute;
     bottom: 0;
-    left: 25%;
-    width: 50%;
-    height: 3px;
-    background: white;
-    border-radius: 3px;
+    left: 20%;
+    width: 60%;
+    height: 2px;
+    background: #58a6ff;
 }
 
-/* ================= LIST ================= */
+/* =========================================
+   LIST
+========================================= */
 
 .appviewer-list {
     flex: 1;
@@ -79,115 +93,134 @@
     padding: 10px;
 }
 
-/* ================= CARD ITEM ================= */
+/* =========================================
+   APP CARD
+========================================= */
 
 .appviewer-item {
-    background: white;
-    border-radius: 12px;
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
     padding: 14px;
+    margin-bottom: 10px;
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-    transition: transform 0.15s ease;
+    transition: all 0.2s ease;
 }
 
 .appviewer-item:hover {
+    border-color: #58a6ff;
     transform: translateY(-2px);
 }
 
-/* ================= ICON ================= */
+/* =========================================
+   ICON
+========================================= */
 
 .appviewer-icon {
-    width: 52px;
-    height: 52px;
-    border-radius: 14px;
-    background: linear-gradient(135deg, #42a5f5, #7e57c2);
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #238636, #2ea043);
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 14px;
     font-size: 22px;
-    color: white;
-    flex-shrink: 0;
 }
-
-/* FIX FONT AWESOME SIZE */
 
 .appviewer-icon i {
-    font-size: 22px !important;
-    color: white !important;
+    color: white;
 }
 
-/* ================= DETAILS ================= */
+/* =========================================
+   DETAILS
+========================================= */
 
 .appviewer-details {
     flex: 1;
-    display: flex;
-    flex-direction: column;
 }
 
 .appviewer-name {
     font-size: 16px;
     font-weight: 600;
-    color: #222;
 }
 
 .appviewer-package {
-    font-size: 13px;
-    color: #666;
-    margin-top: 4px;
-    word-break: break-all;
+    font-size: 12px;
+    color: #8b949e;
+    margin-top: 2px;
 }
 
-/* ================= SEARCH EMOJI BUTTON ================= */
+/* =========================================
+   META INFO
+========================================= */
 
-.appviewer-search-btn {
-    font-size: 20px;
+.appviewer-meta {
+    font-size: 11px;
+    color: #8b949e;
+    margin-top: 6px;
+}
+
+.appviewer-meta span {
+    margin-right: 12px;
+}
+
+/* =========================================
+   ACTION BUTTON
+========================================= */
+
+.appviewer-action {
+    font-size: 18px;
     cursor: pointer;
-    margin-left: 10px;
-    transition: transform 0.2s ease;
+    padding: 6px;
+    border-radius: 6px;
+    transition: background 0.2s;
 }
 
-.appviewer-search-btn:hover {
-    transform: scale(1.2);
+.appviewer-action:hover {
+    background: rgba(88,166,255,0.2);
 }
 
-/* ================= EMPTY MESSAGE ================= */
+/* =========================================
+   EMPTY
+========================================= */
 
 .appviewer-empty {
     text-align: center;
     padding: 40px;
-    color: #666;
-    font-size: 14px;
+    color: #8b949e;
 }
 
-/* ================= SCROLLBAR ================= */
+/* =========================================
+   SCROLLBAR
+========================================= */
 
 .appviewer-list::-webkit-scrollbar {
     width: 6px;
 }
 
 .appviewer-list::-webkit-scrollbar-thumb {
-    background: #ccc;
+    background: #30363d;
     border-radius: 3px;
 }
 
-/* ================= MOBILE ================= */
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 768px) {
 
-    .appviewer-header {
-        font-size: 20px;
+    .appviewer-name {
+        font-size: 15px;
     }
 
-    .appviewer-item {
-        padding: 12px;
+    .appviewer-meta {
+        font-size: 10px;
     }
 
     .appviewer-icon {
-        width: 46px;
-        height: 46px;
-        font-size: 20px;
+        width: 44px;
+        height: 44px;
     }
 }
