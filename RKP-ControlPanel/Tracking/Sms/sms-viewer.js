@@ -1,24 +1,27 @@
 /* =========================================
-   SMS VIEWER ENGINE
+   ADVANCED HACKING SMS VIEWER ENGINE
 ========================================= */
 
 function renderSMS(container) {
+
     if (!Array.isArray(currentJSON)) {
-        container.innerHTML = "<p>Invalid SMS format.</p>";
+        container.innerHTML = "<p>Invalid SMS format</p>";
         return;
     }
 
-    // Group by address
     const grouped = {};
 
+    // Group by address
     currentJSON.forEach(msg => {
         if (!grouped[msg.address]) grouped[msg.address] = [];
         grouped[msg.address].push(msg);
     });
 
-    // Sort conversations by latest message
     const conversations = Object.keys(grouped).map(address => {
-        const messages = grouped[address].sort((a, b) => a.date - b.date);
+
+        const messages = grouped[address]
+            .sort((a, b) => a.date - b.date);
+
         return {
             address,
             messages,
@@ -27,10 +30,11 @@ function renderSMS(container) {
     }).sort((a, b) => b.latest.date - a.latest.date);
 
     container.className = "sms-app";
+
     container.innerHTML = `
-        <div class="sms-header">Messages</div>
+        <div class="sms-header">Secure Messages Terminal</div>
         <div class="sms-search">
-            <input type="text" id="smsSearch" placeholder="Search messages">
+            <input type="text" id="smsSearch" placeholder="Search conversation">
         </div>
         <div class="sms-list" id="smsList"></div>
     `;
@@ -38,49 +42,28 @@ function renderSMS(container) {
     const list = document.getElementById("smsList");
 
     conversations.forEach(conv => {
-        const item = createConversationItem(conv);
-        list.appendChild(item);
+        list.appendChild(createConversationItem(conv));
     });
 
-    document.getElementById("smsSearch").addEventListener("input", function () {
-        const query = this.value.toLowerCase();
-        filterSMS(query);
-    });
+    document.getElementById("smsSearch")
+        .addEventListener("input", function () {
+            filterSMS(this.value.toLowerCase());
+        });
 }
 
 /* =========================================
-   CREATE CONVERSATION ITEM
+   CONVERSATION ITEM
 ========================================= */
 
 function createConversationItem(conv) {
+
     const item = document.createElement("div");
     item.className = "sms-item";
 
-    const avatar = document.createElement("div");
-    avatar.className = "sms-avatar";
-    avatar.textContent = conv.address[0].toUpperCase();
-
-    const details = document.createElement("div");
-    details.className = "sms-details";
-
-    const address = document.createElement("div");
-    address.className = "sms-address";
-    address.textContent = conv.address;
-
-    const preview = document.createElement("div");
-    preview.className = "sms-preview";
-    preview.textContent = conv.latest.body;
-
-    const time = document.createElement("div");
-    time.className = "sms-time";
-    time.textContent = formatDate(conv.latest.date);
-
-    details.appendChild(address);
-    details.appendChild(preview);
-
-    item.appendChild(avatar);
-    item.appendChild(details);
-    item.appendChild(time);
+    item.innerHTML = `
+        <div class="sms-address">${conv.address}</div>
+        <div class="sms-preview">${conv.latest.body}</div>
+    `;
 
     item.addEventListener("click", () => openThread(conv));
 
@@ -88,16 +71,17 @@ function createConversationItem(conv) {
 }
 
 /* =========================================
-   OPEN THREAD VIEW
+   OPEN THREAD
 ========================================= */
 
 function openThread(conv) {
+
     const thread = document.createElement("div");
     thread.className = "sms-thread";
 
     thread.innerHTML = `
         <div class="thread-header">
-            <button onclick="this.closest('.sms-thread').remove()">←</button>
+            <button>←</button>
             ${conv.address}
         </div>
         <div class="thread-messages" id="threadMessages"></div>
@@ -105,21 +89,57 @@ function openThread(conv) {
 
     document.querySelector(".sms-app").appendChild(thread);
 
+    thread.querySelector("button").onclick = () => thread.remove();
+
     const container = thread.querySelector("#threadMessages");
 
     conv.messages.forEach(msg => {
+
         const bubble = document.createElement("div");
-        bubble.className = "message-bubble incoming";
-        bubble.textContent = msg.body;
+
+        // Detect sent vs received
+        const isOutgoing = detectOutgoing(msg);
+
+        bubble.className = "message-bubble " +
+            (isOutgoing ? "outgoing" : "incoming");
+
+        bubble.innerHTML = `
+            ${msg.body}
+            <div class="message-time">${formatTime(msg.date)}</div>
+        `;
+
         container.appendChild(bubble);
     });
+
+    container.scrollTop = container.scrollHeight;
 }
 
 /* =========================================
-   SEARCH FILTER
+   SENT / RECEIVED DETECTION
+========================================= */
+
+function detectOutgoing(msg) {
+
+    // If JSON has type field
+    if (msg.type !== undefined) {
+        return msg.type === 2; // Android: 2 = sent
+    }
+
+    // Fallback logic:
+    // If address looks like shortcode → assume incoming
+    if (msg.address && msg.address.startsWith("+")) {
+        return false;
+    }
+
+    return false;
+}
+
+/* =========================================
+   SEARCH
 ========================================= */
 
 function filterSMS(query) {
+
     const items = document.querySelectorAll(".sms-item");
 
     items.forEach(item => {
@@ -129,10 +149,11 @@ function filterSMS(query) {
 }
 
 /* =========================================
-   DATE FORMAT
+   FORMAT TIME
 ========================================= */
 
-function formatDate(timestamp) {
+function formatTime(timestamp) {
+
     const date = new Date(timestamp);
-    return date.toLocaleDateString();
+    return date.toLocaleString();
 }
