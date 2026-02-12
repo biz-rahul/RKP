@@ -1,13 +1,15 @@
 /* =========================================
-   GOOGLE CONTACTS ANDROID UI CSS
-   Material Design 3 (Material You)
+   HACKING CONTACT VIEWER CSS
+   Terminal + Matrix UI
 ========================================= */
 
 .contactsviewer-app {
 
-    background: #ffffff;
+    background: #020604;
 
-    font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #00ff9c;
+
+    font-family: "Courier New", monospace;
 
     height: 100%;
 
@@ -15,25 +17,66 @@
 
     flex-direction: column;
 
-    color: #202124;
+    position: relative;
 
 }
 
 /* =========================================
-   HEADER (Google Contacts style)
+   MATRIX SCAN EFFECT
+========================================= */
+
+.contactsviewer-app::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        repeating-linear-gradient(
+            to bottom,
+            rgba(0,255,156,0.03),
+            rgba(0,255,156,0.03) 2px,
+            transparent 2px,
+            transparent 4px
+        );
+
+    animation: matrixMove 8s linear infinite;
+
+    pointer-events: none;
+
+}
+
+@keyframes matrixMove {
+
+    from {
+        transform: translateY(-100%);
+    }
+
+    to {
+        transform: translateY(100%);
+    }
+
+}
+
+/* =========================================
+   HEADER
 ========================================= */
 
 .contactsviewer-header {
 
-    padding: 16px;
+    padding: 14px;
 
-    font-size: 22px;
+    font-size: 16px;
 
-    font-weight: 500;
+    font-weight: bold;
 
-    background: #ffffff;
+    background: #03120c;
 
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #00ff9c;
+
+    letter-spacing: 1px;
 
 }
 
@@ -43,9 +86,9 @@
 
 .contactsviewer-search {
 
-    padding: 10px 16px;
+    padding: 10px;
 
-    background: #ffffff;
+    background: #03120c;
 
 }
 
@@ -53,15 +96,15 @@
 
     width: 100%;
 
-    padding: 12px 16px;
+    padding: 8px;
 
-    border-radius: 24px;
+    background: black;
 
-    border: none;
+    border: 1px solid #00ff9c;
 
-    background: #f1f3f4;
+    color: #00ff9c;
 
-    font-size: 14px;
+    font-family: inherit;
 
     outline: none;
 
@@ -77,85 +120,57 @@
 
     overflow-y: auto;
 
+    padding: 10px;
+
 }
 
 /* =========================================
-   LETTER HEADER
+   LETTER GROUP
 ========================================= */
 
 .contactsviewer-letter {
 
-    padding: 8px 16px;
+    font-size: 14px;
 
-    font-size: 13px;
+    font-weight: bold;
 
-    color: #5f6368;
+    margin-top: 12px;
 
-    font-weight: 500;
+    margin-bottom: 6px;
+
+    color: #00ffaa;
 
 }
 
 /* =========================================
-   CONTACT ITEM
+   CONTACT CARD
 ========================================= */
 
 .contactsviewer-contact {
 
-    display: flex;
+    padding: 10px;
 
-    align-items: center;
+    margin-bottom: 6px;
 
-    padding: 10px 16px;
+    border: 1px solid rgba(0,255,156,0.2);
+
+    border-radius: 6px;
+
+    background: rgba(0,255,156,0.05);
 
     cursor: pointer;
 
-    transition: background 0.15s;
+    transition: all 0.2s;
 
 }
 
 .contactsviewer-contact:hover {
 
-    background: #f1f3f4;
+    background: rgba(0,255,156,0.12);
 
-}
+    border-color: #00ff9c;
 
-/* =========================================
-   AVATAR
-========================================= */
-
-.contactsviewer-avatar {
-
-    width: 40px;
-
-    height: 40px;
-
-    border-radius: 50%;
-
-    background: #e8f0fe;
-
-    color: #1a73e8;
-
-    display: flex;
-
-    align-items: center;
-
-    justify-content: center;
-
-    font-weight: 500;
-
-    font-size: 16px;
-
-    margin-right: 16px;
-
-}
-
-/* =========================================
-   CONTACT INFO CONTAINER
-========================================= */
-
-.contactsviewer-info {
-
-    flex: 1;
+    box-shadow: 0 0 6px rgba(0,255,156,0.4);
 
 }
 
@@ -165,11 +180,9 @@
 
 .contactsviewer-name {
 
-    font-size: 16px;
+    font-size: 14px;
 
-    font-weight: 500;
-
-    color: #202124;
+    font-weight: bold;
 
 }
 
@@ -179,11 +192,9 @@
 
 .contactsviewer-number {
 
-    font-size: 14px;
+    font-size: 12px;
 
-    color: #5f6368;
-
-    margin-top: 2px;
+    color: #66ffc2;
 
 }
 
@@ -193,11 +204,11 @@
 
 .contactsviewer-empty {
 
-    text-align: center;
-
     padding: 40px;
 
-    color: #5f6368;
+    text-align: center;
+
+    color: #00ffaa;
 
 }
 
@@ -213,25 +224,17 @@
 
 .contactsviewer-list::-webkit-scrollbar-thumb {
 
-    background: #dadce0;
-
-    border-radius: 3px;
+    background: #00ff9c;
 
 }
 
 /* =========================================
-   MOBILE OPTIMIZATION
+   MOBILE
 ========================================= */
 
 @media (max-width:768px) {
 
     .contactsviewer-name {
-
-        font-size: 15px;
-
-    }
-
-    .contactsviewer-number {
 
         font-size: 13px;
 
