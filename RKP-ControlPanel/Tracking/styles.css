@@ -1,0 +1,375 @@
+/* =========================================================
+   CONTROL THE WORLD — ADVANCED ULTRA MODERN UI
+   Author: You
+   Architecture: Glassmorphism + Neon + Dashboard UX
+========================================================= */
+
+/* ===== ROOT VARIABLES ===== */
+
+:root {
+
+    --bg-primary: #0f172a;
+    --bg-secondary: #111827;
+    --bg-glass: rgba(255,255,255,0.05);
+
+    --accent-primary: #6366f1;
+    --accent-secondary: #22c55e;
+    --accent-danger: #ef4444;
+    --accent-warning: #f59e0b;
+
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
+
+    --border-glass: rgba(255,255,255,0.1);
+
+    --shadow-soft: 0 0 10px rgba(99,102,241,0.2);
+    --shadow-medium: 0 0 20px rgba(99,102,241,0.3);
+    --shadow-strong: 0 0 40px rgba(99,102,241,0.5);
+
+    --radius: 12px;
+    --transition: 0.25s ease;
+
+}
+
+
+/* ===== GLOBAL RESET ===== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+
+    height: 100%;
+    background:
+        radial-gradient(circle at top left, #1e293b, #020617);
+
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
+
+    color: var(--text-primary);
+
+}
+
+
+/* ===== CONTAINER ===== */
+
+.container {
+
+    display: flex;
+    height: 100vh;
+
+}
+
+
+/* ===== SIDEBAR ===== */
+
+.sidebar {
+
+    width: 300px;
+
+    background: var(--bg-glass);
+
+    backdrop-filter: blur(20px);
+
+    border-right: 1px solid var(--border-glass);
+
+    padding: 20px;
+
+    overflow-y: auto;
+
+    transition: var(--transition);
+
+}
+
+
+/* ===== SIDEBAR TITLE ===== */
+
+.sidebar h1 {
+
+    font-size: 20px;
+
+    font-weight: 600;
+
+    margin-bottom: 20px;
+
+    color: var(--accent-primary);
+
+    text-shadow: var(--shadow-soft);
+
+}
+
+
+/* ===== FILE & FOLDER ===== */
+
+.file,
+.folder {
+
+    padding: 10px 14px;
+
+    border-radius: var(--radius);
+
+    margin-bottom: 6px;
+
+    cursor: pointer;
+
+    transition: var(--transition);
+
+    background: transparent;
+
+    border: 1px solid transparent;
+
+}
+
+
+/* Icons */
+
+.folder::before {
+
+    content: "📂 ";
+}
+
+.file::before {
+
+    content: "📄 ";
+}
+
+
+/* Hover effect */
+
+.file:hover,
+.folder:hover {
+
+    background: var(--bg-glass);
+
+    border: 1px solid var(--accent-primary);
+
+    box-shadow: var(--shadow-soft);
+
+    transform: translateX(5px);
+
+}
+
+
+/* Click animation */
+
+.file:active,
+.folder:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* ===== CONTENT AREA ===== */
+
+.content {
+
+    flex: 1;
+
+    padding: 20px;
+
+    overflow-y: auto;
+
+}
+
+
+/* ===== VIEWER OPTIONS ===== */
+
+.viewer-options {
+
+    display: none;
+
+    margin-bottom: 20px;
+
+}
+
+
+/* ===== BUTTON STYLE ===== */
+
+button {
+
+    width: 100%;
+
+    padding: 12px;
+
+    margin-bottom: 10px;
+
+    border-radius: var(--radius);
+
+    border: none;
+
+    cursor: pointer;
+
+    font-weight: 500;
+
+    color: white;
+
+    background: linear-gradient(
+        45deg,
+        var(--accent-primary),
+        #8b5cf6
+    );
+
+    transition: var(--transition);
+
+    box-shadow: var(--shadow-soft);
+
+}
+
+
+/* Button hover */
+
+button:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow: var(--shadow-medium);
+
+}
+
+
+/* Button click */
+
+button:active {
+
+    transform: scale(0.96);
+
+}
+
+
+/* ===== VIEWER CONTAINER ===== */
+
+#viewerContainer {
+
+    background: var(--bg-glass);
+
+    padding: 15px;
+
+    border-radius: var(--radius);
+
+    backdrop-filter: blur(20px);
+
+    border: 1px solid var(--border-glass);
+
+    box-shadow: var(--shadow-soft);
+
+}
+
+
+/* ===== REGULAR VIEWER ===== */
+
+.regular-viewer pre {
+
+    background: #020617;
+
+    padding: 15px;
+
+    border-radius: var(--radius);
+
+    overflow-x: auto;
+
+    font-size: 14px;
+
+    border: 1px solid var(--border-glass);
+
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+
+}
+
+
+/* ===== SCROLLBAR ===== */
+
+::-webkit-scrollbar {
+
+    width: 8px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: transparent;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+    background: var(--accent-primary);
+
+    border-radius: 10px;
+
+}
+
+
+/* ===== MOBILE RESPONSIVE ===== */
+
+@media (max-width: 768px) {
+
+    .container {
+
+        flex-direction: column;
+
+    }
+
+    .sidebar {
+
+        width: 100%;
+        height: 40%;
+
+    }
+
+    .content {
+
+        height: 60%;
+
+    }
+
+}
+
+
+/* ===== SMOOTH FADE ANIMATION ===== */
+
+@keyframes fadeIn {
+
+    from {
+
+        opacity: 0;
+        transform: translateY(10px);
+
+    }
+
+    to {
+
+        opacity: 1;
+        transform: translateY(0);
+
+    }
+
+}
+
+.file,
+.folder,
+button,
+#viewerContainer {
+
+    animation: fadeIn 0.3s ease;
+
+}
+
+
+/* ===== NEON GLOW EFFECT ===== */
+
+.sidebar h1:hover {
+
+    text-shadow:
+        0 0 10px #6366f1,
+        0 0 20px #6366f1,
+        0 0 40px #6366f1;
+
+}
