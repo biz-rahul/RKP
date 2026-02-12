@@ -1,117 +1,59 @@
-/* =====================================================
-   CONTROL THE WORLD — ELITE HACKER INTERFACE v4
-   Cyberpunk • Matrix • Neon • Terminal UI
-===================================================== */
-
+/* =========================================================
+   CONTROL THE WORLD — ADVANCED ULTRA MODERN UI
+   Author: You
+   Architecture: Glassmorphism + Neon + Dashboard UX
+========================================================= */
 
 /* ===== ROOT VARIABLES ===== */
 
 :root {
 
-    --bg-black: #020617;
-    --bg-dark: #040b1a;
-    --bg-panel: rgba(0, 10, 30, 0.6);
+    --bg-primary: #0f172a;
+    --bg-secondary: #111827;
+    --bg-glass: rgba(255,255,255,0.05);
 
-    --neon-green: #00ff9c;
-    --neon-blue: #00eaff;
-    --neon-purple: #8b5cf6;
-    --neon-red: #ff003c;
+    --accent-primary: #6366f1;
+    --accent-secondary: #22c55e;
+    --accent-danger: #ef4444;
+    --accent-warning: #f59e0b;
 
-    --text-main: #00ff9c;
-    --text-dim: #4ade80;
+    --text-primary: #ffffff;
+    --text-secondary: #94a3b8;
 
-    --border-neon: rgba(0,255,156,0.3);
+    --border-glass: rgba(255,255,255,0.1);
 
-    --glow-soft: 0 0 5px #00ff9c;
-    --glow-medium: 0 0 15px #00ff9c;
-    --glow-strong: 0 0 30px #00ff9c;
+    --shadow-soft: 0 0 10px rgba(99,102,241,0.2);
+    --shadow-medium: 0 0 20px rgba(99,102,241,0.3);
+    --shadow-strong: 0 0 40px rgba(99,102,241,0.5);
+
+    --radius: 12px;
+    --transition: 0.25s ease;
 
 }
 
 
-/* ===== GLOBAL ===== */
+/* ===== GLOBAL RESET ===== */
 
 * {
-
+    margin: 0;
+    padding: 0;
     box-sizing: border-box;
-
 }
 
-body {
+html, body {
 
-    margin: 0;
-
-    background: var(--bg-black);
+    height: 100%;
+    background:
+        radial-gradient(circle at top left, #1e293b, #020617);
 
     font-family:
-        "Courier New",
-        monospace;
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        sans-serif;
 
-    color: var(--text-main);
-
-    overflow: hidden;
-
-}
-
-
-/* ===== MATRIX BACKGROUND CANVAS ===== */
-
-#matrixCanvas {
-
-    position: fixed;
-
-    top: 0;
-    left: 0;
-
-    width: 100%;
-    height: 100%;
-
-    z-index: -2;
-
-}
-
-
-/* ===== SCANLINE EFFECT ===== */
-
-.scanlines {
-
-    position: fixed;
-
-    width: 100%;
-    height: 100%;
-
-    background: repeating-linear-gradient(
-        to bottom,
-        rgba(0,255,156,0.05),
-        rgba(0,255,156,0.05) 1px,
-        transparent 1px,
-        transparent 3px
-    );
-
-    z-index: -1;
-
-    pointer-events: none;
-
-}
-
-
-/* ===== GRID BACKGROUND ===== */
-
-.grid {
-
-    position: fixed;
-
-    width: 100%;
-    height: 100%;
-
-    background-image:
-
-        linear-gradient(rgba(0,255,156,0.08) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0,255,156,0.08) 1px, transparent 1px);
-
-    background-size: 40px 40px;
-
-    z-index: -3;
+    color: var(--text-primary);
 
 }
 
@@ -121,7 +63,6 @@ body {
 .container {
 
     display: flex;
-
     height: 100vh;
 
 }
@@ -131,71 +72,102 @@ body {
 
 .sidebar {
 
-    width: 320px;
+    width: 300px;
 
-    background: var(--bg-panel);
+    background: var(--bg-glass);
 
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(20px);
 
-    border-right: 1px solid var(--border-neon);
+    border-right: 1px solid var(--border-glass);
 
-    padding: 15px;
+    padding: 20px;
 
     overflow-y: auto;
 
-    box-shadow: var(--glow-soft);
+    transition: var(--transition);
 
 }
 
 
-/* ===== TITLE ===== */
+/* ===== SIDEBAR TITLE ===== */
 
 .sidebar h1 {
 
-    color: var(--neon-green);
+    font-size: 20px;
 
-    text-shadow: var(--glow-strong);
+    font-weight: 600;
 
-    animation: flicker 2s infinite;
+    margin-bottom: 20px;
+
+    color: var(--accent-primary);
+
+    text-shadow: var(--shadow-soft);
 
 }
 
 
-/* ===== FILE / FOLDER ===== */
+/* ===== FILE & FOLDER ===== */
 
 .file,
 .folder {
 
-    padding: 10px;
+    padding: 10px 14px;
 
-    margin-bottom: 5px;
+    border-radius: var(--radius);
 
-    border: 1px solid transparent;
+    margin-bottom: 6px;
 
     cursor: pointer;
 
-    transition: 0.2s;
+    transition: var(--transition);
+
+    background: transparent;
+
+    border: 1px solid transparent;
 
 }
 
 
-.folder::before { content: "[DIR] "; }
-.file::before { content: "[FILE] "; }
+/* Icons */
 
+.folder::before {
+
+    content: "📂 ";
+}
+
+.file::before {
+
+    content: "📄 ";
+}
+
+
+/* Hover effect */
 
 .file:hover,
 .folder:hover {
 
-    border: 1px solid var(--neon-green);
+    background: var(--bg-glass);
 
-    box-shadow: var(--glow-medium);
+    border: 1px solid var(--accent-primary);
 
-    transform: translateX(10px);
+    box-shadow: var(--shadow-soft);
+
+    transform: translateX(5px);
 
 }
 
 
-/* ===== CONTENT ===== */
+/* Click animation */
+
+.file:active,
+.folder:active {
+
+    transform: scale(0.98);
+
+}
+
+
+/* ===== CONTENT AREA ===== */
 
 .content {
 
@@ -208,58 +180,106 @@ body {
 }
 
 
-/* ===== TERMINAL WINDOW ===== */
+/* ===== VIEWER OPTIONS ===== */
 
-#viewerContainer {
+.viewer-options {
 
-    background: rgba(0,0,0,0.6);
+    display: none;
 
-    border: 1px solid var(--border-neon);
-
-    padding: 15px;
-
-    box-shadow: var(--glow-soft);
+    margin-bottom: 20px;
 
 }
 
 
-/* ===== TERMINAL TEXT ===== */
-
-pre {
-
-    color: var(--neon-green);
-
-}
-
-
-/* ===== BUTTON ===== */
+/* ===== BUTTON STYLE ===== */
 
 button {
 
-    background: transparent;
+    width: 100%;
 
-    color: var(--neon-green);
-
-    border: 1px solid var(--neon-green);
-
-    padding: 10px;
-
-    cursor: pointer;
+    padding: 12px;
 
     margin-bottom: 10px;
 
-    transition: 0.2s;
+    border-radius: var(--radius);
+
+    border: none;
+
+    cursor: pointer;
+
+    font-weight: 500;
+
+    color: white;
+
+    background: linear-gradient(
+        45deg,
+        var(--accent-primary),
+        #8b5cf6
+    );
+
+    transition: var(--transition);
+
+    box-shadow: var(--shadow-soft);
 
 }
 
 
+/* Button hover */
+
 button:hover {
 
-    background: var(--neon-green);
+    transform: translateY(-2px);
 
-    color: black;
+    box-shadow: var(--shadow-medium);
 
-    box-shadow: var(--glow-strong);
+}
+
+
+/* Button click */
+
+button:active {
+
+    transform: scale(0.96);
+
+}
+
+
+/* ===== VIEWER CONTAINER ===== */
+
+#viewerContainer {
+
+    background: var(--bg-glass);
+
+    padding: 15px;
+
+    border-radius: var(--radius);
+
+    backdrop-filter: blur(20px);
+
+    border: 1px solid var(--border-glass);
+
+    box-shadow: var(--shadow-soft);
+
+}
+
+
+/* ===== REGULAR VIEWER ===== */
+
+.regular-viewer pre {
+
+    background: #020617;
+
+    padding: 15px;
+
+    border-radius: var(--radius);
+
+    overflow-x: auto;
+
+    font-size: 14px;
+
+    border: 1px solid var(--border-glass);
+
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
 
 }
 
@@ -268,80 +288,88 @@ button:hover {
 
 ::-webkit-scrollbar {
 
-    width: 6px;
+    width: 8px;
+
+}
+
+::-webkit-scrollbar-track {
+
+    background: transparent;
 
 }
 
 ::-webkit-scrollbar-thumb {
 
-    background: var(--neon-green);
+    background: var(--accent-primary);
+
+    border-radius: 10px;
 
 }
 
 
-/* ===== FLICKER ANIMATION ===== */
+/* ===== MOBILE RESPONSIVE ===== */
 
-@keyframes flicker {
+@media (max-width: 768px) {
 
-    0%,18%,22%,25%,53%,57%,100% {
+    .container {
+
+        flex-direction: column;
+
+    }
+
+    .sidebar {
+
+        width: 100%;
+        height: 40%;
+
+    }
+
+    .content {
+
+        height: 60%;
+
+    }
+
+}
+
+
+/* ===== SMOOTH FADE ANIMATION ===== */
+
+@keyframes fadeIn {
+
+    from {
+
+        opacity: 0;
+        transform: translateY(10px);
+
+    }
+
+    to {
 
         opacity: 1;
-
-    }
-
-    20%,24%,55% {
-
-        opacity: 0.4;
+        transform: translateY(0);
 
     }
 
 }
 
+.file,
+.folder,
+button,
+#viewerContainer {
 
-/* ===== GLITCH EFFECT ===== */
-
-.glitch {
-
-    position: relative;
-
-}
-
-.glitch::before,
-.glitch::after {
-
-    content: attr(data-text);
-
-    position: absolute;
-
-    left: 0;
-
-}
-
-.glitch::before {
-
-    animation: glitchTop 1s infinite;
-
-}
-
-.glitch::after {
-
-    animation: glitchBottom 1.5s infinite;
+    animation: fadeIn 0.3s ease;
 
 }
 
 
-@keyframes glitchTop {
+/* ===== NEON GLOW EFFECT ===== */
 
-    0% { transform: translate(0); }
-    50% { transform: translate(-2px,-2px); }
-    100% { transform: translate(0); }
+.sidebar h1:hover {
 
-}
-
-@keyframes glitchBottom {
-
-    0% { transform: translate(0); }
-    50% { transform: translate(2px,2px); }
-    100% { transform: translate(0); }
+    text-shadow:
+        0 0 10px #6366f1,
+        0 0 20px #6366f1,
+        0 0 40px #6366f1;
 
 }
