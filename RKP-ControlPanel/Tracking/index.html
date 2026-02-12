@@ -274,23 +274,64 @@ function detectViewerType(filename) {
 function generateViewerButtons(filename) {
 
     const viewerOptions = document.getElementById("viewerOptions");
+
     viewerOptions.innerHTML = "";
+
     viewerOptions.style.display = "block";
+
 
     const detected = detectViewerType(filename);
 
+
+    /* ALWAYS show Regular Viewer button */
+
     addViewerButton("regular", "Open in Regular Viewer");
 
+
+    /* If detected viewer exists */
+
     if (detected) {
-        addViewerButton(detected, `Open in ${capitalize(detected)} Viewer`);
-    } else {
-    addViewerButton("sms", "Open in SMS Viewer");
-    addViewerButton("call", "Open in Call Viewer");
-    addViewerButton("contacts", "Open in Contacts Viewer");
-    addViewerButton("device", "Open in Device Viewer");
-    addViewerButton("app", "Open in App Viewer");
-    addViewerButton("notification", "Open in Notification Viewer");
-}
+
+        addViewerButton(
+            detected,
+            `Open in ${capitalize(detected)} Viewer`
+        );
+
+    }
+
+    /* If NOT detected, show all viewers */
+
+    else {
+
+        addViewerButton("sms", "Open in SMS Viewer");
+
+        addViewerButton("call", "Open in Call Viewer");
+
+        addViewerButton("contacts", "Open in Contacts Viewer");
+
+        addViewerButton("device", "Open in Device Viewer");
+
+        addViewerButton("app", "Open in App Viewer");
+
+        addViewerButton("notification", "Open in Notification Viewer");
+
+    }
+
+
+    /* ===== NEW FEATURE: AUTO OPEN DETECTED VIEWER ===== */
+
+    if (detected) {
+
+        openViewer(detected);
+
+    }
+
+    else {
+
+        openViewer("regular");
+
+    }
+
 }
 
 /* ==========================================
