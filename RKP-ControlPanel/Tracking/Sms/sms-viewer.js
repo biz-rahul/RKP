@@ -1,141 +1,273 @@
-SMS VIEWER ENGINE
+/* =========================================
+   FINAL SMS VIEWER JS
+   Supports thread-based JSON structure
+========================================= */
+
+let smsThreads = [];
+
+/* =========================================
+   MAIN ENTRY
 ========================================= */
 
 function renderSMS(container) {
-if (!Array.isArray(currentJSON)) {
-container.innerHTML = "<p>Invalid SMS format.</p>";
-return;
-}
 
-// Group by address  
-const grouped = {};  
+    if (!Array.isArray(currentJSON)) {
 
-currentJSON.forEach(msg => {  
-    if (!grouped[msg.address]) grouped[msg.address] = [];  
-    grouped[msg.address].push(msg);  
-});  
+        container.innerHTML =
+            "<div class='smsviewer-empty'>Invalid SMS format</div>";
 
-// Sort conversations by latest message  
-const conversations = Object.keys(grouped).map(address => {  
-    const messages = grouped[address].sort((a, b) => a.date - b.date);  
-    return {  
-        address,  
-        messages,  
-        latest: messages[messages.length - 1]  
-    };  
-}).sort((a, b) => b.latest.date - a.latest.date);  
+        return;
+    }
 
-container.className = "sms-app";  
-container.innerHTML = `  
-    <div class="sms-header">Messages</div>  
-    <div class="sms-search">  
-        <input type="text" id="smsSearch" placeholder="Search messages">  
-    </div>  
-    <div class="sms-list" id="smsList"></div>  
-`;  
+    /* PROCESS THREADS */
 
-const list = document.getElementById("smsList");  
+    smsThreads = currentJSON.map(thread => {
 
-conversations.forEach(conv => {  
-    const item = createConversationItem(conv);  
-    list.appendChild(item);  
-});  
+        const messagesSorted =
+            thread.messages.sort((a, b) => b.date - a.date);
 
-document.getElementById("smsSearch").addEventListener("input", function () {  
-    const query = this.value.toLowerCase();  
-    filterSMS(query);  
-});
+        const latest = messagesSorted[0];
 
-}
+        const unread =
+            thread.messages.some(msg => msg.read === 0);
 
-/* =========================================
-CREATE CONVERSATION ITEM
-========================================= */
+        return {
 
-function createConversationItem(conv) {
-const item = document.createElement("div");
-item.className = "sms-item";
+            address: thread.address || "Unknown",
 
-const avatar = document.createElement("div");  
-avatar.className = "sms-avatar";  
-avatar.textContent = conv.address[0].toUpperCase();  
+            name: thread.name || thread.address,
 
-const details = document.createElement("div");  
-details.className = "sms-details";  
+            thread_id: thread.thread_id,
 
-const address = document.createElement("div");  
-address.className = "sms-address";  
-address.textContent = conv.address;  
+            messages: messagesSorted.reverse(), // oldest → newest for chat
 
-const preview = document.createElement("div");  
-preview.className = "sms-preview";  
-preview.textContent = conv.latest.body;  
+            latest,
 
-const time = document.createElement("div");  
-time.className = "sms-time";  
-time.textContent = formatDate(conv.latest.date);  
+            unread
 
-details.appendChild(address);  
-details.appendChild(preview);  
+        };
 
-item.appendChild(avatar);  
-item.appendChild(details);  
-item.appendChild(time);  
+    }).sort((a, b) =>
+        b.latest.date - a.latest.date
+    );
 
-item.addEventListener("click", () => openThread(conv));  
+    container.className = "smsviewer-app";
 
-return item;
+    container.innerHTML = `
+        <div class="smsviewer-header">
+            Secure SMS Terminal
+        </div>
 
+        <div class="smsviewer-search">
+            <input type="text"
+                   id="smsSearch"
+                   placeholder="Search threads">
+        </div>
+
+        <div class="smsviewer-list"
+             id="smsList">
+        </div>
+    `;
+
+    renderThreadList();
+
+    document.getElementById("smsSearch")
+        .addEventListener("input", function() {
+
+            renderThreadList(this.value.toLowerCase());
+
+        });
 }
 
 /* =========================================
-OPEN THREAD VIEW
+   RENDER THREAD LIST
 ========================================= */
 
-function openThread(conv) {
-const thread = document.createElement("div");
-thread.className = "sms-thread";
+function renderThreadList(search = "") {
 
-thread.innerHTML = `  
-    <div class="thread-header">  
-        <button onclick="this.closest('.sms-thread').remove()">←</button>  
-        ${conv.address}  
-    </div>  
-    <div class="thread-messages" id="threadMessages"></div>  
-`;  
+    const list =
+        document.getElementById("smsList");
 
-document.querySelector(".sms-app").appendChild(thread);  
+    list.innerHTML = "";
 
-const container = thread.querySelector("#threadMessages");  
+    const filtered =
+        smsThreads.filter(thread => {
 
-conv.messages.forEach(msg => {  
-    const bubble = document.createElement("div");  
-    bubble.className = "message-bubble incoming";  
-    bubble.textContent = msg.body;  
-    container.appendChild(bubble);  
-});
+            if (!search) return true;
 
+            return (
+                thread.address.toLowerCase().includes(search) ||
+                thread.latest.body.toLowerCase().includes(search)
+            );
+
+        });
+
+    if (filtered.length === 0) {
+
+        list.innerHTML =
+            "<div class='smsviewer-empty'>No messages found</div>";
+
+        return;
+    }
+
+    filtered.forEach(thread => {
+
+        list.appendChild(
+            createThreadItem(thread)
+        );
+
+    });
 }
 
 /* =========================================
-SEARCH FILTER
+   CREATE THREAD ITEM
 ========================================= */
 
-function filterSMS(query) {
-const items = document.querySelectorAll(".sms-item");
+function createThreadItem(thread) {
 
-items.forEach(item => {  
-    const text = item.textContent.toLowerCase();  
-    item.style.display = text.includes(query) ? "" : "none";  
-});
+    const div =
+        document.createElement("div");
 
+    div.className =
+        "smsviewer-thread-item" +
+        (thread.unread ? " smsviewer-unread" : "");
+
+    div.innerHTML = `
+
+        <div class="smsviewer-thread-top">
+
+            <div class="smsviewer-address">
+                ${thread.address}
+            </div>
+
+            <div class="smsviewer-time">
+                ${formatTime(thread.latest.date)}
+            </div>
+
+        </div>
+
+        <div class="smsviewer-preview">
+            ${thread.latest.body}
+        </div>
+
+    `;
+
+    div.onclick = () =>
+        openThread(thread);
+
+    return div;
 }
 
 /* =========================================
-DATE FORMAT
+   OPEN CHAT THREAD
 ========================================= */
 
-function formatDate(timestamp) {
-const date = new Date(timestamp);
-return date.toLocaleDateString();
-                      }
+function openThread(thread) {
+
+    const chat =
+        document.createElement("div");
+
+    chat.className =
+        "smsviewer-chat";
+
+    chat.innerHTML = `
+
+        <div class="smsviewer-chat-header">
+
+            <div class="smsviewer-back">
+                ←
+            </div>
+
+            ${thread.address}
+
+        </div>
+
+        <div class="smsviewer-chat-body"
+             id="chatBody">
+        </div>
+
+    `;
+
+    document.querySelector(".smsviewer-app")
+        .appendChild(chat);
+
+    chat.querySelector(".smsviewer-back")
+        .onclick = () => chat.remove();
+
+    const body =
+        chat.querySelector("#chatBody");
+
+    thread.messages.forEach(msg => {
+
+        body.appendChild(
+            createMessageBubble(msg)
+        );
+
+    });
+
+    body.scrollTop =
+        body.scrollHeight;
+}
+
+/* =========================================
+   CREATE MESSAGE BUBBLE
+========================================= */
+
+function createMessageBubble(msg) {
+
+    const div =
+        document.createElement("div");
+
+    const typeClass =
+        msg.type === 2
+        ? "smsviewer-sent"
+        : "smsviewer-inbox";
+
+    const unreadClass =
+        msg.read === 0
+        ? " smsviewer-unread-msg"
+        : "";
+
+    div.className =
+        "smsviewer-bubble " +
+        typeClass +
+        unreadClass;
+
+    div.innerHTML = `
+
+        ${msg.body}
+
+        <div class="smsviewer-msg-time">
+            ${formatFullTime(msg.date)}
+        </div>
+
+    `;
+
+    return div;
+}
+
+/* =========================================
+   TIME FORMAT
+========================================= */
+
+function formatTime(timestamp) {
+
+    const d =
+        new Date(timestamp);
+
+    return d.toLocaleDateString(
+        undefined,
+        {
+            month: "short",
+            day: "numeric"
+        }
+    );
+}
+
+function formatFullTime(timestamp) {
+
+    const d =
+        new Date(timestamp);
+
+    return d.toLocaleString();
+}
