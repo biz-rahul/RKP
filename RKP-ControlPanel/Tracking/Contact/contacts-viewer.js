@@ -1,35 +1,64 @@
 /* =========================================
    GOOGLE CONTACTS ANDROID VIEWER JS
-   Material Design Contacts Viewer
+   FULLY FIXED + UNIVERSAL JSON SUPPORT
 ========================================= */
 
 let contactsList = [];
 
 /* =========================================
-   MAIN ENTRY POINT
+   MAIN RENDER FUNCTION
 ========================================= */
 
 function renderContacts(container) {
 
-    if (!Array.isArray(currentJSON)) {
+    if (!currentJSON) {
 
         container.innerHTML =
-            "<div class='contactsviewer-empty'>Invalid contacts format</div>";
+            "<div class='contactsviewer-empty'>No contacts data</div>";
 
         return;
     }
 
-    /* NORMALIZE AND SORT */
+    /* =====================================
+       FIX: SUPPORT ARRAY OR OBJECT JSON
+    ===================================== */
 
-    contactsList =
-        currentJSON
+    let data = currentJSON;
+
+    if (!Array.isArray(data)) {
+
+        if (typeof data === "object") {
+
+            data = Object.values(data);
+
+        } else {
+
+            container.innerHTML =
+                "<div class='contactsviewer-empty'>Invalid contacts format</div>";
+
+            return;
+        }
+    }
+
+    /* =====================================
+       NORMALIZE DATA
+    ===================================== */
+
+    contactsList = data
         .map(contact => ({
-            name: contact.name || "Unknown",
-            number: contact.number || ""
+            name: String(contact.name || "Unknown"),
+            number: String(contact.number || "")
         }))
+        .filter(contact =>
+            contact.name !== "" || contact.number !== ""
+        )
         .sort((a, b) =>
             a.name.localeCompare(b.name)
         );
+
+    /* =====================================
+       BUILD UI
+    ===================================== */
 
     container.className =
         "contactsviewer-app";
@@ -42,6 +71,7 @@ function renderContacts(container) {
 
         <div class="contactsviewer-search">
             <input id="contactsSearch"
+                   type="text"
                    placeholder="Search contacts">
         </div>
 
@@ -51,19 +81,23 @@ function renderContacts(container) {
 
     `;
 
-    renderContactsList();
+    renderContactsList("");
 
-    /* SEARCH EVENT */
+    /* =====================================
+       SEARCH EVENT
+    ===================================== */
 
-    document
-        .getElementById("contactsSearch")
-        .addEventListener("input", function() {
+    const searchInput =
+        document.getElementById("contactsSearch");
 
-            renderContactsList(
-                this.value.toLowerCase()
-            );
+    searchInput.addEventListener("input", function() {
 
-        });
+        const query =
+            this.value.toLowerCase().trim();
+
+        renderContactsList(query);
+
+    });
 
 }
 
@@ -71,10 +105,12 @@ function renderContacts(container) {
    RENDER CONTACT LIST
 ========================================= */
 
-function renderContactsList(search="") {
+function renderContactsList(searchQuery="") {
 
     const container =
         document.getElementById("contactsList");
+
+    if (!container) return;
 
     container.innerHTML = "";
 
@@ -83,17 +119,21 @@ function renderContactsList(search="") {
     const filtered =
         contactsList.filter(contact => {
 
-            if (!search) return true;
+            if (!searchQuery) return true;
 
             return (
 
-                contact.name.toLowerCase().includes(search) ||
+                contact.name.toLowerCase().includes(searchQuery)
 
-                contact.number.toLowerCase().includes(search)
+                ||
+
+                contact.number.toLowerCase().includes(searchQuery)
 
             );
 
         });
+
+    /* EMPTY */
 
     if (filtered.length === 0) {
 
@@ -103,14 +143,17 @@ function renderContactsList(search="") {
         return;
     }
 
-    /* GROUP BY LETTER */
+    /* GROUP */
 
     const groups = {};
 
     filtered.forEach(contact => {
 
-        const letter =
+        let letter =
             contact.name.charAt(0).toUpperCase();
+
+        if (!letter.match(/[A-Z]/))
+            letter = "#";
 
         if (!groups[letter])
             groups[letter] = [];
@@ -119,7 +162,7 @@ function renderContactsList(search="") {
 
     });
 
-    /* RENDER GROUPS */
+    /* RENDER */
 
     Object.keys(groups)
         .sort()
@@ -142,7 +185,7 @@ function renderContactsList(search="") {
 }
 
 /* =========================================
-   LETTER HEADER
+   CREATE LETTER HEADER
 ========================================= */
 
 function createLetterHeader(letter) {
@@ -160,7 +203,7 @@ function createLetterHeader(letter) {
 }
 
 /* =========================================
-   CONTACT ITEM
+   CREATE CONTACT ITEM
 ========================================= */
 
 function createContactItem(contact) {
@@ -177,7 +220,7 @@ function createContactItem(contact) {
     div.innerHTML = `
 
         <div class="contactsviewer-avatar">
-            ${avatarLetter}
+            ${escapeHTML(avatarLetter)}
         </div>
 
         <div class="contactsviewer-info">
@@ -198,7 +241,7 @@ function createContactItem(contact) {
 }
 
 /* =========================================
-   SAFE HTML FUNCTION
+   SAFE HTML
 ========================================= */
 
 function escapeHTML(text) {
@@ -209,5 +252,4 @@ function escapeHTML(text) {
         .replace(/&/g,"&amp;")
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;");
-
 }
