@@ -1,55 +1,53 @@
 /* =========================================
-   ADVANCED APP VIEWER (NO DATABASE VERSION)
+   FINAL MATERIAL APP VIEWER JS
 ========================================= */
 
+let allApps = [];
+let currentTab = "user";
+
 /* =========================================
-   ENTRY FUNCTION
+   ENTRY
 ========================================= */
 
 function renderApp(container) {
 
     if (!Array.isArray(currentJSON)) {
-        container.innerHTML = "<p>Invalid App JSON format.</p>";
+        container.innerHTML = "<div class='appviewer-empty'>Invalid JSON format</div>";
         return;
     }
 
-    const processedApps = currentJSON
+    allApps = currentJSON
         .filter(app => app.package)
         .map(app => ({
             package: app.package,
             name: formatAppName(app.package),
             type: detectAppType(app.package),
-            icon: detectIcon(app.package)
+            iconClass: detectIcon(app.package)
         }))
         .sort((a, b) =>
             a.name.localeCompare(b.name, undefined, { sensitivity: "base" })
         );
 
-    const userApps = processedApps.filter(app => app.type === "user");
-    const systemApps = processedApps.filter(app => app.type === "system");
-
     container.className = "appviewer-app";
 
     container.innerHTML = `
-        <div class="appviewer-header">Installed Applications</div>
+        <div class="appviewer-header">Package Names</div>
 
-        <div class="appviewer-search">
-            <input type="text" id="appSearch" placeholder="Search apps by name or package">
+        <div class="appviewer-top-search">
+            <input type="text" id="globalSearch" placeholder="Search app or package">
         </div>
 
-        <div class="appviewer-stats">
-            ${userApps.length} User Apps • ${systemApps.length} System Apps
+        <div class="appviewer-tabs">
+            <div class="appviewer-tab active" id="tab-user">USER APPS</div>
+            <div class="appviewer-tab" id="tab-system">SYSTEM APPS</div>
         </div>
 
         <div class="appviewer-list" id="appList"></div>
     `;
 
-    renderSections(userApps, systemApps);
-
-    document.getElementById("appSearch")
-        .addEventListener("input", function() {
-            filterApps(this.value.toLowerCase());
-        });
+    attachTabEvents();
+    attachSearchEvent();
+    renderList();
 }
 
 /* =========================================
@@ -58,7 +56,6 @@ function renderApp(container) {
 
 function detectAppType(pkg) {
 
-    // Strict system prefixes
     const systemPrefixes = [
         "com.android",
         "android",
@@ -68,10 +65,9 @@ function detectAppType(pkg) {
         "com.qualcomm",
         "com.mediatek",
         "com.miui",
-        "com.oppo",
-        "com.vivo",
         "com.huawei",
-        "com.transsion"
+        "com.oppo",
+        "com.vivo"
     ];
 
     for (let prefix of systemPrefixes) {
@@ -80,62 +76,101 @@ function detectAppType(pkg) {
         }
     }
 
-    // Everything else is USER
-    return "user";
+    return "user"; // unknown always user
 }
 
 /* =========================================
-   RENDER SECTIONS
+   TAB SWITCHING
 ========================================= */
 
-function renderSections(userApps, systemApps) {
+function attachTabEvents() {
+
+    document.getElementById("tab-user").onclick = () => {
+        currentTab = "user";
+        switchTabUI();
+        renderList();
+    };
+
+    document.getElementById("tab-system").onclick = () => {
+        currentTab = "system";
+        switchTabUI();
+        renderList();
+    };
+}
+
+function switchTabUI() {
+
+    document.getElementById("tab-user").classList.remove("active");
+    document.getElementById("tab-system").classList.remove("active");
+
+    if (currentTab === "user") {
+        document.getElementById("tab-user").classList.add("active");
+    } else {
+        document.getElementById("tab-system").classList.add("active");
+    }
+}
+
+/* =========================================
+   SEARCH
+========================================= */
+
+function attachSearchEvent() {
+
+    document.getElementById("globalSearch")
+        .addEventListener("input", function() {
+            renderList(this.value.toLowerCase());
+        });
+}
+
+/* =========================================
+   RENDER LIST
+========================================= */
+
+function renderList(searchQuery = "") {
 
     const list = document.getElementById("appList");
     list.innerHTML = "";
 
-    if (userApps.length > 0) {
-        const userTitle = document.createElement("div");
-        userTitle.className = "appviewer-section";
-        userTitle.textContent = "User Applications";
-        list.appendChild(userTitle);
+    const filtered = allApps.filter(app => {
 
-        userApps.forEach(app => {
-            list.appendChild(createAppItem(app));
-        });
+        if (app.type !== currentTab) return false;
+
+        if (!searchQuery) return true;
+
+        return (
+            app.name.toLowerCase().includes(searchQuery) ||
+            app.package.toLowerCase().includes(searchQuery)
+        );
+    });
+
+    if (filtered.length === 0) {
+        list.innerHTML = "<div class='appviewer-empty'>No apps found</div>";
+        return;
     }
 
-    if (systemApps.length > 0) {
-        const systemTitle = document.createElement("div");
-        systemTitle.className = "appviewer-section";
-        systemTitle.textContent = "System Applications";
-        list.appendChild(systemTitle);
-
-        systemApps.forEach(app => {
-            list.appendChild(createAppItem(app));
-        });
-    }
+    filtered.forEach(app => {
+        list.appendChild(createAppItem(app));
+    });
 }
 
 /* =========================================
-   CREATE APP ITEM
+   CREATE CARD ITEM
 ========================================= */
 
 function createAppItem(app) {
 
-    const wrapper = document.createElement("div");
-
     const item = document.createElement("div");
     item.className = "appviewer-item";
 
-    /* ICON USING FONT AWESOME */
+    /* ICON */
 
     const icon = document.createElement("div");
     icon.className = "appviewer-icon";
 
-    const i = document.createElement("i");
-    i.className = app.icon;
+    const iconElement = document.createElement("i");
+    iconElement.className = app.iconClass;
 
-    icon.appendChild(i);
+    icon.appendChild(iconElement);
 
     /* DETAILS */
 
@@ -153,38 +188,30 @@ function createAppItem(app) {
     details.appendChild(name);
     details.appendChild(pkg);
 
-    /* BADGE */
+    /* SEARCH EMOJI */
 
-    const badge = document.createElement("div");
-    badge.className = "appviewer-badge " + 
-        (app.type === "system" ? "badge-system" : "badge-user");
-    badge.textContent = app.type === "system" ? "SYSTEM" : "USER";
+    const searchBtn = document.createElement("div");
+    searchBtn.className = "appviewer-search-btn";
+    searchBtn.textContent = "🔍";
+
+    searchBtn.onclick = (e) => {
+        e.stopPropagation();
+        window.open(
+            "https://www.google.com/search?q=" +
+            encodeURIComponent("what is " + app.package),
+            "_blank"
+        );
+    };
 
     item.appendChild(icon);
     item.appendChild(details);
-    item.appendChild(badge);
+    item.appendChild(searchBtn);
 
-    /* EXPANDED PANEL */
-
-    const expanded = document.createElement("div");
-    expanded.className = "appviewer-expanded";
-    expanded.innerHTML = `
-        <strong>Package:</strong> ${app.package}<br>
-        <strong>Type:</strong> ${app.type === "system" ? "System Application" : "User Installed Application"}
-    `;
-
-    item.addEventListener("click", () => {
-        expanded.classList.toggle("active");
-    });
-
-    wrapper.appendChild(item);
-    wrapper.appendChild(expanded);
-
-    return wrapper;
+    return item;
 }
 
 /* =========================================
-   FONT AWESOME ICON DETECTION
+   FONT AWESOME ICON DETECTION FIXED
 ========================================= */
 
 function detectIcon(pkg) {
@@ -194,26 +221,25 @@ function detectIcon(pkg) {
     if (lower.includes("whatsapp")) return "fa-brands fa-whatsapp";
     if (lower.includes("instagram")) return "fa-brands fa-instagram";
     if (lower.includes("facebook")) return "fa-brands fa-facebook";
-    if (lower.includes("chrome")) return "fa-brands fa-chrome";
     if (lower.includes("youtube")) return "fa-brands fa-youtube";
+    if (lower.includes("chrome")) return "fa-brands fa-chrome";
     if (lower.includes("spotify")) return "fa-brands fa-spotify";
     if (lower.includes("twitter") || lower.includes("x")) return "fa-brands fa-x-twitter";
     if (lower.includes("snapchat")) return "fa-brands fa-snapchat";
     if (lower.includes("amazon")) return "fa-brands fa-amazon";
     if (lower.includes("google")) return "fa-brands fa-google";
     if (lower.includes("microsoft")) return "fa-brands fa-microsoft";
+    if (lower.includes("openai") || lower.includes("chatgpt")) return "fa-brands fa-openai";
 
-    // SYSTEM DEFAULT
     if (detectAppType(pkg) === "system") {
-        return "fa-solid fa-gear";
+        return "fa-solid fa-microchip";
     }
 
-    // USER DEFAULT
     return "fa-solid fa-mobile-screen";
 }
 
 /* =========================================
-   FORMAT APP NAME
+   FORMAT NAME
 ========================================= */
 
 function formatAppName(pkg) {
@@ -224,19 +250,4 @@ function formatAppName(pkg) {
     return raw
         .replace(/([A-Z])/g, " $1")
         .replace(/^./, c => c.toUpperCase());
-}
-
-/* =========================================
-   SEARCH
-========================================= */
-
-function filterApps(query) {
-
-    const items = document.querySelectorAll(".appviewer-item");
-
-    items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.parentElement.style.display =
-            text.includes(query) ? "" : "none";
-    });
-}
+           }
