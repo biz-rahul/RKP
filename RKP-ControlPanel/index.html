@@ -14,17 +14,11 @@
     box-sizing:border-box;
 }
 
-/* BODY LAYOUT FIX */
 body{
     background:#0d1117;
     font-family:'Share Tech Mono', monospace;
     color:#00ff88;
     overflow-x:hidden;
-
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
 }
 
 /* MATRIX */
@@ -36,29 +30,22 @@ canvas{
     pointer-events:none;
 }
 
-/* TERMINAL – FULLSCREEN IMMERSIVE */
+/* TERMINAL — RESTORED STYLE (BUT FULL WIDTH FIXED) */
 .terminal{
     position:relative;
     z-index:10;
 
-    width:95vw;              /* nearly full width */
-    height:92vh;             /* nearly full height */
-    max-width:1800px;
+    width:96%;
+    max-width:1600px;   /* increased from 1100px */
+    margin:40px auto;
 
-    padding:35px;
-    margin:0 auto;
+    padding:30px;
 
-    background:rgba(0,0,0,0.88);
+    background:rgba(0,0,0,0.85);
     border:1px solid #00ff88;
-    border-radius:14px;
+    border-radius:10px;
 
-    box-shadow:
-        0 0 60px rgba(0,255,136,0.45),
-        inset 0 0 40px rgba(0,255,136,0.15);
-
-    display:flex;
-    flex-direction:column;
-    overflow:auto;
+    box-shadow:0 0 40px rgba(0,255,136,0.4);
 }
 
 /* HEADER */
@@ -66,48 +53,45 @@ canvas{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:25px;
-    border-bottom:1px solid rgba(0,255,136,0.4);
-    padding-bottom:12px;
+    margin-bottom:20px;
+    border-bottom:1px solid #00ff88;
+    padding-bottom:10px;
 }
 
 .title{
-    font-size:1.6em;
-    letter-spacing:1px;
+    font-size:1.4em;
     text-shadow:0 0 10px #00ff88;
 }
 
 /* CONTACT BUTTON */
 .contact-btn{
-    padding:8px 18px;
+    padding:6px 15px;
     background:transparent;
-    border:1px solid #ff00ff;
-    color:#ff00ff;
+    border:1px solid #00ff88;
+    color:#00ff88;
     cursor:pointer;
     transition:0.3s ease;
-    box-shadow:0 0 15px rgba(255,0,255,0.5);
 }
 
 .contact-btn:hover{
-    background:#ff00ff;
+    background:#00ff88;
     color:#000;
-    box-shadow:0 0 25px #ff00ff;
+    box-shadow:0 0 15px #00ff88;
 }
 
-/* BOOT */
+/* BOOT SCREEN */
 .boot{
-    margin-bottom:25px;
+    margin-bottom:20px;
     color:#00cc66;
-    font-size:0.95em;
-    line-height:1.6;
+    font-size:0.9em;
 }
 
 /* COMMAND GRID */
 .commands{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-    margin-top:10px;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:14px;
+    margin-top:20px;
 }
 
 .command{
@@ -118,32 +102,30 @@ canvas{
     background:#0f1a14;
     text-align:center;
     border-radius:6px;
-    font-size:0.95em;
 }
 
 .command:hover{
     border-color:#00ff88;
-    box-shadow:0 0 15px #00ff88;
-    transform:translateY(-3px);
+    box-shadow:0 0 12px #00ff88;
+    transform:translateY(-2px);
 }
 
 .command.selected{
     background:#00ff88;
     color:#000;
     font-weight:bold;
-    box-shadow:0 0 25px #00ff88;
+    box-shadow:0 0 20px #00ff88;
 }
 
 /* TERMINAL OUTPUT */
 .output{
     margin-top:25px;
-    padding:18px;
+    padding:15px;
     background:#000;
     border:1px solid #00ff88;
-    border-radius:6px;
-    min-height:70px;
+    min-height:60px;
     font-size:0.95em;
-    overflow-x:auto;
+    border-radius:6px;
 }
 
 /* RUN BUTTON */
@@ -154,61 +136,44 @@ canvas{
 }
 
 .run-btn{
-    padding:10px 35px;
+    padding:10px 30px;
     background:transparent;
     border:1px solid #00ff00;
     color:#00ff00;
     cursor:pointer;
     transition:0.3s ease;
-    box-shadow:0 0 20px rgba(0,255,0,0.4);
 }
 
 .run-btn:hover{
     background:#00ff00;
     color:#000;
-    box-shadow:0 0 35px #00ff00;
+    box-shadow:0 0 20px #00ff00;
 }
 
-/* SCROLLBAR STYLING */
-.terminal::-webkit-scrollbar{
+/* SCROLLBAR */
+::-webkit-scrollbar{
     width:8px;
 }
 
-.terminal::-webkit-scrollbar-thumb{
+::-webkit-scrollbar-thumb{
     background:#00ff88;
-    border-radius:4px;
 }
 
-.terminal::-webkit-scrollbar-track{
-    background:#000;
-}
-
-/* MOBILE OPTIMIZATION */
+/* MOBILE */
 @media(max-width:768px){
 
-    body{
-        align-items:center;
-    }
-
     .terminal{
-        width:95vw;
-        height:auto;
-        min-height:92vh;
-        padding:20px;
-        border-radius:12px;
+        width:95%;
+        margin:20px auto;
+        padding:18px;
     }
 
     .commands{
         grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
-        gap:12px;
     }
 
     .title{
         font-size:1.2em;
-    }
-
-    .boot{
-        font-size:0.85em;
     }
 }
 </style>
