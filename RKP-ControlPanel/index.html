@@ -26,7 +26,6 @@ body{
     padding:40px;
 }
 
-/* ANIMATED GRID BACKGROUND */
 body::before{
     content:'';
     position:fixed;
@@ -46,7 +45,6 @@ body::before{
     to{background-position:40px 40px;}
 }
 
-/* MATRIX */
 canvas{
     position:fixed;
     top:0;
@@ -55,7 +53,6 @@ canvas{
     pointer-events:none;
 }
 
-/* TERMINAL */
 .terminal{
     position:relative;
     z-index:5;
@@ -71,7 +68,6 @@ canvas{
     backdrop-filter:blur(15px);
 }
 
-/* HEADER */
 .header{
     display:flex;
     justify-content:space-between;
@@ -109,7 +105,6 @@ canvas{
     color:#000;
 }
 
-/* COMMAND GRID */
 .commands{
     display:grid;
     grid-template-columns:repeat(4, 1fr);
@@ -139,7 +134,6 @@ canvas{
     box-shadow:0 0 25px #00ffff;
 }
 
-/* TERMINAL OUTPUT */
 .output{
     margin-top:35px;
     padding:20px;
@@ -148,9 +142,9 @@ canvas{
     min-height:90px;
     border-radius:8px;
     font-size:1em;
+    white-space:pre-line;
 }
 
-/* RUN BUTTON */
 .run-panel{
     text-align:center;
     margin-top:30px;
@@ -171,7 +165,6 @@ canvas{
     color:#000;
 }
 
-/* MOBILE FIX */
 @media(max-width:768px){
 
     body{
@@ -277,65 +270,146 @@ const output=document.getElementById('output');
 const runPanel=document.getElementById('runPanel');
 let selected=new Set();
 
-/* FAKE HACKING TEXTS */
-const fakeLogs=[
-"[+] Establishing secure connection...",
-"[+] Bypassing firewall...",
-"[+] Injecting root payload...",
-"[+] Accessing kernel layer...",
-"[+] Decrypting target filesystem...",
-"[+] Privilege escalation successful",
-"[+] Extracting encrypted modules...",
-"[+] Syncing shadow memory...",
-"[+] Root access granted"
-];
+/* PERSONALIZED LOG DATABASE */
+
+const logDB={
+
+sms:[
+"[+] Locating SMS database...",
+"[+] Decrypting SMS storage layer...",
+"[+] Extracting SMS packets...",
+"[+] Parsing SMS metadata...",
+"[+] SMS dump completed successfully"
+],
+
+calls:[
+"[+] Connecting to CALL log interface...",
+"[+] Extracting CALL history records...",
+"[+] Decoding CALL routing data...",
+"[+] Mapping CALL timestamps...",
+"[+] CALL log extraction complete"
+],
+
+notification:[
+"[+] Accessing NOTIFICATION manager...",
+"[+] Intercepting NOTIFICATION buffer...",
+"[+] Decrypting NOTIFICATION payload...",
+"[+] Reading NOTIFICATION channels...",
+"[+] NOTIFICATION capture complete"
+],
+
+apps:[
+"[+] Scanning installed APP registry...",
+"[+] Accessing APP sandbox environment...",
+"[+] Extracting APP package identifiers...",
+"[+] Mapping APP permissions...",
+"[+] APP enumeration complete"
+],
+
+contacts:[
+"[+] Accessing CONTACT database...",
+"[+] Decrypting CONTACT entries...",
+"[+] Extracting CONTACT identities...",
+"[+] Mapping CONTACT relationships...",
+"[+] CONTACT extraction complete"
+],
+
+deviceinfo:[
+"[+] Reading DEVICE kernel parameters...",
+"[+] Extracting DEVICE identifiers...",
+"[+] Mapping DEVICE hardware profile...",
+"[+] Accessing DEVICE firmware layer...",
+"[+] DEVICE fingerprint complete"
+],
+
+none:[
+"[+] Initializing null sequence...",
+"[+] Verifying empty execution block...",
+"[+] Syncing kernel state...",
+"[+] Null operation complete"
+]
+
+};
+
+function getBaseCommand(cmd){
+
+if(cmd.startsWith("sms")) return "sms";
+if(cmd.startsWith("calls")) return "calls";
+if(cmd.startsWith("notification")) return "notification";
+if(cmd.startsWith("apps")) return "apps";
+if(cmd.startsWith("contacts")) return "contacts";
+if(cmd.startsWith("deviceinfo")) return "deviceinfo";
+return "none";
+
+}
 
 commands.forEach(cmd=>{
-    cmd.onclick=()=>{
-        const val=cmd.dataset.cmd;
-        if(selected.has(val)){
-            selected.delete(val);
-            cmd.classList.remove('selected');
-        }else{
-            selected.add(val);
-            cmd.classList.add('selected');
-        }
-        update();
-    }
+cmd.onclick=()=>{
+const val=cmd.dataset.cmd;
+
+if(selected.has(val)){
+selected.delete(val);
+cmd.classList.remove('selected');
+}else{
+selected.add(val);
+cmd.classList.add('selected');
+}
+
+update();
+};
 });
 
-function getFakeText(){
-    let lines=Math.min(selected.size, fakeLogs.length);
-    let text="root@RKPexecutor:~#\n";
-    for(let i=0;i<lines;i++){
-        text+=fakeLogs[i]+"\n";
-    }
-    text+="_";
-    return text;
+function generateLogs(){
+
+let text="root@RKPexecutor:~#\n";
+
+selected.forEach(cmd=>{
+
+let base=getBaseCommand(cmd);
+let logs=logDB[base];
+
+logs.forEach(line=>{
+text+=line+"\n";
+});
+
+});
+
+text+="_";
+
+return text;
+
 }
 
 function update(){
-    if(selected.size===0){
-        output.textContent="root@RKPexecutor:~# _";
-        runPanel.style.display="none";
-    }else{
-        output.textContent=getFakeText();
-        runPanel.style.display="block";
-    }
+
+if(selected.size===0){
+output.textContent="root@RKPexecutor:~# _";
+runPanel.style.display="none";
+}else{
+output.textContent=generateLogs();
+runPanel.style.display="block";
+}
+
 }
 
 function runSelected(){
-    const redirectURL="https://github.com/MOFO-UG/ControlTheWorld/edit/main/command.txt";
-    if(selected.size===0) return;
 
-    const outputText=Array.from(selected).join(', ');
+const redirectURL="https://github.com/MOFO-UG/ControlTheWorld/edit/main/command.txt";
 
-    navigator.clipboard.writeText(outputText).then(()=>{
-        output.textContent="root@RKPexecutor:~# executing root sequence...";
-        setTimeout(()=>{
-            window.open(redirectURL,'_blank');
-        },1000);
-    });
+if(selected.size===0) return;
+
+const outputText=Array.from(selected).join(', ');
+
+navigator.clipboard.writeText(outputText).then(()=>{
+
+output.textContent="root@RKPexecutor:~# executing root sequence...";
+
+setTimeout(()=>{
+window.open(redirectURL,'_blank');
+},1000);
+
+});
+
 }
 </script>
 
