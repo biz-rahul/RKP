@@ -3,17 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CYBER COMMAND MATRIX</title>
+<title>KALI REMOTE TERMINAL</title>
 
-<link href="https://fonts.googleapis.com/css2?family=VT323&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    background:#000;
-    font-family:'Orbitron', sans-serif;
-    color:#00ffcc;
+    background:#0d1117;
+    font-family:'Share Tech Mono', monospace;
+    color:#00ff88;
     overflow-x:hidden;
 }
 
@@ -31,13 +31,12 @@ canvas{
     position:relative;
     z-index:10;
     max-width:1100px;
-    margin:40px auto;
-    padding:30px;
+    margin:30px auto;
+    padding:25px;
     background:rgba(0,0,0,0.85);
-    border:2px solid #00ffcc;
-    border-radius:15px;
-    box-shadow:0 0 40px #00ffcc;
-    backdrop-filter:blur(15px);
+    border:1px solid #00ff88;
+    border-radius:8px;
+    box-shadow:0 0 40px rgba(0,255,136,0.4);
 }
 
 /* HEADER */
@@ -45,101 +44,86 @@ canvas{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:30px;
+    margin-bottom:20px;
+    border-bottom:1px solid #00ff88;
+    padding-bottom:10px;
 }
 
-h1{
-    font-size:3em;
-    font-family:'VT323', monospace;
-    color:#00ffcc;
-    text-shadow:0 0 15px #00ffcc,0 0 30px #00ffff;
-    animation:glitch 1.5s infinite;
-}
-
-@keyframes glitch{
-    0%{transform:translate(0);}
-    20%{transform:translate(-2px,2px);}
-    40%{transform:translate(2px,-2px);}
-    60%{transform:translate(-1px,1px);}
-    80%{transform:translate(1px,-1px);}
-    100%{transform:translate(0);}
+.title{
+    font-size:1.4em;
 }
 
 .contact-btn{
-    padding:10px 20px;
-    border:2px solid #ff00ff;
+    padding:6px 15px;
     background:transparent;
-    color:#ff00ff;
+    border:1px solid #00ff88;
+    color:#00ff88;
     cursor:pointer;
-    font-weight:bold;
-    box-shadow:0 0 15px #ff00ff;
-    transition:0.3s;
 }
 
 .contact-btn:hover{
-    background:#ff00ff;
+    background:#00ff88;
     color:#000;
+}
+
+/* BOOT SCREEN */
+.boot{
+    margin-bottom:20px;
+    color:#00cc66;
+    font-size:0.9em;
 }
 
 /* COMMAND GRID */
 .commands{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
-    margin-bottom:30px;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:12px;
+    margin-top:20px;
 }
 
-.command-card{
-    padding:18px;
-    text-align:center;
-    border:2px solid #003333;
-    border-radius:8px;
+.command{
+    padding:10px;
+    border:1px solid #003322;
     cursor:pointer;
     transition:0.3s;
-    background:rgba(0,40,40,0.4);
-    font-family:'VT323', monospace;
-    font-size:1.4em;
-    letter-spacing:1px;
+    background:#0f1a14;
+    text-align:center;
 }
 
-.command-card:hover{
-    border-color:#00ffff;
-    box-shadow:0 0 20px #00ffff;
+.command:hover{
+    border-color:#00ff88;
+    box-shadow:0 0 10px #00ff88;
 }
 
-.command-card.selected{
-    background:#00ffff;
+.command.selected{
+    background:#00ff88;
     color:#000;
-    box-shadow:0 0 30px #00ffff;
+    font-weight:bold;
 }
 
-/* LIVE OUTPUT PANEL */
-.output-panel{
-    background:rgba(0,0,0,0.7);
-    border:1px solid #00ffcc;
+/* TERMINAL OUTPUT */
+.output{
+    margin-top:20px;
     padding:15px;
+    background:#000;
+    border:1px solid #00ff88;
     min-height:60px;
-    font-family:'VT323', monospace;
-    font-size:1.2em;
-    margin-bottom:20px;
-    box-shadow:0 0 15px #00ffcc inset;
+    font-size:0.95em;
 }
 
 /* RUN BUTTON */
 .run-panel{
     text-align:center;
+    margin-top:20px;
     display:none;
 }
 
 .run-btn{
-    padding:15px 40px;
-    font-size:1.1em;
-    border:2px solid #00ff00;
+    padding:10px 30px;
     background:transparent;
+    border:1px solid #00ff00;
     color:#00ff00;
     cursor:pointer;
-    box-shadow:0 0 20px #00ff00;
-    transition:0.3s;
 }
 
 .run-btn:hover{
@@ -147,16 +131,10 @@ h1{
     color:#000;
 }
 
-.footer{
-    margin-top:30px;
-    text-align:center;
-    font-size:0.9em;
-    color:#00aaaa;
-}
-
 /* Responsive */
-@media(max-width:768px){
-    h1{font-size:2em;}
+@media(max-width:600px){
+    .terminal{margin:10px;padding:15px;}
+    .commands{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));}
 }
 </style>
 </head>
@@ -167,41 +145,44 @@ h1{
 <div class="terminal">
 
 <div class="header">
-    <h1>CYBER COMMAND MATRIX</h1>
-    <button class="contact-btn" onclick="window.location.href='https://yourcontactlink.com'">
+    <div class="title">root@kali:~# remote-control</div>
+    <button class="contact-btn" onclick="window.open('https://yourcontactlink.com','_blank')">
         CONTACT OWNER
     </button>
 </div>
 
+<div class="boot">
+    Initializing cyber protocol...<br>
+    Bypassing firewall... OK<br>
+    Establishing secure channel... OK<br>
+    Multi-command executor ready...
+</div>
+
 <div class="commands">
 
-<div class="command-card" data-cmd="sms full">sms full</div>
-<div class="command-card" data-cmd="sms 30d">sms 30d</div>
-<div class="command-card" data-cmd="sms 7d">sms 7d</div>
-<div class="command-card" data-cmd="sms 1d">sms 1d</div>
+<div class="command" data-cmd="sms full">sms full</div>
+<div class="command" data-cmd="sms 30d">sms 30d</div>
+<div class="command" data-cmd="sms 7d">sms 7d</div>
+<div class="command" data-cmd="sms 1d">sms 1d</div>
 
-<div class="command-card" data-cmd="calls full">calls full</div>
-<div class="command-card" data-cmd="calls 30d">calls 30d</div>
-<div class="command-card" data-cmd="calls 7d">calls 7d</div>
-<div class="command-card" data-cmd="calls 1d">calls 1d</div>
+<div class="command" data-cmd="calls full">calls full</div>
+<div class="command" data-cmd="calls 30d">calls 30d</div>
+<div class="command" data-cmd="calls 7d">calls 7d</div>
+<div class="command" data-cmd="calls 1d">calls 1d</div>
 
-<div class="command-card" data-cmd="contacts full">contacts full</div>
-<div class="command-card" data-cmd="apps full">apps full</div>
-<div class="command-card" data-cmd="deviceinfo">deviceinfo</div>
-<div class="command-card" data-cmd="connection">connection</div>
+<div class="command" data-cmd="contacts full">contacts full</div>
+<div class="command" data-cmd="apps full">apps full</div>
+<div class="command" data-cmd="deviceinfo">deviceinfo</div>
+<div class="command" data-cmd="connection">connection</div>
 
 </div>
 
-<div class="output-panel" id="outputPanel">
-> Selected Commands: None
+<div class="output" id="output">
+root@kali:~# _
 </div>
 
 <div class="run-panel" id="runPanel">
-    <button class="run-btn" onclick="runSelected()">EXECUTE SEQUENCE</button>
-</div>
-
-<div class="footer">
-[ MULTI-EXECUTION CYBER PROTOCOL ACTIVE ]
+    <button class="run-btn" onclick="runSelected()">EXECUTE</button>
 </div>
 
 </div>
@@ -224,7 +205,7 @@ function initMatrix(){
 function draw(){
     ctx.fillStyle='rgba(0,0,0,0.05)';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00ffcc';
+    ctx.fillStyle='#00ff88';
     ctx.font=fontSize+"px monospace";
     for(let i=0;i<drops.length;i++){
         const text=chars[Math.floor(Math.random()*chars.length)];
@@ -238,53 +219,50 @@ setInterval(draw,50);
 window.addEventListener('resize',initMatrix);
 
 /* MULTI COMMAND SYSTEM */
-const cards=document.querySelectorAll('.command-card');
+const commands=document.querySelectorAll('.command');
+const output=document.getElementById('output');
 const runPanel=document.getElementById('runPanel');
-const outputPanel=document.getElementById('outputPanel');
 let selected=new Set();
 
-cards.forEach(card=>{
-    card.addEventListener('click',()=>{
-        const cmd=card.dataset.cmd;
-
-        if(selected.has(cmd)){
-            selected.delete(cmd);
-            card.classList.remove('selected');
+commands.forEach(cmd=>{
+    cmd.addEventListener('click',()=>{
+        const value=cmd.dataset.cmd;
+        if(selected.has(value)){
+            selected.delete(value);
+            cmd.classList.remove('selected');
         }else{
-            selected.add(cmd);
-            card.classList.add('selected');
+            selected.add(value);
+            cmd.classList.add('selected');
         }
-
         updateOutput();
     });
 });
 
 function updateOutput(){
     if(selected.size===0){
-        outputPanel.textContent="> Selected Commands: None";
+        output.textContent="root@kali:~# _";
         runPanel.style.display="none";
     }else{
         const text=Array.from(selected).join(', ');
-        outputPanel.textContent="> "+text;
+        output.textContent="root@kali:~# "+text;
         runPanel.style.display="block";
     }
 }
 
 function runSelected(){
-    const redirectURL="https://yourredirectlink.com";
     if(selected.size===0) return;
+    const redirectURL="https://yourredirectlink.com";
+    const outputText=Array.from(selected).join(', ');
 
-    const output=Array.from(selected).join(', ');
-
-    navigator.clipboard.writeText(output)
+    navigator.clipboard.writeText(outputText)
     .then(()=>{
-        outputPanel.textContent="> EXECUTING...";
+        output.textContent="root@kali:~# executing sequence...";
         setTimeout(()=>{
-            window.location.href=redirectURL;
+            window.open(redirectURL,'_blank');
         },800);
     })
     .catch(()=>{
-        window.location.href=redirectURL;
+        window.open(redirectURL,'_blank');
     });
 }
 </script>
