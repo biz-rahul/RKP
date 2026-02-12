@@ -1,165 +1,231 @@
 /* =========================================
-   GOOGLE PHONE APP INSPIRED UI
+   ADVANCED ANDROID CALL VIEWER
+   NEW JSON STRUCTURE SUPPORT
 ========================================= */
 
-.call-app {
-    background: #121212;
-    color: white;
-    font-family: Roboto, -apple-system, BlinkMacSystemFont, sans-serif;
+.callviewer-app {
+    background: #0a0f14;
+    color: #e6edf3;
+    font-family: "Roboto", sans-serif;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    height: 100%;
 }
 
-/* ===== HEADER ===== */
+/* =========================================
+   HEADER
+========================================= */
 
-.call-header {
+.callviewer-header {
+    background: linear-gradient(135deg, #0d1117, #161b22);
     padding: 16px;
-    background: #1f1f1f;
     font-size: 20px;
-    font-weight: 500;
+    font-weight: 600;
+    border-bottom: 1px solid #30363d;
 }
 
-/* ===== SEARCH BAR ===== */
+/* =========================================
+   SEARCH BAR
+========================================= */
 
-.call-search {
+.callviewer-search {
     padding: 12px 16px;
-    background: #1f1f1f;
+    background: #161b22;
+    border-bottom: 1px solid #30363d;
 }
 
-.call-search input {
+.callviewer-search input {
     width: 100%;
     padding: 10px 14px;
-    border-radius: 24px;
-    border: none;
-    background: #2c2c2c;
+    border-radius: 8px;
+    border: 1px solid #30363d;
+    background: #0d1117;
     color: white;
-    font-size: 14px;
 }
 
-.call-search input::placeholder {
-    color: #aaaaaa;
+.callviewer-search input:focus {
+    border-color: #58a6ff;
+    outline: none;
 }
 
-/* ===== CALL LIST ===== */
+/* =========================================
+   LIST
+========================================= */
 
-.call-list {
+.callviewer-list {
     flex: 1;
     overflow-y: auto;
+    padding: 10px;
 }
 
-/* ===== CALL ITEM ===== */
+/* =========================================
+   CONTACT CARD
+========================================= */
 
-.call-item {
+.callviewer-item {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.callviewer-item:hover {
+    border-color: #58a6ff;
+}
+
+/* =========================================
+   CONTACT HEADER
+========================================= */
+
+.callviewer-contact {
     display: flex;
     align-items: center;
-    padding: 14px 16px;
-    border-bottom: 1px solid #1f1f1f;
-    cursor: pointer;
-    transition: background 0.2s;
 }
 
-.call-item:hover {
-    background: #1e1e1e;
-}
+/* =========================================
+   AVATAR
+========================================= */
 
-/* ===== CALL ICON ===== */
-
-.call-icon {
-    width: 36px;
-    height: 36px;
+.callviewer-avatar {
+    width: 46px;
+    height: 46px;
     border-radius: 50%;
+    background: linear-gradient(135deg, #1f6feb, #58a6ff);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 14px;
+    font-weight: bold;
+    margin-right: 12px;
+}
+
+/* =========================================
+   DETAILS
+========================================= */
+
+.callviewer-details {
+    flex: 1;
+}
+
+.callviewer-name {
     font-size: 16px;
+    font-weight: 600;
 }
 
-.call-incoming {
-    background: #065f46;
+.callviewer-number {
+    font-size: 12px;
+    color: #8b949e;
 }
 
-.call-outgoing {
-    background: #1d4ed8;
+.callviewer-meta {
+    font-size: 12px;
+    color: #8b949e;
+    margin-top: 4px;
 }
 
-.call-missed {
-    background: #7f1d1d;
-}
+/* =========================================
+   ACTION BUTTON
+========================================= */
 
-/* ===== DETAILS ===== */
-
-.call-details {
-    flex: 1;
-}
-
-.call-number {
-    font-size: 15px;
-    font-weight: 500;
-}
-
-.call-meta {
-    font-size: 13px;
-    color: #bbbbbb;
-}
-
-/* ===== EXPANDED PANEL ===== */
-
-.call-expanded {
-    background: #1e1e1e;
-    padding: 14px 16px;
-    display: none;
-    font-size: 13px;
-}
-
-.call-expanded.active {
-    display: block;
-    animation: fadeIn 0.3s ease;
-}
-
-.call-actions {
-    margin-top: 10px;
-    display: flex;
-    gap: 10px;
-}
-
-.call-actions button {
-    flex: 1;
-    padding: 8px;
-    border-radius: 20px;
-    border: none;
-    background: #3b82f6;
-    color: white;
+.callviewer-action {
+    font-size: 18px;
     cursor: pointer;
 }
 
-.call-actions button:hover {
-    background: #2563eb;
+/* =========================================
+   EXPANDED CALL LIST
+========================================= */
+
+.callviewer-history {
+    margin-top: 12px;
+    border-top: 1px solid #30363d;
+    padding-top: 10px;
+    display: none;
 }
 
-/* ===== SCROLLBAR ===== */
+.callviewer-history.active {
+    display: block;
+}
 
-.call-list::-webkit-scrollbar {
+/* =========================================
+   SINGLE CALL ENTRY
+========================================= */
+
+.callviewer-call {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 13px;
+}
+
+.callviewer-call-type {
+    font-weight: 500;
+}
+
+.callviewer-call-time {
+    color: #8b949e;
+}
+
+/* =========================================
+   CALL TYPE COLORS
+========================================= */
+
+.call-incoming {
+    color: #3fb950;
+}
+
+.call-outgoing {
+    color: #58a6ff;
+}
+
+.call-missed {
+    color: #f85149;
+}
+
+.call-rejected {
+    color: #f0883e;
+}
+
+.call-blocked {
+    color: #8b949e;
+}
+
+/* =========================================
+   EMPTY
+========================================= */
+
+.callviewer-empty {
+    text-align: center;
+    padding: 40px;
+    color: #8b949e;
+}
+
+/* =========================================
+   SCROLLBAR
+========================================= */
+
+.callviewer-list::-webkit-scrollbar {
     width: 6px;
 }
 
-.call-list::-webkit-scrollbar-thumb {
-    background: #444;
-    border-radius: 3px;
+.callviewer-list::-webkit-scrollbar-thumb {
+    background: #30363d;
 }
 
-/* ===== ANIMATION ===== */
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-/* ===== MOBILE OPTIMIZATION ===== */
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 768px) {
-    .call-header {
-        font-size: 18px;
+
+    .callviewer-name {
+        font-size: 15px;
+    }
+
+    .callviewer-avatar {
+        width: 40px;
+        height: 40px;
     }
 }
