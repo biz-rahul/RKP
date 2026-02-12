@@ -1,6 +1,6 @@
 /* =========================================
-   HACKING CONTACT VIEWER JS (MERGE VERSION)
-   Merges contacts with same name
+   CONTACT VIEWER JS — FINAL FIXED VERSION
+   Correct merge + deduplicate + normalize
 ========================================= */
 
 let contactsData = [];
@@ -20,47 +20,52 @@ function renderContacts(container) {
     }
 
     /* =====================================
-       STEP 1: MERGE CONTACTS BY NAME
+       STEP 1: MERGE USING MAP (BEST METHOD)
     ===================================== */
 
-    const merged = {};
+    const map = new Map();
 
-    currentJSON.forEach(contact => {
+    currentJSON.forEach(raw => {
 
-        const name =
-            (contact.name || "Unknown").trim();
+        /* Normalize name */
+        let name = (raw.name || "Unknown")
+            .trim()
+            .replace(/\s+/g, " ");
 
-        const number =
-            (contact.number || "Unknown").trim();
+        /* Normalize number */
+        let number = (raw.number || "Unknown")
+            .trim()
+            .replace(/\s+/g, " ");
 
-        if (!merged[name]) {
+        /* Create entry if not exists */
+        if (!map.has(name)) {
 
-            merged[name] = {
+            map.set(name, {
 
                 name: name,
                 numbers: new Set()
 
-            };
+            });
 
         }
 
-        merged[name].numbers.add(number);
+        /* Add number safely */
+        map.get(name).numbers.add(number);
 
     });
 
     /* =====================================
-       STEP 2: CONVERT TO ARRAY
+       STEP 2: CONVERT MAP TO ARRAY
     ===================================== */
 
     contactsData =
-        Object.values(merged)
+        Array.from(map.values())
         .map(contact => ({
 
             name: contact.name,
 
             numbers:
                 Array.from(contact.numbers)
-                .sort()
 
         }))
         .sort((a, b) =>
@@ -68,7 +73,7 @@ function renderContacts(container) {
         );
 
     /* =====================================
-       UI SETUP
+       STEP 3: BUILD UI
     ===================================== */
 
     container.className =
@@ -97,10 +102,9 @@ function renderContacts(container) {
         .getElementById("contactsSearch")
         .addEventListener("input", function() {
 
-            const query =
-                this.value.toLowerCase();
-
-            renderContactsList(query);
+            renderContactsList(
+                this.value.toLowerCase()
+            );
 
         });
 
@@ -127,8 +131,8 @@ function renderContactsList(search="") {
             if (contact.name.toLowerCase().includes(search))
                 return true;
 
-            return contact.numbers.some(number =>
-                number.toLowerCase().includes(search)
+            return contact.numbers.some(num =>
+                num.toLowerCase().includes(search)
             );
 
         });
@@ -142,7 +146,7 @@ function renderContactsList(search="") {
 
     }
 
-    /* GROUP BY LETTER */
+    /* GROUP */
 
     const groups = {};
 
@@ -201,7 +205,7 @@ function createLetterHeader(letter) {
 }
 
 /* =========================================
-   CONTACT CARD (MULTIPLE NUMBERS)
+   CONTACT CARD
 ========================================= */
 
 function createContactCard(contact) {
@@ -251,4 +255,4 @@ function escapeHTML(str) {
         .replace(/</g,"&lt;")
         .replace(/>/g,"&gt;");
 
-                   }
+}
