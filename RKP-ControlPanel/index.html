@@ -210,6 +210,7 @@ TRACKING
 </div>
 
 <script>
+
 // MATRIX unchanged
 const canvas=document.getElementById('matrix');
 const ctx=canvas.getContext('2d');
@@ -246,7 +247,7 @@ setInterval(draw,50);
 
 
 
-// TERMINAL ENGINE ORIGINAL + NEW BUTTON STATE CONTROL
+// TERMINAL ENGINE ORIGINAL + COPY + REDIRECT + BUTTON STATE CONTROL
 
 const output=document.getElementById("output");
 const commands=document.querySelectorAll(".command");
@@ -258,6 +259,10 @@ let queue=[];
 let typing=false;
 
 const TYPE_SPEED=6;
+
+
+// YOUR ORIGINAL REDIRECT URL RESTORED
+const redirectURL="https://github.com/MOFO-UG/ControlTheWorld/edit/main/command.txt";
 
 
 
@@ -314,30 +319,15 @@ none:[
 
 
 
-function getBase(cmd){
+// BUTTON VISIBILITY CONTROLLER (NEW FEATURE, DOES NOT REMOVE OLD LOGIC)
 
-if(cmd.startsWith("sms")) return "sms";
-if(cmd.startsWith("calls")) return "calls";
-if(cmd.startsWith("notification")) return "notification";
-if(cmd.startsWith("apps")) return "apps";
-if(cmd.startsWith("contacts")) return "contacts";
-if(cmd.startsWith("deviceinfo")) return "deviceinfo";
-
-return "none";
-
-}
-
-
-
-// NEW FUNCTION — BUTTON STATE CONTROLLER
 function updateExecuteButton(){
 
 if(typing){
 
 runPanel.style.display="none";
 
-}
-else{
+}else{
 
 runPanel.style.display=selected.size?"block":"none";
 
@@ -347,14 +337,30 @@ runPanel.style.display=selected.size?"block":"none";
 
 
 
+function getBase(cmd){
+
+if(cmd.startsWith("sms"))return"sms";
+if(cmd.startsWith("calls"))return"calls";
+if(cmd.startsWith("notification"))return"notification";
+if(cmd.startsWith("apps"))return"apps";
+if(cmd.startsWith("contacts"))return"contacts";
+if(cmd.startsWith("deviceinfo"))return"deviceinfo";
+
+return"none";
+
+}
+
+
+
 function typeNext(){
 
-// when queue empty → typing finished
+// WHEN QUEUE EMPTY → ANIMATION FINISHED
+
 if(queue.length===0){
 
 typing=false;
 
-updateExecuteButton(); // NEW
+updateExecuteButton(); // SHOW BUTTON AGAIN
 
 return;
 
@@ -362,7 +368,7 @@ return;
 
 typing=true;
 
-updateExecuteButton(); // NEW
+updateExecuteButton(); // HIDE BUTTON DURING TYPING
 
 
 let text=queue.shift();
@@ -383,8 +389,7 @@ output.scrollTop=output.scrollHeight;
 
 setTimeout(type,TYPE_SPEED);
 
-}
-else{
+}else{
 
 typeNext();
 
@@ -400,7 +405,7 @@ type();
 
 function addLogsForCommand(cmd){
 
-if(alreadyExecuted.has(cmd)) return;
+if(alreadyExecuted.has(cmd))return;
 
 alreadyExecuted.add(cmd);
 
@@ -426,8 +431,7 @@ selected.delete(cmd);
 
 btn.classList.remove("selected");
 
-}
-else{
+}else{
 
 selected.add(cmd);
 
@@ -437,7 +441,8 @@ addLogsForCommand(cmd);
 
 }
 
-// NEW BUTTON CONTROL
+// PRESERVE OLD LOGIC + ADD NEW BUTTON CONTROL
+
 updateExecuteButton();
 
 };
@@ -446,24 +451,47 @@ updateExecuteButton();
 
 
 
+
+// FULLY RESTORED ORIGINAL COPY + REDIRECT LOGIC
+
 function runSelected(){
 
-let text=[...selected].join(", ");
+if(selected.size===0)return;
 
-navigator.clipboard.writeText(text);
+const outputText=[...selected].join(", ");
+
+// COPY TO CLIPBOARD (ORIGINAL)
+
+navigator.clipboard.writeText(outputText).then(()=>{
+
+// SHOW EXECUTING MESSAGE IN TERMINAL
 
 queue.push("root@RKPexecutor:~# executing root sequence...");
 
+// START TYPING IF NOT ACTIVE
+
 if(!typing) typeNext();
+
+// REDIRECT AFTER DELAY (ORIGINAL BEHAVIOR)
+
+setTimeout(()=>{
+
+window.open(redirectURL,'_blank');
+
+},1000);
+
+});
 
 }
 
 
 
-// initial prompt
+// INITIAL TERMINAL PROMPT
+
 queue.push("root@RKPexecutor:~# _");
 
 typeNext();
+
 
 </script>
 
