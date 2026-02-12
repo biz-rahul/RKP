@@ -1,59 +1,117 @@
-/* =========================================================
-   CONTROL THE WORLD — ADVANCED ULTRA MODERN UI
-   Author: You
-   Architecture: Glassmorphism + Neon + Dashboard UX
-========================================================= */
+/* =====================================================
+   CONTROL THE WORLD — ELITE HACKER INTERFACE v4
+   Cyberpunk • Matrix • Neon • Terminal UI
+===================================================== */
+
 
 /* ===== ROOT VARIABLES ===== */
 
 :root {
 
-    --bg-primary: #0f172a;
-    --bg-secondary: #111827;
-    --bg-glass: rgba(255,255,255,0.05);
+    --bg-black: #020617;
+    --bg-dark: #040b1a;
+    --bg-panel: rgba(0, 10, 30, 0.6);
 
-    --accent-primary: #6366f1;
-    --accent-secondary: #22c55e;
-    --accent-danger: #ef4444;
-    --accent-warning: #f59e0b;
+    --neon-green: #00ff9c;
+    --neon-blue: #00eaff;
+    --neon-purple: #8b5cf6;
+    --neon-red: #ff003c;
 
-    --text-primary: #ffffff;
-    --text-secondary: #94a3b8;
+    --text-main: #00ff9c;
+    --text-dim: #4ade80;
 
-    --border-glass: rgba(255,255,255,0.1);
+    --border-neon: rgba(0,255,156,0.3);
 
-    --shadow-soft: 0 0 10px rgba(99,102,241,0.2);
-    --shadow-medium: 0 0 20px rgba(99,102,241,0.3);
-    --shadow-strong: 0 0 40px rgba(99,102,241,0.5);
-
-    --radius: 12px;
-    --transition: 0.25s ease;
+    --glow-soft: 0 0 5px #00ff9c;
+    --glow-medium: 0 0 15px #00ff9c;
+    --glow-strong: 0 0 30px #00ff9c;
 
 }
 
 
-/* ===== GLOBAL RESET ===== */
+/* ===== GLOBAL ===== */
 
 * {
-    margin: 0;
-    padding: 0;
+
     box-sizing: border-box;
+
 }
 
-html, body {
+body {
 
-    height: 100%;
-    background:
-        radial-gradient(circle at top left, #1e293b, #020617);
+    margin: 0;
+
+    background: var(--bg-black);
 
     font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        sans-serif;
+        "Courier New",
+        monospace;
 
-    color: var(--text-primary);
+    color: var(--text-main);
+
+    overflow: hidden;
+
+}
+
+
+/* ===== MATRIX BACKGROUND CANVAS ===== */
+
+#matrixCanvas {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    z-index: -2;
+
+}
+
+
+/* ===== SCANLINE EFFECT ===== */
+
+.scanlines {
+
+    position: fixed;
+
+    width: 100%;
+    height: 100%;
+
+    background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,255,156,0.05),
+        rgba(0,255,156,0.05) 1px,
+        transparent 1px,
+        transparent 3px
+    );
+
+    z-index: -1;
+
+    pointer-events: none;
+
+}
+
+
+/* ===== GRID BACKGROUND ===== */
+
+.grid {
+
+    position: fixed;
+
+    width: 100%;
+    height: 100%;
+
+    background-image:
+
+        linear-gradient(rgba(0,255,156,0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,255,156,0.08) 1px, transparent 1px);
+
+    background-size: 40px 40px;
+
+    z-index: -3;
 
 }
 
@@ -63,6 +121,7 @@ html, body {
 .container {
 
     display: flex;
+
     height: 100vh;
 
 }
@@ -72,102 +131,71 @@ html, body {
 
 .sidebar {
 
-    width: 300px;
+    width: 320px;
 
-    background: var(--bg-glass);
+    background: var(--bg-panel);
 
-    backdrop-filter: blur(20px);
+    backdrop-filter: blur(10px);
 
-    border-right: 1px solid var(--border-glass);
+    border-right: 1px solid var(--border-neon);
 
-    padding: 20px;
+    padding: 15px;
 
     overflow-y: auto;
 
-    transition: var(--transition);
+    box-shadow: var(--glow-soft);
 
 }
 
 
-/* ===== SIDEBAR TITLE ===== */
+/* ===== TITLE ===== */
 
 .sidebar h1 {
 
-    font-size: 20px;
+    color: var(--neon-green);
 
-    font-weight: 600;
+    text-shadow: var(--glow-strong);
 
-    margin-bottom: 20px;
-
-    color: var(--accent-primary);
-
-    text-shadow: var(--shadow-soft);
+    animation: flicker 2s infinite;
 
 }
 
 
-/* ===== FILE & FOLDER ===== */
+/* ===== FILE / FOLDER ===== */
 
 .file,
 .folder {
 
-    padding: 10px 14px;
+    padding: 10px;
 
-    border-radius: var(--radius);
-
-    margin-bottom: 6px;
-
-    cursor: pointer;
-
-    transition: var(--transition);
-
-    background: transparent;
+    margin-bottom: 5px;
 
     border: 1px solid transparent;
 
+    cursor: pointer;
+
+    transition: 0.2s;
+
 }
 
 
-/* Icons */
+.folder::before { content: "[DIR] "; }
+.file::before { content: "[FILE] "; }
 
-.folder::before {
-
-    content: "📂 ";
-}
-
-.file::before {
-
-    content: "📄 ";
-}
-
-
-/* Hover effect */
 
 .file:hover,
 .folder:hover {
 
-    background: var(--bg-glass);
+    border: 1px solid var(--neon-green);
 
-    border: 1px solid var(--accent-primary);
+    box-shadow: var(--glow-medium);
 
-    box-shadow: var(--shadow-soft);
-
-    transform: translateX(5px);
+    transform: translateX(10px);
 
 }
 
 
-/* Click animation */
-
-.file:active,
-.folder:active {
-
-    transform: scale(0.98);
-
-}
-
-
-/* ===== CONTENT AREA ===== */
+/* ===== CONTENT ===== */
 
 .content {
 
@@ -180,106 +208,58 @@ html, body {
 }
 
 
-/* ===== VIEWER OPTIONS ===== */
-
-.viewer-options {
-
-    display: none;
-
-    margin-bottom: 20px;
-
-}
-
-
-/* ===== BUTTON STYLE ===== */
-
-button {
-
-    width: 100%;
-
-    padding: 12px;
-
-    margin-bottom: 10px;
-
-    border-radius: var(--radius);
-
-    border: none;
-
-    cursor: pointer;
-
-    font-weight: 500;
-
-    color: white;
-
-    background: linear-gradient(
-        45deg,
-        var(--accent-primary),
-        #8b5cf6
-    );
-
-    transition: var(--transition);
-
-    box-shadow: var(--shadow-soft);
-
-}
-
-
-/* Button hover */
-
-button:hover {
-
-    transform: translateY(-2px);
-
-    box-shadow: var(--shadow-medium);
-
-}
-
-
-/* Button click */
-
-button:active {
-
-    transform: scale(0.96);
-
-}
-
-
-/* ===== VIEWER CONTAINER ===== */
+/* ===== TERMINAL WINDOW ===== */
 
 #viewerContainer {
 
-    background: var(--bg-glass);
+    background: rgba(0,0,0,0.6);
+
+    border: 1px solid var(--border-neon);
 
     padding: 15px;
 
-    border-radius: var(--radius);
-
-    backdrop-filter: blur(20px);
-
-    border: 1px solid var(--border-glass);
-
-    box-shadow: var(--shadow-soft);
+    box-shadow: var(--glow-soft);
 
 }
 
 
-/* ===== REGULAR VIEWER ===== */
+/* ===== TERMINAL TEXT ===== */
 
-.regular-viewer pre {
+pre {
 
-    background: #020617;
+    color: var(--neon-green);
 
-    padding: 15px;
+}
 
-    border-radius: var(--radius);
 
-    overflow-x: auto;
+/* ===== BUTTON ===== */
 
-    font-size: 14px;
+button {
 
-    border: 1px solid var(--border-glass);
+    background: transparent;
 
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+    color: var(--neon-green);
+
+    border: 1px solid var(--neon-green);
+
+    padding: 10px;
+
+    cursor: pointer;
+
+    margin-bottom: 10px;
+
+    transition: 0.2s;
+
+}
+
+
+button:hover {
+
+    background: var(--neon-green);
+
+    color: black;
+
+    box-shadow: var(--glow-strong);
 
 }
 
@@ -288,88 +268,80 @@ button:active {
 
 ::-webkit-scrollbar {
 
-    width: 8px;
-
-}
-
-::-webkit-scrollbar-track {
-
-    background: transparent;
+    width: 6px;
 
 }
 
 ::-webkit-scrollbar-thumb {
 
-    background: var(--accent-primary);
-
-    border-radius: 10px;
+    background: var(--neon-green);
 
 }
 
 
-/* ===== MOBILE RESPONSIVE ===== */
+/* ===== FLICKER ANIMATION ===== */
 
-@media (max-width: 768px) {
+@keyframes flicker {
 
-    .container {
-
-        flex-direction: column;
-
-    }
-
-    .sidebar {
-
-        width: 100%;
-        height: 40%;
-
-    }
-
-    .content {
-
-        height: 60%;
-
-    }
-
-}
-
-
-/* ===== SMOOTH FADE ANIMATION ===== */
-
-@keyframes fadeIn {
-
-    from {
-
-        opacity: 0;
-        transform: translateY(10px);
-
-    }
-
-    to {
+    0%,18%,22%,25%,53%,57%,100% {
 
         opacity: 1;
-        transform: translateY(0);
+
+    }
+
+    20%,24%,55% {
+
+        opacity: 0.4;
 
     }
 
 }
 
-.file,
-.folder,
-button,
-#viewerContainer {
 
-    animation: fadeIn 0.3s ease;
+/* ===== GLITCH EFFECT ===== */
+
+.glitch {
+
+    position: relative;
+
+}
+
+.glitch::before,
+.glitch::after {
+
+    content: attr(data-text);
+
+    position: absolute;
+
+    left: 0;
+
+}
+
+.glitch::before {
+
+    animation: glitchTop 1s infinite;
+
+}
+
+.glitch::after {
+
+    animation: glitchBottom 1.5s infinite;
 
 }
 
 
-/* ===== NEON GLOW EFFECT ===== */
+@keyframes glitchTop {
 
-.sidebar h1:hover {
+    0% { transform: translate(0); }
+    50% { transform: translate(-2px,-2px); }
+    100% { transform: translate(0); }
 
-    text-shadow:
-        0 0 10px #6366f1,
-        0 0 20px #6366f1,
-        0 0 40px #6366f1;
+}
+
+@keyframes glitchBottom {
+
+    0% { transform: translate(0); }
+    50% { transform: translate(2px,2px); }
+    100% { transform: translate(0); }
 
 }
