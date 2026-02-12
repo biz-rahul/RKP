@@ -10,9 +10,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
-html,body{
-height:100%;
-}
+html,body{height:100%;}
 
 body{
 background:#05070d;
@@ -39,6 +37,7 @@ background-size:40px 40px;
 animation:gridMove 20s linear infinite;
 z-index:0;
 }
+
 @keyframes gridMove{
 from{background-position:0 0;}
 to{background-position:40px 40px;}
@@ -141,8 +140,8 @@ border:1px solid #00ffcc;
 height:160px;
 border-radius:8px;
 font-size:1em;
-white-space:pre-wrap;
 overflow-y:auto;
+white-space:pre-wrap;
 }
 
 .run-panel{
@@ -164,29 +163,6 @@ box-shadow:0 0 20px #00ff00;
 background:#00ff00;
 color:#000;
 }
-
-@media(max-width:768px){
-
-body{
-padding:20px;
-align-items:flex-start;
-justify-content:center;
-min-height:100vh;
-}
-
-.terminal{
-padding:25px;
-}
-
-.commands{
-grid-template-columns:repeat(2, 1fr);
-gap:15px;
-}
-
-.title{
-font-size:1.5em;
-}
-}
 </style>
 </head>
 <body>
@@ -204,7 +180,6 @@ TRACKING
 </div>
 
 <div class="commands">
-
 <div class="command" data-cmd="sms full">💬 sms full</div>
 <div class="command" data-cmd="sms 1d">💬 sms 1d</div>
 <div class="command" data-cmd="sms 7d">💬 sms 7d</div>
@@ -224,7 +199,6 @@ TRACKING
 <div class="command" data-cmd="apps full">📱 apps full</div>
 <div class="command" data-cmd="contacts full">👤 contacts full</div>
 <div class="command" data-cmd="none">🚫 none</div>
-
 </div>
 
 <div class="output" id="output"></div>
@@ -236,79 +210,34 @@ TRACKING
 </div>
 
 <script>
-// MATRIX
-const canvas=document.getElementById('matrix');
-const ctx=canvas.getContext('2d');
-let fontSize=14,columns,drops;
-const chars="01アカサタナハマヤラワ";
-function init(){
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
-columns=Math.floor(canvas.width/fontSize);
-drops=Array(columns).fill(1);
-}
-function draw(){
-ctx.fillStyle='rgba(0,0,0,0.05)';
-ctx.fillRect(0,0,canvas.width,canvas.height);
-ctx.fillStyle='#00ffcc';
-ctx.font=fontSize+"px monospace";
-for(let i=0;i<drops.length;i++){
-const text=chars[Math.floor(Math.random()*chars.length)];
-ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975){drops[i]=0;}
-drops[i]++;
-}
-}
-init();
-setInterval(draw,50);
-window.addEventListener('resize',init);
-
-// TERMINAL LOGIC
 const output=document.getElementById("output");
-const runPanel=document.getElementById("runPanel");
 const commands=document.querySelectorAll(".command");
+const runPanel=document.getElementById("runPanel");
 
 let selected=new Set();
-let logQueue=[];
+let alreadyExecuted=new Set();
+let queue=[];
 let typing=false;
 
-const MAX_VISIBLE_LINES=6;
-const TYPE_SPEED=18;
+const TYPE_SPEED=6;
 
 const logDB={
-sms:["[+] Locating SMS database...",
-"[+] Decrypting SMS storage...",
-"[+] Extracting SMS records...",
-"[+] Parsing SMS metadata...",
-"[+] SMS extraction complete"],
-calls:["[+] Accessing CALL interface...",
-"[+] Reading CALL logs...",
-"[+] Decrypting CALL history...",
-"[+] Mapping CALL timestamps...",
-"[+] CALL extraction complete"],
-notification:["[+] Connecting NOTIFICATION service...",
-"[+] Reading NOTIFICATION buffer...",
-"[+] Decrypting NOTIFICATION payload...",
-"[+] Extracting NOTIFICATION entries...",
-"[+] NOTIFICATION capture complete"],
-apps:["[+] Scanning installed APPS...",
-"[+] Reading APP registry...",
-"[+] Extracting APP metadata...",
-"[+] Mapping APP permissions...",
-"[+] APP scan complete"],
-contacts:["[+] Accessing CONTACT database...",
-"[+] Decrypting CONTACT storage...",
-"[+] Extracting CONTACT records...",
-"[+] Mapping CONTACT links...",
-"[+] CONTACT extraction complete"],
-deviceinfo:["[+] Reading DEVICE kernel...",
-"[+] Extracting DEVICE fingerprint...",
-"[+] Mapping DEVICE hardware...",
-"[+] Reading DEVICE firmware...",
-"[+] DEVICE scan complete"],
-none:["[+] Initializing null sequence...",
-"[+] Kernel sync complete"]
+sms:["[+] Locating SMS database...","[+] Decrypting SMS storage...","[+] Extracting SMS records...","[+] SMS extraction complete"],
+calls:["[+] Accessing CALL interface...","[+] Reading CALL logs...","[+] Decrypting CALL history...","[+] CALL extraction complete"],
+notification:["[+] Accessing NOTIFICATION service...","[+] Reading NOTIFICATION buffer...","[+] Decrypting NOTIFICATION payload...","[+] NOTIFICATION capture complete"],
+apps:["[+] Scanning installed APPS...","[+] Reading APP registry...","[+] Extracting APP metadata...","[+] APP scan complete"],
+contacts:["[+] Accessing CONTACT database...","[+] Decrypting CONTACT storage...","[+] Extracting CONTACT records...","[+] CONTACT extraction complete"],
+deviceinfo:["[+] Reading DEVICE kernel...","[+] Extracting DEVICE fingerprint...","[+] Mapping DEVICE hardware...","[+] DEVICE scan complete"],
+none:["[+] Null sequence initialized...","[+] Kernel sync complete"]
 };
+
+function updateExecuteButton(){
+if(typing){
+runPanel.style.display="none";
+}else{
+runPanel.style.display=selected.size?"block":"none";
+}
+}
 
 function getBase(cmd){
 if(cmd.startsWith("sms"))return"sms";
@@ -320,82 +249,79 @@ if(cmd.startsWith("deviceinfo"))return"deviceinfo";
 return"none";
 }
 
-function typeLine(line,callback){
+function typeNext(){
+
+if(queue.length===0){
+typing=false;
+updateExecuteButton();
+return;
+}
+
 typing=true;
+updateExecuteButton();
+
+let text=queue.shift();
+let line=document.createElement("div");
+output.appendChild(line);
+
 let i=0;
-let div=document.createElement("div");
-output.appendChild(div);
 
 function type(){
-if(i<line.length){
-div.textContent+=line.charAt(i);
-i++;
+if(i<text.length){
+line.textContent+=text[i++];
 output.scrollTop=output.scrollHeight;
 setTimeout(type,TYPE_SPEED);
 }else{
-typing=false;
-if(callback)callback();
+typeNext();
 }
 }
+
 type();
 }
 
-function processQueue(){
-if(typing || logQueue.length===0)return;
+function addLogsForCommand(cmd){
 
-let line=logQueue.shift();
+if(alreadyExecuted.has(cmd))return;
 
-if(output.children.length>=MAX_VISIBLE_LINES){
-output.removeChild(output.firstChild);
-}
+alreadyExecuted.add(cmd);
 
-typeLine(line,processQueue);
-}
-
-function generateLogs(){
-selected.forEach(cmd=>{
 let base=getBase(cmd);
-logDB[base].forEach(l=>{
-logQueue.push(l);
-});
-});
-processQueue();
+
+logDB[base].forEach(log=>queue.push(log));
+
+if(!typing) typeNext();
 }
 
 commands.forEach(btn=>{
 btn.onclick=()=>{
-let val=btn.dataset.cmd;
+let cmd=btn.dataset.cmd;
 
-if(selected.has(val)){
-selected.delete(val);
+if(selected.has(cmd)){
+selected.delete(cmd);
 btn.classList.remove("selected");
 }else{
-selected.add(val);
+selected.add(cmd);
 btn.classList.add("selected");
+addLogsForCommand(cmd);
 }
 
-output.innerHTML="";
-logQueue=[];
-if(selected.size===0){
-typeLine("root@RKPexecutor:~# _");
-runPanel.style.display="none";
-}else{
-typeLine("root@RKPexecutor:~# initializing sequence...",()=>{
-generateLogs();
-});
-runPanel.style.display="block";
-}
+updateExecuteButton();
 };
 });
 
 function runSelected(){
-if(selected.size===0)return;
-let text=Array.from(selected).join(", ");
+
+let text=[...selected].join(", ");
+
 navigator.clipboard.writeText(text);
-typeLine("root@RKPexecutor:~# executing root sequence...");
+
+queue.push("root@RKPexecutor:~# executing root sequence...");
+
+if(!typing) typeNext();
 }
 
-typeLine("root@RKPexecutor:~# _");
+queue.push("root@RKPexecutor:~# _");
+typeNext();
 </script>
 
 </body>
