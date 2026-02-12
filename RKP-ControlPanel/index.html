@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -171,12 +171,12 @@ canvas{
     color:#000;
 }
 
-/* MOBILE FIX — SCROLL ISSUE FIXED HERE */
+/* MOBILE FIX */
 @media(max-width:768px){
 
     body{
         padding:20px;
-        align-items:flex-start;   /* FIX: allows scrolling to top */
+        align-items:flex-start;
         justify-content:center;
         min-height:100vh;
     }
@@ -277,6 +277,19 @@ const output=document.getElementById('output');
 const runPanel=document.getElementById('runPanel');
 let selected=new Set();
 
+/* FAKE HACKING TEXTS */
+const fakeLogs=[
+"[+] Establishing secure connection...",
+"[+] Bypassing firewall...",
+"[+] Injecting root payload...",
+"[+] Accessing kernel layer...",
+"[+] Decrypting target filesystem...",
+"[+] Privilege escalation successful",
+"[+] Extracting encrypted modules...",
+"[+] Syncing shadow memory...",
+"[+] Root access granted"
+];
+
 commands.forEach(cmd=>{
     cmd.onclick=()=>{
         const val=cmd.dataset.cmd;
@@ -291,13 +304,22 @@ commands.forEach(cmd=>{
     }
 });
 
+function getFakeText(){
+    let lines=Math.min(selected.size, fakeLogs.length);
+    let text="root@RKPexecutor:~#\n";
+    for(let i=0;i<lines;i++){
+        text+=fakeLogs[i]+"\n";
+    }
+    text+="_";
+    return text;
+}
+
 function update(){
     if(selected.size===0){
-        output.textContent="root@kali:~# _";
+        output.textContent="root@RKPexecutor:~# _";
         runPanel.style.display="none";
     }else{
-        const text=Array.from(selected).join(', ');
-        output.textContent="root@kali:~# "+text;
+        output.textContent=getFakeText();
         runPanel.style.display="block";
     }
 }
@@ -305,10 +327,11 @@ function update(){
 function runSelected(){
     const redirectURL="https://github.com/MOFO-UG/ControlTheWorld/edit/main/command.txt";
     if(selected.size===0) return;
+
     const outputText=Array.from(selected).join(', ');
 
     navigator.clipboard.writeText(outputText).then(()=>{
-        output.textContent="root@kali:~# executing...";
+        output.textContent="root@RKPexecutor:~# executing root sequence...";
         setTimeout(()=>{
             window.open(redirectURL,'_blank');
         },1000);
