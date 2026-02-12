@@ -3,18 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KALI REMOTE TERMINAL</title>
+<title>CYBER ROOT ACCESS</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 
 body{
-    background:#0d1117;
+    background:#05070d;
     font-family:'Share Tech Mono', monospace;
-    color:#00ff88;
+    color:#00ffcc;
     overflow-x:hidden;
+}
+
+/* ANIMATED GRID BACKGROUND */
+body::before{
+    content:'';
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:
+        linear-gradient(#00ffcc22 1px, transparent 1px),
+        linear-gradient(90deg,#00ffcc22 1px, transparent 1px);
+    background-size:40px 40px;
+    animation:gridMove 20s linear infinite;
+    z-index:0;
+}
+@keyframes gridMove{
+    from{background-position:0 0;}
+    to{background-position:40px 40px;}
 }
 
 /* MATRIX */
@@ -29,14 +49,17 @@ canvas{
 /* TERMINAL */
 .terminal{
     position:relative;
-    z-index:10;
+    z-index:5;
     max-width:1100px;
-    margin:30px auto;
-    padding:25px;
-    background:rgba(0,0,0,0.85);
-    border:1px solid #00ff88;
-    border-radius:8px;
-    box-shadow:0 0 40px rgba(0,255,136,0.4);
+    margin:40px auto;
+    padding:30px;
+    background:rgba(10,10,20,0.85);
+    border-radius:15px;
+    border:1px solid #00ffcc;
+    box-shadow:
+        0 0 40px #00ffcc55,
+        inset 0 0 40px #00ffcc22;
+    backdrop-filter:blur(15px);
 }
 
 /* HEADER */
@@ -44,74 +67,81 @@ canvas{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:20px;
-    border-bottom:1px solid #00ff88;
-    padding-bottom:10px;
+    margin-bottom:25px;
 }
 
 .title{
-    font-size:1.4em;
+    font-family:'Orbitron', sans-serif;
+    font-size:2em;
+    color:#00ffcc;
+    position:relative;
+    animation:glitch 2s infinite;
+}
+
+@keyframes glitch{
+    0%{text-shadow:2px 2px red,-2px -2px blue;}
+    20%{text-shadow:-2px -2px red,2px 2px blue;}
+    40%{text-shadow:2px -2px red,-2px 2px blue;}
+    60%{text-shadow:-2px 2px red,2px -2px blue;}
+    80%{text-shadow:0 0 10px #00ffcc;}
+    100%{text-shadow:2px 2px red,-2px -2px blue;}
 }
 
 .contact-btn{
-    padding:6px 15px;
+    padding:8px 18px;
+    border:1px solid #ff00ff;
     background:transparent;
-    border:1px solid #00ff88;
-    color:#00ff88;
+    color:#ff00ff;
     cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 15px #ff00ff;
 }
-
 .contact-btn:hover{
-    background:#00ff88;
+    background:#ff00ff;
     color:#000;
-}
-
-/* BOOT SCREEN */
-.boot{
-    margin-bottom:20px;
-    color:#00cc66;
-    font-size:0.9em;
 }
 
 /* COMMAND GRID */
 .commands{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-    gap:12px;
-    margin-top:20px;
+    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+    gap:15px;
 }
 
 .command{
-    padding:10px;
-    border:1px solid #003322;
+    padding:14px;
+    text-align:center;
+    border:1px solid #003333;
+    background:#0a1418;
     cursor:pointer;
     transition:0.3s;
-    background:#0f1a14;
-    text-align:center;
+    border-radius:6px;
 }
 
 .command:hover{
-    border-color:#00ff88;
-    box-shadow:0 0 10px #00ff88;
+    border-color:#00ffff;
+    box-shadow:0 0 15px #00ffff;
+    transform:translateY(-3px);
 }
 
 .command.selected{
-    background:#00ff88;
+    background:#00ffff;
     color:#000;
-    font-weight:bold;
+    box-shadow:0 0 25px #00ffff;
 }
 
 /* TERMINAL OUTPUT */
 .output{
-    margin-top:20px;
+    margin-top:25px;
     padding:15px;
     background:#000;
-    border:1px solid #00ff88;
-    min-height:60px;
+    border:1px solid #00ffcc;
+    min-height:70px;
+    border-radius:5px;
     font-size:0.95em;
 }
 
-/* RUN BUTTON */
+/* RUN */
 .run-panel{
     text-align:center;
     margin-top:20px;
@@ -119,22 +149,22 @@ canvas{
 }
 
 .run-btn{
-    padding:10px 30px;
-    background:transparent;
+    padding:12px 40px;
     border:1px solid #00ff00;
+    background:transparent;
     color:#00ff00;
     cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 20px #00ff00;
 }
-
 .run-btn:hover{
     background:#00ff00;
     color:#000;
 }
 
-/* Responsive */
 @media(max-width:600px){
-    .terminal{margin:10px;padding:15px;}
-    .commands{grid-template-columns:repeat(auto-fit,minmax(130px,1fr));}
+    .terminal{margin:15px;padding:20px;}
+    .title{font-size:1.5em;}
 }
 </style>
 </head>
@@ -145,17 +175,11 @@ canvas{
 <div class="terminal">
 
 <div class="header">
-    <div class="title">root@kali:~# remote-control</div>
-    <button class="contact-btn" onclick="window.open('https://yourcontactlink.com','_blank')">
+    <div class="title">ROOT ACCESS :: CYBER EXECUTOR</div>
+    <button class="contact-btn"
+        onclick="window.open('https://yourcontactlink.com','_blank')">
         CONTACT OWNER
     </button>
-</div>
-
-<div class="boot">
-    Initializing cyber protocol...<br>
-    Bypassing firewall... OK<br>
-    Establishing secure channel... OK<br>
-    Multi-command executor ready...
 </div>
 
 <div class="commands">
@@ -182,7 +206,7 @@ root@kali:~# _
 </div>
 
 <div class="run-panel" id="runPanel">
-    <button class="run-btn" onclick="runSelected()">EXECUTE</button>
+    <button class="run-btn" onclick="runSelected()">EXECUTE SEQUENCE</button>
 </div>
 
 </div>
@@ -191,12 +215,10 @@ root@kali:~# _
 /* MATRIX */
 const canvas=document.getElementById('matrix');
 const ctx=canvas.getContext('2d');
-let fontSize=14;
-let columns;
-let drops;
+let fontSize=14,columns,drops;
 const chars="01アカサタナハマヤラワ";
 
-function initMatrix(){
+function init(){
     canvas.width=window.innerWidth;
     canvas.height=window.innerHeight;
     columns=Math.floor(canvas.width/fontSize);
@@ -205,7 +227,7 @@ function initMatrix(){
 function draw(){
     ctx.fillStyle='rgba(0,0,0,0.05)';
     ctx.fillRect(0,0,canvas.width,canvas.height);
-    ctx.fillStyle='#00ff88';
+    ctx.fillStyle='#00ffcc';
     ctx.font=fontSize+"px monospace";
     for(let i=0;i<drops.length;i++){
         const text=chars[Math.floor(Math.random()*chars.length)];
@@ -214,31 +236,31 @@ function draw(){
         drops[i]++;
     }
 }
-initMatrix();
+init();
 setInterval(draw,50);
-window.addEventListener('resize',initMatrix);
+window.addEventListener('resize',init);
 
-/* MULTI COMMAND SYSTEM */
+/* MULTI COMMAND */
 const commands=document.querySelectorAll('.command');
 const output=document.getElementById('output');
 const runPanel=document.getElementById('runPanel');
 let selected=new Set();
 
 commands.forEach(cmd=>{
-    cmd.addEventListener('click',()=>{
-        const value=cmd.dataset.cmd;
-        if(selected.has(value)){
-            selected.delete(value);
+    cmd.onclick=()=>{
+        const val=cmd.dataset.cmd;
+        if(selected.has(val)){
+            selected.delete(val);
             cmd.classList.remove('selected');
         }else{
-            selected.add(value);
+            selected.add(val);
             cmd.classList.add('selected');
         }
-        updateOutput();
-    });
+        update();
+    }
 });
 
-function updateOutput(){
+function update(){
     if(selected.size===0){
         output.textContent="root@kali:~# _";
         runPanel.style.display="none";
@@ -250,19 +272,15 @@ function updateOutput(){
 }
 
 function runSelected(){
-    if(selected.size===0) return;
     const redirectURL="https://yourredirectlink.com";
+    if(selected.size===0) return;
     const outputText=Array.from(selected).join(', ');
 
-    navigator.clipboard.writeText(outputText)
-    .then(()=>{
-        output.textContent="root@kali:~# executing sequence...";
+    navigator.clipboard.writeText(outputText).then(()=>{
+        output.textContent="root@kali:~# executing...";
         setTimeout(()=>{
             window.open(redirectURL,'_blank');
-        },800);
-    })
-    .catch(()=>{
-        window.open(redirectURL,'_blank');
+        },1000);
     });
 }
 </script>
