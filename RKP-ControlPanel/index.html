@@ -135,19 +135,29 @@ EXECUTE SEQUENCE
 
 <div class="notify-entry">
 
-<input class="title" placeholder="Title">
+<input class="title" placeholder="Notification Title">
 
-<input class="message" placeholder="Message">
+<input class="message" placeholder="Notification Message">
 
-<input class="repeat" placeholder="Repeat">
+<input class="repeat" placeholder="Repeat Count (example: 1)">
 
-<label>
 
-<input type="checkbox" class="enableBtn">
+
+<label style="display:flex;align-items:center;gap:10px;margin-top:10px;">
 
 Enable Button
 
+<label class="switch">
+
+<input type="checkbox" class="enableBtn">
+
+<span class="slider"></span>
+
 </label>
+
+</label>
+
+
 
 <div class="btnArea" style="display:none">
 
@@ -160,6 +170,7 @@ Enable Button
 </div>
 
 </template>
+
 
 
 <script>
