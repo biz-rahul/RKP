@@ -10,8 +10,6 @@
 
 <style>
 
-/* CYBERPUNK STYLE */
-
 *{box-sizing:border-box;margin:0;padding:0;}
 
 body{
@@ -22,15 +20,37 @@ min-height:100vh;
 padding-bottom:80px;
 }
 
+/* TOP BUTTON */
+.topbar{
+padding:10px;
+text-align:center;
+border-bottom:1px solid #00ffff33;
+}
+
+.topbtn{
+display:inline-block;
+padding:10px 18px;
+border:1px solid #00ffff;
+border-radius:10px;
+color:#00ffff;
+text-decoration:none;
+font-family:'Orbitron';
+transition:0.2s;
+}
+
+.topbtn:hover{
+background:#00ffff;
+color:black;
+box-shadow:0 0 15px #00ffff;
+}
+
 .header{
-font-family:'Orbitron',sans-serif;
+font-family:'Orbitron';
 font-size:22px;
 letter-spacing:2px;
 text-align:center;
-padding:20px;
-color:#00ffff;
-text-shadow:0 0 5px #00ffff,0 0 15px #00ffff,0 0 30px #00ffff;
-border-bottom:1px solid rgba(0,255,255,0.3);
+padding:15px;
+text-shadow:0 0 10px #00ffff;
 }
 
 .container{
@@ -49,12 +69,12 @@ box-shadow:0 0 10px #00ffff22,inset 0 0 10px #00ffff11;
 }
 
 .panel-title{
-font-family:'Orbitron',sans-serif;
+font-family:'Orbitron';
 font-size:13px;
 margin-bottom:10px;
 color:#ff00ff;
 letter-spacing:2px;
-text-shadow:0 0 5px #ff00ff,0 0 10px #ff00ff;
+text-shadow:0 0 5px #ff00ff;
 }
 
 .grid{
@@ -72,13 +92,11 @@ border-radius:10px;
 background:#020617;
 border:1px solid #00ffff33;
 cursor:pointer;
-transition:0.2s;
 }
 
 .tile:hover{
 border:1px solid #00ffff;
 box-shadow:0 0 10px #00ffff88;
-transform:translateY(-2px);
 }
 
 .tile input{
@@ -88,12 +106,11 @@ height:18px;
 border:1px solid #00ffff;
 background:black;
 cursor:pointer;
-position:relative;
 }
 
 .tile input:checked{
 background:#00ffff;
-box-shadow:0 0 10px #00ffff,0 0 20px #00ffff;
+box-shadow:0 0 10px #00ffff;
 }
 
 .input{
@@ -107,11 +124,6 @@ color:#00ffff;
 outline:none;
 }
 
-.input:focus{
-border:1px solid #ff00ff;
-box-shadow:0 0 10px #ff00ff;
-}
-
 .btn{
 width:100%;
 padding:12px;
@@ -120,16 +132,14 @@ background:black;
 border:1px solid #00ffff;
 color:#00ffff;
 font-family:'Orbitron';
-letter-spacing:1px;
 cursor:pointer;
 border-radius:10px;
-transition:0.2s;
 }
 
 .btn:hover{
 background:#00ffff;
 color:black;
-box-shadow:0 0 15px #00ffff,0 0 30px #00ffff;
+box-shadow:0 0 15px #00ffff;
 }
 
 .output{
@@ -141,7 +151,6 @@ border-radius:10px;
 padding:12px;
 color:#00ff88;
 font-family:monospace;
-box-shadow:inset 0 0 15px #00ff8855;
 }
 
 .notification-box{
@@ -158,18 +167,15 @@ width:100%;
 background:black;
 border-top:1px solid #00ffff55;
 padding:10px;
-display:flex;
-gap:10px;
-}
-
-@media(max-width:500px){
-.grid{grid-template-columns:1fr;}
-.header{font-size:18px;}
 }
 
 </style>
 </head>
 <body>
+
+<div class="topbar">
+<a href="/terminal" class="topbtn">GO TO TERMINAL</a>
+</div>
 
 <div class="header">CYBERPUNK COMMAND SYSTEM</div>
 
@@ -189,7 +195,6 @@ gap:10px;
 
 <input id="wallpaperUrl" class="input" placeholder="Wallpaper URL">
 <button class="btn" onclick="addWallpaper()">ADD WALLPAPER</button>
-
 </div>
 
 <!-- APPS -->
@@ -236,7 +241,7 @@ gap:10px;
 </div>
 </div>
 
-<!-- NOTIFICATION BACKUP -->
+<!-- NOTIFICATION -->
 <div class="panel">
 <div class="panel-title">NOTIFICATION DATA</div>
 <div class="grid">
@@ -276,8 +281,7 @@ gap:10px;
 </div>
 
 <div class="action">
-<button class="btn" onclick="generate()">GENERATE</button>
-<button class="btn" onclick="copy()">COPY</button>
+<button class="btn" onclick="execute()">EXECUTE</button>
 </div>
 
 
@@ -288,29 +292,20 @@ let wallpaperCommands=[]
 let notificationCommands=[]
 
 function addRedirect(){
-
 let url=document.getElementById("redirectUrl").value
-
 if(url)
 redirectCommands.push("redirect url "+url)
-
 }
 
 function addWallpaper(){
-
 let url=document.getElementById("wallpaperUrl").value
-
 if(url)
 wallpaperCommands.push("change wallpaper "+url)
-
 }
 
 function addNotificationBox(){
-
 let box=document.createElement("div")
-
 box.className="notification-box"
-
 box.innerHTML=`
 Title:<input class="ntitle input"><br>
 Message:<input class="nmessage input"><br>
@@ -318,9 +313,7 @@ Repeat:<input class="nrepeat input" value="1"><br>
 Button:<input class="nbutton input"><br>
 URL:<input class="nurl input"><br>
 `
-
 document.getElementById("notifications").appendChild(box)
-
 }
 
 function generate(){
@@ -383,6 +376,22 @@ text.select()
 document.execCommand("copy")
 
 alert("Copied")
+
+}
+
+/* EXECUTE FUNCTION */
+function execute(){
+
+generate()
+
+let text=document.getElementById("result")
+
+text.select()
+
+document.execCommand("copy")
+
+/* redirect ONLY after copy */
+window.location.href="/terminal"
 
 }
 
