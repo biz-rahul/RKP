@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>RKP ROOT ACCESS</title>
 
 <link rel="stylesheet" href="styles.css">
@@ -12,11 +14,14 @@
 </head>
 <body>
 
+
 <canvas id="matrix"></canvas>
+
 
 <div class="terminal">
 
 <div class="header">
+
 <div class="title">ROOT ACCESS :: RKP EXECUTOR</div>
 
 <button class="contact-btn"
@@ -27,95 +32,33 @@ TRACKING
 </div>
 
 
+
+<!-- COMMAND LIST -->
 <div class="commands">
 
-<!-- DEVICE CONTROL -->
+<div class="command popup-trigger" data-base="apps">📱 apps</div>
 
-<div class="command builder" data-builder="redirect">🌐 redirect url</div>
+<div class="command popup-trigger" data-base="apps installed">📦 apps installed</div>
 
-<div class="command builder" data-builder="wallpaper">🖼️ change wallpaper</div>
+<div class="command popup-trigger" data-base="sms">💬 sms</div>
 
-<div class="command" data-cmd="connection">📡 connection</div>
+<div class="command popup-trigger" data-base="calls">📞 calls</div>
 
+<div class="command popup-trigger" data-base="notification">🔔 notification</div>
 
-<!-- DEVICE INFO -->
+<div class="command popup-trigger" data-base="clipboard">📋 clipboard</div>
 
-<div class="command" data-cmd="deviceinfo">ℹ️ deviceinfo</div>
-
-
-<!-- APPS -->
-
-<div class="command" data-cmd="apps full">📱 apps full</div>
-<div class="command" data-cmd="apps 1d">📱 apps 1d</div>
-<div class="command" data-cmd="apps 7d">📱 apps 7d</div>
-<div class="command" data-cmd="apps 30d">📱 apps 30d</div>
-
-<div class="command" data-cmd="apps installed 1d">📦 apps installed 1d</div>
-<div class="command" data-cmd="apps installed 7d">📦 apps installed 7d</div>
-<div class="command" data-cmd="apps installed 30d">📦 apps installed 30d</div>
-
-
-<!-- SMS -->
-
-<div class="command" data-cmd="sms full">💬 sms full</div>
-<div class="command" data-cmd="sms 1d">💬 sms 1d</div>
-<div class="command" data-cmd="sms 7d">💬 sms 7d</div>
-<div class="command" data-cmd="sms 30d">💬 sms 30d</div>
-
-
-<!-- CALLS -->
-
-<div class="command" data-cmd="calls full">📞 calls full</div>
-<div class="command" data-cmd="calls 1d">📞 calls 1d</div>
-<div class="command" data-cmd="calls 7d">📞 calls 7d</div>
-<div class="command" data-cmd="calls 30d">📞 calls 30d</div>
-
-
-<!-- CONTACTS -->
 
 <div class="command" data-cmd="contacts full">👤 contacts full</div>
 
+<div class="command" data-cmd="deviceinfo">ℹ️ deviceinfo</div>
 
-<!-- NOTIFICATIONS -->
-
-<div class="command" data-cmd="notification full">🔔 notification full</div>
-<div class="command" data-cmd="notification 1d">🔔 notification 1d</div>
-<div class="command" data-cmd="notification 7d">🔔 notification 7d</div>
-<div class="command" data-cmd="notification 30d">🔔 notification 30d</div>
-
-<div class="command" data-cmd="no notification">⛔ no notification</div>
-
-
-<!-- CLIPBOARD -->
-
-<div class="command" data-cmd="clipboard full">📋 clipboard full</div>
-<div class="command" data-cmd="clipboard 1d">📋 clipboard 1d</div>
-<div class="command" data-cmd="clipboard 7d">📋 clipboard 7d</div>
-<div class="command" data-cmd="clipboard 30d">📋 clipboard 30d</div>
-
-<div class="command" data-cmd="no clipboard">⛔ no clipboard</div>
-
-
-<!-- CUSTOM NOTIFICATION -->
-
-<div class="command builder" data-builder="notification">📢 send notification</div>
-
-
-<!-- NONE -->
+<div class="command" data-cmd="connection">🌐 connection</div>
 
 <div class="command" data-cmd="none">🚫 none</div>
 
 </div>
 
-
-<div id="builderPanel" class="builder-panel" style="display:none">
-<div id="builderContent"></div>
-
-<button onclick="builderAdd()">ADD</button>
-
-<button onclick="builderClose()">CANCEL</button>
-
-</div>
 
 
 <div class="output" id="output"></div>
@@ -131,52 +74,38 @@ EXECUTE SEQUENCE
 </div>
 
 
-<template id="notifyTemplate">
 
-<div class="notify-entry">
+<!-- POPUP -->
+<div id="rangePopup" class="popup">
 
-<input class="title" placeholder="Notification Title">
+<div class="popup-box">
 
-<input class="message" placeholder="Notification Message">
+<div class="popup-title">SELECT RANGE</div>
 
-<input class="repeat" placeholder="Repeat Count (example: 1)">
+<div class="popup-options">
 
+<button onclick="selectRange('full')">FULL</button>
 
+<button onclick="selectRange('1d')">1 DAY</button>
 
-<label style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+<button onclick="selectRange('7d')">7 DAYS</button>
 
-Enable Button
+<button onclick="selectRange('30d')">30 DAYS</button>
 
-<label class="switch">
+</div>
 
-<input type="checkbox" class="enableBtn">
-
-<span class="slider"></span>
-
-</label>
-
-</label>
-
-
-
-<div class="btnArea" style="display:none">
-
-<input class="btnText" placeholder="Button Text">
-
-<input class="btnUrl" placeholder="Button URL">
+<button class="popup-close" onclick="closePopup()">CLOSE</button>
 
 </div>
 
 </div>
-
-</template>
 
 
 
 <script>
 
 
-/* MATRIX (UNCHANGED) */
+/* ================= MATRIX ================= */
 
 const canvas=document.getElementById('matrix');
 const ctx=canvas.getContext('2d');
@@ -222,16 +151,13 @@ drops[i]++;
 }
 
 init();
-
 setInterval(draw,50);
 
 
 
-/* TERMINAL ENGINE (UNCHANGED) */
+/* ================= TERMINAL ENGINE ================= */
 
 const output=document.getElementById("output");
-
-const commands=document.querySelectorAll(".command");
 
 const runPanel=document.getElementById("runPanel");
 
@@ -251,19 +177,56 @@ const redirectURL="https://github.com/MOFO-UG/ControlTheWorld/edit/main/command.
 
 const logDB={
 
-sms:["[+] Accessing SMS","[+] SMS complete"],
+apps:[
+"[+] Scanning installed APPS...",
+"[+] Reading APP registry...",
+"[+] Extracting APP metadata...",
+"[+] APP scan complete"
+],
 
-calls:["[+] Accessing CALL","[+] CALL complete"],
+sms:[
+"[+] Locating SMS database...",
+"[+] Decrypting SMS storage...",
+"[+] Extracting SMS records...",
+"[+] SMS extraction complete"
+],
 
-notification:["[+] Accessing NOTIFICATION","[+] NOTIFICATION complete"],
+calls:[
+"[+] Accessing CALL interface...",
+"[+] Reading CALL logs...",
+"[+] CALL extraction complete"
+],
 
-apps:["[+] Accessing APPS","[+] APPS complete"],
+notification:[
+"[+] Accessing NOTIFICATION service...",
+"[+] Reading NOTIFICATION buffer...",
+"[+] NOTIFICATION capture complete"
+],
 
-contacts:["[+] Accessing CONTACT","[+] CONTACT complete"],
+clipboard:[
+"[+] Accessing CLIPBOARD service...",
+"[+] Reading clipboard buffer...",
+"[+] Clipboard extraction complete"
+],
 
-deviceinfo:["[+] Accessing DEVICE","[+] DEVICE complete"],
+contacts:[
+"[+] Accessing CONTACT database...",
+"[+] CONTACT extraction complete"
+],
 
-none:["[+] Idle"]
+deviceinfo:[
+"[+] Reading DEVICE kernel...",
+"[+] DEVICE scan complete"
+],
+
+connection:[
+"[+] Reading network interfaces...",
+"[+] Connection upload complete"
+],
+
+none:[
+"[+] Null sequence initialized..."
+]
 
 };
 
@@ -271,7 +234,28 @@ none:["[+] Idle"]
 
 function updateExecuteButton(){
 
+if(typing)
+runPanel.style.display="none";
+else
 runPanel.style.display=selected.size?"block":"none";
+
+}
+
+
+
+function addLogs(cmd){
+
+if(alreadyExecuted.has(cmd))return;
+
+alreadyExecuted.add(cmd);
+
+let base=getBase(cmd);
+
+if(logDB[base])
+logDB[base].forEach(log=>queue.push(log));
+
+if(!typing)
+typeNext();
 
 }
 
@@ -279,14 +263,23 @@ runPanel.style.display=selected.size?"block":"none";
 
 function getBase(cmd){
 
-if(cmd.startsWith("sms"))return"sms";
-if(cmd.startsWith("calls"))return"calls";
-if(cmd.startsWith("notification"))return"notification";
-if(cmd.startsWith("apps"))return"apps";
-if(cmd.startsWith("contacts"))return"contacts";
-if(cmd.startsWith("deviceinfo"))return"deviceinfo";
+if(cmd.startsWith("apps")) return "apps";
 
-return"none";
+if(cmd.startsWith("sms")) return "sms";
+
+if(cmd.startsWith("calls")) return "calls";
+
+if(cmd.startsWith("notification")) return "notification";
+
+if(cmd.startsWith("clipboard")) return "clipboard";
+
+if(cmd.startsWith("contacts")) return "contacts";
+
+if(cmd.startsWith("deviceinfo")) return "deviceinfo";
+
+if(cmd.startsWith("connection")) return "connection";
+
+return "none";
 
 }
 
@@ -297,12 +290,16 @@ function typeNext(){
 if(queue.length===0){
 
 typing=false;
+
 updateExecuteButton();
+
 return;
 
 }
 
 typing=true;
+
+updateExecuteButton();
 
 let text=queue.shift();
 
@@ -318,13 +315,13 @@ if(i<text.length){
 
 line.textContent+=text[i++];
 
+output.scrollTop=output.scrollHeight;
+
 setTimeout(type,TYPE_SPEED);
 
-}else{
-
-typeNext();
-
 }
+
+else typeNext();
 
 }
 
@@ -334,153 +331,71 @@ type();
 
 
 
-/* BUILDER ENGINE */
+/* ================= POPUP SYSTEM ================= */
 
-let builderMode=null;
+let popupBase=null;
 
-const builderPanel=document.getElementById("builderPanel");
+const popup=document.getElementById("rangePopup");
 
-const builderContent=document.getElementById("builderContent");
-
-
-document.querySelectorAll(".builder").forEach(btn=>{
+document.querySelectorAll(".popup-trigger").forEach(btn=>{
 
 btn.onclick=()=>{
 
-builderMode=btn.dataset.builder;
+popupBase=btn.dataset.base;
 
-builderPanel.style.display="block";
-
-if(builderMode==="redirect")
-
-builderContent.innerHTML='<input id="urlInput" placeholder="Enter URL">';
-
-if(builderMode==="wallpaper")
-
-builderContent.innerHTML='<input id="urlInput" placeholder="Enter Image URL">';
-
-if(builderMode==="notification"){
-
-builderContent.innerHTML='<div id="notifyList"></div><button onclick="notifyAdd()">+ add new</button>';
-
-notifyAdd();
-
-}
+popup.style.display="flex";
 
 };
 
 });
 
 
-function notifyAdd(){
 
-const t=document.getElementById("notifyTemplate");
+function closePopup(){
 
-const clone=t.content.cloneNode(true);
-
-const check=clone.querySelector(".enableBtn");
-
-const area=clone.querySelector(".btnArea");
-
-check.onchange=()=>area.style.display=check.checked?"block":"none";
-
-document.getElementById("notifyList").appendChild(clone);
+popup.style.display="none";
 
 }
 
 
 
-function builderAdd(){
+function selectRange(range){
 
-let cmd="";
+closePopup();
 
-if(builderMode==="redirect"){
+let cmd = popupBase + " " + range;
 
-const url=document.getElementById("urlInput").value;
-
-cmd="redirect url "+url;
+toggleCommand(cmd);
 
 }
 
-if(builderMode==="wallpaper"){
 
-const url=document.getElementById("urlInput").value;
 
-cmd="change wallpaper "+url;
+/* ================= COMMAND TOGGLE ================= */
 
-}
+function toggleCommand(cmd){
 
-if(builderMode==="notification"){
+if(selected.has(cmd)){
 
-let parts=[];
-
-document.querySelectorAll(".notify-entry").forEach(e=>{
-
-let p="send notification | title="+e.querySelector(".title").value;
-
-p+=" | message="+e.querySelector(".message").value;
-
-let repeat=e.querySelector(".repeat").value;
-
-if(repeat)p+=" | repeat="+repeat;
-
-if(e.querySelector(".enableBtn").checked){
-
-p+=" | button="+e.querySelector(".btnText").value;
-
-p+=" | url="+e.querySelector(".btnUrl").value;
+selected.delete(cmd);
 
 }
 
-parts.push(p);
-
-});
-
-cmd=parts.join(",,,,,");
-
-}
+else{
 
 selected.add(cmd);
 
-queue.push("[+] Command added: "+cmd);
+addLogs(cmd);
 
-typeNext();
+}
 
-builderClose();
+updateExecuteButton();
 
 }
 
 
 
-function builderClose(){
-
-builderPanel.style.display="none";
-
-}
-
-
-
-/* NORMAL COMMANDS */
-
-commands.forEach(btn=>{
-
-if(btn.classList.contains("builder"))return;
-
-btn.onclick=()=>{
-
-let cmd=btn.dataset.cmd;
-
-selected.add(cmd);
-
-queue.push("[+] Command added: "+cmd);
-
-typeNext();
-
-};
-
-});
-
-
+/* ================= EXECUTE ================= */
 
 function runSelected(){
 
@@ -492,6 +407,7 @@ navigator.clipboard.writeText(outputText).then(()=>{
 
 queue.push("root@RKPexecutor:~# executing root sequence...");
 
+if(!typing)
 typeNext();
 
 setTimeout(()=>{
@@ -506,12 +422,15 @@ window.open(redirectURL,'_blank');
 
 
 
+/* ================= START ================= */
+
 queue.push("root@RKPexecutor:~# _");
 
 typeNext();
 
 
 </script>
+
 
 </body>
 </html>
