@@ -1,185 +1,409 @@
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Share Tech Mono', monospace;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html,body{height:100%;}
 
 body{
-
-background:#0c1116;
-color:#00ffd5;
-
+background:#05070d;
+font-family:'Share Tech Mono', monospace;
+color:#00ffcc;
+overflow-x:hidden;
 display:flex;
-justify-content:center;
 align-items:center;
-
-min-height:100vh;
-padding:20px;
-
+justify-content:center;
+padding:40px;
 }
 
-.container{
-
+body::before{
+content:'';
+position:fixed;
+top:0;
+left:0;
 width:100%;
-max-width:1000px;
+height:100%;
+background:
+linear-gradient(#00ffcc22 1px, transparent 1px),
+linear-gradient(90deg,#00ffcc22 1px, transparent 1px);
+background-size:40px 40px;
+animation:gridMove 20s linear infinite;
+z-index:0;
+}
 
-background:#121922;
+@keyframes gridMove{
+from{background-position:0 0;}
+to{background-position:40px 40px;}
+}
 
-border:1px solid #00ffd555;
+canvas{
+position:fixed;
+top:0;
+left:0;
+z-index:1;
+pointer-events:none;
+}
 
-border-radius:10px;
+.terminal{
+position:relative;
+z-index:5;
+width:100%;
+max-width:1600px;
+padding:40px;
+background:rgba(10,10,20,0.85);
+border-radius:15px;
+border:1px solid #00ffcc;
+box-shadow:
+0 0 40px #00ffcc55,
+inset 0 0 40px #00ffcc22;
+backdrop-filter:blur(15px);
+}
 
-padding:25px;
-
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
 }
 
 .title{
+font-family:'Orbitron', sans-serif;
+font-size:2em;
+color:#00ffcc;
+animation:glitch 2s infinite;
+}
 
-font-size:22px;
-margin-bottom:20px;
-text-align:center;
+@keyframes glitch{
+0%{text-shadow:2px 2px red,-2px -2px blue;}
+20%{text-shadow:-2px -2px red,2px 2px blue;}
+40%{text-shadow:2px -2px red,-2px 2px blue;}
+60%{text-shadow:-2px 2px red,2px -2px blue;}
+80%{text-shadow:0 0 10px #00ffcc;}
+100%{text-shadow:2px 2px red,-2px -2px blue;}
+}
 
-color:#00ffd5;
-
+.contact-btn{
+padding:8px 18px;
+border:1px solid #ff00ff;
+background:transparent;
+color:#ff00ff;
+cursor:pointer;
+transition:0.3s;
+box-shadow:0 0 15px #ff00ff;
+}
+.contact-btn:hover{
+background:#ff00ff;
+color:#000;
 }
 
 .commands{
-
 display:grid;
-
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-
-gap:12px;
-
+grid-template-columns:repeat(4, 1fr);
+gap:25px;
 }
 
 .command{
-
-padding:14px;
-
-border:1px solid #00ffd533;
-
-border-radius:6px;
-
-cursor:pointer;
-
+padding:22px;
+font-size:1.05em;
 text-align:center;
-
-background:#0f141a;
-
-transition:0.15s;
-
+border:1px solid #003333;
+background:#0a1418;
+cursor:pointer;
+transition:0.3s;
+border-radius:8px;
 }
 
 .command:hover{
-
-border-color:#00ffd5;
-
+border-color:#00ffff;
+box-shadow:0 0 15px #00ffff;
+transform:translateY(-3px);
 }
 
 .command.selected{
+background:#00ffff;
+color:#000;
+box-shadow:0 0 25px #00ffff;
+}
 
-background:#00ffd5;
+.output{
+margin-top:35px;
+padding:20px;
+background:#000;
+border:1px solid #00ffcc;
+height:160px;
+border-radius:8px;
+font-size:1em;
+overflow-y:auto;
+white-space:pre-wrap;
+}
 
-color:black;
-
-border-color:#00ffd5;
-
+.run-panel{
+text-align:center;
+margin-top:30px;
+display:none;
 }
 
 .run-btn{
-
-margin-top:20px;
-
-width:100%;
-
-padding:14px;
-
-border:none;
-
-background:#00ffd5;
-
-color:black;
-
-border-radius:6px;
-
+padding:14px 50px;
+border:1px solid #00ff00;
+background:transparent;
+color:#00ff00;
 cursor:pointer;
-
-font-size:16px;
-
+transition:0.3s;
+box-shadow:0 0 20px #00ff00;
 }
 
 .run-btn:hover{
-
-background:#00e6c3;
-
+background:#00ff00;
+color:#000;
 }
 
-.popup{
 
-position:fixed;
+/* =========================
+CYBER BUILDER PANEL STYLE
+========================= */
 
-top:0;
-left:0;
+.builder-panel{
 
-width:100%;
-height:100%;
+background: rgba(0,0,0,0.65);
+backdrop-filter: blur(12px);
 
-background:rgba(0,0,0,0.6);
+border:1px solid rgba(0,255,204,0.4);
 
-display:none;
+box-shadow:
+0 0 10px rgba(0,255,204,0.2),
+0 0 30px rgba(0,255,204,0.1);
 
-justify-content:center;
-align-items:center;
-
-}
-
-.popup-box{
-
-background:#121922;
+border-radius:12px;
 
 padding:20px;
+margin-top:20px;
 
-border-radius:8px;
-
-border:1px solid #00ffd5;
-
-width:260px;
+animation: panelFade 0.3s ease;
 
 }
 
-.popup-title{
+@keyframes panelFade{
 
-margin-bottom:10px;
+from{
+opacity:0;
+transform:translateY(10px);
+}
 
-text-align:center;
+to{
+opacity:1;
+transform:translateY(0px);
+}
 
 }
 
-.popup-box button{
+
+/* =========================
+INPUT STYLE
+========================= */
+
+.builder-panel input{
 
 width:100%;
 
-margin-top:8px;
+background: rgba(0,0,0,0.6);
+
+border:1px solid rgba(0,255,204,0.4);
+
+color:#00ffcc;
 
 padding:10px;
 
-border:1px solid #00ffd5;
+margin-top:10px;
 
-background:#0f141a;
+border-radius:6px;
 
-color:#00ffd5;
+font-family:'Share Tech Mono', monospace;
+
+transition:0.25s;
+
+}
+
+.builder-panel input:focus{
+
+outline:none;
+
+border-color:#00ffcc;
+
+box-shadow:
+0 0 8px #00ffcc;
+
+}
+
+
+/* =========================
+NOTIFICATION ENTRY CARD
+========================= */
+
+.notify-entry{
+
+background: rgba(0,255,204,0.03);
+
+border:1px solid rgba(0,255,204,0.25);
+
+border-radius:10px;
+
+padding:15px;
+
+margin-top:15px;
+
+box-shadow:
+0 0 10px rgba(0,255,204,0.1);
+
+transition:0.25s;
+
+}
+
+.notify-entry:hover{
+
+box-shadow:
+0 0 15px rgba(0,255,204,0.25);
+
+}
+
+
+/* =========================
+BUTTON STYLE
+========================= */
+
+.builder-panel button{
+
+background: linear-gradient(45deg,#00ffcc,#00ffaa);
+
+border:none;
+
+color:black;
+
+padding:10px 18px;
+
+margin-top:12px;
+
+border-radius:6px;
+
+font-weight:bold;
 
 cursor:pointer;
 
-border-radius:5px;
+transition:0.25s;
 
 }
 
-.popup-box button:hover{
+.builder-panel button:hover{
 
-background:#00ffd5;
+box-shadow:
+0 0 12px #00ffcc;
+
+transform:translateY(-1px);
+
+}
+
+
+/* =========================
+CYBER TOGGLE SWITCH
+========================= */
+
+.switch{
+
+position:relative;
+display:inline-block;
+
+width:46px;
+height:24px;
+
+margin-top:10px;
+
+}
+
+.switch input{
+display:none;
+}
+
+.slider{
+
+position:absolute;
+cursor:pointer;
+
+top:0;
+left:0;
+right:0;
+bottom:0;
+
+background:#222;
+
+border:1px solid #00ffcc;
+
+transition:.3s;
+
+border-radius:24px;
+
+}
+
+.slider:before{
+
+position:absolute;
+content:"";
+
+height:18px;
+width:18px;
+
+left:3px;
+bottom:2px;
+
+background:#00ffcc;
+
+transition:.3s;
+
+border-radius:50%;
+
+}
+
+input:checked + .slider{
+
+background:#00ffcc;
+
+}
+
+input:checked + .slider:before{
+
+transform:translateX(22px);
+
+background:black;
+
+}
+
+
+/* =========================
+ADD NEW BUTTON STYLE
+========================= */
+
+.add-btn{
+
+background: transparent;
+
+border:1px dashed #00ffcc;
+
+color:#00ffcc;
+
+padding:10px;
+
+width:100%;
+
+margin-top:15px;
+
+border-radius:8px;
+
+transition:0.25s;
+
+}
+
+.add-btn:hover{
+
+background:#00ffcc;
+
 color:black;
 
-}
+box-shadow:0 0 10px #00ffcc;
+
+}                                 ab iska full updated more stylish code likho
