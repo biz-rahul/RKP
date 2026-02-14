@@ -41,6 +41,29 @@ z-index:1;
 pointer-events:none;
 }
 
+.builder-panel{
+background:black;
+border:1px solid #00ffcc;
+padding:15px;
+margin-top:15px;
+}
+
+.builder-panel input{
+display:block;
+width:100%;
+margin:6px 0;
+background:black;
+color:#00ffcc;
+border:1px solid #00ffcc;
+padding:6px;
+}
+
+.notify-entry{
+border:1px solid #00ffcc;
+padding:10px;
+margin-top:10px;
+}
+
 .terminal{
 position:relative;
 z-index:5;
