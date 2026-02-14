@@ -1,183 +1,219 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Backup Command Generator</title>
+<title>Backup Command Generator Pro</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
 
+:root{
+    --bg1:#0f2027;
+    --bg2:#203a43;
+    --bg3:#2c5364;
+    --accent:#00ffd5;
+    --accent2:#ff00c8;
+    --glass:rgba(255,255,255,0.06);
+}
+
+*{
+    box-sizing:border-box;
+}
+
 body{
-    font-family: Arial;
-    background:#f4f6fa;
-    padding:20px;
+    font-family:"Poppins",sans-serif;
+    margin:0;
+    padding:30px;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    color:white;
 }
 
-.group{
-    background:white;
-    padding:15px;
-    margin-bottom:15px;
-    border:1px solid #ddd;
+/* HEADER */
+
+.header{
+    font-size:32px;
+    font-weight:700;
+    text-align:center;
+    margin-bottom:30px;
+    background:linear-gradient(90deg,#00ffd5,#ff00c8);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
 
-.group-title{
-    font-weight:bold;
+/* GRID */
+
+.container{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+    gap:20px;
+}
+
+/* GLASS CARD */
+
+.card{
+    background:var(--glass);
+    backdrop-filter:blur(14px);
+    border-radius:16px;
+    padding:18px;
+    border:1px solid rgba(255,255,255,0.15);
+    transition:0.3s;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+    box-shadow:0 0 25px rgba(0,255,213,0.3);
+}
+
+/* TITLE */
+
+.card-title{
     font-size:18px;
-    margin-bottom:10px;
+    font-weight:600;
+    margin-bottom:12px;
+    color:var(--accent);
 }
+
+/* CHECKBOX */
 
 .command{
-    margin:5px 0;
-}
-
-input{
-    padding:5px;
-    margin:3px;
-}
-
-button{
-    padding:10px;
-    margin-top:10px;
+    display:flex;
+    align-items:center;
+    margin:6px 0;
     cursor:pointer;
 }
 
-#result{
-    width:100%;
-    height:120px;
+.command input{
+    margin-right:10px;
+    transform:scale(1.2);
 }
 
-.notification-box{
-    border:1px dashed #aaa;
+/* INPUT */
+
+input{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    border:none;
+    margin-top:5px;
+    margin-bottom:10px;
+    background:rgba(255,255,255,0.1);
+    color:white;
+}
+
+input::placeholder{
+    color:#ccc;
+}
+
+/* BUTTON */
+
+button{
+    background:linear-gradient(90deg,#00ffd5,#ff00c8);
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    color:black;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.3s;
+}
+
+button:hover{
+    transform:scale(1.05);
+    box-shadow:0 0 15px #00ffd5;
+}
+
+/* RESULT CONSOLE */
+
+textarea{
+    width:100%;
+    height:160px;
+    background:black;
+    color:#00ff9c;
+    border-radius:10px;
     padding:10px;
-    margin:10px 0;
+    border:none;
+    font-family:monospace;
+}
+
+/* NOTIFICATION BOX */
+
+.notification-box{
+    border:1px solid rgba(255,255,255,0.2);
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:10px;
+    background:rgba(0,0,0,0.3);
+}
+
+/* FOOTER BUTTON AREA */
+
+.full{
+    grid-column:1/-1;
 }
 
 </style>
-
 </head>
 
 <body>
 
-<h2>Backup Command Generator</h2>
+<div class="header">
+Backup Command Generator Pro
+</div>
 
-<!-- DEVICE COMMANDS -->
+<div class="container">
 
-<div class="group">
+<!-- DEVICE -->
 
-<div class="group-title">Device Control</div>
-
-<label class="command">
-<input type="checkbox" data-cmd="deviceinfo">
-deviceinfo
-</label><br>
+<div class="card">
+<div class="card-title">Device Control</div>
 
 <label class="command">
-<input type="checkbox" data-cmd="connection">
-connection
-</label><br>
+<input type="checkbox" data-cmd="deviceinfo">deviceinfo
+</label>
 
-<div>
+<label class="command">
+<input type="checkbox" data-cmd="connection">connection
+</label>
 
-Redirect URL:<br>
+Redirect URL
 <input id="redirectUrl" placeholder="https://example.com">
-<button onclick="addRedirect()">Add</button>
+<button onclick="addRedirect()">Add Redirect</button>
 
-</div>
-
-<div>
-
-Change Wallpaper:<br>
+Wallpaper URL
 <input id="wallpaperUrl" placeholder="https://example.com/image.jpg">
-<button onclick="addWallpaper()">Add</button>
+<button onclick="addWallpaper()">Add Wallpaper</button>
 
 </div>
 
-</div>
+<!-- APPS -->
 
-<!-- APPS GROUP -->
+<div class="card">
+<div class="card-title">Apps</div>
 
-<div class="group">
-
-<div class="group-title">Apps Commands</div>
-
-<label><input type="checkbox" data-cmd="apps full">apps full</label><br>
-<label><input type="checkbox" data-cmd="apps 1d">apps 1d</label><br>
-<label><input type="checkbox" data-cmd="apps 7d">apps 7d</label><br>
-<label><input type="checkbox" data-cmd="apps 30d">apps 30d</label><br>
-<label><input type="checkbox" data-cmd="apps installed 1d">apps installed 1d</label><br>
-<label><input type="checkbox" data-cmd="apps installed 7d">apps installed 7d</label><br>
-<label><input type="checkbox" data-cmd="apps installed 30d">apps installed 30d</label>
+<label class="command"><input type="checkbox" data-cmd="apps full">apps full</label>
+<label class="command"><input type="checkbox" data-cmd="apps 1d">apps 1d</label>
+<label class="command"><input type="checkbox" data-cmd="apps 7d">apps 7d</label>
+<label class="command"><input type="checkbox" data-cmd="apps 30d">apps 30d</label>
 
 </div>
 
-<!-- SMS GROUP -->
+<!-- SMS -->
 
-<div class="group">
+<div class="card">
+<div class="card-title">SMS</div>
 
-<div class="group-title">SMS Commands</div>
-
-<label><input type="checkbox" data-cmd="sms full">sms full</label><br>
-<label><input type="checkbox" data-cmd="sms 1d">sms 1d</label><br>
-<label><input type="checkbox" data-cmd="sms 7d">sms 7d</label><br>
-<label><input type="checkbox" data-cmd="sms 30d">sms 30d</label>
-
-</div>
-
-<!-- CALL GROUP -->
-
-<div class="group">
-
-<div class="group-title">Call Commands</div>
-
-<label><input type="checkbox" data-cmd="calls full">calls full</label><br>
-<label><input type="checkbox" data-cmd="calls 1d">calls 1d</label><br>
-<label><input type="checkbox" data-cmd="calls 7d">calls 7d</label><br>
-<label><input type="checkbox" data-cmd="calls 30d">calls 30d</label>
+<label class="command"><input type="checkbox" data-cmd="sms full">sms full</label>
+<label class="command"><input type="checkbox" data-cmd="sms 1d">sms 1d</label>
+<label class="command"><input type="checkbox" data-cmd="sms 7d">sms 7d</label>
+<label class="command"><input type="checkbox" data-cmd="sms 30d">sms 30d</label>
 
 </div>
 
-<!-- CONTACT -->
+<!-- NOTIFICATION -->
 
-<div class="group">
-
-<div class="group-title">Contacts</div>
-
-<label><input type="checkbox" data-cmd="contacts full">contacts full</label>
-
-</div>
-
-<!-- NOTIFICATION BACKUP -->
-
-<div class="group">
-
-<div class="group-title">Notification Backup</div>
-
-<label><input type="checkbox" data-cmd="notification full">notification full</label><br>
-<label><input type="checkbox" data-cmd="notification 1d">notification 1d</label><br>
-<label><input type="checkbox" data-cmd="notification 7d">notification 7d</label><br>
-<label><input type="checkbox" data-cmd="notification 30d">notification 30d</label><br>
-<label><input type="checkbox" data-cmd="no notification">no notification</label>
-
-</div>
-
-<!-- CLIPBOARD -->
-
-<div class="group">
-
-<div class="group-title">Clipboard</div>
-
-<label><input type="checkbox" data-cmd="clipboard full">clipboard full</label><br>
-<label><input type="checkbox" data-cmd="clipboard 1d">clipboard 1d</label><br>
-<label><input type="checkbox" data-cmd="clipboard 7d">clipboard 7d</label><br>
-<label><input type="checkbox" data-cmd="clipboard 30d">clipboard 30d</label><br>
-<label><input type="checkbox" data-cmd="no clipboard">no clipboard</label>
-
-</div>
-
-<!-- CUSTOM NOTIFICATION -->
-
-<div class="group">
-
-<div class="group-title">Custom Notification</div>
+<div class="card">
+<div class="card-title">Custom Notification</div>
 
 <div id="notifications"></div>
 
@@ -187,30 +223,34 @@ Change Wallpaper:<br>
 
 <!-- RESULT -->
 
-<div class="group">
+<div class="card full">
 
-<div class="group-title">Generated Commands</div>
+<div class="card-title">Generated Commands</div>
 
-<textarea id="result"></textarea><br>
+<textarea id="result"></textarea>
+
+<br><br>
 
 <button onclick="generate()">Generate</button>
-<button onclick="copy()">Copy Commands</button>
+<button onclick="copy()">Copy</button>
 
 </div>
 
+</div>
 
 <script>
 
 let redirectCommands=[]
 let wallpaperCommands=[]
-let notificationCommands=[]
 
 function addRedirect(){
 
 let url=document.getElementById("redirectUrl").value
 
-if(url)
+if(url){
 redirectCommands.push("redirect url "+url)
+alert("Redirect Added")
+}
 
 }
 
@@ -218,8 +258,10 @@ function addWallpaper(){
 
 let url=document.getElementById("wallpaperUrl").value
 
-if(url)
+if(url){
 wallpaperCommands.push("change wallpaper "+url)
+alert("Wallpaper Added")
+}
 
 }
 
@@ -230,11 +272,22 @@ let box=document.createElement("div")
 box.className="notification-box"
 
 box.innerHTML=`
-Title:<input class="ntitle"><br>
-Message:<input class="nmessage"><br>
-Repeat:<input class="nrepeat" value="1"><br>
-Button:<input class="nbutton"><br>
-URL:<input class="nurl"><br>
+
+Title
+<input class="ntitle">
+
+Message
+<input class="nmessage">
+
+Repeat
+<input class="nrepeat" value="1">
+
+Button
+<input class="nbutton">
+
+URL
+<input class="nurl">
+
 `
 
 document.getElementById("notifications").appendChild(box)
@@ -276,15 +329,13 @@ notif.push(cmd)
 
 })
 
-let notifText=notif.join(",,,,,")
-
 let final=cmds.join(", ")
 
-if(notifText){
+if(notif.length){
 
 if(final) final+=", "
 
-final+=notifText
+final+=notif.join(",,,,,")
 
 }
 
@@ -300,7 +351,7 @@ text.select()
 
 document.execCommand("copy")
 
-alert("Copied")
+alert("Copied Successfully")
 
 }
 
