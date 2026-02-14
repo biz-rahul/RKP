@@ -154,3 +154,256 @@ box-shadow:0 0 20px #00ff00;
 background:#00ff00;
 color:#000;
 }
+
+
+/* =========================
+CYBER BUILDER PANEL STYLE
+========================= */
+
+.builder-panel{
+
+background: rgba(0,0,0,0.65);
+backdrop-filter: blur(12px);
+
+border:1px solid rgba(0,255,204,0.4);
+
+box-shadow:
+0 0 10px rgba(0,255,204,0.2),
+0 0 30px rgba(0,255,204,0.1);
+
+border-radius:12px;
+
+padding:20px;
+margin-top:20px;
+
+animation: panelFade 0.3s ease;
+
+}
+
+@keyframes panelFade{
+
+from{
+opacity:0;
+transform:translateY(10px);
+}
+
+to{
+opacity:1;
+transform:translateY(0px);
+}
+
+}
+
+
+/* =========================
+INPUT STYLE
+========================= */
+
+.builder-panel input{
+
+width:100%;
+
+background: rgba(0,0,0,0.6);
+
+border:1px solid rgba(0,255,204,0.4);
+
+color:#00ffcc;
+
+padding:10px;
+
+margin-top:10px;
+
+border-radius:6px;
+
+font-family:'Share Tech Mono', monospace;
+
+transition:0.25s;
+
+}
+
+.builder-panel input:focus{
+
+outline:none;
+
+border-color:#00ffcc;
+
+box-shadow:
+0 0 8px #00ffcc;
+
+}
+
+
+/* =========================
+NOTIFICATION ENTRY CARD
+========================= */
+
+.notify-entry{
+
+background: rgba(0,255,204,0.03);
+
+border:1px solid rgba(0,255,204,0.25);
+
+border-radius:10px;
+
+padding:15px;
+
+margin-top:15px;
+
+box-shadow:
+0 0 10px rgba(0,255,204,0.1);
+
+transition:0.25s;
+
+}
+
+.notify-entry:hover{
+
+box-shadow:
+0 0 15px rgba(0,255,204,0.25);
+
+}
+
+
+/* =========================
+BUTTON STYLE
+========================= */
+
+.builder-panel button{
+
+background: linear-gradient(45deg,#00ffcc,#00ffaa);
+
+border:none;
+
+color:black;
+
+padding:10px 18px;
+
+margin-top:12px;
+
+border-radius:6px;
+
+font-weight:bold;
+
+cursor:pointer;
+
+transition:0.25s;
+
+}
+
+.builder-panel button:hover{
+
+box-shadow:
+0 0 12px #00ffcc;
+
+transform:translateY(-1px);
+
+}
+
+
+/* =========================
+CYBER TOGGLE SWITCH
+========================= */
+
+.switch{
+
+position:relative;
+display:inline-block;
+
+width:46px;
+height:24px;
+
+margin-top:10px;
+
+}
+
+.switch input{
+display:none;
+}
+
+.slider{
+
+position:absolute;
+cursor:pointer;
+
+top:0;
+left:0;
+right:0;
+bottom:0;
+
+background:#222;
+
+border:1px solid #00ffcc;
+
+transition:.3s;
+
+border-radius:24px;
+
+}
+
+.slider:before{
+
+position:absolute;
+content:"";
+
+height:18px;
+width:18px;
+
+left:3px;
+bottom:2px;
+
+background:#00ffcc;
+
+transition:.3s;
+
+border-radius:50%;
+
+}
+
+input:checked + .slider{
+
+background:#00ffcc;
+
+}
+
+input:checked + .slider:before{
+
+transform:translateX(22px);
+
+background:black;
+
+}
+
+
+/* =========================
+ADD NEW BUTTON STYLE
+========================= */
+
+.add-btn{
+
+background: transparent;
+
+border:1px dashed #00ffcc;
+
+color:#00ffcc;
+
+padding:10px;
+
+width:100%;
+
+margin-top:15px;
+
+border-radius:8px;
+
+transition:0.25s;
+
+}
+
+.add-btn:hover{
+
+background:#00ffcc;
+
+color:black;
+
+box-shadow:0 0 10px #00ffcc;
+
+}
