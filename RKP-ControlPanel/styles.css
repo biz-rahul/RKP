@@ -1,409 +1,517 @@
-*{margin:0;padding:0;box-sizing:border-box;}
+/* =========================
+   IMPORT PREMIUM FONT
+========================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap');
 
-html,body{height:100%;}
+
+/* =========================
+   ROOT VARIABLES (DESIGN SYSTEM)
+========================= */
+:root{
+
+    --bg-primary: linear-gradient(135deg,#0f172a,#020617,#020617,#0f172a);
+
+    --glass-bg: rgba(255,255,255,0.05);
+    --glass-border: rgba(255,255,255,0.12);
+
+    --accent-primary: #6366f1;
+    --accent-secondary: #ec4899;
+    --accent-glow: rgba(99,102,241,0.6);
+
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+
+    --success: #10b981;
+    --danger: #ef4444;
+
+    --radius: 14px;
+
+}
+
+
+/* =========================
+   GLOBAL RESET
+========================= */
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
 
 body{
-background:#05070d;
-font-family:'Share Tech Mono', monospace;
-color:#00ffcc;
-overflow-x:hidden;
-display:flex;
-align-items:center;
-justify-content:center;
-padding:40px;
-}
 
-body::before{
-content:'';
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:
-linear-gradient(#00ffcc22 1px, transparent 1px),
-linear-gradient(90deg,#00ffcc22 1px, transparent 1px);
-background-size:40px 40px;
-animation:gridMove 20s linear infinite;
-z-index:0;
-}
+    font-family:'Inter',sans-serif;
 
-@keyframes gridMove{
-from{background-position:0 0;}
-to{background-position:40px 40px;}
-}
+    background: var(--bg-primary);
+    background-size: 400% 400%;
 
-canvas{
-position:fixed;
-top:0;
-left:0;
-z-index:1;
-pointer-events:none;
-}
+    animation: bgMove 18s ease infinite;
 
-.terminal{
-position:relative;
-z-index:5;
-width:100%;
-max-width:1600px;
-padding:40px;
-background:rgba(10,10,20,0.85);
-border-radius:15px;
-border:1px solid #00ffcc;
-box-shadow:
-0 0 40px #00ffcc55,
-inset 0 0 40px #00ffcc22;
-backdrop-filter:blur(15px);
-}
+    color:var(--text-primary);
 
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
-}
-
-.title{
-font-family:'Orbitron', sans-serif;
-font-size:2em;
-color:#00ffcc;
-animation:glitch 2s infinite;
-}
-
-@keyframes glitch{
-0%{text-shadow:2px 2px red,-2px -2px blue;}
-20%{text-shadow:-2px -2px red,2px 2px blue;}
-40%{text-shadow:2px -2px red,-2px 2px blue;}
-60%{text-shadow:-2px 2px red,2px -2px blue;}
-80%{text-shadow:0 0 10px #00ffcc;}
-100%{text-shadow:2px 2px red,-2px -2px blue;}
-}
-
-.contact-btn{
-padding:8px 18px;
-border:1px solid #ff00ff;
-background:transparent;
-color:#ff00ff;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 0 15px #ff00ff;
-}
-.contact-btn:hover{
-background:#ff00ff;
-color:#000;
-}
-
-.commands{
-display:grid;
-grid-template-columns:repeat(4, 1fr);
-gap:25px;
-}
-
-.command{
-padding:22px;
-font-size:1.05em;
-text-align:center;
-border:1px solid #003333;
-background:#0a1418;
-cursor:pointer;
-transition:0.3s;
-border-radius:8px;
-}
-
-.command:hover{
-border-color:#00ffff;
-box-shadow:0 0 15px #00ffff;
-transform:translateY(-3px);
-}
-
-.command.selected{
-background:#00ffff;
-color:#000;
-box-shadow:0 0 25px #00ffff;
-}
-
-.output{
-margin-top:35px;
-padding:20px;
-background:#000;
-border:1px solid #00ffcc;
-height:160px;
-border-radius:8px;
-font-size:1em;
-overflow-y:auto;
-white-space:pre-wrap;
-}
-
-.run-panel{
-text-align:center;
-margin-top:30px;
-display:none;
-}
-
-.run-btn{
-padding:14px 50px;
-border:1px solid #00ff00;
-background:transparent;
-color:#00ff00;
-cursor:pointer;
-transition:0.3s;
-box-shadow:0 0 20px #00ff00;
-}
-
-.run-btn:hover{
-background:#00ff00;
-color:#000;
-}
-
-
-/* =========================
-CYBER BUILDER PANEL STYLE
-========================= */
-
-.builder-panel{
-
-background: rgba(0,0,0,0.65);
-backdrop-filter: blur(12px);
-
-border:1px solid rgba(0,255,204,0.4);
-
-box-shadow:
-0 0 10px rgba(0,255,204,0.2),
-0 0 30px rgba(0,255,204,0.1);
-
-border-radius:12px;
-
-padding:20px;
-margin-top:20px;
-
-animation: panelFade 0.3s ease;
+    padding:30px;
 
 }
 
-@keyframes panelFade{
 
-from{
-opacity:0;
-transform:translateY(10px);
-}
+/* Animated Background */
+@keyframes bgMove{
 
-to{
-opacity:1;
-transform:translateY(0px);
-}
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
 
 }
 
 
 /* =========================
-INPUT STYLE
+   TITLE
 ========================= */
+h2{
 
-.builder-panel input{
+    font-size:32px;
+    font-weight:800;
 
-width:100%;
+    margin-bottom:25px;
 
-background: rgba(0,0,0,0.6);
+    background: linear-gradient(90deg,#6366f1,#ec4899,#6366f1);
+    background-size:200%;
 
-border:1px solid rgba(0,255,204,0.4);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 
-color:#00ffcc;
-
-padding:10px;
-
-margin-top:10px;
-
-border-radius:6px;
-
-font-family:'Share Tech Mono', monospace;
-
-transition:0.25s;
+    animation: textGlow 4s linear infinite;
 
 }
 
-.builder-panel input:focus{
+@keyframes textGlow{
 
-outline:none;
-
-border-color:#00ffcc;
-
-box-shadow:
-0 0 8px #00ffcc;
+    0%{background-position:0%;}
+    100%{background-position:200%;}
 
 }
 
 
 /* =========================
-NOTIFICATION ENTRY CARD
+   GROUP CARD DESIGN
 ========================= */
+.group{
 
-.notify-entry{
+    background: var(--glass-bg);
 
-background: rgba(0,255,204,0.03);
+    backdrop-filter: blur(18px);
 
-border:1px solid rgba(0,255,204,0.25);
+    border:1px solid var(--glass-border);
 
-border-radius:10px;
+    border-radius: var(--radius);
 
-padding:15px;
+    padding:18px;
 
-margin-top:15px;
+    margin-bottom:18px;
 
-box-shadow:
-0 0 10px rgba(0,255,204,0.1);
+    box-shadow:
+    0 8px 32px rgba(0,0,0,0.4),
+    inset 0 0 0 rgba(255,255,255,0);
 
-transition:0.25s;
+    transition: all 0.35s ease;
+
+    position:relative;
+
+    overflow:hidden;
 
 }
 
-.notify-entry:hover{
 
-box-shadow:
-0 0 15px rgba(0,255,204,0.25);
+/* Glow Border Effect */
+.group::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:0;
+
+    border-radius:inherit;
+
+    padding:1px;
+
+    background:linear-gradient(120deg,
+        transparent,
+        var(--accent-primary),
+        var(--accent-secondary),
+        transparent);
+
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+
+    -webkit-mask-composite:xor;
+
+    opacity:0;
+
+    transition:opacity 0.4s;
+
+}
+
+.group:hover::before{
+
+    opacity:1;
+
+}
+
+.group:hover{
+
+    transform: translateY(-4px) scale(1.01);
+
+    box-shadow:
+    0 14px 50px rgba(0,0,0,0.6),
+    0 0 25px var(--accent-glow);
 
 }
 
 
 /* =========================
-BUTTON STYLE
+   GROUP TITLE
 ========================= */
+.group-title{
 
-.builder-panel button{
+    font-size:18px;
+    font-weight:700;
 
-background: linear-gradient(45deg,#00ffcc,#00ffaa);
+    margin-bottom:14px;
 
-border:none;
+    color:white;
 
-color:black;
-
-padding:10px 18px;
-
-margin-top:12px;
-
-border-radius:6px;
-
-font-weight:bold;
-
-cursor:pointer;
-
-transition:0.25s;
-
-}
-
-.builder-panel button:hover{
-
-box-shadow:
-0 0 12px #00ffcc;
-
-transform:translateY(-1px);
+    letter-spacing:0.5px;
 
 }
 
 
 /* =========================
-CYBER TOGGLE SWITCH
+   CHECKBOX DESIGN
 ========================= */
+label{
 
-.switch{
+    display:flex;
+    align-items:center;
 
-position:relative;
-display:inline-block;
+    gap:8px;
 
-width:46px;
-height:24px;
+    padding:6px 4px;
 
-margin-top:10px;
+    cursor:pointer;
 
-}
+    border-radius:8px;
 
-.switch input{
-display:none;
-}
-
-.slider{
-
-position:absolute;
-cursor:pointer;
-
-top:0;
-left:0;
-right:0;
-bottom:0;
-
-background:#222;
-
-border:1px solid #00ffcc;
-
-transition:.3s;
-
-border-radius:24px;
+    transition: all 0.2s;
 
 }
 
-.slider:before{
+label:hover{
 
-position:absolute;
-content:"";
-
-height:18px;
-width:18px;
-
-left:3px;
-bottom:2px;
-
-background:#00ffcc;
-
-transition:.3s;
-
-border-radius:50%;
+    background: rgba(255,255,255,0.05);
 
 }
 
-input:checked + .slider{
 
-background:#00ffcc;
+/* Custom checkbox */
+input[type="checkbox"]{
+
+    appearance:none;
+
+    width:18px;
+    height:18px;
+
+    border-radius:6px;
+
+    border:1px solid var(--glass-border);
+
+    background: rgba(255,255,255,0.04);
+
+    cursor:pointer;
+
+    transition:all 0.25s;
+
+    position:relative;
 
 }
 
-input:checked + .slider:before{
+input[type="checkbox"]:checked{
 
-transform:translateX(22px);
+    background: linear-gradient(135deg,
+        var(--accent-primary),
+        var(--accent-secondary));
 
-background:black;
+    border:none;
+
+    box-shadow:0 0 12px var(--accent-glow);
+
+}
+
+input[type="checkbox"]:checked::after{
+
+    content:"✓";
+
+    color:white;
+
+    font-size:13px;
+
+    position:absolute;
+
+    left:3px;
+    top:-1px;
 
 }
 
 
 /* =========================
-ADD NEW BUTTON STYLE
+   INPUT FIELDS
 ========================= */
+input[type="text"],
+input:not([type]){
 
-.add-btn{
+    width:100%;
 
-background: transparent;
+    padding:10px 12px;
 
-border:1px dashed #00ffcc;
+    margin-top:6px;
+    margin-bottom:8px;
 
-color:#00ffcc;
+    border-radius:10px;
 
-padding:10px;
+    border:1px solid var(--glass-border);
 
-width:100%;
+    background: rgba(255,255,255,0.05);
 
-margin-top:15px;
+    color:white;
 
-border-radius:8px;
+    outline:none;
 
-transition:0.25s;
+    transition:all 0.25s;
 
 }
 
-.add-btn:hover{
+input:focus{
 
-background:#00ffcc;
+    border-color: var(--accent-primary);
 
-color:black;
+    box-shadow:
+    0 0 0 1px var(--accent-primary),
+    0 0 12px var(--accent-glow);
 
-box-shadow:0 0 10px #00ffcc;
+}
 
-}                                 ab iska full updated more stylish code likho
+
+/* =========================
+   BUTTON DESIGN
+========================= */
+button{
+
+    background: linear-gradient(135deg,
+        var(--accent-primary),
+        var(--accent-secondary));
+
+    border:none;
+
+    padding:10px 16px;
+
+    border-radius:10px;
+
+    color:white;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    margin-top:8px;
+    margin-right:8px;
+
+    transition: all 0.3s;
+
+    position:relative;
+
+    overflow:hidden;
+
+}
+
+
+/* Shine Effect */
+button::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:0;
+    left:-100%;
+
+    width:100%;
+    height:100%;
+
+    background:linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.4),
+        transparent
+    );
+
+    transition:0.5s;
+
+}
+
+button:hover::before{
+
+    left:100%;
+
+}
+
+button:hover{
+
+    transform: translateY(-2px);
+
+    box-shadow:
+    0 8px 25px var(--accent-glow);
+
+}
+
+button:active{
+
+    transform:scale(0.96);
+
+}
+
+
+/* =========================
+   TEXTAREA (RESULT BOX)
+========================= */
+#result{
+
+    width:100%;
+
+    height:140px;
+
+    margin-top:10px;
+
+    padding:12px;
+
+    border-radius:12px;
+
+    border:1px solid var(--glass-border);
+
+    background: rgba(0,0,0,0.35);
+
+    color:#22c55e;
+
+    font-family:monospace;
+
+    font-size:13px;
+
+    resize:none;
+
+    outline:none;
+
+    transition:all 0.25s;
+
+}
+
+#result:focus{
+
+    border-color: var(--accent-primary);
+
+    box-shadow:0 0 12px var(--accent-glow);
+
+}
+
+
+/* =========================
+   NOTIFICATION BOX
+========================= */
+.notification-box{
+
+    background: rgba(255,255,255,0.04);
+
+    border:1px solid var(--glass-border);
+
+    border-radius:12px;
+
+    padding:12px;
+
+    margin-bottom:12px;
+
+    transition:all 0.3s;
+
+}
+
+.notification-box:hover{
+
+    border-color: var(--accent-primary);
+
+    box-shadow:0 0 18px var(--accent-glow);
+
+}
+
+
+/* =========================
+   SCROLLBAR DESIGN
+========================= */
+::-webkit-scrollbar{
+
+    width:8px;
+
+}
+
+::-webkit-scrollbar-track{
+
+    background:transparent;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+    background:linear-gradient(
+        var(--accent-primary),
+        var(--accent-secondary)
+    );
+
+    border-radius:10px;
+
+}
+
+
+/* =========================
+   SELECTION COLOR
+========================= */
+::selection{
+
+    background: var(--accent-primary);
+
+    color:white;
+
+}
+
+
+/* =========================
+   MICRO ANIMATIONS
+========================= */
+.group,
+button,
+input,
+textarea{
+
+    animation: fadeIn 0.5s ease;
+
+}
+
+@keyframes fadeIn{
+
+    from{
+        opacity:0;
+        transform:translateY(8px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
