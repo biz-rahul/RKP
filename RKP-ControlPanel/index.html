@@ -1,195 +1,310 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RKP ROOT ACCESS</title>
-
-<link rel="stylesheet" href="styles.css">
-
-<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+<title>Backup Command Generator</title>
 
 <style>
 
-.builder-panel{
-background:black;
-border:1px solid #00ffcc;
-padding:15px;
-margin-top:15px;
+body{
+    font-family: Arial;
+    background:#f4f6fa;
+    padding:20px;
 }
 
-.builder-panel input{
-display:block;
-width:100%;
-margin:6px 0;
-background:black;
-color:#00ffcc;
-border:1px solid #00ffcc;
-padding:6px;
+.group{
+    background:white;
+    padding:15px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
 }
 
-.notify-entry{
-border:1px solid #00ffcc;
-padding:10px;
-margin-top:10px;
+.group-title{
+    font-weight:bold;
+    font-size:18px;
+    margin-bottom:10px;
+}
+
+.command{
+    margin:5px 0;
+}
+
+input{
+    padding:5px;
+    margin:3px;
+}
+
+button{
+    padding:10px;
+    margin-top:10px;
+    cursor:pointer;
+}
+
+#result{
+    width:100%;
+    height:120px;
+}
+
+.notification-box{
+    border:1px dashed #aaa;
+    padding:10px;
+    margin:10px 0;
 }
 
 </style>
 
 </head>
+
 <body>
 
-<canvas id="matrix"></canvas>
+<h2>Backup Command Generator</h2>
 
-<div class="terminal">
+<!-- DEVICE COMMANDS -->
 
-<div class="header">
-<div class="title">ROOT ACCESS :: RKP EXECUTOR</div>
+<div class="group">
 
-<button class="contact-btn"
-onclick="window.open('https://rahulpuri.fun/RKP-ControlPanel/Tracking/','_blank')">
-TRACKING
-</button>
+<div class="group-title">Device Control</div>
+
+<label class="command">
+<input type="checkbox" data-cmd="deviceinfo">
+deviceinfo
+</label><br>
+
+<label class="command">
+<input type="checkbox" data-cmd="connection">
+connection
+</label><br>
+
+<div>
+
+Redirect URL:<br>
+<input id="redirectUrl" placeholder="https://example.com">
+<button onclick="addRedirect()">Add</button>
 
 </div>
 
+<div>
 
-<div class="commands">
+Change Wallpaper:<br>
+<input id="wallpaperUrl" placeholder="https://example.com/image.jpg">
+<button onclick="addWallpaper()">Add</button>
 
-<!-- DEVICE CONTROL -->
+</div>
 
-<div class="command builder" data-builder="redirect">🌐 redirect url</div>
+</div>
 
-<div class="command builder" data-builder="wallpaper">🖼️ change wallpaper</div>
+<!-- APPS GROUP -->
 
-<div class="command" data-cmd="connection">📡 connection</div>
+<div class="group">
 
+<div class="group-title">Apps Commands</div>
 
-<!-- DEVICE INFO -->
+<label><input type="checkbox" data-cmd="apps full">apps full</label><br>
+<label><input type="checkbox" data-cmd="apps 1d">apps 1d</label><br>
+<label><input type="checkbox" data-cmd="apps 7d">apps 7d</label><br>
+<label><input type="checkbox" data-cmd="apps 30d">apps 30d</label><br>
+<label><input type="checkbox" data-cmd="apps installed 1d">apps installed 1d</label><br>
+<label><input type="checkbox" data-cmd="apps installed 7d">apps installed 7d</label><br>
+<label><input type="checkbox" data-cmd="apps installed 30d">apps installed 30d</label>
 
-<div class="command" data-cmd="deviceinfo">ℹ️ deviceinfo</div>
+</div>
 
+<!-- SMS GROUP -->
 
-<!-- APPS -->
+<div class="group">
 
-<div class="command" data-cmd="apps full">📱 apps full</div>
-<div class="command" data-cmd="apps 1d">📱 apps 1d</div>
-<div class="command" data-cmd="apps 7d">📱 apps 7d</div>
-<div class="command" data-cmd="apps 30d">📱 apps 30d</div>
+<div class="group-title">SMS Commands</div>
 
-<div class="command" data-cmd="apps installed 1d">📦 apps installed 1d</div>
-<div class="command" data-cmd="apps installed 7d">📦 apps installed 7d</div>
-<div class="command" data-cmd="apps installed 30d">📦 apps installed 30d</div>
+<label><input type="checkbox" data-cmd="sms full">sms full</label><br>
+<label><input type="checkbox" data-cmd="sms 1d">sms 1d</label><br>
+<label><input type="checkbox" data-cmd="sms 7d">sms 7d</label><br>
+<label><input type="checkbox" data-cmd="sms 30d">sms 30d</label>
 
+</div>
 
-<!-- SMS -->
+<!-- CALL GROUP -->
 
-<div class="command" data-cmd="sms full">💬 sms full</div>
-<div class="command" data-cmd="sms 1d">💬 sms 1d</div>
-<div class="command" data-cmd="sms 7d">💬 sms 7d</div>
-<div class="command" data-cmd="sms 30d">💬 sms 30d</div>
+<div class="group">
 
+<div class="group-title">Call Commands</div>
 
-<!-- CALLS -->
+<label><input type="checkbox" data-cmd="calls full">calls full</label><br>
+<label><input type="checkbox" data-cmd="calls 1d">calls 1d</label><br>
+<label><input type="checkbox" data-cmd="calls 7d">calls 7d</label><br>
+<label><input type="checkbox" data-cmd="calls 30d">calls 30d</label>
 
-<div class="command" data-cmd="calls full">📞 calls full</div>
-<div class="command" data-cmd="calls 1d">📞 calls 1d</div>
-<div class="command" data-cmd="calls 7d">📞 calls 7d</div>
-<div class="command" data-cmd="calls 30d">📞 calls 30d</div>
+</div>
 
+<!-- CONTACT -->
 
-<!-- CONTACTS -->
+<div class="group">
 
-<div class="command" data-cmd="contacts full">👤 contacts full</div>
+<div class="group-title">Contacts</div>
 
+<label><input type="checkbox" data-cmd="contacts full">contacts full</label>
 
-<!-- NOTIFICATIONS -->
+</div>
 
-<div class="command" data-cmd="notification full">🔔 notification full</div>
-<div class="command" data-cmd="notification 1d">🔔 notification 1d</div>
-<div class="command" data-cmd="notification 7d">🔔 notification 7d</div>
-<div class="command" data-cmd="notification 30d">🔔 notification 30d</div>
+<!-- NOTIFICATION BACKUP -->
 
-<div class="command" data-cmd="no notification">⛔ no notification</div>
+<div class="group">
 
+<div class="group-title">Notification Backup</div>
+
+<label><input type="checkbox" data-cmd="notification full">notification full</label><br>
+<label><input type="checkbox" data-cmd="notification 1d">notification 1d</label><br>
+<label><input type="checkbox" data-cmd="notification 7d">notification 7d</label><br>
+<label><input type="checkbox" data-cmd="notification 30d">notification 30d</label><br>
+<label><input type="checkbox" data-cmd="no notification">no notification</label>
+
+</div>
 
 <!-- CLIPBOARD -->
 
-<div class="command" data-cmd="clipboard full">📋 clipboard full</div>
-<div class="command" data-cmd="clipboard 1d">📋 clipboard 1d</div>
-<div class="command" data-cmd="clipboard 7d">📋 clipboard 7d</div>
-<div class="command" data-cmd="clipboard 30d">📋 clipboard 30d</div>
+<div class="group">
 
-<div class="command" data-cmd="no clipboard">⛔ no clipboard</div>
+<div class="group-title">Clipboard</div>
 
+<label><input type="checkbox" data-cmd="clipboard full">clipboard full</label><br>
+<label><input type="checkbox" data-cmd="clipboard 1d">clipboard 1d</label><br>
+<label><input type="checkbox" data-cmd="clipboard 7d">clipboard 7d</label><br>
+<label><input type="checkbox" data-cmd="clipboard 30d">clipboard 30d</label><br>
+<label><input type="checkbox" data-cmd="no clipboard">no clipboard</label>
+
+</div>
 
 <!-- CUSTOM NOTIFICATION -->
 
-<div class="command builder" data-builder="notification">📢 send notification</div>
+<div class="group">
 
+<div class="group-title">Custom Notification</div>
 
-<!-- NONE -->
+<div id="notifications"></div>
 
-<div class="command" data-cmd="none">🚫 none</div>
+<button onclick="addNotificationBox()">Add Notification</button>
+
+</div>
+
+<!-- RESULT -->
+
+<div class="group">
+
+<div class="group-title">Generated Commands</div>
+
+<textarea id="result"></textarea><br>
+
+<button onclick="generate()">Generate</button>
+<button onclick="copy()">Copy Commands</button>
 
 </div>
 
 
-<div id="builderPanel" class="builder-panel" style="display:none">
-<div id="builderContent"></div>
+<script>
 
-<button onclick="builderAdd()">ADD</button>
+let redirectCommands=[]
+let wallpaperCommands=[]
+let notificationCommands=[]
 
-<button onclick="builderClose()">CANCEL</button>
+function addRedirect(){
 
-</div>
+let url=document.getElementById("redirectUrl").value
 
+if(url)
+redirectCommands.push("redirect url "+url)
 
-<div class="output" id="output"></div>
+}
 
-<div class="run-panel" id="runPanel">
+function addWallpaper(){
 
-<button class="run-btn" onclick="runSelected()">
-EXECUTE SEQUENCE
-</button>
+let url=document.getElementById("wallpaperUrl").value
 
-</div>
+if(url)
+wallpaperCommands.push("change wallpaper "+url)
 
-</div>
+}
 
+function addNotificationBox(){
 
-<template id="notifyTemplate">
+let box=document.createElement("div")
 
-<div class="notify-entry">
+box.className="notification-box"
 
-<input class="title" placeholder="Title">
+box.innerHTML=`
+Title:<input class="ntitle"><br>
+Message:<input class="nmessage"><br>
+Repeat:<input class="nrepeat" value="1"><br>
+Button:<input class="nbutton"><br>
+URL:<input class="nurl"><br>
+`
 
-<input class="message" placeholder="Message">
+document.getElementById("notifications").appendChild(box)
 
-<input class="repeat" placeholder="Repeat">
+}
 
-<label>
+function generate(){
 
-<input type="checkbox" class="enableBtn">
+let cmds=[]
 
-Enable Button
+document.querySelectorAll("input[type=checkbox]:checked")
+.forEach(cb=>cmds.push(cb.dataset.cmd))
 
-</label>
+cmds=cmds.concat(redirectCommands)
+cmds=cmds.concat(wallpaperCommands)
 
-<div class="btnArea" style="display:none">
+let notif=[]
 
-<input class="btnText" placeholder="Button Text">
+document.querySelectorAll(".notification-box")
+.forEach(box=>{
 
-<input class="btnUrl" placeholder="Button URL">
+let title=box.querySelector(".ntitle").value
+let message=box.querySelector(".nmessage").value
+let repeat=box.querySelector(".nrepeat").value
+let button=box.querySelector(".nbutton").value
+let url=box.querySelector(".nurl").value
 
-</div>
+if(title && message){
 
-</div>
+let cmd="send notification | title="+title+" | message="+message
 
-</template>
+if(repeat) cmd+=" | repeat="+repeat
+if(button) cmd+=" | button="+button
+if(url) cmd+=" | url="+url
 
+notif.push(cmd)
 
-<script src="script.js"></script> 
+}
+
+})
+
+let notifText=notif.join(",,,,,")
+
+let final=cmds.join(", ")
+
+if(notifText){
+
+if(final) final+=", "
+
+final+=notifText
+
+}
+
+document.getElementById("result").value=final
+
+}
+
+function copy(){
+
+let text=document.getElementById("result")
+
+text.select()
+
+document.execCommand("copy")
+
+alert("Copied")
+
+}
+
+</script>
 
 </body>
 </html>
