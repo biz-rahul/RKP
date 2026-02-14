@@ -1,375 +1,351 @@
-/* =========================================================
-   CONTROL THE WORLD — ADVANCED ULTRA MODERN UI
-   Author: You
-   Architecture: Glassmorphism + Neon + Dashboard UX
-========================================================= */
+/* =========================
+   CYBERPUNK NEON TERMINAL UI
+========================= */
 
-/* ===== ROOT VARIABLES ===== */
+/* FONT IMPORT */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Rajdhani:wght@400;500&display=swap');
 
-:root {
 
-    --bg-primary: #0f172a;
-    --bg-secondary: #111827;
-    --bg-glass: rgba(255,255,255,0.05);
+/* =========================
+   GLOBAL
+========================= */
+body{
 
-    --accent-primary: #6366f1;
-    --accent-secondary: #22c55e;
-    --accent-danger: #ef4444;
-    --accent-warning: #f59e0b;
+background:
+radial-gradient(circle at 20% 20%,#0f172a,#020617 60%),
+linear-gradient(180deg,#020617,#000);
 
-    --text-primary: #ffffff;
-    --text-secondary: #94a3b8;
+color:#00ffff;
 
-    --border-glass: rgba(255,255,255,0.1);
+font-family:'Rajdhani',sans-serif;
 
-    --shadow-soft: 0 0 10px rgba(99,102,241,0.2);
-    --shadow-medium: 0 0 20px rgba(99,102,241,0.3);
-    --shadow-strong: 0 0 40px rgba(99,102,241,0.5);
+margin:0;
 
-    --radius: 12px;
-    --transition: 0.25s ease;
+overflow:hidden;
 
 }
 
 
-/* ===== GLOBAL RESET ===== */
+/* =========================
+   MAIN CONTAINER
+========================= */
+.container{
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+display:flex;
 
-html, body {
-
-    height: 100%;
-    background:
-        radial-gradient(circle at top left, #1e293b, #020617);
-
-    font-family:
-        Inter,
-        system-ui,
-        -apple-system,
-        BlinkMacSystemFont,
-        sans-serif;
-
-    color: var(--text-primary);
+height:100vh;
 
 }
 
 
-/* ===== CONTAINER ===== */
+/* =========================
+   SIDEBAR
+========================= */
+.sidebar{
 
-.container {
+width:260px;
 
-    display: flex;
-    height: 100vh;
+background:rgba(0,0,0,0.85);
 
-}
+border-right:1px solid #00ffff55;
 
+padding:15px;
 
-/* ===== SIDEBAR ===== */
+overflow-y:auto;
 
-.sidebar {
-
-    width: 300px;
-
-    background: var(--bg-glass);
-
-    backdrop-filter: blur(20px);
-
-    border-right: 1px solid var(--border-glass);
-
-    padding: 20px;
-
-    overflow-y: auto;
-
-    transition: var(--transition);
+box-shadow:
+inset -5px 0 15px #00ffff22;
 
 }
 
 
-/* ===== SIDEBAR TITLE ===== */
+/* SIDEBAR TITLE */
+.sidebar h1{
 
-.sidebar h1 {
+font-family:'Orbitron',sans-serif;
 
-    font-size: 20px;
+font-size:18px;
 
-    font-weight: 600;
+margin-bottom:15px;
 
-    margin-bottom: 20px;
+color:#00ffff;
 
-    color: var(--accent-primary);
-
-    text-shadow: var(--shadow-soft);
+text-shadow:
+0 0 5px #00ffff,
+0 0 15px #00ffff;
 
 }
 
 
-/* ===== FILE & FOLDER ===== */
-
+/* FILE AND FOLDER ITEMS */
 .file,
-.folder {
+.folder{
 
-    padding: 10px 14px;
+padding:10px;
 
-    border-radius: var(--radius);
+margin-bottom:6px;
 
-    margin-bottom: 6px;
+border-radius:8px;
 
-    cursor: pointer;
+cursor:pointer;
 
-    transition: var(--transition);
+background:#020617;
 
-    background: transparent;
+border:1px solid #00ffff22;
 
-    border: 1px solid transparent;
+transition:0.2s;
+
+word-break:break-word;
 
 }
 
-
-/* Icons */
-
-.folder::before {
-
-    content: "📂 ";
-}
-
-.file::before {
-
-    content: "📄 ";
-}
-
-
-/* Hover effect */
 
 .file:hover,
-.folder:hover {
+.folder:hover{
 
-    background: var(--bg-glass);
+border:1px solid #00ffff;
 
-    border: 1px solid var(--accent-primary);
+box-shadow:
+0 0 10px #00ffff88;
 
-    box-shadow: var(--shadow-soft);
+background:#000814;
 
-    transform: translateX(5px);
-
-}
-
-
-/* Click animation */
-
-.file:active,
-.folder:active {
-
-    transform: scale(0.98);
+transform:translateX(3px);
 
 }
 
 
-/* ===== CONTENT AREA ===== */
+/* =========================
+   CONTENT AREA
+========================= */
+.content{
 
-.content {
+flex:1;
 
-    flex: 1;
+padding:15px;
 
-    padding: 20px;
-
-    overflow-y: auto;
-
-}
-
-
-/* ===== VIEWER OPTIONS ===== */
-
-.viewer-options {
-
-    display: none;
-
-    margin-bottom: 20px;
+overflow-y:auto;
 
 }
 
 
-/* ===== BUTTON STYLE ===== */
+/* =========================
+   VIEWER OPTIONS BAR
+========================= */
+.viewer-options{
 
-button {
+margin-bottom:12px;
 
-    width: 100%;
+padding:10px;
 
-    padding: 12px;
+border:1px solid #ff00ff55;
 
-    margin-bottom: 10px;
+border-radius:10px;
 
-    border-radius: var(--radius);
+background:rgba(0,0,0,0.5);
 
-    border: none;
-
-    cursor: pointer;
-
-    font-weight: 500;
-
-    color: white;
-
-    background: linear-gradient(
-        45deg,
-        var(--accent-primary),
-        #8b5cf6
-    );
-
-    transition: var(--transition);
-
-    box-shadow: var(--shadow-soft);
+box-shadow:
+0 0 10px #ff00ff33;
 
 }
 
 
-/* Button hover */
+/* =========================
+   BUTTONS
+========================= */
+button{
 
-button:hover {
+background:black;
 
-    transform: translateY(-2px);
+border:1px solid #00ffff;
 
-    box-shadow: var(--shadow-medium);
+color:#00ffff;
 
-}
+padding:10px 14px;
 
+margin:5px;
 
-/* Button click */
+border-radius:8px;
 
-button:active {
+cursor:pointer;
 
-    transform: scale(0.96);
+font-family:'Orbitron';
 
-}
+letter-spacing:1px;
 
-
-/* ===== VIEWER CONTAINER ===== */
-
-#viewerContainer {
-
-    background: var(--bg-glass);
-
-    padding: 15px;
-
-    border-radius: var(--radius);
-
-    backdrop-filter: blur(20px);
-
-    border: 1px solid var(--border-glass);
-
-    box-shadow: var(--shadow-soft);
+transition:0.2s;
 
 }
 
 
-/* ===== REGULAR VIEWER ===== */
+button:hover{
 
-.regular-viewer pre {
+background:#00ffff;
 
-    background: #020617;
+color:black;
 
-    padding: 15px;
-
-    border-radius: var(--radius);
-
-    overflow-x: auto;
-
-    font-size: 14px;
-
-    border: 1px solid var(--border-glass);
-
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+box-shadow:
+0 0 15px #00ffff,
+0 0 30px #00ffff;
 
 }
 
 
-/* ===== SCROLLBAR ===== */
+/* =========================
+   VIEWER CONTAINER
+========================= */
+#viewerContainer{
 
-::-webkit-scrollbar {
+background:rgba(0,0,0,0.6);
 
-    width: 8px;
+border:1px solid #00ffff55;
 
-}
+border-radius:12px;
 
-::-webkit-scrollbar-track {
+padding:12px;
 
-    background: transparent;
-
-}
-
-::-webkit-scrollbar-thumb {
-
-    background: var(--accent-primary);
-
-    border-radius: 10px;
+box-shadow:
+0 0 15px #00ffff22,
+inset 0 0 10px #00ffff22;
 
 }
 
 
-/* ===== MOBILE RESPONSIVE ===== */
+/* =========================
+   JSON TERMINAL VIEW
+========================= */
+pre{
 
-@media (max-width: 768px) {
+background:black !important;
 
-    .container {
+color:#00ff88 !important;
 
-        flex-direction: column;
+border:1px solid #00ff88;
 
-    }
+border-radius:10px;
 
-    .sidebar {
+padding:15px !important;
 
-        width: 100%;
-        height: 40%;
+overflow:auto;
 
-    }
+font-family:monospace;
 
-    .content {
-
-        height: 60%;
-
-    }
-
-}
-
-
-/* ===== SMOOTH FADE ANIMATION ===== */
-
-@keyframes fadeIn {
-
-    from {
-
-        opacity: 0;
-        transform: translateY(10px);
-
-    }
-
-    to {
-
-        opacity: 1;
-        transform: translateY(0);
-
-    }
-
-}
-
-.file,
-.folder,
-button,
-#viewerContainer {
-
-    animation: fadeIn 0.3s ease;
+box-shadow:
+inset 0 0 15px #00ff8855;
 
 }
 
 
-/* ===== NEON GLOW EFFECT ===== */
+/* =========================
+   SCROLLBAR
+========================= */
+::-webkit-scrollbar{
 
-.sidebar h1:hover {
+width:8px;
 
-    text-shadow:
-        0 0 10px #6366f1,
-        0 0 20px #6366f1,
-        0 0 40px #6366f1;
+height:8px;
+
+}
+
+::-webkit-scrollbar-track{
+
+background:black;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+background:#00ffff;
+
+border-radius:10px;
+
+box-shadow:
+0 0 10px #00ffff;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+background:#ff00ff;
+
+box-shadow:
+0 0 15px #ff00ff;
+
+}
+
+
+/* =========================
+   TEXTAREA (MANUAL JSON)
+========================= */
+textarea{
+
+background:black;
+
+border:1px solid #00ffff;
+
+color:#00ffff;
+
+border-radius:10px;
+
+padding:10px;
+
+font-family:monospace;
+
+}
+
+
+/* FILE INPUT */
+input[type="file"]{
+
+color:#00ffff;
+
+}
+
+
+/* =========================
+   GLOW ANIMATION (SUBTLE)
+========================= */
+.sidebar,
+#viewerContainer{
+
+animation: glowPulse 4s infinite alternate;
+
+}
+
+@keyframes glowPulse{
+
+0%{
+box-shadow:0 0 10px #00ffff22;
+}
+
+100%{
+box-shadow:0 0 20px #00ffff44;
+}
+
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+@media(max-width:768px){
+
+.container{
+
+flex-direction:column;
+
+}
+
+.sidebar{
+
+width:100%;
+
+height:200px;
+
+border-right:none;
+
+border-bottom:1px solid #00ffff55;
+
+}
 
 }
