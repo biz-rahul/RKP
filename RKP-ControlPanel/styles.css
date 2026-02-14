@@ -149,3 +149,8 @@ cursor:pointer;
 transition:0.3s;
 box-shadow:0 0 20px #00ff00;
 }
+
+.run-btn:hover{
+background:#00ff00;
+color:#000;
+}
