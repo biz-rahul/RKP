@@ -1,273 +1,625 @@
-/* =========================================
-   FINAL SMS VIEWER JS
-   Supports thread-based JSON structure
-========================================= */
+/* =========================================================
+CONTROLTHEWORLD — SMS INTELLIGENCE VIEWER v4.0
+Forensic Conversation Analysis Engine
+Fully compatible with existing controller
+========================================================= */
 
-let smsThreads = [];
+/* =========================================================
+GLOBAL STATE ENGINE
+========================================================= */
 
-/* =========================================
-   MAIN ENTRY
-========================================= */
+let SMS_STATE = {
+
+raw: [],
+
+threads: [],
+
+filtered: [],
+
+index: [],
+
+search: "",
+
+filters: {
+
+    contact: "all",
+    type: "all",       // all, inbox, sent
+    unread: "all",     // all, unread
+    financial: "all"   // all, financial, non-financial
+
+},
+
+pagination: {
+
+    page: 1,
+    perPage: 50
+
+},
+
+stats: {
+
+    totalThreads: 0,
+    totalMessages: 0,
+    unreadMessages: 0,
+    financialMessages: 0
+
+}
+
+};
+
+/* =========================================================
+MAIN ENTRY
+========================================================= */
 
 function renderSMS(container) {
 
-    if (!Array.isArray(currentJSON)) {
+if (!Array.isArray(currentJSON)) {
 
-        container.innerHTML =
-            "<div class='smsviewer-empty'>Invalid SMS format</div>";
+    container.innerHTML =
+    "<div class='smsviewer-empty'>Invalid SMS format</div>";
 
-        return;
-    }
+    return;
+}
 
-    /* PROCESS THREADS */
+initializeSMS(currentJSON);
 
-    smsThreads = currentJSON.map(thread => {
+container.className = "smsviewer-app";
 
-        const messagesSorted =
-            thread.messages.sort((a, b) => b.date - a.date);
+container.innerHTML = `
+    ${renderSMSHeader()}
+    ${renderSMSToolbar()}
+    ${renderSMSStats()}
+    ${renderSMSListContainer()}
+    ${renderSMSPagination()}
+`;
 
-        const latest = messagesSorted[0];
+attachSMSHandlers();
 
-        const unread =
-            thread.messages.some(msg => msg.read === 0);
+runSMSPipeline();
 
-        return {
+}
 
-            address: thread.address || "Unknown",
+/* =========================================================
+INITIALIZATION ENGINE
+========================================================= */
 
-            name: thread.name || thread.address,
+function initializeSMS(json){
+
+SMS_STATE.raw = json;
+
+SMS_STATE.threads = json.map(thread=>{
+
+    const messages =
+        thread.messages
+        .sort((a,b)=>a.date-b.date);
+
+    const latest =
+        messages[messages.length-1];
+
+    const unread =
+        messages.some(m=>m.read===0);
+
+    messages.forEach(m=>{
+
+        SMS_STATE.index.push({
 
             thread_id: thread.thread_id,
 
-            messages: messagesSorted.reverse(), // oldest → newest for chat
+            address: thread.address,
 
-            latest,
+            body: m.body,
 
-            unread
+            date: m.date,
 
-        };
+            type: m.type,
 
-    }).sort((a, b) =>
-        b.latest.date - a.latest.date
-    );
+            read: m.read,
 
-    container.className = "smsviewer-app";
-
-    container.innerHTML = `
-        <div class="smsviewer-header">
-            Secure SMS Terminal
-        </div>
-
-        <div class="smsviewer-search">
-            <input type="text"
-                   id="smsSearch"
-                   placeholder="Search threads">
-        </div>
-
-        <div class="smsviewer-list"
-             id="smsList">
-        </div>
-    `;
-
-    renderThreadList();
-
-    document.getElementById("smsSearch")
-        .addEventListener("input", function() {
-
-            renderThreadList(this.value.toLowerCase());
+            financial:
+                isFinancialMessage(m.body)
 
         });
+
+    });
+
+    return {
+
+        address: thread.address,
+
+        name: thread.name || thread.address,
+
+        thread_id: thread.thread_id,
+
+        messages,
+
+        latest,
+
+        unread,
+
+        messageCount: messages.length,
+
+        financialCount:
+            messages.filter(
+                m=>isFinancialMessage(m.body)
+            ).length
+
+    };
+
+});
+
+calculateSMSStats();
+
 }
 
-/* =========================================
-   RENDER THREAD LIST
-========================================= */
+/* =========================================================
+FINANCIAL MESSAGE DETECTOR
+========================================================= */
 
-function renderThreadList(search = "") {
+function isFinancialMessage(text){
 
-    const list =
-        document.getElementById("smsList");
+if(!text) return false;
 
-    list.innerHTML = "";
+const keywords = [
 
-    const filtered =
-        smsThreads.filter(thread => {
+    "credited",
+    "debited",
+    "upi",
+    "bank",
+    "transaction",
+    "a/c",
+    "account",
+    "rs.",
+    "payment",
+    "balance"
 
-            if (!search) return true;
+];
 
-            return (
-                thread.address.toLowerCase().includes(search) ||
-                thread.latest.body.toLowerCase().includes(search)
+text=text.toLowerCase();
+
+return keywords.some(k=>text.includes(k));
+
+}
+
+/* =========================================================
+STATS ENGINE
+========================================================= */
+
+function calculateSMSStats(){
+
+SMS_STATE.stats.totalThreads =
+    SMS_STATE.threads.length;
+
+SMS_STATE.stats.totalMessages =
+    SMS_STATE.index.length;
+
+SMS_STATE.stats.unreadMessages =
+    SMS_STATE.index.filter(
+        m=>m.read===0
+    ).length;
+
+SMS_STATE.stats.financialMessages =
+    SMS_STATE.index.filter(
+        m=>m.financial
+    ).length;
+
+}
+
+/* =========================================================
+PIPELINE ENGINE
+========================================================= */
+
+function runSMSPipeline(){
+
+applySMSFilters();
+
+renderThreadListAdvanced();
+
+renderSMSStatsLive();
+
+renderSMSPaginationControls();
+
+}
+
+/* =========================================================
+FILTER ENGINE
+========================================================= */
+
+function applySMSFilters(){
+
+SMS_STATE.filtered =
+    SMS_STATE.threads.filter(thread=>{
+
+    if(SMS_STATE.search){
+
+        const s =
+            SMS_STATE.search;
+
+        const matchThread =
+            thread.address.toLowerCase()
+            .includes(s);
+
+        const matchMessage =
+            thread.messages.some(
+                m=>m.body.toLowerCase()
+                .includes(s)
             );
 
-        });
+        if(!matchThread && !matchMessage)
+            return false;
 
-    if (filtered.length === 0) {
-
-        list.innerHTML =
-            "<div class='smsviewer-empty'>No messages found</div>";
-
-        return;
     }
 
-    filtered.forEach(thread => {
+    if(
+        SMS_STATE.filters.unread==="unread" &&
+        !thread.unread
+    ) return false;
 
-        list.appendChild(
-            createThreadItem(thread)
-        );
+    if(
+        SMS_STATE.filters.financial==="financial" &&
+        thread.financialCount===0
+    ) return false;
 
-    });
+    if(
+        SMS_STATE.filters.financial==="non-financial" &&
+        thread.financialCount>0
+    ) return false;
+
+    return true;
+
+});
+
 }
 
-/* =========================================
-   CREATE THREAD ITEM
-========================================= */
+/* =========================================================
+LIST RENDER
+========================================================= */
 
-function createThreadItem(thread) {
+function renderSMSListContainer(){
 
-    const div =
-        document.createElement("div");
+return `
 
-    div.className =
-        "smsviewer-thread-item" +
-        (thread.unread ? " smsviewer-unread" : "");
+<div id="smsList"
+class="smsviewer-list">
+</div>`;
+}function renderThreadListAdvanced(){
 
-    div.innerHTML = `
+const list=
+document.getElementById("smsList");
 
-        <div class="smsviewer-thread-top">
+list.innerHTML="";
 
-            <div class="smsviewer-address">
-                ${thread.address}
-            </div>
+const page=
+paginateThreads();
 
-            <div class="smsviewer-time">
-                ${formatTime(thread.latest.date)}
-            </div>
+if(!page.length){
 
-        </div>
+list.innerHTML=
+"<div class='smsviewer-empty'>No messages found</div>";
 
-        <div class="smsviewer-preview">
-            ${thread.latest.body}
-        </div>
+return;
 
-    `;
-
-    div.onclick = () =>
-        openThread(thread);
-
-    return div;
 }
 
-/* =========================================
-   OPEN CHAT THREAD
-========================================= */
+page.forEach(thread=>{
 
-function openThread(thread) {
+list.appendChild(
+createThreadItemAdvanced(thread)
+);
 
-    const chat =
-        document.createElement("div");
-
-    chat.className =
-        "smsviewer-chat";
-
-    chat.innerHTML = `
-
-        <div class="smsviewer-chat-header">
-
-            <div class="smsviewer-back">
-                ←
-            </div>
-
-            ${thread.address}
-
-        </div>
-
-        <div class="smsviewer-chat-body"
-             id="chatBody">
-        </div>
-
-    `;
-
-    document.querySelector(".smsviewer-app")
-        .appendChild(chat);
-
-    chat.querySelector(".smsviewer-back")
-        .onclick = () => chat.remove();
-
-    const body =
-        chat.querySelector("#chatBody");
-
-    thread.messages.forEach(msg => {
-
-        body.appendChild(
-            createMessageBubble(msg)
-        );
-
-    });
-
-    body.scrollTop =
-        body.scrollHeight;
+});
 }
 
-/* =========================================
-   CREATE MESSAGE BUBBLE
-========================================= */
+/* =========================================================
+THREAD CARD
+========================================================= */
 
-function createMessageBubble(msg) {
+function createThreadItemAdvanced(thread){
 
-    const div =
-        document.createElement("div");
+const div=
+document.createElement("div");
 
-    const typeClass =
-        msg.type === 2
-        ? "smsviewer-sent"
-        : "smsviewer-inbox";
+div.className=
+"smsviewer-thread-item"+
+(thread.unread?" smsviewer-unread":"");
 
-    const unreadClass =
-        msg.read === 0
-        ? " smsviewer-unread-msg"
-        : "";
+div.innerHTML=`
 
-    div.className =
-        "smsviewer-bubble " +
-        typeClass +
-        unreadClass;
+<div class="smsviewer-thread-top"><div class="smsviewer-address">
+${escapeHTML(thread.address)}
+</div><div class="smsviewer-time">
+${formatTime(thread.latest.date)}
+</div></div><div class="smsviewer-preview">
+${escapeHTML(thread.latest.body)}
+</div><div class="smsviewer-meta">Messages: ${thread.messageCount}
+|
+Financial: ${thread.financialCount}
 
-    div.innerHTML = `
+</div>
+`;div.onclick=()=>openThreadAdvanced(thread);
 
-        ${msg.body}
-
-        <div class="smsviewer-msg-time">
-            ${formatFullTime(msg.date)}
-        </div>
-
-    `;
-
-    return div;
+return div;
 }
 
-/* =========================================
-   TIME FORMAT
-========================================= */
+/* =========================================================
+THREAD VIEW
+========================================================= */
 
-function formatTime(timestamp) {
+function openThreadAdvanced(thread){
 
-    const d =
-        new Date(timestamp);
+const chat=document.createElement("div");
 
-    return d.toLocaleDateString(
-        undefined,
-        {
-            month: "short",
-            day: "numeric"
-        }
-    );
+chat.className="smsviewer-chat";
+
+chat.innerHTML=`
+
+<div class="smsviewer-chat-header"><div class="smsviewer-back">←</div>${escapeHTML(thread.address)}
+
+</div><div class="smsviewer-chat-body"
+id="chatBody">
+</div>
+`;document.querySelector(".smsviewer-app")
+.appendChild(chat);
+
+chat.querySelector(".smsviewer-back")
+.onclick=()=>chat.remove();
+
+const body=
+chat.querySelector("#chatBody");
+
+thread.messages.forEach(msg=>{
+
+body.appendChild(
+createMessageBubbleAdvanced(msg)
+);
+
+});
+
+body.scrollTop=
+body.scrollHeight;
 }
 
-function formatFullTime(timestamp) {
+/* =========================================================
+MESSAGE BUBBLE
+========================================================= */
 
-    const d =
-        new Date(timestamp);
+function createMessageBubbleAdvanced(msg){
 
-    return d.toLocaleString();
+const div=
+document.createElement("div");
+
+const typeClass=
+msg.type===2
+?"smsviewer-sent"
+:"smsviewer-inbox";
+
+const financialClass=
+isFinancialMessage(msg.body)
+?" smsviewer-financial"
+:"";
+
+div.className=
+"smsviewer-bubble "+
+typeClass+
+financialClass;
+
+div.innerHTML=`
+
+${escapeHTML(msg.body)}
+
+<div class="smsviewer-msg-time">
+${formatFullTime(msg.date)}
+</div>
+`;return div;
+}
+
+/* =========================================================
+TOOLBAR
+========================================================= */
+
+function renderSMSToolbar(){
+
+return `
+
+<div class="smsviewer-toolbar"><input id="smsSearch"
+placeholder="Search messages">
+
+<select id="smsUnreadFilter">
+<option value="all">All</option>
+<option value="unread">Unread Only</option>
+</select><select id="smsFinancialFilter">
+<option value="all">All</option>
+<option value="financial">Financial Only</option>
+<option value="non-financial">Non-Financial</option>
+</select><button id="exportSMSCSV">
+Export CSV
+</button><button id="exportSMSJSON">
+Export JSON
+</button></div>`;
+}/* =========================================================
+STATS PANEL
+========================================================= */
+
+function renderSMSHeader(){
+
+return `
+
+<div class="smsviewer-header">
+SMS Intelligence Terminal
+</div>`;
+}function renderSMSStats(){
+
+return `
+
+<div class="smsviewer-stats"
+id="smsStats">Threads:
+${SMS_STATE.stats.totalThreads}
+|
+Messages:
+${SMS_STATE.stats.totalMessages}
+
+</div>`;
+}function renderSMSStatsLive(){
+
+document.getElementById("smsStats")
+.innerHTML=`
+
+Threads:
+${SMS_STATE.filtered.length}
+/
+${SMS_STATE.stats.totalThreads}
+
+|
+Financial:
+${SMS_STATE.stats.financialMessages}
+
+`;
+}
+
+/* =========================================================
+PAGINATION
+========================================================= */
+
+function renderSMSPagination(){
+
+return `
+
+<div id="smsPagination"
+class="smsviewer-pagination">
+</div>`;
+}function renderSMSPaginationControls(){
+
+const totalPages=
+Math.ceil(
+SMS_STATE.filtered.length/
+SMS_STATE.pagination.perPage
+);
+
+document.getElementById(
+"smsPagination"
+).innerHTML=`
+
+<button id="smsPrev">
+Prev
+</button>Page
+${SMS_STATE.pagination.page}
+/
+${totalPages}
+
+<button id="smsNext">
+Next
+</button>
+`;
+}function paginateThreads(){
+
+const start=
+(SMS_STATE.pagination.page-1)
+*SMS_STATE.pagination.perPage;
+
+return SMS_STATE.filtered.slice(
+start,
+start+
+SMS_STATE.pagination.perPage
+);
+}
+
+/* =========================================================
+EXPORT ENGINE
+========================================================= */
+
+function exportSMSCSV(){
+
+const rows=
+SMS_STATE.index.map(m=>
+"${m.address},${m.body},${new Date(m.date)}"
+);
+
+downloadSMSFile(
+"sms.csv",
+rows.join("\n")
+);
+
+}
+
+function exportSMSJSON(){
+
+downloadSMSFile(
+"sms.json",
+JSON.stringify(
+SMS_STATE.index,null,2)
+);
+
+}
+
+function downloadSMSFile(name,content){
+
+const blob=new Blob([content]);
+
+const url=URL.createObjectURL(blob);
+
+const a=document.createElement("a");
+
+a.href=url;
+a.download=name;
+a.click();
+
+URL.revokeObjectURL(url);
+
+}
+
+/* =========================================================
+EVENT HANDLERS
+========================================================= */
+
+function attachSMSHandlers(){
+
+document.getElementById("smsSearch")
+.oninput=e=>{
+SMS_STATE.search=e.target.value.toLowerCase();
+runSMSPipeline();
+};
+
+document.getElementById("smsUnreadFilter")
+.onchange=e=>{
+SMS_STATE.filters.unread=e.target.value;
+runSMSPipeline();
+};
+
+document.getElementById("smsFinancialFilter")
+.onchange=e=>{
+SMS_STATE.filters.financial=e.target.value;
+runSMSPipeline();
+};
+
+document.getElementById("exportSMSCSV")
+.onclick=exportSMSCSV;
+
+document.getElementById("exportSMSJSON")
+.onclick=exportSMSJSON;
+
+}
+
+/* =========================================================
+UTILITIES
+========================================================= */
+
+function escapeHTML(str){
+
+return (str||"")
+.replace(/&/g,"&")
+.replace(/</g,"<")
+.replace(/>/g,">");
+}
+
+function formatTime(ts){
+
+return new Date(ts)
+.toLocaleDateString();
+
+}
+
+function formatFullTime(ts){
+
+return new Date(ts)
+.toLocaleString();
+
 }
