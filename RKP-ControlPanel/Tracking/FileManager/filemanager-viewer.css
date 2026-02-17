@@ -1,1 +1,325 @@
+/* =========================================================
+CONTROLTHEWORLD — FILE MANAGER INTELLIGENCE VIEWER CSS v1.0
+Forensic Storage Visualization Interface
+Fully scoped under .filemanager-app
+========================================================= */
 
+/* =========================================================
+ROOT CONTAINER
+========================================================= */
+
+.filemanager-app {
+
+display: flex;
+flex-direction: column;
+
+height: 100%;
+
+background: #0a0f14;
+
+color: #e6edf3;
+
+font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    Roboto,
+    sans-serif;
+
+overflow: hidden;
+
+}
+
+/* =========================================================
+HEADER
+========================================================= */
+
+.filemanager-header {
+
+padding: 16px;
+
+font-size: 18px;
+
+font-weight: 600;
+
+background: linear-gradient(
+    135deg,
+    #0d1117,
+    #161b22
+);
+
+border-bottom: 1px solid #30363d;
+
+}
+
+/* =========================================================
+TOOLBAR
+========================================================= */
+
+.filemanager-toolbar {
+
+display: flex;
+
+flex-wrap: wrap;
+
+gap: 8px;
+
+padding: 10px;
+
+background: #161b22;
+
+border-bottom: 1px solid #30363d;
+
+}
+
+.filemanager-toolbar input,
+.filemanager-toolbar select {
+
+padding: 8px 10px;
+
+background: #0d1117;
+
+border: 1px solid #30363d;
+
+color: white;
+
+border-radius: 6px;
+
+font-size: 13px;
+
+}
+
+.filemanager-toolbar input {
+
+flex: 1;
+
+min-width: 180px;
+
+}
+
+.filemanager-toolbar input:focus,
+.filemanager-toolbar select:focus {
+
+outline: none;
+
+border-color: #58a6ff;
+
+}
+
+.filemanager-toolbar button {
+
+padding: 8px 12px;
+
+background: #0d1117;
+
+border: 1px solid #58a6ff;
+
+color: #58a6ff;
+
+border-radius: 6px;
+
+cursor: pointer;
+
+transition: 0.2s;
+
+}
+
+.filemanager-toolbar button:hover {
+
+background: rgba(88,166,255,0.15);
+
+}
+
+/* =========================================================
+BREADCRUMB
+========================================================= */
+
+.filemanager-breadcrumb {
+
+padding: 8px 12px;
+
+background: #0d1117;
+
+border-bottom: 1px solid #30363d;
+
+font-size: 13px;
+
+}
+
+.filemanager-breadcrumb span {
+
+cursor: pointer;
+
+color: #58a6ff;
+
+}
+
+.filemanager-breadcrumb span:hover {
+
+text-decoration: underline;
+
+}
+
+/* =========================================================
+STATS
+========================================================= */
+
+.filemanager-stats {
+
+padding: 6px 12px;
+
+font-size: 12px;
+
+color: #8b949e;
+
+background: #0d1117;
+
+border-bottom: 1px solid #30363d;
+
+}
+
+/* =========================================================
+FILE LIST
+========================================================= */
+
+.filemanager-list {
+
+flex: 1;
+
+overflow-y: auto;
+
+padding: 10px;
+
+}
+
+/* =========================================================
+FILE ITEM
+========================================================= */
+
+.filemanager-item {
+
+display: flex;
+
+align-items: center;
+
+padding: 10px;
+
+border-radius: 8px;
+
+border: 1px solid transparent;
+
+margin-bottom: 6px;
+
+cursor: pointer;
+
+transition: 0.15s;
+
+}
+
+.filemanager-item:hover {
+
+background: #161b22;
+
+border-color: #58a6ff;
+
+}
+
+/* =========================================================
+HIDDEN FILE
+========================================================= */
+
+.filemanager-hidden {
+
+opacity: 0.55;
+
+}
+
+/* =========================================================
+ICON
+========================================================= */
+
+.filemanager-icon {
+
+font-size: 20px;
+
+margin-right: 10px;
+
+}
+
+/* =========================================================
+INFO
+========================================================= */
+
+.filemanager-info {
+
+flex: 1;
+
+}
+
+/* FILE NAME */
+
+.filemanager-name {
+
+font-size: 14px;
+
+font-weight: 500;
+
+}
+
+/* META */
+
+.filemanager-meta {
+
+font-size: 12px;
+
+color: #8b949e;
+
+margin-top: 2px;
+
+}
+
+/* =========================================================
+EMPTY STATE
+========================================================= */
+
+.filemanager-empty {
+
+padding: 40px;
+
+text-align: center;
+
+color: #8b949e;
+
+}
+
+/* =========================================================
+SCROLLBAR
+========================================================= */
+
+.filemanager-list::-webkit-scrollbar {
+
+width: 6px;
+
+}
+
+.filemanager-list::-webkit-scrollbar-thumb {
+
+background: #30363d;
+
+border-radius: 3px;
+
+}
+
+/* =========================================================
+MOBILE OPTIMIZATION
+========================================================= */
+
+@media (max-width:768px) {
+
+.filemanager-toolbar {
+
+    flex-direction: column;
+
+}
+
+}
