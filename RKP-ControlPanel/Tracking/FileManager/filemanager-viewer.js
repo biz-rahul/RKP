@@ -1,7 +1,7 @@
 /* =========================================================
-CONTROLTHEWORLD — FILE MANAGER INTELLIGENCE VIEWER JS v1.0
-Forensic Storage Analysis Engine
-Compatible with your existing viewer architecture
+CONTROLTHEWORLD — FILE MANAGER INTELLIGENCE VIEWER JS v2.0
+Fully Fixed Root Detection + Advanced Intelligence Engine
+Zero main HTML modification required
 ========================================================= */
 
 /* =========================================================
@@ -17,14 +17,13 @@ let fm_state = {
 search: "",
 type: "all",
 hidden: "all",
-extension: "all",
 sort: "name",
 order: "asc"
 
 };
 
 /* =========================================================
-MAIN ENTRY POINT
+MAIN ENTRY
 ========================================================= */
 
 function renderFileManager(container)
@@ -33,28 +32,44 @@ function renderFileManager(container)
 if (!Array.isArray(currentJSON))
 {
     container.innerHTML =
-        "<div class='filemanager-empty'>Invalid file structure</div>";
+    "<div class='filemanager-empty'>Invalid file structure</div>";
     return;
 }
 
 container.className = "filemanager-app";
 
-/* Normalize */
+/* Normalize filesystem */
 
-fm_allFiles = currentJSON.map(file =>
-({
-    name: file.name,
-    path: file.path,
-    directory: file.directory,
-    hidden: file.hidden,
-    size: file.size,
-    modified: file.last_modified,
+fm_allFiles =
+currentJSON.map(file => ({
+
+    name: file.name || "Unknown",
+
+    path: normalizePath(file.path),
+
+    directory: !!file.directory,
+
+    hidden: !!file.hidden,
+
+    size: file.size || 0,
+
+    modified: file.last_modified || 0,
+
     extension: getExtension(file.name),
-    parent: getParent(file.path)
+
+    parent: getParent(normalizePath(file.path))
+
 }));
 
-fm_currentPath = "/";
-fm_buildUI(container);
+/* Detect correct root automatically */
+
+fm_currentPath = detectRootPath();
+
+/* Build UI */
+
+container.innerHTML = buildFileManagerUI();
+
+attachFileManagerEvents();
 
 fm_render();
 
@@ -64,15 +79,15 @@ fm_render();
 BUILD UI
 ========================================================= */
 
-function fm_buildUI(container)
+function buildFileManagerUI()
 {
 
-container.innerHTML = `
+return `
 
 <div class="filemanager-header">
     File Manager Intelligence
 </div><div class="filemanager-toolbar"><input id="fm-search"
-       placeholder="Search files, folders, paths">
+placeholder="Search name or path">
 
 <select id="fm-type">
     <option value="all">All</option>
@@ -90,36 +105,31 @@ container.innerHTML = `
     <option value="name">Sort: Name</option>
     <option value="size">Sort: Size</option>
     <option value="modified">Sort: Date</option>
-    <option value="type">Sort: Type</option>
+    <option value="extension">Sort: Type</option>
 </select>
 
 <button id="fm-export">
-    Export JSON
+    Export
 </button>
 
-</div><div class="filemanager-breadcrumb"
-     id="fm-breadcrumb">
-</div><div class="filemanager-stats"
-     id="fm-stats">
-</div><div class="filemanager-list"
-     id="fm-list">
-</div>`;
-
-fm_attachEvents();
-
+</div><div id="fm-breadcrumb"
+class="filemanager-breadcrumb"></div><div id="fm-stats"
+class="filemanager-stats"></div><div id="fm-list"
+class="filemanager-list"></div>`;
 }
 
 /* =========================================================
-EVENTS
+EVENT SYSTEM
 ========================================================= */
 
-function fm_attachEvents()
+function attachFileManagerEvents()
 {
 
 document.getElementById("fm-search")
 .oninput = e =>
 {
-fm_state.search = e.target.value.toLowerCase();
+fm_state.search =
+e.target.value.toLowerCase();
 fm_render();
 };
 
@@ -147,51 +157,51 @@ fm_render();
 document.getElementById("fm-export")
 .onclick = () =>
 {
-downloadJSON(fm_filtered, "filemanager_export.json");
+exportJSON(fm_filtered);
 };
 
 }
 
 /* =========================================================
-RENDER PIPELINE
+MAIN RENDER PIPELINE
 ========================================================= */
 
 function fm_render()
 {
 
 let list =
-fm_allFiles.filter(f =>
-f.parent === fm_currentPath
+fm_allFiles.filter(file =>
+file.parent === fm_currentPath
 );
 
 /* Apply filters */
 
 list =
-list.filter(f =>
+list.filter(file =>
 {
 
-    if (fm_state.type === "file" && f.directory)
-        return false;
+if (fm_state.type === "file" && file.directory)
+    return false;
 
-    if (fm_state.type === "directory" && !f.directory)
-        return false;
+if (fm_state.type === "directory" && !file.directory)
+    return false;
 
-    if (fm_state.hidden === "hidden" && !f.hidden)
-        return false;
+if (fm_state.hidden === "hidden" && !file.hidden)
+    return false;
 
-    if (fm_state.hidden === "visible" && f.hidden)
-        return false;
+if (fm_state.hidden === "visible" && file.hidden)
+    return false;
 
-    if (fm_state.search)
-    {
-        return (
-            f.name.toLowerCase().includes(fm_state.search)
-            ||
-            f.path.toLowerCase().includes(fm_state.search)
-        );
-    }
+if (fm_state.search)
+{
+    return (
+        file.name.toLowerCase().includes(fm_state.search)
+        ||
+        file.path.toLowerCase().includes(fm_state.search)
+    );
+}
 
-    return true;
+return true;
 
 });
 
@@ -210,19 +220,25 @@ return v1 - v2;
 
 });
 
+/* Directories first */
+
+list.sort((a,b)=>
+b.directory - a.directory
+);
+
 fm_filtered = list;
 
-fm_renderBreadcrumb();
-fm_renderStats();
-fm_renderList();
+renderBreadcrumb();
+renderStats();
+renderFileList();
 
 }
 
 /* =========================================================
-RENDER LIST
+FILE LIST RENDER
 ========================================================= */
 
-function fm_renderList()
+function renderFileList()
 {
 
 const container =
@@ -244,8 +260,8 @@ const div =
 document.createElement("div");
 
 div.className =
-"filemanager-item " +
-(file.hidden ? "filemanager-hidden":"");
+"filemanager-item" +
+(file.hidden ? " filemanager-hidden": "");
 
 div.innerHTML =
 `
@@ -254,9 +270,13 @@ div.innerHTML =
 ${file.directory ? "📁" : getFileIcon(file.extension)}
 </div><div class="filemanager-info"><div class="filemanager-name">
 ${escapeHTML(file.name)}
-</div><div class="filemanager-meta">
-${file.directory ? "Folder" : formatSize(file.size)}
-• ${formatDate(file.modified)}
+</div><div class="filemanager-meta">${file.directory
+? "Folder"
+: formatSize(file.size)}
+
+•
+${formatDate(file.modified)}
+
 </div></div>
 `;if(file.directory)
 {
@@ -275,10 +295,10 @@ container.appendChild(div);
 }
 
 /* =========================================================
-BREADCRUMB
+BREADCRUMB NAVIGATION
 ========================================================= */
 
-function fm_renderBreadcrumb()
+function renderBreadcrumb()
 {
 
 const bc =
@@ -288,17 +308,17 @@ const parts =
 fm_currentPath.split("/").filter(Boolean);
 
 let html =
-"<span onclick="fm_navigate('/')">Root</span>";
+"<span onclick="fm_goRoot()">Root</span>";
 
 let path = "";
 
-parts.forEach(p=>
+parts.forEach(p =>
 {
 
 path += "/" + p;
 
 html +=
-" / <span onclick="fm_navigate('${path}')">${p}</span>";
+" / <span onclick="fm_goPath('${path}')">${p}</span>";
 
 });
 
@@ -306,7 +326,15 @@ bc.innerHTML = html;
 
 }
 
-function fm_navigate(path)
+function fm_goRoot()
+{
+
+fm_currentPath = detectRootPath();
+fm_render();
+
+}
+
+function fm_goPath(path)
 {
 
 fm_currentPath = path;
@@ -315,10 +343,10 @@ fm_render();
 }
 
 /* =========================================================
-STATS
+STATS ENGINE
 ========================================================= */
 
-function fm_renderStats()
+function renderStats()
 {
 
 const stats =
@@ -339,23 +367,75 @@ stats.innerHTML =
 }
 
 /* =========================================================
+ROOT DETECTION ENGINE (FIXED)
+========================================================= */
+
+function detectRootPath()
+{
+
+if(fm_allFiles.length === 0)
+return "/";
+
+/* find shortest path */
+
+let shortest =
+fm_allFiles[0].path;
+
+fm_allFiles.forEach(f =>
+{
+
+if(f.path.length < shortest.length)
+shortest = f.path;
+
+});
+
+/* remove filename if file */
+
+if(!shortest.endsWith("/"))
+{
+const parent =
+getParent(shortest);
+return parent || "/";
+}
+
+return shortest;
+
+}
+
+/* =========================================================
 HELPERS
 ========================================================= */
 
+function normalizePath(path)
+{
+
+if(!path) return "/";
+
+return path.replace(//+/g,"/");
+
+}
+
 function getParent(path)
 {
+
+if(!path) return "/";
 
 const parts =
 path.split("/");
 
 parts.pop();
 
-return parts.join("/") || "/";
+const parent =
+parts.join("/");
+
+return parent || "/";
 
 }
 
 function getExtension(name)
 {
+
+if(!name) return "";
 
 const i =
 name.lastIndexOf(".");
@@ -375,31 +455,35 @@ if(!bytes) return "0 B";
 const units =
 ["B","KB","MB","GB"];
 
-let i=0;
+let i = 0;
 
-while(bytes>=1024)
+while(bytes >= 1024 && i < units.length-1)
 {
-bytes/=1024;
+bytes /= 1024;
 i++;
 }
 
-return bytes.toFixed(1)+" "+units[i];
+return bytes.toFixed(1) + " " + units[i];
 
 }
 
 function formatDate(ts)
 {
 
+if(!ts) return "Unknown";
+
 return new Date(ts).toLocaleString();
 
 }
 
-function downloadJSON(data,name)
+function exportJSON(data)
 {
 
 const blob =
-new Blob([JSON.stringify(data,null,2)],
-{type:"application/json"});
+new Blob(
+[JSON.stringify(data,null,2)],
+{type:"application/json"}
+);
 
 const a =
 document.createElement("a");
@@ -408,7 +492,7 @@ a.href =
 URL.createObjectURL(blob);
 
 a.download =
-name;
+"filemanager_export.json";
 
 a.click();
 
@@ -435,7 +519,8 @@ json:"📄",
 mp3:"🎵",
 mp4:"🎬",
 jpg:"🖼",
-png:"🖼"
+png:"🖼",
+txt:"📄"
 };
 
 return map[ext] || "📄";
