@@ -1,133 +1,98 @@
-/* =========================================
-   ANDROID REAL NOTIFICATION VIEWER JS
-========================================= */
+/* =========================================================
+CONTROLTHEWORLD — NOTIFICATION INTELLIGENCE VIEWER v3.0
+Forensic Notification Analysis Engine
+Fully compatible with existing controller
+========================================================= */
 
-let notificationList = [];
+/* =========================================================
+GLOBAL STATE ENGINE
+========================================================= */
 
-/* =========================================
-   MAIN ENTRY
-========================================= */
+let NOTIFICATION_STATE = {
+
+raw: [],
+
+indexed: [],
+
+filtered: [],
+
+search: "",
+
+filters: {
+
+    app: "all",
+    category: "all",
+    timeRange: "all"
+
+},
+
+sort: {
+
+    field: "posted_time",
+    dir: "desc"
+
+},
+
+pagination: {
+
+    page: 1,
+    perPage: 50
+
+},
+
+stats: {
+
+    total: 0,
+    apps: new Map(),
+    categories: new Map(),
+    firstTime: 0,
+    lastTime: 0
+
+}
+
+};
+
+/* =========================================================
+MAIN ENTRY
+========================================================= */
 
 function renderNotification(container) {
 
-    if (!Array.isArray(currentJSON)) {
+if (!Array.isArray(currentJSON)) {
 
-        container.innerHTML =
-            "<div class='notificationviewer-empty'>Invalid notification format</div>";
+    container.innerHTML =
+        "<div class='notificationviewer-empty'>Invalid notification format</div>";
 
-        return;
-    }
+    return;
+}
 
-    /* SORT newest first */
+initializeNotifications(currentJSON);
 
-    notificationList =
-        currentJSON.sort(
-            (a, b) => b.posted_time - a.posted_time
-        );
+container.className = "notificationviewer-app";
 
-    container.className = "notificationviewer-app";
+container.innerHTML = `
+    ${renderNotificationHeader()}
+    ${renderNotificationToolbar()}
+    ${renderNotificationStats()}
+    ${renderNotificationListContainer()}
+    ${renderNotificationPagination()}
+`;
 
-    container.innerHTML = `
+attachNotificationHandlers();
 
-        <div class="notificationviewer-header">
-            Notifications
-        </div>
-
-        <div class="notificationviewer-search">
-            <input id="notificationSearch"
-                   placeholder="Search notifications">
-        </div>
-
-        <div class="notificationviewer-list"
-             id="notificationList">
-        </div>
-
-    `;
-
-    renderNotificationItems();
-
-    /* SEARCH */
-
-    document
-        .getElementById("notificationSearch")
-        .addEventListener("input", function() {
-
-            const query =
-                this.value.toLowerCase();
-
-            renderNotificationItems(query);
-
-        });
+runNotificationPipeline();
 
 }
 
-/* =========================================
-   RENDER LIST
-========================================= */
+/* =========================================================
+INITIALIZATION ENGINE
+========================================================= */
 
-function renderNotificationItems(search="") {
+function initializeNotifications(json) {
 
-    const list =
-        document.getElementById("notificationList");
+NOTIFICATION_STATE.raw = json;
 
-    list.innerHTML = "";
-
-    const filtered =
-        notificationList.filter(n => {
-
-            if (!search) return true;
-
-            return (
-
-                n.app_name?.toLowerCase().includes(search) ||
-
-                n.package?.toLowerCase().includes(search) ||
-
-                n.title?.toLowerCase().includes(search) ||
-
-                n.text?.toLowerCase().includes(search) ||
-
-                n.big_text?.toLowerCase().includes(search)
-
-            );
-
-        });
-
-    if (filtered.length === 0) {
-
-        list.innerHTML =
-            "<div class='notificationviewer-empty'>No notifications</div>";
-
-        return;
-    }
-
-    filtered.forEach(notification => {
-
-        list.appendChild(
-            createNotificationCard(notification)
-        );
-
-    });
-
-}
-
-/* =========================================
-   CREATE CARD
-========================================= */
-
-function createNotificationCard(n) {
-
-    const card =
-        document.createElement("div");
-
-    card.className =
-        "notificationviewer-item";
-
-    const icon =
-        getAppIcon(n.package, n.app_name);
-
-    const time =
-        formatRelativeTime(n.posted_time);
+NOTIFICATION_STATE.indexed = json.map(n => {
 
     const text =
         n.text ||
@@ -135,141 +100,510 @@ function createNotificationCard(n) {
         n.ticker ||
         "";
 
-    card.innerHTML = `
+    return {
 
-        <div class="notificationviewer-icon">
-            ${icon}
-        </div>
+        id: n.notification_id,
 
-        <div class="notificationviewer-content">
+        app: n.app_name || "Unknown",
 
-            <div class="notificationviewer-top">
+        package: n.package || "",
 
-                <div class="notificationviewer-appname">
-                    ${escapeHTML(n.app_name || "Unknown")}
-                </div>
+        title: n.title || "",
 
-                <div class="notificationviewer-time">
-                    ${time}
-                </div>
+        text,
 
-            </div>
+        category: n.category || "other",
 
-            <div class="notificationviewer-title">
-                ${escapeHTML(n.title || "")}
-            </div>
+        posted_time: n.posted_time,
 
-            ${
-                text
-                ?
-                `<div class="notificationviewer-text">
-                    ${escapeHTML(text)}
-                 </div>`
-                :
-                ""
-            }
+        timeFormatted:
+            formatRelativeTime(n.posted_time),
 
-        </div>
-
-    `;
-
-    return card;
-}
-
-/* =========================================
-   APP ICON GENERATOR
-========================================= */
-
-function getAppIcon(packageName, appName) {
-
-    const map = {
-
-        "com.whatsapp": "fab fa-whatsapp",
-        "com.whatsapp.w4b": "fab fa-whatsapp",
-
-        "com.instagram.android": "fab fa-instagram",
-
-        "com.snapchat.android": "fab fa-snapchat",
-
-        "com.google.android.gm": "fas fa-envelope",
-
-        "com.android.systemui": "fas fa-mobile-alt",
-
-        "com.samsung.android.incallui": "fas fa-phone",
-
-        "com.facebook.katana": "fab fa-facebook",
-
-        "com.google.android.youtube": "fab fa-youtube",
-
-        "com.android.chrome": "fab fa-chrome"
+        fullTime:
+            new Date(n.posted_time)
+            .toLocaleString()
 
     };
 
-    if (map[packageName]) {
+});
 
-        return `<i class="${map[packageName]}"></i>`;
+calculateNotificationStats();
+
+}
+
+/* =========================================================
+STATS ENGINE
+========================================================= */
+
+function calculateNotificationStats(){
+
+NOTIFICATION_STATE.stats.total =
+    NOTIFICATION_STATE.indexed.length;
+
+NOTIFICATION_STATE.indexed.forEach(n=>{
+
+    incrementMap(
+        NOTIFICATION_STATE.stats.apps,
+        n.app
+    );
+
+    incrementMap(
+        NOTIFICATION_STATE.stats.categories,
+        n.category
+    );
+
+});
+
+const times =
+    NOTIFICATION_STATE.indexed
+    .map(n=>n.posted_time);
+
+NOTIFICATION_STATE.stats.firstTime =
+    Math.min(...times);
+
+NOTIFICATION_STATE.stats.lastTime =
+    Math.max(...times);
+
+}
+
+/* =========================================================
+PIPELINE ENGINE
+========================================================= */
+
+function runNotificationPipeline(){
+
+applyNotificationFilters();
+
+applyNotificationSort();
+
+renderNotificationItems();
+
+renderNotificationPaginationControls();
+
+renderNotificationStatsLive();
+
+}
+
+/* =========================================================
+FILTER ENGINE
+========================================================= */
+
+function applyNotificationFilters(){
+
+NOTIFICATION_STATE.filtered =
+    NOTIFICATION_STATE.indexed.filter(n=>{
+
+    if(NOTIFICATION_STATE.search){
+
+        const s =
+            NOTIFICATION_STATE.search;
+
+        if(!(
+
+            n.app.toLowerCase().includes(s) ||
+            n.package.toLowerCase().includes(s) ||
+            n.title.toLowerCase().includes(s) ||
+            n.text.toLowerCase().includes(s)
+
+        )) return false;
 
     }
 
-    /* fallback: first letter */
+    if(
+        NOTIFICATION_STATE.filters.app !== "all" &&
+        n.app !== NOTIFICATION_STATE.filters.app
+    ) return false;
 
-    return appName
-        ? appName.charAt(0).toUpperCase()
-        : "?";
+    if(
+        NOTIFICATION_STATE.filters.category !== "all" &&
+        n.category !== NOTIFICATION_STATE.filters.category
+    ) return false;
 
-}
+    if(!passesTimeFilter(n.posted_time))
+        return false;
 
-/* =========================================
-   TIME FORMAT (Android style)
-========================================= */
+    return true;
 
-function formatRelativeTime(timestamp) {
-
-    const now =
-        Date.now();
-
-    const diff =
-        now - timestamp;
-
-    const seconds =
-        Math.floor(diff / 1000);
-
-    const minutes =
-        Math.floor(seconds / 60);
-
-    const hours =
-        Math.floor(minutes / 60);
-
-    const days =
-        Math.floor(hours / 24);
-
-    if (seconds < 60)
-        return "now";
-
-    if (minutes < 60)
-        return minutes + " min ago";
-
-    if (hours < 24)
-        return hours + " hr ago";
-
-    if (days === 1)
-        return "Yesterday";
-
-    return days + " days ago";
+});
 
 }
 
-/* =========================================
-   SAFE HTML
-========================================= */
+/* =========================================================
+TIME FILTER ENGINE
+========================================================= */
 
-function escapeHTML(str) {
+function passesTimeFilter(time){
 
-    if (!str) return "";
+const now =
+    Date.now();
 
-    return str
-        .replace(/&/g,"&amp;")
-        .replace(/</g,"&lt;")
-        .replace(/>/g,"&gt;");
+const range =
+    NOTIFICATION_STATE.filters.timeRange;
+
+if(range==="all")
+    return true;
+
+if(range==="1h")
+    return now-time<3600000;
+
+if(range==="24h")
+    return now-time<86400000;
+
+if(range==="7d")
+    return now-time<604800000;
+
+return true;
 
 }
+
+/* =========================================================
+SORT ENGINE
+========================================================= */
+
+function applyNotificationSort(){
+
+const {field,dir} =
+    NOTIFICATION_STATE.sort;
+
+NOTIFICATION_STATE.filtered.sort(
+    (a,b)=>
+        dir==="asc"
+        ?a[field]-b[field]
+        :b[field]-a[field]
+);
+
+}
+
+/* =========================================================
+PAGINATION ENGINE
+========================================================= */
+
+function paginateNotifications(){
+
+const start =
+    (NOTIFICATION_STATE.pagination.page-1)
+    * NOTIFICATION_STATE.pagination.perPage;
+
+return NOTIFICATION_STATE.filtered.slice(
+    start,
+    start+
+    NOTIFICATION_STATE.pagination.perPage
+);
+
+}
+
+/* =========================================================
+HEADER
+========================================================= */
+
+function renderNotificationHeader(){
+
+return `
+
+<div class="notificationviewer-header">
+Notification Intelligence Terminal
+</div>`;
+}/* =========================================================
+TOOLBAR
+========================================================= */
+
+function renderNotificationToolbar(){
+
+return `
+
+<div class="notificationviewer-toolbar"><input id="notificationSearch"
+placeholder="Search notifications">
+
+<select id="notificationAppFilter">
+<option value="all">All Apps</option>
+${generateAppOptions()}
+</select><select id="notificationCategoryFilter">
+<option value="all">All Categories</option>
+${generateCategoryOptions()}
+</select><select id="notificationTimeFilter">
+<option value="all">All Time</option>
+<option value="1h">Last Hour</option>
+<option value="24h">Last 24 Hours</option>
+<option value="7d">Last 7 Days</option>
+</select><button id="exportNotificationCSV">
+Export CSV
+</button><button id="exportNotificationJSON">
+Export JSON
+</button></div>`;
+}/* =========================================================
+STATS PANEL
+========================================================= */
+
+function renderNotificationStats(){
+
+return `
+
+<div class="notificationviewer-stats"
+id="notificationStats">Total:
+${NOTIFICATION_STATE.stats.total}
+
+</div>`;
+}function renderNotificationStatsLive(){
+
+document.getElementById("notificationStats")
+.innerHTML="Showing ${NOTIFICATION_STATE.filtered.length} / ${NOTIFICATION_STATE.stats.total} notifications";
+}
+
+/* =========================================================
+LIST
+========================================================= */
+
+function renderNotificationListContainer(){
+
+return `
+
+<div id="notificationList"
+class="notificationviewer-list">
+</div>`;
+}function renderNotificationItems(){
+
+const list =
+document.getElementById("notificationList");
+
+list.innerHTML="";
+
+const page =
+paginateNotifications();
+
+if(!page.length){
+
+list.innerHTML=
+"<div class='notificationviewer-empty'>No notifications</div>";
+
+return;
+
+}
+
+page.forEach(n=>{
+
+list.appendChild(
+createNotificationCardAdvanced(n)
+);
+
+});
+}
+
+/* =========================================================
+CARD
+========================================================= */
+
+function createNotificationCardAdvanced(n){
+
+const div =
+document.createElement("div");
+
+div.className="notificationviewer-item";
+
+div.innerHTML=`
+
+<div class="notificationviewer-icon">
+${getAppIcon(n.package,n.app)}
+</div><div class="notificationviewer-content"><div class="notificationviewer-top"><div class="notificationviewer-appname">
+${escapeHTML(n.app)}
+</div><div class="notificationviewer-time">
+${n.timeFormatted}
+</div></div><div class="notificationviewer-title">
+${escapeHTML(n.title)}
+</div><div class="notificationviewer-text">
+${escapeHTML(n.text)}
+</div><div class="notificationviewer-package">
+${escapeHTML(n.package)}
+</div></div>
+`;return div;
+}
+
+/* =========================================================
+PAGINATION
+========================================================= */
+
+function renderNotificationPagination(){
+
+return `
+
+<div id="notificationPagination"
+class="notificationviewer-pagination">
+</div>`;
+}function renderNotificationPaginationControls(){
+
+const totalPages =
+Math.ceil(
+NOTIFICATION_STATE.filtered.length /
+NOTIFICATION_STATE.pagination.perPage
+);
+
+document.getElementById(
+"notificationPagination"
+).innerHTML=`
+
+<button id="notificationPrev">
+Prev
+</button>Page
+${NOTIFICATION_STATE.pagination.page}
+/
+${totalPages}
+
+<button id="notificationNext">
+Next
+</button>
+`;
+}/* =========================================================
+EVENT HANDLERS
+========================================================= */
+
+function attachNotificationHandlers(){
+
+document.getElementById("notificationSearch")
+.oninput=e=>{
+NOTIFICATION_STATE.search=
+e.target.value.toLowerCase();
+runNotificationPipeline();
+};
+
+document.getElementById("notificationAppFilter")
+.onchange=e=>{
+NOTIFICATION_STATE.filters.app=e.target.value;
+runNotificationPipeline();
+};
+
+document.getElementById("notificationCategoryFilter")
+.onchange=e=>{
+NOTIFICATION_STATE.filters.category=e.target.value;
+runNotificationPipeline();
+};
+
+document.getElementById("notificationTimeFilter")
+.onchange=e=>{
+NOTIFICATION_STATE.filters.timeRange=e.target.value;
+runNotificationPipeline();
+};
+
+document.getElementById("notificationPrev")
+.onclick=()=>{
+if(NOTIFICATION_STATE.pagination.page>1)
+NOTIFICATION_STATE.pagination.page--;
+runNotificationPipeline();
+};
+
+document.getElementById("notificationNext")
+.onclick=()=>{
+NOTIFICATION_STATE.pagination.page++;
+runNotificationPipeline();
+};
+
+document.getElementById("exportNotificationCSV")
+.onclick=exportNotificationCSV;
+
+document.getElementById("exportNotificationJSON")
+.onclick=exportNotificationJSON;
+
+}
+
+/* =========================================================
+EXPORT ENGINE
+========================================================= */
+
+function exportNotificationCSV(){
+
+const rows=
+NOTIFICATION_STATE.filtered.map(n=>
+"${n.app},${n.package},${n.title},${n.text},${n.fullTime}"
+);
+
+downloadNotificationFile(
+"notifications.csv",
+rows.join("\n")
+);
+
+}
+
+function exportNotificationJSON(){
+
+downloadNotificationFile(
+"notifications.json",
+JSON.stringify(
+NOTIFICATION_STATE.filtered,null,2)
+);
+
+}
+
+function downloadNotificationFile(name,content){
+
+const blob=
+new Blob([content]);
+
+const url=
+URL.createObjectURL(blob);
+
+const a=
+document.createElement("a");
+
+a.href=url;
+a.download=name;
+a.click();
+
+URL.revokeObjectURL(url);
+
+}
+
+/* =========================================================
+OPTION GENERATORS
+========================================================= */
+
+function generateAppOptions(){
+
+return Array.from(
+NOTIFICATION_STATE.stats.apps.keys()
+).map(a=>
+"<option value="${a}">${a}</option>"
+).join("");
+
+}
+
+function generateCategoryOptions(){
+
+return Array.from(
+NOTIFICATION_STATE.stats.categories.keys()
+).map(c=>
+"<option value="${c}">${c}</option>"
+).join("");
+
+}
+
+function incrementMap(map,key){
+
+map.set(key,(map.get(key)||0)+1);
+
+}
+
+/* =========================================================
+UTILITIES
+========================================================= */
+
+function formatRelativeTime(ts){
+
+const diff=Date.now()-ts;
+
+const m=Math.floor(diff/60000);
+const h=Math.floor(diff/3600000);
+const d=Math.floor(diff/86400000);
+
+if(m<1) return "now";
+if(m<60) return m+"m ago";
+if(h<24) return h+"h ago";
+return d+"d ago";
+
+}
+
+function escapeHTML(str){
+
+return (str||"")
+.replace(/&/g,"&")
+.replace(/</g,"<")
+.replace(/>/g,">");
+
+   }
