@@ -264,6 +264,8 @@ function detectViewerType(filename) {
     if (lower.startsWith("device")) return "device";
     if (lower.startsWith("app") || lower.startsWith("apps")) return "app";
     if (lower.startsWith("notification")) return "notification";
+    if (lower.startsWith("file") || lower.startsWith("storage"))
+    return "filemanager";
 
     return null;
 }
