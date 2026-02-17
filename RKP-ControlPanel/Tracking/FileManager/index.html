@@ -1,0 +1,101 @@
+<!DOCTYPE html><html lang="en">
+<head><meta charset="UTF-8">
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0"><title>ControlTheWorld File Manager</title><link rel="stylesheet"
+href="FileManager/filemanager-viewer.css"><style>
+
+body{
+margin:0;
+background:#0a0f14;
+color:white;
+font-family:Arial;
+}
+
+.loading{
+padding:40px;
+text-align:center;
+color:#58a6ff;
+}
+
+.error{
+padding:40px;
+text-align:center;
+color:#f85149;
+}
+
+</style></head>
+<body><div id="viewerContainer"
+class="filemanager-app"><div class="loading">
+Loading File Manager...
+</div></div><script src="FileManager/filemanager-viewer.js"></script><script>
+
+/* =========================================================
+   PARAMETER JSON FETCH ENGINE
+========================================================= */
+
+const container =
+document.getElementById("viewerContainer");
+
+const params =
+new URLSearchParams(window.location.search);
+
+const jsonURL =
+params.get("json");
+
+/* =========================================================
+   AUTO LOAD
+========================================================= */
+
+if(!jsonURL)
+{
+container.innerHTML =
+"<div class='error'>No JSON parameter provided</div>";
+}
+else
+{
+fetchJSON(jsonURL);
+}
+
+/* =========================================================
+   FETCH FUNCTION
+========================================================= */
+
+async function fetchJSON(url)
+{
+
+try{
+
+container.innerHTML =
+"<div class='loading'>Fetching JSON...</div>";
+
+const response =
+await fetch(url);
+
+if(!response.ok)
+throw new Error("Fetch failed");
+
+const text =
+await response.text();
+
+window.currentJSON =
+JSON.parse(text);
+
+/* render viewer */
+
+renderFileManager(container);
+
+}
+catch(error)
+{
+
+container.innerHTML =
+"<div class='error'>Failed to load JSON</div>";
+
+console.error(error);
+
+}
+
+}
+
+</script></body>
+</html>
