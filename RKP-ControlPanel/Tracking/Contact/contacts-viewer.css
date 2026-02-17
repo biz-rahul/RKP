@@ -1,243 +1,437 @@
-/* =========================================
-   HACKING CONTACT VIEWER CSS
-   Terminal + Matrix UI
-========================================= */
+/* =========================================================
+CONTROLTHEWORLD — ADVANCED CONTACT VIEWER CSS v3.0
+Contact Intelligence & Forensic UI
+Fully scoped under .contactsviewer-app
+========================================================= */
+
+/* =========================================================
+ROOT CONTAINER
+========================================================= */
 
 .contactsviewer-app {
 
-    background: #020604;
+display: flex;
 
-    color: #00ff9c;
+flex-direction: column;
 
-    font-family: "Courier New", monospace;
+height: 100%;
 
-    height: 100%;
+background: #020604;
 
-    display: flex;
+color: #00ff9c;
 
-    flex-direction: column;
+font-family: -apple-system,
+             BlinkMacSystemFont,
+             "Segoe UI",
+             Courier New,
+             monospace;
 
-    position: relative;
+overflow: hidden;
+
+position: relative;
 
 }
 
-/* =========================================
-   MATRIX SCAN EFFECT
-========================================= */
+/* =========================================================
+MATRIX SCAN EFFECT (FORENSIC TERMINAL STYLE)
+========================================================= */
 
 .contactsviewer-app::before {
 
-    content: "";
+content: "";
 
-    position: absolute;
+position: absolute;
 
-    inset: 0;
+inset: 0;
 
-    background:
-        repeating-linear-gradient(
-            to bottom,
-            rgba(0,255,156,0.03),
-            rgba(0,255,156,0.03) 2px,
-            transparent 2px,
-            transparent 4px
-        );
+background:
+    repeating-linear-gradient(
+        to bottom,
+        rgba(0,255,156,0.03),
+        rgba(0,255,156,0.03) 2px,
+        transparent 2px,
+        transparent 4px
+    );
 
-    animation: matrixMove 8s linear infinite;
+animation: contactsviewer-matrix 8s linear infinite;
 
-    pointer-events: none;
+pointer-events: none;
 
-}
-
-@keyframes matrixMove {
-
-    from {
-        transform: translateY(-100%);
-    }
-
-    to {
-        transform: translateY(100%);
-    }
+z-index: 0;
 
 }
 
-/* =========================================
-   HEADER
-========================================= */
+@keyframes contactsviewer-matrix {
+
+from {
+    transform: translateY(-100%);
+}
+
+to {
+    transform: translateY(100%);
+}
+
+}
+
+/* =========================================================
+HEADER
+========================================================= */
 
 .contactsviewer-header {
 
-    padding: 14px;
+padding: 14px 18px;
 
-    font-size: 16px;
+font-size: 16px;
 
-    font-weight: bold;
+font-weight: bold;
 
-    background: #03120c;
+background: #03120c;
 
-    border-bottom: 1px solid #00ff9c;
+border-bottom: 1px solid #00ff9c;
 
-    letter-spacing: 1px;
+letter-spacing: 1px;
 
-}
-
-/* =========================================
-   SEARCH BAR
-========================================= */
-
-.contactsviewer-search {
-
-    padding: 10px;
-
-    background: #03120c;
+z-index: 1;
 
 }
 
-.contactsviewer-search input {
+/* =========================================================
+TOOLBAR
+========================================================= */
 
-    width: 100%;
+.contactsviewer-toolbar {
 
-    padding: 8px;
+display: flex;
 
-    background: black;
+flex-wrap: wrap;
 
-    border: 1px solid #00ff9c;
+gap: 8px;
 
-    color: #00ff9c;
+padding: 10px;
 
-    font-family: inherit;
+background: #03120c;
 
-    outline: none;
+border-bottom: 1px solid rgba(0,255,156,0.3);
+
+z-index: 1;
 
 }
 
-/* =========================================
-   CONTACT LIST
-========================================= */
+.contactsviewer-toolbar input {
+
+flex: 1;
+
+min-width: 160px;
+
+padding: 8px;
+
+background: black;
+
+border: 1px solid #00ff9c;
+
+color: #00ff9c;
+
+font-family: inherit;
+
+font-size: 13px;
+
+border-radius: 4px;
+
+}
+
+.contactsviewer-toolbar input:focus {
+
+outline: none;
+
+box-shadow: 0 0 6px rgba(0,255,156,0.6);
+
+}
+
+.contactsviewer-toolbar select {
+
+padding: 8px;
+
+background: black;
+
+border: 1px solid #00ff9c;
+
+color: #00ff9c;
+
+font-family: inherit;
+
+font-size: 13px;
+
+border-radius: 4px;
+
+cursor: pointer;
+
+}
+
+.contactsviewer-toolbar button {
+
+padding: 8px 12px;
+
+background: rgba(0,255,156,0.08);
+
+border: 1px solid #00ff9c;
+
+color: #00ff9c;
+
+font-family: inherit;
+
+font-size: 13px;
+
+border-radius: 4px;
+
+cursor: pointer;
+
+transition: all 0.15s ease;
+
+}
+
+.contactsviewer-toolbar button:hover {
+
+background: rgba(0,255,156,0.2);
+
+box-shadow: 0 0 6px rgba(0,255,156,0.6);
+
+}
+
+/* =========================================================
+STATS PANEL
+========================================================= */
+
+.contactsviewer-stats {
+
+padding: 8px 14px;
+
+font-size: 12px;
+
+color: #66ffc2;
+
+background: #020604;
+
+border-bottom: 1px solid rgba(0,255,156,0.2);
+
+z-index: 1;
+
+}
+
+/* =========================================================
+CONTACT LIST
+========================================================= */
 
 .contactsviewer-list {
 
-    flex: 1;
+flex: 1;
 
-    overflow-y: auto;
+overflow-y: auto;
 
-    padding: 10px;
+padding: 12px;
 
-}
+position: relative;
 
-/* =========================================
-   LETTER GROUP
-========================================= */
-
-.contactsviewer-letter {
-
-    font-size: 14px;
-
-    font-weight: bold;
-
-    margin-top: 12px;
-
-    margin-bottom: 6px;
-
-    color: #00ffaa;
+z-index: 1;
 
 }
 
-/* =========================================
-   CONTACT CARD
-========================================= */
+/* =========================================================
+CONTACT CARD
+========================================================= */
 
 .contactsviewer-contact {
 
-    padding: 10px;
+padding: 10px 12px;
 
-    margin-bottom: 6px;
+margin-bottom: 8px;
 
-    border: 1px solid rgba(0,255,156,0.2);
+border-radius: 6px;
 
-    border-radius: 6px;
+border: 1px solid rgba(0,255,156,0.2);
 
-    background: rgba(0,255,156,0.05);
+background: rgba(0,255,156,0.04);
 
-    cursor: pointer;
+cursor: default;
 
-    transition: all 0.2s;
+transition: all 0.18s ease;
 
 }
 
 .contactsviewer-contact:hover {
 
-    background: rgba(0,255,156,0.12);
+background: rgba(0,255,156,0.12);
 
-    border-color: #00ff9c;
+border-color: #00ff9c;
 
-    box-shadow: 0 0 6px rgba(0,255,156,0.4);
+box-shadow: 0 0 8px rgba(0,255,156,0.5);
 
 }
 
-/* =========================================
-   NAME
-========================================= */
+/* =========================================================
+CONTACT NAME
+========================================================= */
 
 .contactsviewer-name {
 
-    font-size: 14px;
+font-size: 14px;
 
-    font-weight: bold;
+font-weight: bold;
+
+color: #00ff9c;
+
+white-space: nowrap;
+
+overflow: hidden;
+
+text-overflow: ellipsis;
 
 }
 
-/* =========================================
-   NUMBER
-========================================= */
+/* =========================================================
+CONTACT NUMBER
+========================================================= */
 
 .contactsviewer-number {
 
-    font-size: 12px;
+font-size: 12px;
 
-    color: #66ffc2;
+color: #66ffc2;
+
+margin-top: 2px;
 
 }
 
-/* =========================================
-   EMPTY STATE
-========================================= */
+/* =========================================================
+DUPLICATE INDICATOR
+========================================================= */
+
+.contactsviewer-duplicate {
+
+font-size: 11px;
+
+margin-top: 4px;
+
+color: #ffaa00;
+
+font-weight: bold;
+
+}
+
+/* =========================================================
+PAGINATION
+========================================================= */
+
+.contactsviewer-pagination {
+
+display: flex;
+
+justify-content: center;
+
+align-items: center;
+
+gap: 12px;
+
+padding: 10px;
+
+border-top: 1px solid rgba(0,255,156,0.2);
+
+background: #03120c;
+
+font-size: 12px;
+
+z-index: 1;
+
+}
+
+.contactsviewer-pagination button {
+
+padding: 6px 12px;
+
+background: black;
+
+border: 1px solid #00ff9c;
+
+color: #00ff9c;
+
+font-family: inherit;
+
+cursor: pointer;
+
+border-radius: 4px;
+
+transition: all 0.15s ease;
+
+}
+
+.contactsviewer-pagination button:hover {
+
+background: rgba(0,255,156,0.2);
+
+box-shadow: 0 0 6px rgba(0,255,156,0.5);
+
+}
+
+/* =========================================================
+EMPTY STATE
+========================================================= */
 
 .contactsviewer-empty {
 
-    padding: 40px;
+text-align: center;
 
-    text-align: center;
+padding: 40px;
 
-    color: #00ffaa;
+color: #00ffaa;
+
+font-size: 14px;
+
+z-index: 1;
 
 }
 
-/* =========================================
-   SCROLLBAR
-========================================= */
+/* =========================================================
+SCROLLBAR
+========================================================= */
 
 .contactsviewer-list::-webkit-scrollbar {
 
-    width: 6px;
+width: 6px;
 
 }
 
 .contactsviewer-list::-webkit-scrollbar-thumb {
 
-    background: #00ff9c;
+background: #00ff9c;
+
+border-radius: 3px;
 
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+.contactsviewer-list::-webkit-scrollbar-thumb:hover {
+
+background: #00ffaa;
+
+}
+
+/* =========================================================
+MOBILE OPTIMIZATION
+========================================================= */
 
 @media (max-width:768px) {
 
-    .contactsviewer-name {
+.contactsviewer-toolbar {
 
-        font-size: 13px;
+    flex-direction: column;
+}
 
-    }
+.contactsviewer-name {
+
+    font-size: 13px;
+}
+
+.contactsviewer-number {
+
+    font-size: 11px;
+}
 
 }
