@@ -8,42 +8,139 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<title id="pageTitle">Universal Viewer</title>
+<title id="title">Viewer</title>
 
-<!-- UNIVERSAL CSS -->
-<link rel="stylesheet" href="filemanager-viewer.css">
+<!-- YOUR VIEWER CSS -->
+<script src="FileManager/filemanager-viewer.css"></script>
 
 </head>
 
 <body>
 
-<div class="container">
-
-<h2 id="viewerTitle">
-Viewer
-</h2>
-
+<!-- STATUS -->
 <div id="status">
 Initializing...
 </div>
 
-<table id="viewerTable">
+<!-- YOUR VIEWER CONTENT -->
+<div id="viewerRoot"></div>
 
-<thead>
-<tr id="tableHeader">
-</tr>
-</thead>
 
-<tbody id="tableBody">
-</tbody>
+<!-- JSON LOADER ONLY -->
+<script>
 
-</table>
+(function()
+{
 
-</div>
+/* GLOBAL VARIABLES */
 
-<!-- VIEWER TYPE SCRIPT -->
+window.VIEWER =
+{
+    jsonUrl: null,
+    jsonData: null,
+    params: {}
+};
+
+
+/* GET PARAMETERS */
+
+function parseParams()
+{
+    const url =
+        new URL(window.location.href);
+
+    const params =
+        url.searchParams;
+
+    params.forEach(function(value, key)
+    {
+        VIEWER.params[key] =
+            value;
+    });
+
+    VIEWER.jsonUrl =
+        VIEWER.params.json || null;
+}
+
+
+/* STATUS UPDATE */
+
+function setStatus(text)
+{
+    const el =
+        document.getElementById(
+            "status");
+
+    if(el)
+        el.innerHTML = text;
+}
+
+
+/* FETCH JSON */
+
+function fetchJSON()
+{
+    if(!VIEWER.jsonUrl)
+    {
+        setStatus(
+            "Missing json parameter");
+
+        return;
+    }
+
+    setStatus(
+        "Loading JSON...");
+
+    fetch(VIEWER.jsonUrl)
+    .then(function(res)
+    {
+        if(!res.ok)
+            throw new Error();
+
+        return res.json();
+    })
+    .then(function(data)
+    {
+        VIEWER.jsonData =
+            data;
+
+        setStatus(
+            "Loaded: "
+            + data.length
+            + " records");
+
+        /* CALL YOUR EXTERNAL JS */
+
+        if(window.onViewerData)
+        {
+            window.onViewerData(
+                data,
+                VIEWER.params);
+        }
+
+    })
+    .catch(function()
+    {
+        setStatus(
+            "JSON load failed");
+    });
+}
+
+
+/* INIT */
+
+parseParams();
+
+fetchJSON();
+
+})();
+
+</script>
+
+
+<!-- YOUR VIEWER JS -->
 <script src="filemanager-viewer.js"></script>
 
-</body>
 
+</body>
 </html>
