@@ -1,184 +1,49 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+
 <meta charset="UTF-8">
-<title>Device File Manager</title>
-    <link rel="stylesheet" href="filemanager-viewer.css">
 
-<style>
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-body{
-    font-family: Arial;
-    background:#f4f6fa;
-    margin:0;
-    padding:20px;
-}
+<title id="pageTitle">Universal Viewer</title>
 
-h2{
-    margin-bottom:10px;
-}
-
-#status{
-    margin-bottom:15px;
-    color:#444;
-}
-
-table{
-    border-collapse: collapse;
-    width:100%;
-    background:white;
-}
-
-th, td{
-    padding:8px;
-    border-bottom:1px solid #ddd;
-    text-align:left;
-}
-
-th{
-    background:#3F51B5;
-    color:white;
-}
-
-tr:hover{
-    background:#f1f1f1;
-}
-
-.hidden{
-    color:red;
-}
-
-.folder{
-    color:#2196F3;
-}
-
-</style>
+<!-- UNIVERSAL CSS -->
+<link rel="stylesheet" href="filemanager-viewer.css">
 
 </head>
+
 <body>
 
-<h2>Device File Manager</h2>
+<div class="container">
 
-<div id="status">Loading...</div>
+<h2 id="viewerTitle">
+Viewer
+</h2>
 
-<table>
+<div id="status">
+Initializing...
+</div>
+
+<table id="viewerTable">
+
 <thead>
-<tr>
-<th>Name</th>
-<th>Path</th>
-<th>Size</th>
-<th>Modified</th>
-<th>Type</th>
+<tr id="tableHeader">
 </tr>
 </thead>
 
-<tbody id="table"></tbody>
+<tbody id="tableBody">
+</tbody>
 
 </table>
 
-<script>
+</div>
 
-function getParam(name)
-{
-    const url = new URL(window.location.href);
-    return url.searchParams.get(name);
-}
-
-const jsonUrl = getParam("json");
-
-if(!jsonUrl)
-{
-    document.getElementById("status").innerHTML =
-        "Missing JSON parameter";
-
-    throw new Error("Missing json param");
-}
-
-fetch(jsonUrl)
-.then(response => response.json())
-.then(data =>
-{
-    render(data);
-})
-.catch(err =>
-{
-    document.getElementById("status").innerHTML =
-        "Error loading JSON";
-});
-
-function render(files)
-{
-    const table =
-        document.getElementById("table");
-
-    table.innerHTML = "";
-
-    document.getElementById("status").innerHTML =
-        files.length + " files";
-
-    files.forEach(file =>
-    {
-        const tr =
-            document.createElement("tr");
-
-        const name =
-            file.name;
-
-        const hidden =
-            file.hidden;
-
-        const type =
-            file.directory
-            ? "Folder"
-            : "File";
-
-        tr.innerHTML =
-        "<td class='"+(hidden?"hidden":"")+"'>"
-        + name +
-        "</td>"
-        +
-        "<td>"
-        + file.path +
-        "</td>"
-        +
-        "<td>"
-        + formatSize(file.size) +
-        "</td>"
-        +
-        "<td>"
-        + formatDate(file.last_modified) +
-        "</td>"
-        +
-        "<td class='"+(file.directory?"folder":"")+"'>"
-        + type +
-        "</td>";
-
-        table.appendChild(tr);
-    });
-}
-
-function formatSize(bytes)
-{
-    if(bytes<1024)
-        return bytes+" B";
-
-    if(bytes<1024*1024)
-        return (bytes/1024).toFixed(1)+" KB";
-
-    if(bytes<1024*1024*1024)
-        return (bytes/1024/1024).toFixed(1)+" MB";
-
-    return (bytes/1024/1024/1024).toFixed(1)+" GB";
-}
-
-function formatDate(ts)
-{
-    const d = new Date(ts);
-
-    return d.toLocaleString();
-}
-
-</script>
+<!-- VIEWER TYPE SCRIPT -->
 <script src="filemanager-viewer.js"></script>
+
 </body>
+
 </html>
