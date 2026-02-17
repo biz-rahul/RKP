@@ -1,101 +1,183 @@
-<!DOCTYPE html><html lang="en">
-<head><meta charset="UTF-8">
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0"><title>ControlTheWorld File Manager</title><link rel="stylesheet"
-href="FileManager/filemanager-viewer.css"><style>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Device File Manager</title>
+
+<style>
 
 body{
-margin:0;
-background:#0a0f14;
-color:white;
-font-family:Arial;
+    font-family: Arial;
+    background:#f4f6fa;
+    margin:0;
+    padding:20px;
 }
 
-.loading{
-padding:40px;
-text-align:center;
-color:#58a6ff;
+h2{
+    margin-bottom:10px;
 }
 
-.error{
-padding:40px;
-text-align:center;
-color:#f85149;
+#status{
+    margin-bottom:15px;
+    color:#444;
 }
 
-</style></head>
-<body><div id="viewerContainer"
-class="filemanager-app"><div class="loading">
-Loading File Manager...
-</div></div><script src="FileManager/filemanager-viewer.js"></script><script>
+table{
+    border-collapse: collapse;
+    width:100%;
+    background:white;
+}
 
-/* =========================================================
-   PARAMETER JSON FETCH ENGINE
-========================================================= */
+th, td{
+    padding:8px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
 
-const container =
-document.getElementById("viewerContainer");
+th{
+    background:#3F51B5;
+    color:white;
+}
 
-const params =
-new URLSearchParams(window.location.search);
+tr:hover{
+    background:#f1f1f1;
+}
 
-const jsonURL =
-params.get("json");
+.hidden{
+    color:red;
+}
 
-/* =========================================================
-   AUTO LOAD
-========================================================= */
+.folder{
+    color:#2196F3;
+}
 
-if(!jsonURL)
+</style>
+
+</head>
+<body>
+
+<h2>Device File Manager</h2>
+
+<div id="status">Loading...</div>
+
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Path</th>
+<th>Size</th>
+<th>Modified</th>
+<th>Type</th>
+</tr>
+</thead>
+
+<tbody id="table"></tbody>
+
+</table>
+
+<script>
+
+function getParam(name)
 {
-container.innerHTML =
-"<div class='error'>No JSON parameter provided</div>";
+    const url = new URL(window.location.href);
+    return url.searchParams.get(name);
 }
-else
+
+const jsonUrl = getParam("json");
+
+if(!jsonUrl)
 {
-fetchJSON(jsonURL);
+    document.getElementById("status").innerHTML =
+        "Missing JSON parameter";
+
+    throw new Error("Missing json param");
 }
 
-/* =========================================================
-   FETCH FUNCTION
-========================================================= */
-
-async function fetchJSON(url)
+fetch(jsonUrl)
+.then(response => response.json())
+.then(data =>
 {
-
-try{
-
-container.innerHTML =
-"<div class='loading'>Fetching JSON...</div>";
-
-const response =
-await fetch(url);
-
-if(!response.ok)
-throw new Error("Fetch failed");
-
-const text =
-await response.text();
-
-window.currentJSON =
-JSON.parse(text);
-
-/* render viewer */
-
-renderFileManager(container);
-
-}
-catch(error)
+    render(data);
+})
+.catch(err =>
 {
+    document.getElementById("status").innerHTML =
+        "Error loading JSON";
+});
 
-container.innerHTML =
-"<div class='error'>Failed to load JSON</div>";
+function render(files)
+{
+    const table =
+        document.getElementById("table");
 
-console.error(error);
+    table.innerHTML = "";
 
+    document.getElementById("status").innerHTML =
+        files.length + " files";
+
+    files.forEach(file =>
+    {
+        const tr =
+            document.createElement("tr");
+
+        const name =
+            file.name;
+
+        const hidden =
+            file.hidden;
+
+        const type =
+            file.directory
+            ? "Folder"
+            : "File";
+
+        tr.innerHTML =
+        "<td class='"+(hidden?"hidden":"")+"'>"
+        + name +
+        "</td>"
+        +
+        "<td>"
+        + file.path +
+        "</td>"
+        +
+        "<td>"
+        + formatSize(file.size) +
+        "</td>"
+        +
+        "<td>"
+        + formatDate(file.last_modified) +
+        "</td>"
+        +
+        "<td class='"+(file.directory?"folder":"")+"'>"
+        + type +
+        "</td>";
+
+        table.appendChild(tr);
+    });
 }
 
+function formatSize(bytes)
+{
+    if(bytes<1024)
+        return bytes+" B";
+
+    if(bytes<1024*1024)
+        return (bytes/1024).toFixed(1)+" KB";
+
+    if(bytes<1024*1024*1024)
+        return (bytes/1024/1024).toFixed(1)+" MB";
+
+    return (bytes/1024/1024/1024).toFixed(1)+" GB";
 }
 
-</script></body>
+function formatDate(ts)
+{
+    const d = new Date(ts);
+
+    return d.toLocaleString();
+}
+
+</script>
+
+</body>
 </html>
