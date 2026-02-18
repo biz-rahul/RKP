@@ -1,26 +1,358 @@
 <!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Professional SMS Viewer</title>
-<link rel="stylesheet" href="styles.css">
-</head><body><header>
-<h1>Professional SMS JSON Viewer</h1>
-<div class="stats">
-<span id="statThreads"></span>
-<span id="statMessages"></span>
-<span id="statCredit"></span>
-<span id="statDebit"></span>
-<span id="statNet"></span>
-</div>
-</header><section class="controls"><textarea id="pasteBox" placeholder="Paste JSON here"></textarea><div class="buttons"><input type="file" id="fileInput"><input type="text" id="githubInput" placeholder="GitHub raw URL">
-<button onclick="loadGithub()">Fetch</button><button onclick="loadPaste()">Load Paste</button>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apps Analytics Viewer</title><style>
 
-</div><div class="filters"><input type="text" id="searchBox" placeholder="Search messages"><select id="typeFilter">
-<option value="">All</option>
-<option value="INBOX">Inbox</option>
-<option value="SENT">Sent</option>
-</select><input type="date" id="startDate">
-<input type="date" id="endDate"></div></section><main><div id="threadPanel"></div><div id="messagePanel">
-<h2>Select thread</h2>
-</div></main><script src="script.js"></script></body>
+/* ---------- BASE ---------- */
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:#e4e8ee;
+color:#2d3748;
+}
+
+/* ---------- NEUMORPHIC CORE ---------- */
+
+.neu{
+border-radius:20px;
+background:#e4e8ee;
+box-shadow:
+10px 10px 20px #c2c8d0,
+-10px -10px 20px #ffffff;
+}
+
+.neu-inset{
+border-radius:15px;
+background:#e4e8ee;
+box-shadow:
+inset 6px 6px 12px #c2c8d0,
+inset -6px -6px 12px #ffffff;
+}
+
+/* ---------- LOAD SCREEN ---------- */
+
+#loadScreen{
+padding:20px;
+max-width:600px;
+margin:auto;
+}
+
+.title{
+text-align:center;
+font-size:32px;
+font-weight:700;
+margin:30px 0;
+}
+
+.card{
+padding:25px;
+}
+
+label{
+font-weight:600;
+display:block;
+margin:20px 0 10px;
+}
+
+input[type=text],
+textarea,
+input[type=file]{
+width:100%;
+padding:15px;
+border:none;
+outline:none;
+font-size:16px;
+background:transparent;
+}
+
+textarea{
+height:120px;
+resize:none;
+}
+
+button{
+margin-top:15px;
+padding:12px 25px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+background:#e4e8ee;
+box-shadow:
+6px 6px 12px #c2c8d0,
+-6px -6px 12px #ffffff;
+}
+
+button:active{
+box-shadow:
+inset 4px 4px 8px #c2c8d0,
+inset -4px -4px 8px #ffffff;
+}
+
+/* ---------- APP VIEW ---------- */
+
+#app{
+display:none;
+height:100vh;
+flex-direction:column;
+}
+
+header{
+padding:15px;
+margin:10px;
+}
+
+#stats{
+font-size:14px;
+margin-top:5px;
+}
+
+#main{
+flex:1;
+display:flex;
+overflow:hidden;
+}
+
+#threads{
+width:35%;
+max-width:300px;
+overflow:auto;
+padding:10px;
+}
+
+.thread{
+padding:15px;
+margin-bottom:10px;
+cursor:pointer;
+}
+
+.thread.active{
+background:#dbeafe;
+}
+
+#messages{
+flex:1;
+overflow:auto;
+padding:15px;
+display:flex;
+flex-direction:column;
+}
+
+.msg{
+padding:12px;
+margin:6px 0;
+max-width:75%;
+border-radius:12px;
+}
+
+.inbox{
+align-self:flex-start;
+}
+
+.sent{
+align-self:flex-end;
+background:#dcfce7;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:700px){
+
+#main{
+flex-direction:column;
+}
+
+#threads{
+width:100%;
+max-width:none;
+height:40%;
+}
+
+#messages{
+height:60%;
+}
+
+.title{
+font-size:26px;
+}
+
+}
+
+</style></head>
+<body><!-- LOAD SCREEN (MATCHES YOUR SCREENSHOT) --><div id="loadScreen"><div class="title">Apps Analytics Viewer</div><div class="card neu"><label>Load from Link</label>
+
+<input id="linkInput" class="neu-inset"
+value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
+
+<button onclick="loadFromLink()">Load</button>
+
+<label>Paste JSON</label>
+
+<textarea id="pasteInput" class="neu-inset"></textarea><button onclick="loadFromPaste()">Load</button>
+
+<label>Select File</label>
+
+<input type="file" id="fileInput" class="neu-inset"></div></div><!-- APP VIEW --><div id="app"><header class="neu"><div id="threadTitle"><b>Messages</b></div><div id="stats"></div></header><div id="main"><div id="threads"></div><div id="messages"></div></div></div><script>
+
+/* ---------- GLOBAL ---------- */
+
+let smsData=[];
+let totalCredit=0;
+let totalDebit=0;
+
+/* ---------- LOAD ---------- */
+
+function showApp(){
+
+document.getElementById("loadScreen").style.display="none";
+document.getElementById("app").style.display="flex";
+
+}
+
+function loadJSON(text){
+
+try{
+
+smsData=JSON.parse(text);
+
+calculateStats();
+renderThreads();
+showApp();
+
+}catch{
+
+alert("Invalid JSON");
+
+}
+
+}
+
+async function loadFromLink(){
+
+let url=document.getElementById("linkInput").value;
+
+let res=await fetch(url);
+
+let text=await res.text();
+
+loadJSON(text);
+
+}
+
+function loadFromPaste(){
+
+let text=document.getElementById("pasteInput").value;
+
+loadJSON(text);
+
+}
+
+document.getElementById("fileInput").onchange=function(){
+
+let reader=new FileReader();
+
+reader.onload=e=>loadJSON(e.target.result);
+
+reader.readAsText(this.files[0]);
+
+};
+
+/* ---------- STATS ---------- */
+
+function extractAmount(text){
+
+let m=text.match(/Rs\.?\s?([\d\.]+)/i);
+
+return m?parseFloat(m[1]):0;
+
+}
+
+function calculateStats(){
+
+totalCredit=0;
+totalDebit=0;
+
+smsData.forEach(thread=>{
+
+thread.messages.forEach(msg=>{
+
+if(msg.body.toLowerCase().includes("credited"))
+totalCredit+=extractAmount(msg.body);
+
+if(msg.body.toLowerCase().includes("debited"))
+totalDebit+=extractAmount(msg.body);
+
+});
+
+});
+
+document.getElementById("stats").innerText=
+"Credit ₹"+totalCredit+"   Debit ₹"+totalDebit+
+"   Net ₹"+(totalCredit-totalDebit);
+
+}
+
+/* ---------- THREADS ---------- */
+
+function renderThreads(){
+
+let container=document.getElementById("threads");
+
+container.innerHTML="";
+
+smsData.forEach((thread,i)=>{
+
+let div=document.createElement("div");
+
+div.className="thread neu";
+
+div.innerHTML=
+"<b>"+(thread.name||thread.address)+"</b><br>"+
+thread.messages.length+" messages";
+
+div.onclick=()=>selectThread(thread,div);
+
+container.appendChild(div);
+
+});
+
+}
+
+/* ---------- MESSAGES ---------- */
+
+function selectThread(thread,element){
+
+document.querySelectorAll(".thread")
+.forEach(e=>e.classList.remove("active"));
+
+element.classList.add("active");
+
+document.getElementById("threadTitle").innerHTML=
+"<b>"+(thread.name||thread.address)+"</b>";
+
+let container=document.getElementById("messages");
+
+container.innerHTML="";
+
+thread.messages
+.sort((a,b)=>a.date-b.date)
+.forEach(msg=>{
+
+let div=document.createElement("div");
+
+div.className="msg neu "+
+(msg.type_name==="SENT"?"sent":"inbox");
+
+div.innerHTML=
+msg.body+
+"<br><small>"+new Date(msg.date).toLocaleString()+"</small>";
+
+container.appendChild(div);
+
+});
+
+}
+
+</script></body>
 </html>
