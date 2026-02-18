@@ -372,7 +372,10 @@ html+=`
 
 <div>
 <div class="call-name">${call.name}</div>
-<div class="call-meta">${call.number}</div>
+<div class="call-meta">
+${formatDate(call.date)}<br>
+${formatTime(call.date)}
+</div>
 <div class="call-type ${typeInfo.class}">
 ${typeInfo.name}
 ${call.duration?`• ${formatDuration(call.duration)}`:""}
