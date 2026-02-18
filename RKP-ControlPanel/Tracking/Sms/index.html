@@ -207,7 +207,6 @@ opacity:0.6;
 
 /* ---------- MESSAGE VIEW ---------- */
 
-
 #messageView{
 
 display:none;
@@ -216,19 +215,7 @@ flex-direction:column;
 
 height:100vh;
 
-}
-
-#messageHeader{
-
-flex-shrink:0;
-
-display:flex;
-
-align-items:center;
-
-gap:12px;
-
-padding:12px;
+overflow:hidden;
 
 }
 
@@ -240,7 +227,12 @@ overflow-y:auto;
 
 padding:16px;
 
+display:flex;
+
+flex-direction:column;
+
 }
+
 
 /* ---------- BUBBLES ---------- */
 
@@ -341,24 +333,7 @@ Select File
   <div id="threadList"></div>
 
 </div>
-<div id="messageView">
-
-  <!-- FIXED HEADER -->
-  <div id="messageHeader" class="neu">
-
-    <img src="back.webp" id="backBtn" onclick="showThreads()">
-
-    <img src="contact.webp" class="contactIcon">
-
-    <div id="contactName"></div>
-
-  </div>
-
-  <!-- ONLY THIS PART SCROLLS -->
-  <div id="messages"></div>
-
-</div>
-  <div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
+<div id="messageView"><div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
 
 /* ---------- GLOBAL ---------- */
 
@@ -391,15 +366,6 @@ function closeSearch(){
 searchBox.style.display="none";
 
 }
-
-setTimeout(()=>{
-
-messages.lastElementChild?.scrollIntoView({
-block:"end"
-});
-
-},50);
-  
 
 function filterDate(type){
 
