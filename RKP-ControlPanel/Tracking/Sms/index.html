@@ -227,7 +227,12 @@ overflow-y:auto;
 
 padding:16px;
 
+height:0;
+
+min-height:0;
+
 }
+
 
 
 /* ---------- BUBBLES ---------- */
@@ -608,19 +613,21 @@ updateCounts();
 
 function openThread(thread){
 
-/* ---------- HIDE CONTACT LIST + FILTER BAR + STATS ---------- */
+/* ---------- HIDE CONTACT LIST + FILTERS + STATS ---------- */
 
 threadList.style.display = "none";
-
 filterBar.style.display = "none";
-
 statsBar.style.display = "none";
 
 /* ---------- SHOW MESSAGE VIEW ---------- */
 
 messageView.style.display = "flex";
 
-/* ---------- HEADER INFO ---------- */
+/* ---------- RESET SCROLL FIRST (CRITICAL FIX) ---------- */
+
+messages.scrollTop = 0;
+
+/* ---------- HEADER ---------- */
 
 let display = getDisplayName(thread);
 
@@ -633,35 +640,30 @@ thread.address +
 "Messages: " + thread.messages.length +
 "</div>";
 
-/* ---------- CLEAR OLD MESSAGES ---------- */
+/* ---------- CLEAR ---------- */
 
 messages.innerHTML = "";
 
-/* ---------- SORT MESSAGES OLDEST → NEWEST ---------- */
+/* ---------- SORT ---------- */
 
 let sorted = [...thread.messages].sort((a,b)=>a.date-b.date);
 
-/* ---------- RENDER MESSAGES ---------- */
+/* ---------- RENDER ---------- */
 
-sorted.forEach(msg => {
+sorted.forEach(msg=>{
 
 let time = document.createElement("div");
 
 time.className = "timeLabel";
-
 time.innerText = formatMessageTime(msg.date);
 
 messages.appendChild(time);
-
-/* row */
 
 let row = document.createElement("div");
 
 row.className =
 "msgRow " +
 (msg.type_name === "SENT" ? "sentRow" : "inboxRow");
-
-/* bubble */
 
 let bubble = document.createElement("div");
 
@@ -677,46 +679,33 @@ messages.appendChild(row);
 
 });
 
-/* ---------- CRITICAL FIX: SCROLL TO NEWEST MESSAGE ---------- */
-/* requestAnimationFrame ensures layout is fully rendered */
+/* ---------- FORCE REFLOW ---------- */
 
-requestAnimationFrame(()=>{
+messages.offsetHeight;
 
-messages.scrollTop = messages.scrollHeight;
-
-});
-
-/* extra safety for slower devices */
+/* ---------- FINAL SCROLL FIX ---------- */
 
 setTimeout(()=>{
 
 messages.scrollTop = messages.scrollHeight;
 
-},100);
+},0);
 
 }
 
 function showThreads(){
 
-/* ---------- HIDE MESSAGE VIEW ---------- */
-
 messageView.style.display = "none";
-
-/* ---------- SHOW CONTACT LIST ---------- */
 
 threadList.style.display = "block";
 
-/* ---------- SHOW FILTER BAR ---------- */
-
 filterBar.style.display = "flex";
-
-/* ---------- SHOW STATS ---------- */
 
 statsBar.style.display = "block";
 
-/* ---------- SCROLL CONTACT LIST TO TOP (OPTIONAL) ---------- */
+/* reset scroll */
 
-threadList.scrollTop = 0;
+messages.scrollTop = 0;
 
 }
 
