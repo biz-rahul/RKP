@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Professional JSON File Explorer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body><header>
+<h1>Professional JSON File Explorer</h1>
+</header><section class="topbar"><textarea id="pasteBox" placeholder="Paste JSON here..."></textarea><div class="input-group">
+<input type="file" id="fileInput">
+<button onclick="Explorer.loadFile()">Upload</button>
+</div><div class="input-group">
+<input type="text" id="githubInput" placeholder="GitHub raw URL">
+<button onclick="Explorer.loadGithub()">Fetch</button>
+</div></section><section class="main"><aside class="sidebar"><div class="filter-box"><h3>Search</h3>
+<input type="text" id="searchBox" placeholder="Search files"><h3>Filters</h3><label>
+<input type="checkbox" id="showHidden">
+Show Hidden
+</label><select id="typeFilter">
+<option value="">All Types</option>
+<option value="directory">Directory</option>
+<option value="file">File</option>
+</select><input type="number" id="minSize" placeholder="Min Size (bytes)">
+<input type="number" id="maxSize" placeholder="Max Size"><input type="date" id="dateFrom">
+<input type="date" id="dateTo"><button onclick="Explorer.applyFilters()">Apply Filters</button>
+
+</div><div id="tree"></div></aside><main class="content"><div id="breadcrumb"></div><table><thead>
+<tr>
+<th onclick="Explorer.sort('name')">Name</th>
+<th onclick="Explorer.sort('directory')">Type</th>
+<th onclick="Explorer.sort('size')">Size</th>
+<th onclick="Explorer.sort('last_modified')">Modified</th>
+<th>Hidden</th>
+</tr>
+</thead><tbody id="tableBody"></tbody></table></main></section><script src="script.js"></script></body>
+</html>
