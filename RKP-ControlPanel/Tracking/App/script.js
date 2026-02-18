@@ -2,7 +2,16 @@ let apps=[];
 let filtered=[];
 
 
-// URL AUTO LOAD
+// MENU
+
+function toggleMenu(){
+
+document.getElementById("sideMenu").classList.toggle("open");
+
+}
+
+
+// URL PARAM LOAD
 
 window.onload=function(){
 
@@ -19,9 +28,9 @@ if(github) fetchGithub(github);
 
 function loadPaste(){
 
-const json=document.getElementById("jsonPaste").value;
+const text=document.getElementById("jsonPaste").value;
 
-process(JSON.parse(json));
+process(JSON.parse(text));
 
 }
 
@@ -39,13 +48,15 @@ reader.readAsText(e.target.files[0]);
 
 };
 
+
 function loadGithub(){
 
-const url=document.getElementById("githubUrl").value;
+const url=document.getElementById("githubInput").value;
 
 fetchGithub(url);
 
 }
+
 
 function fetchGithub(url){
 
@@ -58,7 +69,7 @@ fetch(url)
 }
 
 
-// PROCESS DATA
+// PROCESS
 
 function process(data){
 
@@ -66,129 +77,77 @@ apps=data;
 
 filtered=[...apps];
 
-renderStats();
-
-renderApps();
-
-renderChart();
+render();
 
 }
 
 
-// STATS
+// RENDER
 
-function renderStats(){
+function render(){
 
-const total=apps.length;
+const list=document.getElementById("appsList");
 
-const totalSize=sum(apps,"app_size_bytes");
-
-const totalUsage=sum(apps,"usage_time_ms");
-
-const largest=max(apps,"app_size_bytes");
-
-const mostUsed=max(apps,"usage_time_ms");
-
-document.getElementById("statApps").innerHTML="Apps: "+total;
-
-document.getElementById("statSize").innerHTML="Size: "+formatSize(totalSize);
-
-document.getElementById("statUsage").innerHTML="Usage: "+formatTime(totalUsage);
-
-document.getElementById("statLargest").innerHTML="Largest: "+largest.app_name;
-
-document.getElementById("statMostUsed").innerHTML="Most Used: "+mostUsed.app_name;
-
-}
-
-
-// RENDER APPS
-
-function renderApps(){
-
-const container=document.getElementById("appsContainer");
-
-container.innerHTML="";
-
-if(document.getElementById("viewMode").value==="table"){
-
-renderTable();
-
-return;
-
-}
+list.innerHTML="";
 
 filtered.forEach(app=>{
 
-const card=document.createElement("div");
+const icon=getIcon(app.package_name);
 
-card.className="card";
+const row=document.createElement("div");
 
-card.innerHTML=`
+row.className="appRow";
 
-<h3>${app.app_name}</h3>
+row.innerHTML=`
 
-<p>Package: ${app.package_name}</p>
+<img class="appIcon" src="${icon}">
 
-<p>Size: ${formatSize(app.app_size_bytes)}</p>
+<div class="appInfo">
 
-<p>Usage: ${formatTime(app.usage_time_ms)}</p>
+<div class="appName">${app.app_name}</div>
 
-<p>Installed: ${formatDate(app.installed_date)}</p>
+<div class="appPackage">${app.package_name}</div>
 
-`;
+<div class="appMeta">
+Version: ${app.version_name}
+<br>
+Version Code: ${app.version_code}
+<br>
+Size: ${formatSize(app.app_size_bytes)}
+<br>
+Installed: ${formatDate(app.installed_date)}
+<br>
+Last Used: ${formatDate(app.last_used)}
+<br>
+Usage: ${formatTime(app.usage_time_ms)}
+</div>
 
-container.appendChild(card);
-
-});
-
-}
-
-
-// TABLE VIEW
-
-function renderTable(){
-
-const container=document.getElementById("appsContainer");
-
-let html="<table class='table'>";
-
-html+="<tr><th>Name</th><th>Size</th><th>Usage</th></tr>";
-
-filtered.forEach(app=>{
-
-html+=`
-
-<tr>
-
-<td>${app.app_name}</td>
-
-<td>${formatSize(app.app_size_bytes)}</td>
-
-<td>${formatTime(app.usage_time_ms)}</td>
-
-</tr>
+</div>
 
 `;
 
+list.appendChild(row);
+
 });
-
-html+="</table>";
-
-container.innerHTML=html;
 
 }
 
 
 // SEARCH
 
-document.getElementById("searchBox").oninput=function(){
+document.getElementById("searchInput").oninput=function(){
 
 const v=this.value.toLowerCase();
 
-filtered=apps.filter(a=>a.app_name.toLowerCase().includes(v));
+filtered=apps.filter(a=>
 
-renderApps();
+a.app_name.toLowerCase().includes(v) ||
+
+a.package_name.toLowerCase().includes(v)
+
+);
+
+render();
 
 };
 
@@ -207,87 +166,39 @@ if(v==="usage") return b.usage_time_ms-a.usage_time_ms;
 
 if(v==="installed") return b.installed_date-a.installed_date;
 
+if(v==="last_used") return b.last_used-a.last_used;
+
 return a.app_name.localeCompare(b.app_name);
 
 });
 
-renderApps();
+render();
 
 };
 
 
-// VIEW MODE
+// ICON FETCH
 
-document.getElementById("viewMode").onchange=function(){
+function getIcon(pkg){
 
-renderApps();
-
-};
-
-
-// CHART
-
-function renderChart(){
-
-const top=apps.sort((a,b)=>b.usage_time_ms-a.usage_time_ms).slice(0,10);
-
-new Chart(document.getElementById("usageChart"),{
-
-type:"bar",
-
-data:{
-
-labels:top.map(a=>a.app_name),
-
-datasets:[{
-
-label:"Usage",
-
-data:top.map(a=>a.usage_time_ms)
-
-}]
-
-}
-
-});
-
-}
-
-
-// EXPORT
-
-function exportFiltered(){
-
-const blob=new Blob([JSON.stringify(filtered,null,2)]);
-
-const a=document.createElement("a");
-
-a.href=URL.createObjectURL(blob);
-
-a.download="filtered.json";
-
-a.click();
+return "https://play-lh.googleusercontent.com/"+pkg;
 
 }
 
 
 // UTILS
 
-function sum(arr,key){
-
-return arr.reduce((a,b)=>a+b[key],0);
-
-}
-
-function max(arr,key){
-
-return arr.reduce((a,b)=>a[key]>b[key]?a:b);
-
-}
-
 function formatSize(bytes){
 
 return (bytes/1024/1024).toFixed(2)+" MB";
+
+}
+
+function formatDate(ts){
+
+if(ts==0) return "Never";
+
+return new Date(ts).toLocaleString();
 
 }
 
@@ -298,11 +209,5 @@ let m=Math.floor(ms/60000);
 let h=Math.floor(m/60);
 
 return h+"h "+(m%60)+"m";
-
-}
-
-function formatDate(ts){
-
-return new Date(ts).toLocaleDateString();
 
 }
