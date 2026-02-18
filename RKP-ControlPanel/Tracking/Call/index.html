@@ -434,17 +434,18 @@ renderFromCallArray(calls);
 
 }
 
-function filterBlocked(){
+function filterRejected(){
 
 let calls=getAllCalls();
 
-calls=calls.filter(call=>call.type==6);
+calls=calls.filter(call=>call.type==5);
 
 calls.sort((a,b)=>b.date-a.date);
 
 renderFromCallArray(calls);
 
 }
+
 
 
 function renderFromCallArray(callArray){
