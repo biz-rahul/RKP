@@ -357,6 +357,19 @@ display:none;
 
 <button class="filterBtn" onclick="sortUsageHigh()">Usage Highest</button> <button class="filterBtn" onclick="sortUsageLow()">Usage Lowest</button>
 
+<button class="filterBtn" onclick="showAllApps()">All Apps</button>
+
+<button class="filterBtn" onclick="showUserApps()">User Apps</button>
+
+<button class="filterBtn" onclick="showSystemApps()">System Apps</button>
+
+<div class="filterBtn" id="countAll">All: 0</div>
+
+<div class="filterBtn" id="countUser">User: 0</div>
+
+<div class="filterBtn" id="countSystem">System: 0</div>
+
+
 <button class="filterBtn" onclick="resetApps()">Reset</button>
 
 </div>
@@ -375,6 +388,9 @@ display:none;
 
 let apps=[];
 let filtered=[];
+let systemApps=[];
+let userApps=[];
+
 
 
 /* LOAD METHODS */
@@ -409,10 +425,56 @@ function process(data){
 
 apps=data;
 filtered=[...apps];
+// classify apps
+
+systemApps = apps.filter(app =>
+app.package_name.startsWith("com.android") ||
+app.package_name.startsWith("com.google.android") ||
+app.package_name.startsWith("com.samsung") ||
+app.package_name.startsWith("android")
+);
+
+userApps = apps.filter(app => !systemApps.includes(app));
+
+
+// update counts
+
+document.getElementById("countAll").innerText =
+"All: " + apps.length;
+
+document.getElementById("countUser").innerText =
+"User: " + userApps.length;
+
+document.getElementById("countSystem").innerText =
+"System: " + systemApps.length;
+
 
 inputPanel.style.display="none";
 filterSection.classList.remove("hidden");
 
+render();
+
+}
+
+
+
+function showAllApps(){
+
+filtered = [...apps];
+render();
+
+}
+
+function showUserApps(){
+
+filtered = [...userApps];
+render();
+
+}
+
+function showSystemApps(){
+
+filtered = [...systemApps];
 render();
 
 }
