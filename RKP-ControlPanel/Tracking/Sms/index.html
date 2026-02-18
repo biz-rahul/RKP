@@ -212,27 +212,53 @@ Select File
 <input type="file" id="fileInput">
 
 </div></div><!-- APP --><div id="app">
+
+  <!-- Stats -->
   <div id="statsBar" style="padding:10px;font-weight:600;"></div>
-  <button onclick="openSearch()">Search</button>
-<div id="searchBox" style="display:none">
-<input id="searchInput">
-<button onclick="searchContact()">Contact</button>
-<button onclick="searchMessage()">Message</button>
+
+  <!-- Filter Toolbar -->
+  <div id="filterBar">
+
+    <button onclick="openSearch()">🔍 Search</button>
+
+    <button onclick="filterReal()">👤 Real Person</button>
+
+    <button onclick="filterBank()">🏦 Bank</button>
+
+    <button onclick="filterDate('today')">📅 Today</button>
+
+    <button onclick="filterDate('yesterday')">📆 Yesterday</button>
+
+    <button onclick="filterDate('week')">🗓 This Week</button>
+
+    <button onclick="filterDate('month')">📁 This Month</button>
+
+    <button onclick="resetFilters()">📂 All</button>
+
+  </div>
+
+  <!-- Search Panel -->
+  <div id="searchBox" class="neu" style="display:none; margin:10px; padding:10px;">
+
+    <input id="searchInput" placeholder="Enter search text...">
+
+    <div style="margin-top:8px; display:flex; gap:10px; flex-wrap:wrap;">
+
+      <button onclick="searchContact()">Search Contact</button>
+
+      <button onclick="searchMessage()">Search Message</button>
+
+      <button onclick="closeSearch()">Close</button>
+
+    </div>
+
+  </div>
+
+  <!-- Thread List -->
+  <div id="threadList"></div>
+
 </div>
-  <button onclick="filterReal()">Real Person</button>
-  <button onclick="filterBank()">Bank</button>
-  <button onclick="filterDate('today')">Today</button>
-<button onclick="filterDate('yesterday')">Yesterday</button>
-<button onclick="filterDate('week')">This Week</button>
-<button onclick="filterDate('month')">This Month</button>
-<button onclick="resetFilters()">All</button>
-
-
-
-
-  <div id="threadList">
-    
-  </div><div id="messageView"><div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
+<div id="messageView"><div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
 
 /* ---------- GLOBAL ---------- */
 
