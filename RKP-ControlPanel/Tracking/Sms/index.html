@@ -613,21 +613,21 @@ updateCounts();
 
 function openThread(thread){
 
-/* ---------- HIDE CONTACT LIST + FILTERS + STATS ---------- */
+/* hide list and buttons */
 
 threadList.style.display = "none";
 filterBar.style.display = "none";
 statsBar.style.display = "none";
 
-/* ---------- SHOW MESSAGE VIEW ---------- */
+/* show message view */
 
 messageView.style.display = "flex";
 
-/* ---------- RESET SCROLL FIRST (CRITICAL FIX) ---------- */
+/* clear */
 
-messages.scrollTop = 0;
+messages.innerHTML = "";
 
-/* ---------- HEADER ---------- */
+/* header */
 
 let display = getDisplayName(thread);
 
@@ -637,41 +637,38 @@ display +
 thread.address +
 "</div>" +
 "<div style='font-size:12px;opacity:0.6'>" +
-"Messages: " + thread.messages.length +
+"Messages: "+thread.messages.length+
 "</div>";
 
-/* ---------- CLEAR ---------- */
+/* sort */
 
-messages.innerHTML = "";
+let sorted=[...thread.messages].sort((a,b)=>a.date-b.date);
 
-/* ---------- SORT ---------- */
-
-let sorted = [...thread.messages].sort((a,b)=>a.date-b.date);
-
-/* ---------- RENDER ---------- */
+/* render */
 
 sorted.forEach(msg=>{
 
-let time = document.createElement("div");
+let time=document.createElement("div");
 
-time.className = "timeLabel";
-time.innerText = formatMessageTime(msg.date);
+time.className="timeLabel";
+
+time.innerText=formatMessageTime(msg.date);
 
 messages.appendChild(time);
 
-let row = document.createElement("div");
+let row=document.createElement("div");
 
-row.className =
-"msgRow " +
-(msg.type_name === "SENT" ? "sentRow" : "inboxRow");
+row.className="msgRow "+(
+msg.type_name=="SENT"?"sentRow":"inboxRow"
+);
 
-let bubble = document.createElement("div");
+let bubble=document.createElement("div");
 
-bubble.className =
-"bubble " +
-(msg.type_name === "SENT" ? "sentBubble" : "inboxBubble");
+bubble.className="bubble "+(
+msg.type_name=="SENT"?"sentBubble":"inboxBubble"
+);
 
-bubble.innerText = msg.body;
+bubble.innerText=msg.body;
 
 row.appendChild(bubble);
 
@@ -679,33 +676,28 @@ messages.appendChild(row);
 
 });
 
-/* ---------- FORCE REFLOW ---------- */
-
-messages.offsetHeight;
-
-/* ---------- FINAL SCROLL FIX ---------- */
+/* THE REAL FIX */
 
 setTimeout(()=>{
 
-messages.scrollTop = messages.scrollHeight;
+messages.lastElementChild?.scrollIntoView({
+behavior:"instant",
+block:"end"
+});
 
-},0);
+},50);
 
 }
 
 function showThreads(){
 
-messageView.style.display = "none";
+messageView.style.display="none";
 
-threadList.style.display = "block";
+threadList.style.display="block";
 
-filterBar.style.display = "flex";
+filterBar.style.display="flex";
 
-statsBar.style.display = "block";
-
-/* reset scroll */
-
-messages.scrollTop = 0;
+statsBar.style.display="block";
 
 }
 
