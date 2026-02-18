@@ -341,7 +341,24 @@ Select File
   <div id="threadList"></div>
 
 </div>
-<div id="messageView"><div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
+<div id="messageView">
+
+  <!-- FIXED HEADER -->
+  <div id="messageHeader" class="neu">
+
+    <img src="back.webp" id="backBtn" onclick="showThreads()">
+
+    <img src="contact.webp" class="contactIcon">
+
+    <div id="contactName"></div>
+
+  </div>
+
+  <!-- ONLY THIS PART SCROLLS -->
+  <div id="messages"></div>
+
+</div>
+  <div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
 
 /* ---------- GLOBAL ---------- */
 
