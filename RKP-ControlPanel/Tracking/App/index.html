@@ -2,59 +2,103 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apps Viewer Elite Hacker</title><style>
+<title>APPS DATABASE // ELITE</title><style>
 
-/* GLOBAL */
+/* ===== GLOBAL HACKER UI ===== */
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
 
 body{
-margin:0;
-background:#02030a;
-color:#00ffd5;
+
+background:#020409;
+color:#00ffcc;
 font-family:Consolas,monospace;
+overflow-x:hidden;
+
+background-image:
+linear-gradient(#001010 1px, transparent 1px),
+linear-gradient(90deg,#001010 1px, transparent 1px);
+
+background-size:25px 25px;
+
 }
 
-.hidden{
-display:none;
-}
 
-
-/* INPUT SCREEN */
+/* ===== INPUT SCREEN ===== */
 
 #inputScreen{
+
 padding:20px;
-text-align:center;
+max-width:600px;
+margin:auto;
+
 }
 
 .title{
-font-size:28px;
+
+font-size:26px;
+text-align:center;
 margin-bottom:20px;
-background:linear-gradient(90deg,#00ffd5,#00ff88);
--webkit-background-clip:text;
-color:transparent;
-font-weight:bold;
-letter-spacing:2px;
+
+color:#00ffcc;
+
+text-shadow:
+0 0 5px #00ffcc,
+0 0 10px #00ffcc,
+0 0 20px #00ffcc;
+
+letter-spacing:3px;
+
 }
 
 .btn{
+
 width:100%;
-padding:15px;
+padding:14px;
 margin-top:12px;
-border:none;
-border-radius:10px;
-background:linear-gradient(45deg,#00ffd5,#00ff88);
-color:black;
+
+background:black;
+
+border:1px solid #00ffcc;
+
+color:#00ffcc;
+
+border-radius:6px;
+
 font-weight:bold;
-font-size:16px;
+
+box-shadow:
+0 0 5px #00ffcc;
+
 }
 
-input,textarea,select{
+.btn:active{
+
+box-shadow:
+0 0 20px #00ffcc;
+
+}
+
+
+/* ===== INPUT FIELDS ===== */
+
+input,textarea{
+
 width:100%;
 padding:12px;
 margin-top:10px;
-background:#01020a;
-border:1px solid #00ffd5;
-color:#00ffd5;
-border-radius:8px;
+
+background:black;
+border:1px solid #00ffcc;
+
+color:#00ffcc;
+
+border-radius:5px;
+
 }
 
 textarea{
@@ -62,121 +106,141 @@ height:120px;
 }
 
 
-/* TOP BAR */
+/* ===== VIEWER ===== */
+
+#viewer{
+
+max-width:600px;
+margin:auto;
+
+}
+
+
+/* ===== TOP FILTER BAR ===== */
 
 #topBar{
-padding:10px;
-background:#01020a;
-border-bottom:1px solid #00ffd5;
+
 position:sticky;
 top:0;
-z-index:100;
+
+background:black;
+
+padding:10px;
+
+border-bottom:1px solid #00ffcc;
+
+box-shadow:0 0 10px #00ffcc;
+
 }
+
 
 .search{
-width:100%;
+
 margin-bottom:8px;
+
 }
 
-.filters{
-display:flex;
+
+/* FILTER GRID */
+
+.filterGrid{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
 gap:5px;
+
+}
+
+.filterGrid input{
+
+font-size:12px;
+
 }
 
 
-/* APP LIST */
+/* ===== APP CARD ===== */
 
 .app{
-display:flex;
-gap:12px;
+
 padding:12px;
-border-bottom:1px solid #003a3a;
+
+border-bottom:1px solid #003333;
+
 cursor:pointer;
+
+transition:0.2s;
+
 }
 
 .app:hover{
-background:#001a1a;
-}
 
-.icon{
-width:50px;
-height:50px;
-background:#00ffd5;
-border-radius:10px;
-}
+background:#001111;
 
-.info{
-flex:1;
+box-shadow:0 0 10px #00ffcc;
+
 }
 
 .name{
-color:#00ff88;
-font-size:17px;
+
+color:#00ff66;
+
 font-weight:bold;
+
+font-size:16px;
+
+text-shadow:0 0 5px #00ff66;
+
 }
 
 .package{
+
 font-size:12px;
-color:#00ffd5;
+color:#00ccaa;
+
 }
 
 .version{
+
 font-size:12px;
-color:#8afff3;
+color:#00ffaa;
+
 }
 
 .details{
-font-size:13px;
-color:#8afff3;
+
+display:none;
+
 margin-top:8px;
+
+font-size:13px;
+
+color:#66ffee;
+
+line-height:1.4;
+
+}
+
+
+/* ===== HIDDEN ===== */
+
+.hidden{
 display:none;
 }
 
-
-/* MOBILE */
-
-@media(min-width:700px){
-
-#viewer{
-max-width:600px;
-margin:auto;
-}
-
-#inputScreen{
-max-width:600px;
-margin:auto;
-}
-
-}
-
 </style></head>
-<body><!-- INPUT SCREEN --><div id="inputScreen"><div class="title">APPS DATABASE</div><button class="btn" onclick="showLink()">LOAD FROM LINK</button>
+<body><!-- ===== INPUT SCREEN ===== --><div id="inputScreen"><div class="title">APPS DATABASE</div><button class="btn" onclick="showLink()">LOAD FROM LINK</button>
 
 <button class="btn" onclick="showText()">PASTE JSON</button>
 
 <button class="btn" onclick="fileInput.click()">SELECT FILE</button>
 
-<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden">
-<input id="linkInput" placeholder="GitHub Raw JSON Link">
-<button class="btn" onclick="loadLink()">LOAD</button>
-</div><div id="textBox" class="hidden">
-<textarea id="textInput"></textarea>
-<button class="btn" onclick="loadText()">LOAD</button>
-</div></div><!-- VIEWER --><div id="viewer" class="hidden"><div id="topBar"><input class="search" id="searchInput" placeholder="Search app..."><div class="filters"><select id="sizeFilter">
-<option value="">Size Filter</option>
-<option value="small">< 10 MB</option>
-<option value="medium">10–100 MB</option>
-<option value="large">> 100 MB</option>
-</select><select id="usageFilter">
-<option value="">Usage Filter</option>
-<option value="unused">Unused</option>
-<option value="low">< 1 hr</option>
-<option value="high">> 1 hr</option>
-</select><select id="dateFilter">
-<option value="">Date Filter</option>
-<option value="new">Newest</option>
-<option value="old">Oldest</option>
-</select></div></div><div id="appsList"></div></div><script>
+<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden"><input id="linkInput" placeholder="GitHub Raw JSON Link"><button class="btn" onclick="loadLink()">LOAD</button>
+
+</div><div id="textBox" class="hidden"><textarea id="textInput"></textarea><button class="btn" onclick="loadText()">LOAD</button>
+
+</div></div><!-- ===== VIEWER ===== --><div id="viewer" class="hidden"><div id="topBar"><input id="searchInput" class="search" placeholder="SEARCH APP"><div class="filterGrid"><input id="minSize" placeholder="Min Size MB"><input id="maxSize" placeholder="Max Size MB"><input id="minUsage" placeholder="Min Usage Hours"><input id="maxUsage" placeholder="Max Usage Hours"></div></div><div id="appsList"></div></div><script>
 
 let apps=[];
 let filtered=[];
@@ -186,22 +250,15 @@ let filtered=[];
 
 function showLink(){
 
-hideInputs();
 linkBox.classList.remove("hidden");
+textBox.classList.add("hidden");
 
 }
 
 function showText(){
 
-hideInputs();
 textBox.classList.remove("hidden");
-
-}
-
-function hideInputs(){
-
 linkBox.classList.add("hidden");
-textBox.classList.add("hidden");
 
 }
 
@@ -212,17 +269,13 @@ async function loadLink(){
 
 try{
 
-let url=linkInput.value.trim();
+let res=await fetch(linkInput.value);
 
-let res=await fetch(url);
-
-let data=await res.json();
-
-process(data);
+process(await res.json());
 
 }catch{
 
-alert("Link failed");
+alert("LOAD FAILED");
 
 }
 
@@ -232,13 +285,11 @@ function loadText(){
 
 try{
 
-let data=JSON.parse(textInput.value);
-
-process(data);
+process(JSON.parse(textInput.value));
 
 }catch{
 
-alert("Invalid JSON");
+alert("INVALID JSON");
 
 }
 
@@ -246,17 +297,11 @@ alert("Invalid JSON");
 
 fileInput.onchange=function(){
 
-let file=this.files[0];
-
 let reader=new FileReader();
 
-reader.onload=function(){
+reader.onload=()=>process(JSON.parse(reader.result));
 
-process(JSON.parse(reader.result));
-
-};
-
-reader.readAsText(file);
+reader.readAsText(this.files[0]);
 
 };
 
@@ -266,9 +311,11 @@ reader.readAsText(file);
 function process(data){
 
 apps=data;
+
 filtered=[...apps];
 
 inputScreen.style.display="none";
+
 viewer.classList.remove("hidden");
 
 render();
@@ -282,15 +329,15 @@ function render(){
 
 appsList.innerHTML="";
 
-filtered.forEach((app,i)=>{
+filtered.forEach(app=>{
 
 let div=document.createElement("div");
 
 div.className="app";
 
-div.onclick=function(){
+div.onclick=()=>{
 
-let d=this.querySelector(".details");
+let d=div.querySelector(".details");
 
 d.style.display=d.style.display=="block"?"none":"block";
 
@@ -298,27 +345,23 @@ d.style.display=d.style.display=="block"?"none":"block";
 
 div.innerHTML=`
 
-<div class="icon"></div>
+<div class="name">${app.app_name}</div>
 
-<div class="info">
+<div class="package">${app.package_name}</div>
 
-<div class="name">${safe(app.app_name)}</div>
-
-<div class="package">${safe(app.package_name)}</div>
-
-<div class="version">Version: ${safe(app.version_name)}</div>
+<div class="version">Version: ${app.version_name}</div>
 
 <div class="details">
 
-Version Code: ${safe(app.version_code)}<br>
-Installed: ${date(app.installed_date)}<br>
-Last Used: ${date(app.last_used)}<br>
-Size: ${size(app.app_size_bytes)}<br>
-Usage Time: ${time(app.usage_time_ms)}<br>
-Usage Hours: ${safe(app.usage_hours)}<br>
-Usage Minutes: ${safe(app.usage_minutes)}
+Version Code: ${app.version_code}<br>
 
-</div>
+Installed: ${date(app.installed_date)}<br>
+
+Last Used: ${date(app.last_used)}<br>
+
+Size: ${size(app.app_size_bytes)}<br>
+
+Usage Time: ${time(app.usage_time_ms)}
 
 </div>
 
@@ -331,63 +374,45 @@ appsList.appendChild(div);
 }
 
 
-/* SEARCH */
+/* SEARCH + FILTER */
 
-searchInput.oninput=function(){
-
-filterAll();
-
-};
-
-
-/* FILTERS */
-
-sizeFilter.onchange=filterAll;
-usageFilter.onchange=filterAll;
-dateFilter.onchange=filterAll;
+searchInput.oninput=filter;
+minSize.oninput=filter;
+maxSize.oninput=filter;
+minUsage.oninput=filter;
+maxUsage.oninput=filter;
 
 
-function filterAll(){
+function filter(){
 
 let s=searchInput.value.toLowerCase();
 
+let minS=parseFloat(minSize.value)||0;
+let maxS=parseFloat(maxSize.value)||Infinity;
+
+let minU=parseFloat(minUsage.value)||0;
+let maxU=parseFloat(maxUsage.value)||Infinity;
+
+
 filtered=apps.filter(app=>{
+
+let sizeMB=app.app_size_bytes/1048576;
+
+let usageH=app.usage_time_ms/3600000;
 
 if(s && !app.app_name.toLowerCase().includes(s)
 && !app.package_name.toLowerCase().includes(s))
 return false;
 
+if(sizeMB<minS||sizeMB>maxS)
+return false;
 
-/* SIZE */
-
-let sizeMB=app.app_size_bytes/1048576;
-
-if(sizeFilter.value=="small" && sizeMB>=10) return false;
-if(sizeFilter.value=="medium" && (sizeMB<10||sizeMB>100)) return false;
-if(sizeFilter.value=="large" && sizeMB<=100) return false;
-
-
-/* USAGE */
-
-let hr=app.usage_time_ms/3600000;
-
-if(usageFilter.value=="unused" && hr>0) return false;
-if(usageFilter.value=="low" && hr>=1) return false;
-if(usageFilter.value=="high" && hr<1) return false;
+if(usageH<minU||usageH>maxU)
+return false;
 
 return true;
 
 });
-
-
-/* DATE SORT */
-
-if(dateFilter.value=="new")
-filtered.sort((a,b)=>b.installed_date-a.installed_date);
-
-if(dateFilter.value=="old")
-filtered.sort((a,b)=>a.installed_date-b.installed_date);
-
 
 render();
 
@@ -396,26 +421,18 @@ render();
 
 /* FORMAT */
 
-function safe(v){return v??"N/A";}
-
 function size(b){
-
 return (b/1048576).toFixed(2)+" MB";
-
 }
 
 function date(t){
-
-if(!t||t==0)return"Never";
-
+if(!t)return"Never";
 return new Date(t).toLocaleString();
-
 }
 
 function time(ms){
 
 let m=Math.floor(ms/60000);
-
 let h=Math.floor(m/60);
 
 return h+"h "+(m%60)+"m";
