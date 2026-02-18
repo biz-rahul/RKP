@@ -4,9 +4,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Apps Analytics Viewer</title><style>
 
-/* =========================
-GLOBAL
-========================= */
+/* ================= GLOBAL ================= */
 
 *{
 box-sizing:border-box;
@@ -19,9 +17,16 @@ background:#e6edf5;
 color:#2d3748;
 }
 
-/* =========================
-NEUMORPHIC BASE
-========================= */
+/* ================= HEADER ================= */
+
+.header{
+text-align:center;
+padding:25px 10px;
+font-size:26px;
+font-weight:700;
+}
+
+/* ================= NEUMORPHIC ================= */
 
 .neu-card{
 background:#e6edf5;
@@ -49,6 +54,7 @@ box-shadow:
 -4px -4px 8px #ffffff;
 font-weight:600;
 cursor:pointer;
+margin-top:10px;
 }
 
 .neu-button:active{
@@ -57,20 +63,7 @@ inset 4px 4px 8px #c5ccd3,
 inset -4px -4px 8px #ffffff;
 }
 
-/* =========================
-HEADER
-========================= */
-
-.header{
-text-align:center;
-padding:25px 10px;
-font-size:28px;
-font-weight:700;
-}
-
-/* =========================
-INPUT PANEL
-========================= */
+/* ================= INPUT PANEL ================= */
 
 #inputPanel{
 margin:15px;
@@ -83,8 +76,7 @@ margin-top:15px;
 margin-bottom:8px;
 }
 
-input[type=text], textarea, input[type=file]{
-
+input, textarea{
 width:100%;
 padding:15px;
 border:none;
@@ -97,9 +89,7 @@ height:120px;
 resize:none;
 }
 
-/* =========================
-FILE VIEWER
-========================= */
+/* ================= VIEWER ================= */
 
 #viewer{
 display:none;
@@ -107,20 +97,22 @@ padding:10px;
 }
 
 .file-card{
-
 margin:10px;
 padding:15px;
-
 }
 
 .file-row{
-
 display:flex;
 justify-content:space-between;
-padding:10px;
-margin:5px 0;
+align-items:center;
+padding:12px;
+margin:6px 0;
 border-radius:12px;
+cursor:pointer;
+}
 
+.file-row:hover{
+transform:scale(1.01);
 }
 
 .folder{
@@ -132,14 +124,23 @@ font-weight:600;
 color:#059669;
 }
 
-.path{
-font-size:12px;
+.hidden{
 color:#64748b;
 }
 
-/* =========================
-MOBILE OPTIMIZATION
-========================= */
+.path{
+font-size:11px;
+color:#64748b;
+}
+
+/* ================= BACK BUTTON ================= */
+
+.back-button{
+font-weight:700;
+color:#7c3aed;
+}
+
+/* ================= MOBILE ================= */
 
 @media(max-width:600px){
 
@@ -161,17 +162,13 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 
 <div class="label">Select File</div><input class="neu-inset" type="file" id="fileInput"></div><div id="viewer"></div><script>
 
-/* =========================
-STATE
-========================= */
+/* ================= STATE ================= */
 
 let fileIndex = {};
 let childrenMap = {};
-let currentPath = "";
+let currentPath = "/storage/emulated/0";
 
-/* =========================
-AUTO LOAD FILE SELECT
-========================= */
+/* ================= FILE INPUT ================= */
 
 document.getElementById("fileInput").addEventListener("change", function(){
 
@@ -181,91 +178,65 @@ if(!file) return;
 
 const reader = new FileReader();
 
-reader.onload = function(e){
-
-processJSON(e.target.result);
-
-};
+reader.onload = e => processJSON(e.target.result);
 
 reader.readAsText(file);
 
 });
 
-/* =========================
-LOAD FROM LINK
-========================= */
+/* ================= LOAD METHODS ================= */
 
 function loadFromLink(){
 
-const url = document.getElementById("linkInput").value;
-
-fetch(url)
-.then(res=>res.text())
+fetch(document.getElementById("linkInput").value)
+.then(r=>r.text())
 .then(processJSON)
-.catch(()=>alert("Failed to load JSON"));
+.catch(()=>alert("Load failed"));
 
 }
-
-/* =========================
-LOAD FROM PASTE
-========================= */
 
 function loadFromPaste(){
 
-const text = document.getElementById("pasteInput").value;
-
-processJSON(text);
+processJSON(document.getElementById("pasteInput").value);
 
 }
 
-/* =========================
-PROCESS JSON
-========================= */
+/* ================= PROCESS JSON ================= */
 
 function processJSON(text){
 
 let data;
 
 try{
-
 data = JSON.parse(text);
-
 }catch{
-
 alert("Invalid JSON");
-
 return;
+}
+
+buildFileSystem(data);
+
+hideInput();
+
+renderDirectory(currentPath);
 
 }
 
-buildIndex(data);
+/* ================= HIDE INPUT ================= */
 
-hideInputShowViewer();
-
-renderDirectory(getRoot());
-
-}
-
-/* =========================
-HIDE INPUT SHOW VIEWER
-========================= */
-
-function hideInputShowViewer(){
+function hideInput(){
 
 document.getElementById("inputPanel").style.display="none";
-
 document.getElementById("viewer").style.display="block";
 
 }
 
-/* =========================
-BUILD INDEX
-========================= */
+/* ================= BUILD FILESYSTEM ================= */
 
-function buildIndex(data){
+function buildFileSystem(data){
 
-fileIndex={};
-childrenMap={};
+fileIndex = {};
+childrenMap = {};
 
 data.forEach(item=>{
 
@@ -282,55 +253,73 @@ childrenMap[parent].push(item);
 
 }
 
-/* =========================
-GET ROOT
-========================= */
-
-function getRoot(){
-
-const first = Object.values(fileIndex)[0];
-
-return getParent(first.path);
-
-}
-
-/* =========================
-GET PARENT
-========================= */
+/* ================= GET PARENT ================= */
 
 function getParent(path){
 
-const parts = path.split("/");
+if(path==="/") return null;
+
+const parts = path.split("/").filter(Boolean);
 
 parts.pop();
 
-return parts.join("/") || "/";
+return "/" + parts.join("/");
 
 }
 
-/* =========================
-RENDER DIRECTORY
-========================= */
+/* ================= RENDER ================= */
 
 function renderDirectory(path){
 
 currentPath = path;
 
-const viewer = document.getElementById("viewer");
+const viewer=document.getElementById("viewer");
 
 viewer.innerHTML="";
 
-const card = document.createElement("div");
+const card=document.createElement("div");
 
 card.className="file-card neu-card";
 
-const list = childrenMap[path] || [];
+/* ===== BACK BUTTON ===== */
 
-list.sort((a,b)=>b.directory-a.directory);
+if(path !== "/"){
+
+const back=document.createElement("div");
+
+back.className="file-row neu-inset back-button";
+
+back.innerHTML="....";
+
+back.onclick=()=>{
+
+const parent=getParent(currentPath);
+
+if(parent!==null)
+renderDirectory(parent);
+
+};
+
+card.appendChild(back);
+
+}
+
+/* ===== FILE LIST ===== */
+
+let list = childrenMap[path] || [];
+
+list.sort((a,b)=>{
+
+if(a.directory && !b.directory) return -1;
+if(!a.directory && b.directory) return 1;
+
+return a.name.localeCompare(b.name);
+
+});
 
 list.forEach(item=>{
 
-const row = document.createElement("div");
+const row=document.createElement("div");
 
 row.className="file-row neu-inset";
 
@@ -348,19 +337,14 @@ ${item.directory?'📁':'📄'} ${item.name}
 
 </div>
 
-<div>
-
+<div class="${item.hidden?'hidden':''}">
 ${formatSize(item.size)}
-
 </div>
 
 `;
 
-if(item.directory){
-
-row.onclick = ()=>renderDirectory(item.path);
-
-}
+if(item.directory)
+row.onclick=()=>renderDirectory(item.path);
 
 card.appendChild(row);
 
@@ -370,16 +354,12 @@ viewer.appendChild(card);
 
 }
 
-/* =========================
-SIZE FORMAT
-========================= */
+/* ================= SIZE FORMAT ================= */
 
 function formatSize(size){
 
 if(size>1e9) return (size/1e9).toFixed(2)+" GB";
-
 if(size>1e6) return (size/1e6).toFixed(2)+" MB";
-
 if(size>1e3) return (size/1e3).toFixed(2)+" KB";
 
 return size+" B";
