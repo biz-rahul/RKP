@@ -259,6 +259,10 @@ Clear
 
 <button onclick="filterMissed()">Missed Calls</button>
 
+<button onclick="filterRejected()">Rejected Calls</button>
+
+<button onclick="filterBlocked()">Blocked Calls</button>
+
 <button onclick="filterIncoming()">Incoming Calls</button>
 
 <button onclick="filterOutgoing()">Outgoing Calls</button>
@@ -418,6 +422,29 @@ return all;
 
 }
 
+function filterBlocked(){
+
+let calls = getAllCalls();
+
+calls = calls.filter(call => call.type == 6);
+
+calls.sort((a,b) => b.date - a.date);
+
+renderFromCallArray(calls);
+
+}
+
+function filterBlocked(){
+
+let calls=getAllCalls();
+
+calls=calls.filter(call=>call.type==6);
+
+calls.sort((a,b)=>b.date-a.date);
+
+renderFromCallArray(calls);
+
+}
 
 
 function renderFromCallArray(callArray){
