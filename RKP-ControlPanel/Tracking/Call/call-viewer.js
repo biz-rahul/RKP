@@ -1,669 +1,230 @@
-/* =========================================================
-CONTROLTHEWORLD — ADVANCED CALL VIEWER v3.0
-Forensic Call Intelligence & Analysis Engine
-Fully compatible with existing controller
-========================================================= */
+let rawData=[];
+let filteredData=[];
 
-/* =========================================================
-GLOBAL STATE ENGINE
-========================================================= */
+const callTypes={
+1:"Incoming",
+2:"Outgoing",
+3:"Missed",
+5:"Rejected",
+6:"Blocked"
+};
 
-let CALL_STATE = {
 
-rawContacts: [],
-rawCalls: [],
-filteredCalls: [],
+function loadPaste(){
 
-search: "",
+let text=document.getElementById("jsonInput").value;
 
-filters: {
-
-    type: "all",     // incoming, outgoing, missed, rejected
-    minDuration: 0,
-    maxDuration: Infinity,
-
-    dateFrom: 0,
-    dateTo: Infinity
-
-},
-
-sort: {
-
-    field: "date",
-    dir: "desc"
-
-},
-
-pagination: {
-
-    page: 1,
-    perPage: 50
-
-},
-
-stats: {
-
-    totalCalls: 0,
-    incoming: 0,
-    outgoing: 0,
-    missed: 0,
-    rejected: 0,
-    totalDuration: 0
+process(text);
 
 }
+
+
+document.getElementById("fileInput").onchange=e=>{
+
+let file=e.target.files[0];
+
+let reader=new FileReader();
+
+reader.onload=x=>process(x.target.result);
+
+reader.readAsText(file);
 
 };
 
-/* =========================================================
-MAIN ENTRY
-========================================================= */
 
-function renderCall(container) {
+async function loadGithub(){
 
-if (!Array.isArray(currentJSON)) {
+let url=document.getElementById("githubUrl").value;
 
-    container.innerHTML =
-        "<div class='callviewer-empty'>Invalid call log format</div>";
+let res=await fetch(url);
 
-    return;
+let text=await res.text();
+
+process(text);
+
 }
 
-initializeCallData(currentJSON);
 
-container.className = "callviewer-app";
+function process(text){
 
-container.innerHTML = `
-    ${renderHeader()}
-    ${renderToolbar()}
-    ${renderStats()}
-    ${renderListContainer()}
-    ${renderPagination()}
+rawData=JSON.parse(text);
+
+filteredData=rawData;
+
+renderStats();
+
+renderViewer();
+
+renderCharts();
+
+}
+
+
+function renderStats(){
+
+let totalCalls=0;
+let totalDuration=0;
+
+let typesCount={};
+
+rawData.forEach(c=>{
+
+c.calls.forEach(call=>{
+
+totalCalls++;
+
+totalDuration+=call.duration;
+
+typesCount[call.type]=(typesCount[call.type]||0)+1;
+
+});
+
+});
+
+
+document.getElementById("stats").innerHTML=`
+
+<div class="statbox">
+
+Contacts: ${rawData.length}<br>
+
+Calls: ${totalCalls}<br>
+
+Duration: ${formatDuration(totalDuration)}
+
+</div>
+
 `;
 
-attachCallHandlers();
-
-runCallPipeline();
-
 }
 
-/* =========================================================
-DATA INITIALIZATION
-========================================================= */
 
-function initializeCallData(json) {
+function renderViewer(){
 
-CALL_STATE.rawContacts = json;
+let html="";
 
-CALL_STATE.rawCalls = [];
+filteredData.forEach(contact=>{
 
-json.forEach(contact => {
+let duration=contact.calls.reduce((a,b)=>a+b.duration,0);
 
-    const name = contact.name || "Unknown";
-    const number = contact.number || "";
+html+=`
 
-    contact.calls.forEach(call => {
+<div class="contact">
 
-        CALL_STATE.rawCalls.push({
+<h3>${contact.name}</h3>
 
-            name,
-            number,
+${contact.number}<br>
 
-            type: call.type,
+Calls:${contact.calls.length}<br>
 
-            date: call.date,
+Duration:${formatDuration(duration)}
 
-            duration: call.duration,
+</div>
 
-            durationFormatted:
-                formatDuration(call.duration),
-
-            dateFormatted:
-                formatDateTime(call.date)
-
-        });
-
-    });
+`;
 
 });
 
-calculateCallStats();
+document.getElementById("viewer").innerHTML=html;
 
 }
 
-/* =========================================================
-STATS ENGINE
-========================================================= */
 
-function calculateCallStats() {
+function renderCharts(){
 
-let incoming = 0;
-let outgoing = 0;
-let missed = 0;
-let rejected = 0;
-let totalDuration = 0;
+let counts={};
 
-CALL_STATE.rawCalls.forEach(call => {
+rawData.forEach(c=>{
 
-    totalDuration += call.duration;
+c.calls.forEach(call=>{
 
-    switch(call.type) {
-
-        case 1: incoming++; break;
-        case 2: outgoing++; break;
-        case 3: missed++; break;
-        case 5: rejected++; break;
-
-    }
+counts[call.type]=(counts[call.type]||0)+1;
 
 });
 
-CALL_STATE.stats = {
-
-    totalCalls: CALL_STATE.rawCalls.length,
-    incoming,
-    outgoing,
-    missed,
-    rejected,
-    totalDuration
-
-};
-
-}
-
-/* =========================================================
-PIPELINE ENGINE
-========================================================= */
-
-function runCallPipeline() {
-
-applyCallFilters();
-
-applyCallSort();
-
-renderCallList();
-
-renderCallPagination();
-
-renderCallStatsLive();
-
-}
-
-/* =========================================================
-FILTER ENGINE
-========================================================= */
-
-function applyCallFilters() {
-
-const f = CALL_STATE.filters;
-
-CALL_STATE.filteredCalls =
-    CALL_STATE.rawCalls.filter(call => {
-
-    if (CALL_STATE.search) {
-
-        const s = CALL_STATE.search;
-
-        if (!(
-            call.name.toLowerCase().includes(s) ||
-            call.number.includes(s)
-        )) return false;
-    }
-
-    if (f.type !== "all" &&
-        call.type !== Number(f.type))
-        return false;
-
-    if (call.duration < f.minDuration)
-        return false;
-
-    if (call.duration > f.maxDuration)
-        return false;
-
-    if (call.date < f.dateFrom)
-        return false;
-
-    if (call.date > f.dateTo)
-        return false;
-
-    return true;
 });
 
+
+new Chart(
+
+document.getElementById("callTypeChart"),
+
+{
+
+type:"pie",
+
+data:{
+
+labels:Object.keys(counts).map(x=>callTypes[x]),
+
+datasets:[{
+
+data:Object.values(counts)
+
+}]
+
 }
 
-/* =========================================================
-SORT ENGINE
-========================================================= */
-
-function applyCallSort() {
-
-const { field, dir } = CALL_STATE.sort;
-
-CALL_STATE.filteredCalls.sort((a, b) => {
-
-    let v1 = a[field];
-    let v2 = b[field];
-
-    return dir === "asc"
-        ? v1 - v2
-        : v2 - v1;
-});
-
 }
 
-/* =========================================================
-PAGINATION ENGINE
-========================================================= */
-
-function paginateCalls() {
-
-const start =
-    (CALL_STATE.pagination.page - 1)
-    * CALL_STATE.pagination.perPage;
-
-return CALL_STATE.filteredCalls.slice(
-    start,
-    start + CALL_STATE.pagination.perPage
 );
 
 }
 
-/* =========================================================
-HEADER
-========================================================= */
 
-function renderHeader() {
+function applyFilters(){
 
-return `
-    <div class="callviewer-header">
-        Call Intelligence Terminal
-    </div>
-`;
+let search=document.getElementById("searchName").value.toLowerCase();
 
-}
+let type=document.getElementById("typeFilter").value;
 
-/* =========================================================
-TOOLBAR
-========================================================= */
+filteredData=rawData.filter(c=>{
 
-function renderToolbar() {
+if(search && !c.name.toLowerCase().includes(search)) return false;
 
-return `
-    <div class="callviewer-toolbar">
+if(type){
 
-        <input
-            type="text"
-            id="callSearch"
-            placeholder="Search name or number"
-        >
-
-        <select id="callTypeFilter">
-
-            <option value="all">All Types</option>
-            <option value="1">Incoming</option>
-            <option value="2">Outgoing</option>
-            <option value="3">Missed</option>
-            <option value="5">Rejected</option>
-
-        </select>
-
-        <select id="callSortField">
-
-            <option value="date">Date</option>
-            <option value="duration">Duration</option>
-
-        </select>
-
-        <button id="callSortToggle">
-            Toggle Sort
-        </button>
-
-        <button id="exportCallCSV">
-            Export CSV
-        </button>
-
-        <button id="exportCallJSON">
-            Export JSON
-        </button>
-
-    </div>
-`;
+if(!c.calls.some(call=>call.type==type)) return false;
 
 }
 
-/* =========================================================
-STATS PANEL
-========================================================= */
-
-function renderStats() {
-
-return `
-    <div class="callviewer-stats"
-         id="callStats">
-
-        Total Calls:
-        ${CALL_STATE.stats.totalCalls}
-
-        |
-        Duration:
-        ${formatDuration(
-            CALL_STATE.stats.totalDuration
-        )}
-
-    </div>
-`;
-
-}
-
-function renderCallStatsLive() {
-
-const el =
-    document.getElementById("callStats");
-
-el.innerHTML = `
-    Showing
-    ${CALL_STATE.filteredCalls.length}
-    /
-    ${CALL_STATE.stats.totalCalls}
-    calls
-`;
-
-}
-
-/* =========================================================
-LIST CONTAINER
-========================================================= */
-
-function renderListContainer() {
-
-return `
-    <div class="callviewer-list"
-         id="callList"></div>
-`;
-
-}
-
-/* =========================================================
-RENDER CALL LIST
-========================================================= */
-
-function renderCallList() {
-
-const list =
-    document.getElementById("callList");
-
-list.innerHTML = "";
-
-const calls = paginateCalls();
-
-if (!calls.length) {
-
-    list.innerHTML =
-    "<div class='callviewer-empty'>No calls found</div>";
-
-    return;
-}
-
-calls.forEach(call => {
-
-    list.appendChild(
-        createCallItem(call)
-    );
+return true;
 
 });
 
-}
 
-/* =========================================================
-CALL ITEM
-========================================================= */
-
-function createCallItem(call) {
-
-const div =
-    document.createElement("div");
-
-div.className =
-    "callviewer-item";
-
-div.innerHTML = `
-
-    <div class="callviewer-name">
-        ${call.name}
-    </div>
-
-    <div class="callviewer-number">
-        ${call.number}
-    </div>
-
-    <div class="callviewer-meta
-        ${getCallTypeClass(call.type)}">
-
-        ${getCallTypeText(call.type)}
-        |
-        ${call.dateFormatted}
-        |
-        ${call.durationFormatted}
-
-    </div>
-
-`;
-
-return div;
+renderViewer();
 
 }
 
-/* =========================================================
-PAGINATION
-========================================================= */
 
-function renderPagination() {
+function formatDuration(sec){
 
-return `
-    <div class="callviewer-pagination"
-         id="callPagination"></div>
-`;
+let m=Math.floor(sec/60);
+
+let s=sec%60;
+
+return m+"m "+s+"s";
 
 }
 
-function renderCallPagination() {
 
-const el =
-    document.getElementById(
-        "callPagination"
-    );
+function loadFromParams(){
 
-const totalPages =
-    Math.ceil(
-        CALL_STATE.filteredCalls.length /
-        CALL_STATE.pagination.perPage
-    );
+let params=new URLSearchParams(location.search);
 
-el.innerHTML = `
+let url=params.get("github");
 
-    <button id="callPrev">
-        Prev
-    </button>
+if(url){
 
-    Page
-    ${CALL_STATE.pagination.page}
-    /
-    ${totalPages}
+fetch(url)
 
-    <button id="callNext">
-        Next
-    </button>
+.then(res=>res.text())
 
-`;
+.then(process);
 
 }
 
-/* =========================================================
-EVENT HANDLERS
-========================================================= */
-
-function attachCallHandlers() {
-
-document.getElementById("callSearch")
-    .oninput = e => {
-
-    CALL_STATE.search =
-        e.target.value.toLowerCase();
-
-    CALL_STATE.pagination.page = 1;
-
-    runCallPipeline();
-};
-
-document.getElementById("callTypeFilter")
-    .onchange = e => {
-
-    CALL_STATE.filters.type =
-        e.target.value;
-
-    runCallPipeline();
-};
-
-document.getElementById("callSortField")
-    .onchange = e => {
-
-    CALL_STATE.sort.field =
-        e.target.value;
-
-    runCallPipeline();
-};
-
-document.getElementById("callSortToggle")
-    .onclick = () => {
-
-    CALL_STATE.sort.dir =
-        CALL_STATE.sort.dir === "asc"
-        ? "desc"
-        : "asc";
-
-    runCallPipeline();
-};
-
-document.getElementById("callPrev")
-    .onclick = () => {
-
-    if (CALL_STATE.pagination.page > 1)
-        CALL_STATE.pagination.page--;
-
-    runCallPipeline();
-};
-
-document.getElementById("callNext")
-    .onclick = () => {
-
-    CALL_STATE.pagination.page++;
-
-    runCallPipeline();
-};
-
-document.getElementById("exportCallCSV")
-    .onclick = exportCallCSV;
-
-document.getElementById("exportCallJSON")
-    .onclick = exportCallJSON;
-
 }
 
-/* =========================================================
-EXPORT ENGINE
-========================================================= */
-
-function exportCallCSV() {
-
-const rows =
-    CALL_STATE.filteredCalls.map(c =>
-
-    `${c.name},${c.number},${getCallTypeText(c.type)},${c.dateFormatted},${c.durationFormatted}`
-);
-
-downloadCallFile(
-    "calls.csv",
-    rows.join("\n")
-);
-
-}
-
-function exportCallJSON() {
-
-downloadCallFile(
-    "calls.json",
-    JSON.stringify(
-        CALL_STATE.filteredCalls,
-        null,
-        2
-    )
-);
-
-}
-
-function downloadCallFile(name, content) {
-
-const blob =
-    new Blob([content]);
-
-const url =
-    URL.createObjectURL(blob);
-
-const a =
-    document.createElement("a");
-
-a.href = url;
-a.download = name;
-a.click();
-
-URL.revokeObjectURL(url);
-
-}
-
-/* =========================================================
-UTILITIES
-========================================================= */
-
-function getCallTypeText(type) {
-
-return {
-    1: "Incoming",
-    2: "Outgoing",
-    3: "Missed",
-    5: "Rejected"
-}[type] || "Unknown";
-
-}
-
-function getCallTypeClass(type) {
-
-return {
-    1: "call-incoming",
-    2: "call-outgoing",
-    3: "call-missed",
-    5: "call-rejected"
-}[type] || "";
-
-}
-
-function formatDateTime(ts) {
-
-return new Date(ts)
-    .toLocaleString();
-
-}
-
-function formatDuration(sec) {
-
-if (!sec) return "0s";
-
-const m =
-    Math.floor(sec / 60);
-
-const s =
-    sec % 60;
-
-return m > 0
-    ? `${m}m ${s}s`
-    : `${s}s`;
-
-    }
+loadFromParams();
