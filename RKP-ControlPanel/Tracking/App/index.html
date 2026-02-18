@@ -3,7 +3,9 @@
 <head>
 
 <meta charset="UTF-8">
-<title>Apps Viewer Hacker UI</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Apps Viewer Pro</title>
 
 <link rel="stylesheet" href="style.css">
 
@@ -11,43 +13,73 @@
 <body>
 
 
-<header>
+<!-- INPUT SCREEN -->
 
-<div class="hamburger" onclick="toggleMenu()">☰</div>
+<div id="inputScreen">
 
-<div class="title">APP DATABASE</div>
+<h1 class="title">APPS VIEWER</h1>
 
-</header>
+<div class="buttonGroup">
 
+<button class="mainButton" onclick="showLinkInput()">
+Load from Link
+</button>
 
-<div id="sideMenu" class="sideMenu">
+<button class="mainButton" onclick="showTextInput()">
+Paste JSON Text
+</button>
 
-<h3>FILTER PANEL</h3>
-
-<input type="text" id="searchInput" placeholder="Search apps">
-
-<select id="sortSelect">
-<option value="name">Sort by Name</option>
-<option value="size">Sort by Size</option>
-<option value="usage">Sort by Usage</option>
-<option value="installed">Sort by Installed</option>
-<option value="last_used">Sort by Last Used</option>
-</select>
-
-<input type="text" id="githubInput" placeholder="GitHub Raw JSON URL">
-
-<button onclick="loadGithub()">LOAD GITHUB</button>
-
-<input type="file" id="fileInput">
-
-<textarea id="jsonPaste" placeholder="Paste JSON"></textarea>
-
-<button onclick="loadPaste()">LOAD JSON</button>
+<label class="mainButton fileButton">
+Select JSON File
+<input type="file" id="fileInput" hidden>
+</label>
 
 </div>
 
 
+<div id="linkBox" class="inputBox hidden">
+
+<input type="text" id="linkInput"
+placeholder="Paste GitHub Raw JSON Link">
+
+<button onclick="loadFromLink()" class="submitButton">
+Load Apps
+</button>
+
+</div>
+
+
+<div id="textBox" class="inputBox hidden">
+
+<textarea id="textInput"
+placeholder="Paste JSON text here"></textarea>
+
+<button onclick="loadFromText()" class="submitButton">
+Load Apps
+</button>
+
+</div>
+
+</div>
+
+
+
+<!-- APPS SCREEN -->
+
+<div id="appsScreen" class="hidden">
+
+<div class="topBar">
+
+<div class="topTitle">Installed Apps</div>
+
+<div class="appCount" id="appCount"></div>
+
+</div>
+
 <div id="appsList"></div>
+
+</div>
+
 
 
 <script src="script.js"></script>
