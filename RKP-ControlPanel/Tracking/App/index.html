@@ -48,7 +48,6 @@ margin-bottom:20px;
 
 }
 
-
 /* =========================
    MAIN PANEL (matches your screenshot)
 ========================= */
@@ -357,17 +356,18 @@ display:none;
 
 <button class="filterBtn" onclick="sortUsageHigh()">Usage Highest</button> <button class="filterBtn" onclick="sortUsageLow()">Usage Lowest</button>
 
-<button class="filterBtn" onclick="showAllApps()">All Apps</button>
+<button class="filterBtn" id="btnAll" onclick="showAllApps()">
+All Apps (0)
+</button>
 
-<button class="filterBtn" onclick="showUserApps()">User Apps</button>
+<button class="filterBtn" id="btnUser" onclick="showUserApps()">
+User Apps (0)
+</button>
 
-<button class="filterBtn" onclick="showSystemApps()">System Apps</button>
+<button class="filterBtn" id="btnSystem" onclick="showSystemApps()">
+System Apps (0)
+</button>
 
-<div class="filterBtn" id="countAll">All: 0</div>
-
-<div class="filterBtn" id="countUser">User: 0</div>
-
-<div class="filterBtn" id="countSystem">System: 0</div>
 
 
 <button class="filterBtn" onclick="resetApps()">Reset</button>
@@ -427,6 +427,8 @@ apps=data;
 filtered=[...apps];
 // classify apps
 
+// classify apps
+
 systemApps = apps.filter(app =>
 app.package_name.startsWith("com.android") ||
 app.package_name.startsWith("com.google.android") ||
@@ -437,16 +439,17 @@ app.package_name.startsWith("android")
 userApps = apps.filter(app => !systemApps.includes(app));
 
 
-// update counts
+// update button labels with counts
 
-document.getElementById("countAll").innerText =
-"All: " + apps.length;
+document.getElementById("btnAll").innerText =
+`All Apps (${apps.length})`;
 
-document.getElementById("countUser").innerText =
-"User: " + userApps.length;
+document.getElementById("btnUser").innerText =
+`User Apps (${userApps.length})`;
 
-document.getElementById("countSystem").innerText =
-"System: " + systemApps.length;
+document.getElementById("btnSystem").innerText =
+`System Apps (${systemApps.length})`;
+
 
 
 inputPanel.style.display="none";
