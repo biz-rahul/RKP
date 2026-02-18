@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Advanced Contacts Viewer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>Advanced Contacts JSON Viewer</h1>
+
+<div class="panel">
+
+<h2>Load JSON</h2>
+
+<textarea id="jsonPaste" placeholder="Paste JSON here"></textarea>
+
+<input type="file" id="fileInput">
+
+<input type="text" id="githubUrl"
+placeholder="GitHub RAW URL">
+
+<button onclick="loadPaste()">Load Paste</button>
+<button onclick="loadFile()">Load File</button>
+<button onclick="loadGitHub()">Load GitHub</button>
+
+</div>
+
+<div class="panel">
+
+<h2>Filters</h2>
+
+<input id="nameFilter" placeholder="Name filter">
+
+<input id="numberFilter" placeholder="Number filter">
+
+<select id="duplicateFilter">
+<option value="all">All</option>
+<option value="unique">Unique</option>
+<option value="duplicate">Duplicate</option>
+</select>
+
+<select id="sortFilter">
+<option value="name">Sort by Name</option>
+<option value="number">Sort by Number</option>
+</select>
+
+<button onclick="applyFilters()">Apply</button>
+
+</div>
+
+<div class="panel">
+
+<h2>Analytics</h2>
+
+<div id="stats"></div>
+
+<button onclick="exportCSV()">Export CSV</button>
+<button onclick="exportJSON()">Export JSON</button>
+
+</div>
+
+<div id="contactsContainer"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
