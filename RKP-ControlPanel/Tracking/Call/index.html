@@ -217,6 +217,18 @@ minute:"2-digit"
 
 }
 
+function formatDate(ts){
+
+let d=new Date(ts);
+
+return d.toLocaleDateString([],{
+day:"numeric",
+month:"short",
+year:"numeric"
+});
+
+}
+
 
 function getRelativeLabel(ts){
 
