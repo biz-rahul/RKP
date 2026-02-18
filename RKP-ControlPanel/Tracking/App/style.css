@@ -1,129 +1,182 @@
 body{
 
-background:#02030a;
-color:#00ffcc;
-font-family:Consolas,monospace;
 margin:0;
+background:#05060a;
+color:white;
+font-family:system-ui;
 
 }
 
-header{
 
-display:flex;
-align-items:center;
-padding:15px;
-background:#01020a;
-border-bottom:1px solid #00ffcc;
+/* INPUT SCREEN */
+
+#inputScreen{
+
+padding:20px;
+text-align:center;
 
 }
 
 .title{
 
-margin-left:15px;
-font-size:20px;
+font-size:28px;
+margin-bottom:30px;
+
+background:linear-gradient(90deg,#00ffe0,#00ffa2);
+
+-webkit-background-clip:text;
+color:transparent;
 
 }
 
-.hamburger{
 
-font-size:24px;
-cursor:pointer;
-
-}
-
-
-.sideMenu{
-
-position:fixed;
-left:-300px;
-top:0;
-width:300px;
-height:100%;
-background:#01020a;
-padding:20px;
-transition:0.3s;
-
-}
-
-.sideMenu.open{
-
-left:0;
-
-}
-
-input,textarea,select,button{
-
-width:100%;
-margin-bottom:10px;
-background:#02030a;
-color:#00ffcc;
-border:1px solid #00ffcc;
-padding:8px;
-
-}
-
-button{
-
-cursor:pointer;
-
-}
-
-#appsList{
-
-padding:10px;
-
-}
-
-.appRow{
-
-display:flex;
-align-items:center;
-padding:10px;
-border-bottom:1px solid #003333;
-
-transition:0.2s;
-
-}
-
-.appRow:hover{
-
-background:#001111;
-
-}
-
-.appIcon{
-
-width:60px;
-height:60px;
-border-radius:12px;
-margin-right:15px;
-
-}
-
-.appInfo{
+.buttonGroup{
 
 display:flex;
 flex-direction:column;
+gap:15px;
 
 }
+
+
+.mainButton{
+
+background:linear-gradient(45deg,#00ffa2,#00ffe0);
+
+border:none;
+padding:15px;
+border-radius:12px;
+font-size:16px;
+color:black;
+font-weight:bold;
+
+}
+
+
+.fileButton{
+
+display:block;
+cursor:pointer;
+
+}
+
+
+.inputBox{
+
+margin-top:20px;
+
+}
+
+.inputBox input,
+.inputBox textarea{
+
+width:100%;
+padding:12px;
+border-radius:10px;
+border:none;
+margin-bottom:10px;
+
+}
+
+
+.submitButton{
+
+background:#00ffa2;
+border:none;
+padding:12px;
+border-radius:10px;
+width:100%;
+
+}
+
+
+/* APPS SCREEN */
+
+.topBar{
+
+padding:15px;
+background:#0c0f17;
+
+display:flex;
+justify-content:space-between;
+
+}
+
+
+.appCard{
+
+background:#0c0f17;
+margin:10px;
+padding:15px;
+border-radius:15px;
+
+}
+
+
+.appHeader{
+
+display:flex;
+gap:12px;
+
+}
+
+
+.appIcon{
+
+width:50px;
+height:50px;
+background:#00ffa2;
+border-radius:12px;
+
+}
+
 
 .appName{
 
 font-size:18px;
-color:#00ffaa;
+font-weight:bold;
 
 }
+
 
 .appPackage{
 
-color:#00cccc;
-font-size:13px;
+font-size:12px;
+color:#aaa;
 
 }
 
-.appMeta{
 
-font-size:12px;
-color:#008888;
+.appDetails{
+
+margin-top:10px;
+font-size:13px;
+color:#ccc;
+
+display:flex;
+flex-direction:column;
+gap:4px;
+
+}
+
+
+/* MOBILE OPTIMIZED */
+
+@media (max-width:600px){
+
+.appCard{
+
+margin:8px;
+
+}
+
+}
+
+
+/* UTIL */
+
+.hidden{
+
+display:none;
 
 }
