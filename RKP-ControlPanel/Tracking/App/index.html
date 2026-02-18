@@ -2,9 +2,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>APPS DATABASE // ELITE</title><style>
+<title>SYSTEM APP DATABASE</title><style>
 
-/* ===== GLOBAL HACKER UI ===== */
+/* ========================= */
+/* TRUE HACKER UI DESIGN */
+/* ========================= */
 
 *{
 box-sizing:border-box;
@@ -14,159 +16,209 @@ padding:0;
 
 body{
 
-background:#020409;
-color:#00ffcc;
+background:#000;
+color:#00ff9c;
 font-family:Consolas,monospace;
+
 overflow-x:hidden;
 
-background-image:
-linear-gradient(#001010 1px, transparent 1px),
-linear-gradient(90deg,#001010 1px, transparent 1px);
+/* animated hacker grid */
 
-background-size:25px 25px;
+background-image:
+linear-gradient(rgba(0,255,156,0.07) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,255,156,0.07) 1px, transparent 1px);
+
+background-size:40px 40px;
+
+animation:gridMove 10s linear infinite;
 
 }
 
+@keyframes gridMove{
+from{background-position:0 0;}
+to{background-position:0 40px;}
+}
 
-/* ===== INPUT SCREEN ===== */
 
-#inputScreen{
+/* ========================= */
+/* TERMINAL HEADER */
+/* ========================= */
 
-padding:20px;
-max-width:600px;
-margin:auto;
+.header{
+
+padding:15px;
+
+border-bottom:1px solid #00ff9c;
+
+box-shadow:0 0 20px #00ff9c;
+
+background:#010101;
 
 }
 
 .title{
 
-font-size:26px;
-text-align:center;
-margin-bottom:20px;
-
-color:#00ffcc;
+font-size:20px;
 
 text-shadow:
-0 0 5px #00ffcc,
-0 0 10px #00ffcc,
-0 0 20px #00ffcc;
+0 0 5px #00ff9c,
+0 0 10px #00ff9c,
+0 0 20px #00ff9c;
 
 letter-spacing:3px;
+
+}
+
+
+/* ========================= */
+/* INPUT SCREEN */
+/* ========================= */
+
+#inputScreen{
+
+padding:20px;
+
+max-width:700px;
+margin:auto;
 
 }
 
 .btn{
 
 width:100%;
-padding:14px;
+
 margin-top:12px;
+
+padding:14px;
 
 background:black;
 
-border:1px solid #00ffcc;
+border:1px solid #00ff9c;
 
-color:#00ffcc;
-
-border-radius:6px;
+color:#00ff9c;
 
 font-weight:bold;
 
+border-radius:4px;
+
 box-shadow:
-0 0 5px #00ffcc;
+0 0 5px #00ff9c;
 
 }
 
-.btn:active{
+.btn:hover{
+
+background:#001a12;
 
 box-shadow:
-0 0 20px #00ffcc;
+0 0 20px #00ff9c;
 
 }
 
 
-/* ===== INPUT FIELDS ===== */
+/* INPUT */
 
-input,textarea{
+input, textarea{
 
 width:100%;
+
 padding:12px;
+
 margin-top:10px;
 
 background:black;
-border:1px solid #00ffcc;
 
-color:#00ffcc;
+border:1px solid #00ff9c;
 
-border-radius:5px;
+color:#00ff9c;
+
+font-family:Consolas;
 
 }
 
 textarea{
+
 height:120px;
+
 }
 
 
-/* ===== VIEWER ===== */
+/* ========================= */
+/* VIEWER */
+/* ========================= */
 
 #viewer{
 
-max-width:600px;
+max-width:700px;
+
 margin:auto;
 
 }
 
 
-/* ===== TOP FILTER BAR ===== */
+/* FILTER PANEL */
 
-#topBar{
+.filters{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:6px;
+
+padding:10px;
 
 position:sticky;
 top:0;
 
 background:black;
 
+border-bottom:1px solid #00ff9c;
+
+}
+
+
+.filterBtn{
+
 padding:10px;
 
-border-bottom:1px solid #00ffcc;
+background:black;
 
-box-shadow:0 0 10px #00ffcc;
+border:1px solid #00ff9c;
 
-}
-
-
-.search{
-
-margin-bottom:8px;
-
-}
-
-
-/* FILTER GRID */
-
-.filterGrid{
-
-display:grid;
-
-grid-template-columns:1fr 1fr;
-
-gap:5px;
-
-}
-
-.filterGrid input{
+color:#00ff9c;
 
 font-size:12px;
 
+box-shadow:0 0 5px #00ff9c;
+
+}
+
+.filterBtn:hover{
+
+box-shadow:0 0 20px #00ff9c;
+
 }
 
 
-/* ===== APP CARD ===== */
+/* SEARCH */
+
+.searchBox{
+
+grid-column:span 2;
+
+}
+
+
+/* ========================= */
+/* APP LIST */
+/* ========================= */
 
 .app{
 
-padding:12px;
+padding:14px;
 
-border-bottom:1px solid #003333;
+border-bottom:1px solid #002b1c;
 
 cursor:pointer;
 
@@ -176,34 +228,34 @@ transition:0.2s;
 
 .app:hover{
 
-background:#001111;
+background:#001a12;
 
-box-shadow:0 0 10px #00ffcc;
+box-shadow:0 0 10px #00ff9c;
 
 }
 
 .name{
 
-color:#00ff66;
+font-size:16px;
 
 font-weight:bold;
 
-font-size:16px;
-
-text-shadow:0 0 5px #00ff66;
+text-shadow:0 0 5px #00ff9c;
 
 }
 
 .package{
 
 font-size:12px;
-color:#00ccaa;
+
+color:#00cc88;
 
 }
 
 .version{
 
 font-size:12px;
+
 color:#00ffaa;
 
 }
@@ -216,37 +268,52 @@ margin-top:8px;
 
 font-size:13px;
 
-color:#66ffee;
+color:#88ffd0;
 
 line-height:1.4;
 
 }
 
 
-/* ===== HIDDEN ===== */
+/* ========================= */
 
 .hidden{
 display:none;
 }
 
 </style></head>
-<body><!-- ===== INPUT SCREEN ===== --><div id="inputScreen"><div class="title">APPS DATABASE</div><button class="btn" onclick="showLink()">LOAD FROM LINK</button>
+<body><div class="header"><div class="title">SYSTEM APP DATABASE v4.0</div></div><!-- INPUT --><div id="inputScreen"><button class="btn" onclick="showLink()">LOAD FROM LINK</button>
 
 <button class="btn" onclick="showText()">PASTE JSON</button>
 
 <button class="btn" onclick="fileInput.click()">SELECT FILE</button>
 
-<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden"><input id="linkInput" placeholder="GitHub Raw JSON Link"><button class="btn" onclick="loadLink()">LOAD</button>
+<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden"><input id="linkInput" placeholder="ENTER RAW JSON LINK"><button class="btn" onclick="loadLink()">EXECUTE</button>
 
-</div><div id="textBox" class="hidden"><textarea id="textInput"></textarea><button class="btn" onclick="loadText()">LOAD</button>
+</div><div id="textBox" class="hidden"><textarea id="textInput"></textarea><button class="btn" onclick="loadText()">EXECUTE</button>
 
-</div></div><!-- ===== VIEWER ===== --><div id="viewer" class="hidden"><div id="topBar"><input id="searchInput" class="search" placeholder="SEARCH APP"><div class="filterGrid"><input id="minSize" placeholder="Min Size MB"><input id="maxSize" placeholder="Max Size MB"><input id="minUsage" placeholder="Min Usage Hours"><input id="maxUsage" placeholder="Max Usage Hours"></div></div><div id="appsList"></div></div><script>
+</div></div><!-- VIEWER --><div id="viewer" class="hidden"><div class="filters"><input id="searchInput" class="searchBox" placeholder="SEARCH APP"><button class="filterBtn" onclick="sortNewest()">DATE NEWEST</button>
+
+<button class="filterBtn" onclick="sortOldest()">DATE OLDEST</button>
+
+<button class="filterBtn" onclick="sortSizeHigh()">SIZE HIGHEST</button>
+
+<button class="filterBtn" onclick="sortSizeLow()">SIZE LOWEST</button>
+
+<button class="filterBtn" onclick="sortUsageHigh()">USAGE HIGHEST</button>
+
+<button class="filterBtn" onclick="sortUsageLow()">USAGE LOWEST</button>
+
+<button class="filterBtn" onclick="resetList()">RESET</button>
+
+</div><div id="appsList"></div></div><script>
+
 
 let apps=[];
 let filtered=[];
 
 
-/* INPUT UI */
+/* INPUT */
 
 function showLink(){
 
@@ -263,35 +330,17 @@ linkBox.classList.add("hidden");
 }
 
 
-/* LOAD METHODS */
-
 async function loadLink(){
-
-try{
 
 let res=await fetch(linkInput.value);
 
 process(await res.json());
 
-}catch{
-
-alert("LOAD FAILED");
-
-}
-
 }
 
 function loadText(){
 
-try{
-
 process(JSON.parse(textInput.value));
-
-}catch{
-
-alert("INVALID JSON");
-
-}
 
 }
 
@@ -374,45 +423,77 @@ appsList.appendChild(div);
 }
 
 
-/* SEARCH + FILTER */
+/* SEARCH */
 
-searchInput.oninput=filter;
-minSize.oninput=filter;
-maxSize.oninput=filter;
-minUsage.oninput=filter;
-maxUsage.oninput=filter;
+searchInput.oninput=function(){
 
+let s=this.value.toLowerCase();
 
-function filter(){
+filtered=apps.filter(a=>
 
-let s=searchInput.value.toLowerCase();
+a.app_name.toLowerCase().includes(s)
+|| a.package_name.toLowerCase().includes(s)
 
-let minS=parseFloat(minSize.value)||0;
-let maxS=parseFloat(maxSize.value)||Infinity;
+);
 
-let minU=parseFloat(minUsage.value)||0;
-let maxU=parseFloat(maxUsage.value)||Infinity;
+render();
+
+};
 
 
-filtered=apps.filter(app=>{
+/* SORT FUNCTIONS */
 
-let sizeMB=app.app_size_bytes/1048576;
+function sortNewest(){
 
-let usageH=app.usage_time_ms/3600000;
+filtered.sort((a,b)=>b.installed_date-a.installed_date);
 
-if(s && !app.app_name.toLowerCase().includes(s)
-&& !app.package_name.toLowerCase().includes(s))
-return false;
+render();
 
-if(sizeMB<minS||sizeMB>maxS)
-return false;
+}
 
-if(usageH<minU||usageH>maxU)
-return false;
+function sortOldest(){
 
-return true;
+filtered.sort((a,b)=>a.installed_date-b.installed_date);
 
-});
+render();
+
+}
+
+function sortSizeHigh(){
+
+filtered.sort((a,b)=>b.app_size_bytes-a.app_size_bytes);
+
+render();
+
+}
+
+function sortSizeLow(){
+
+filtered.sort((a,b)=>a.app_size_bytes-b.app_size_bytes);
+
+render();
+
+}
+
+function sortUsageHigh(){
+
+filtered.sort((a,b)=>b.usage_time_ms-a.usage_time_ms);
+
+render();
+
+}
+
+function sortUsageLow(){
+
+filtered.sort((a,b)=>a.usage_time_ms-b.usage_time_ms);
+
+render();
+
+}
+
+function resetList(){
+
+filtered=[...apps];
 
 render();
 
@@ -422,22 +503,29 @@ render();
 /* FORMAT */
 
 function size(b){
+
 return (b/1048576).toFixed(2)+" MB";
+
 }
 
 function date(t){
+
 if(!t)return"Never";
+
 return new Date(t).toLocaleString();
+
 }
 
 function time(ms){
 
 let m=Math.floor(ms/60000);
+
 let h=Math.floor(m/60);
 
 return h+"h "+(m%60)+"m";
 
 }
+
 
 </script></body>
 </html>
