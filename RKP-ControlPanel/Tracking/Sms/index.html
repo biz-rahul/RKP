@@ -208,16 +208,27 @@ opacity:0.6;
 /* ---------- MESSAGE VIEW ---------- */
 
 #messageView{
+
 display:none;
+
 flex-direction:column;
-height:100%;
+
+height:100vh;
+
+overflow:hidden;
+
 }
 
 #messages{
+
 flex:1;
-overflow:auto;
+
+overflow-y:auto;
+
 padding:16px;
+
 }
+
 
 /* ---------- BUBBLES ---------- */
 
@@ -597,8 +608,19 @@ updateCounts();
 
 function openThread(thread){
 
-threadList.style.display="none";
-messageView.style.display="flex";
+/* ---------- HIDE CONTACT LIST + FILTER BAR + STATS ---------- */
+
+threadList.style.display = "none";
+
+filterBar.style.display = "none";
+
+statsBar.style.display = "none";
+
+/* ---------- SHOW MESSAGE VIEW ---------- */
+
+messageView.style.display = "flex";
+
+/* ---------- HEADER INFO ---------- */
 
 let display = getDisplayName(thread);
 
@@ -608,49 +630,93 @@ display +
 thread.address +
 "</div>" +
 "<div style='font-size:12px;opacity:0.6'>" +
-"Messages: "+thread.messages.length +
+"Messages: " + thread.messages.length +
 "</div>";
 
+/* ---------- CLEAR OLD MESSAGES ---------- */
 
-messages.innerHTML="";
+messages.innerHTML = "";
 
-let sorted=[...thread.messages].sort((a,b)=>a.date-b.date);
+/* ---------- SORT MESSAGES OLDEST → NEWEST ---------- */
 
-sorted.forEach(msg=>{
+let sorted = [...thread.messages].sort((a,b)=>a.date-b.date);
 
-let time=document.createElement("div");
-time.className="timeLabel";
-time.innerText=formatMessageTime(msg.date);
+/* ---------- RENDER MESSAGES ---------- */
+
+sorted.forEach(msg => {
+
+let time = document.createElement("div");
+
+time.className = "timeLabel";
+
+time.innerText = formatMessageTime(msg.date);
 
 messages.appendChild(time);
 
-let row=document.createElement("div");
-row.className="msgRow "+(msg.type_name=="SENT"?"sentRow":"inboxRow");
+/* row */
 
-let bubble=document.createElement("div");
-bubble.className="bubble "+(msg.type_name=="SENT"?"sentBubble":"inboxBubble");
+let row = document.createElement("div");
 
-bubble.innerText=msg.body;
+row.className =
+"msgRow " +
+(msg.type_name === "SENT" ? "sentRow" : "inboxRow");
+
+/* bubble */
+
+let bubble = document.createElement("div");
+
+bubble.className =
+"bubble " +
+(msg.type_name === "SENT" ? "sentBubble" : "inboxBubble");
+
+bubble.innerText = msg.body;
 
 row.appendChild(bubble);
+
 messages.appendChild(row);
 
 });
 
-/* FIXED: auto scroll to newest message */
+/* ---------- CRITICAL FIX: SCROLL TO NEWEST MESSAGE ---------- */
+/* requestAnimationFrame ensures layout is fully rendered */
+
+requestAnimationFrame(()=>{
+
+messages.scrollTop = messages.scrollHeight;
+
+});
+
+/* extra safety for slower devices */
 
 setTimeout(()=>{
-messages.scrollTop=messages.scrollHeight;
-},50);
+
+messages.scrollTop = messages.scrollHeight;
+
+},100);
 
 }
 
-/* ---------- BACK ---------- */
-
 function showThreads(){
 
-messageView.style.display="none";
-threadList.style.display="block";
+/* ---------- HIDE MESSAGE VIEW ---------- */
+
+messageView.style.display = "none";
+
+/* ---------- SHOW CONTACT LIST ---------- */
+
+threadList.style.display = "block";
+
+/* ---------- SHOW FILTER BAR ---------- */
+
+filterBar.style.display = "flex";
+
+/* ---------- SHOW STATS ---------- */
+
+statsBar.style.display = "block";
+
+/* ---------- SCROLL CONTACT LIST TO TOP (OPTIONAL) ---------- */
+
+threadList.scrollTop = 0;
 
 }
 
