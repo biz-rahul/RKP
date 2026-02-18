@@ -2,137 +2,168 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SYSTEM APP DATABASE</title><style>
+<title>Apps Viewer Neumorphic</title><style>
 
 /* ========================= */
-/* TRUE HACKER UI DESIGN */
+/* GLOBAL NEUMORPHIC LIGHT THEME */
 /* ========================= */
+
+:root{
+
+--bg:#e6edf3;
+--shadow-light:#ffffff;
+--shadow-dark:#c8d0d8;
+
+--primary:#4a90e2;
+--text:#2d3436;
+--subtext:#636e72;
+
+}
 
 *{
 box-sizing:border-box;
-margin:0;
-padding:0;
 }
 
 body{
 
-background:#000;
-color:#00ff9c;
-font-family:Consolas,monospace;
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+
+background:var(--bg);
+
+color:var(--text);
 
 overflow-x:hidden;
 
-/* animated hacker grid */
-
-background-image:
-linear-gradient(rgba(0,255,156,0.07) 1px, transparent 1px),
-linear-gradient(90deg, rgba(0,255,156,0.07) 1px, transparent 1px);
-
-background-size:40px 40px;
-
-animation:gridMove 10s linear infinite;
-
-}
-
-@keyframes gridMove{
-from{background-position:0 0;}
-to{background-position:0 40px;}
 }
 
 
 /* ========================= */
-/* TERMINAL HEADER */
+/* CONTAINER */
+/* ========================= */
+
+.container{
+
+max-width:700px;
+margin:auto;
+padding:15px;
+
+}
+
+
+/* ========================= */
+/* NEUMORPHIC CARD */
+/* ========================= */
+
+.neu{
+
+background:var(--bg);
+
+border-radius:18px;
+
+box-shadow:
+
+8px 8px 16px var(--shadow-dark),
+-8px -8px 16px var(--shadow-light);
+
+}
+
+
+/* PRESSED */
+
+.neu-pressed{
+
+box-shadow:
+
+inset 6px 6px 12px var(--shadow-dark),
+inset -6px -6px 12px var(--shadow-light);
+
+}
+
+
+/* ========================= */
+/* HEADER */
 /* ========================= */
 
 .header{
 
-padding:15px;
-
-border-bottom:1px solid #00ff9c;
-
-box-shadow:0 0 20px #00ff9c;
-
-background:#010101;
+padding:18px;
+margin-bottom:15px;
 
 }
 
 .title{
 
 font-size:20px;
-
-text-shadow:
-0 0 5px #00ff9c,
-0 0 10px #00ff9c,
-0 0 20px #00ff9c;
-
-letter-spacing:3px;
+font-weight:600;
 
 }
 
 
 /* ========================= */
-/* INPUT SCREEN */
+/* BUTTON */
 /* ========================= */
 
-#inputScreen{
-
-padding:20px;
-
-max-width:700px;
-margin:auto;
-
-}
-
-.btn{
-
-width:100%;
-
-margin-top:12px;
+.button{
 
 padding:14px;
+margin-top:12px;
 
-background:black;
+border-radius:14px;
 
-border:1px solid #00ff9c;
+border:none;
 
-color:#00ff9c;
+font-size:15px;
 
-font-weight:bold;
+font-weight:600;
 
-border-radius:4px;
+background:var(--bg);
+
+color:var(--primary);
+
+cursor:pointer;
 
 box-shadow:
-0 0 5px #00ff9c;
+
+6px 6px 12px var(--shadow-dark),
+-6px -6px 12px var(--shadow-light);
 
 }
 
-.btn:hover{
-
-background:#001a12;
+.button:active{
 
 box-shadow:
-0 0 20px #00ff9c;
+
+inset 4px 4px 8px var(--shadow-dark),
+inset -4px -4px 8px var(--shadow-light);
 
 }
 
 
+/* ========================= */
 /* INPUT */
+/* ========================= */
 
 input, textarea{
 
 width:100%;
+padding:14px;
+margin-top:12px;
 
-padding:12px;
+border:none;
 
-margin-top:10px;
+outline:none;
 
-background:black;
+border-radius:14px;
 
-border:1px solid #00ff9c;
+font-size:14px;
 
-color:#00ff9c;
+background:var(--bg);
 
-font-family:Consolas;
+box-shadow:
+
+inset 4px 4px 8px var(--shadow-dark),
+inset -4px -4px 8px var(--shadow-light);
 
 }
 
@@ -144,19 +175,8 @@ height:120px;
 
 
 /* ========================= */
-/* VIEWER */
+/* FILTER GRID */
 /* ========================= */
-
-#viewer{
-
-max-width:700px;
-
-margin:auto;
-
-}
-
-
-/* FILTER PANEL */
 
 .filters{
 
@@ -164,99 +184,64 @@ display:grid;
 
 grid-template-columns:1fr 1fr;
 
-gap:6px;
+gap:10px;
 
-padding:10px;
-
-position:sticky;
-top:0;
-
-background:black;
-
-border-bottom:1px solid #00ff9c;
-
-}
-
-
-.filterBtn{
-
-padding:10px;
-
-background:black;
-
-border:1px solid #00ff9c;
-
-color:#00ff9c;
-
-font-size:12px;
-
-box-shadow:0 0 5px #00ff9c;
-
-}
-
-.filterBtn:hover{
-
-box-shadow:0 0 20px #00ff9c;
-
-}
-
-
-/* SEARCH */
-
-.searchBox{
-
-grid-column:span 2;
+margin-bottom:15px;
 
 }
 
 
 /* ========================= */
-/* APP LIST */
+/* APP CARD */
 /* ========================= */
 
 .app{
 
-padding:14px;
+padding:15px;
+margin-bottom:12px;
 
-border-bottom:1px solid #002b1c;
+border-radius:16px;
 
 cursor:pointer;
 
-transition:0.2s;
+box-shadow:
+
+6px 6px 12px var(--shadow-dark),
+-6px -6px 12px var(--shadow-light);
 
 }
 
-.app:hover{
 
-background:#001a12;
+.app:active{
 
-box-shadow:0 0 10px #00ff9c;
+box-shadow:
+
+inset 4px 4px 8px var(--shadow-dark),
+inset -4px -4px 8px var(--shadow-light);
 
 }
+
 
 .name{
 
+font-weight:600;
 font-size:16px;
-
-font-weight:bold;
-
-text-shadow:0 0 5px #00ff9c;
 
 }
 
 .package{
 
-font-size:12px;
-
-color:#00cc88;
+font-size:13px;
+color:var(--subtext);
 
 }
 
 .version{
 
-font-size:12px;
+font-size:13px;
+color:var(--primary);
 
-color:#00ffaa;
+margin-top:2px;
 
 }
 
@@ -264,13 +249,13 @@ color:#00ffaa;
 
 display:none;
 
-margin-top:8px;
+margin-top:10px;
 
-font-size:13px;
+font-size:14px;
 
-color:#88ffd0;
+color:var(--subtext);
 
-line-height:1.4;
+line-height:1.5;
 
 }
 
@@ -282,31 +267,31 @@ display:none;
 }
 
 </style></head>
-<body><div class="header"><div class="title">SYSTEM APP DATABASE v4.0</div></div><!-- INPUT --><div id="inputScreen"><button class="btn" onclick="showLink()">LOAD FROM LINK</button>
+<body><div class="container"><!-- HEADER --><div class="header neu"><div class="title">Apps Viewer</div></div><!-- INPUT SCREEN --><div id="inputScreen"><button class="button" onclick="showLink()">Load from Link</button>
 
-<button class="btn" onclick="showText()">PASTE JSON</button>
+<button class="button" onclick="showText()">Paste JSON</button>
 
-<button class="btn" onclick="fileInput.click()">SELECT FILE</button>
+<button class="button" onclick="fileInput.click()">Select File</button>
 
-<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden"><input id="linkInput" placeholder="ENTER RAW JSON LINK"><button class="btn" onclick="loadLink()">EXECUTE</button>
+<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden"><input id="linkInput" placeholder="Paste JSON link"><button class="button" onclick="loadLink()">Load</button>
 
-</div><div id="textBox" class="hidden"><textarea id="textInput"></textarea><button class="btn" onclick="loadText()">EXECUTE</button>
+</div><div id="textBox" class="hidden"><textarea id="textInput"></textarea><button class="button" onclick="loadText()">Load</button>
 
-</div></div><!-- VIEWER --><div id="viewer" class="hidden"><div class="filters"><input id="searchInput" class="searchBox" placeholder="SEARCH APP"><button class="filterBtn" onclick="sortNewest()">DATE NEWEST</button>
+</div></div><!-- VIEWER --><div id="viewer" class="hidden"><input id="searchInput" placeholder="Search app"><div class="filters"><button class="button" onclick="sortNewest()">Date Newest</button>
 
-<button class="filterBtn" onclick="sortOldest()">DATE OLDEST</button>
+<button class="button" onclick="sortOldest()">Date Oldest</button>
 
-<button class="filterBtn" onclick="sortSizeHigh()">SIZE HIGHEST</button>
+<button class="button" onclick="sortSizeHigh()">Size Highest</button>
 
-<button class="filterBtn" onclick="sortSizeLow()">SIZE LOWEST</button>
+<button class="button" onclick="sortSizeLow()">Size Lowest</button>
 
-<button class="filterBtn" onclick="sortUsageHigh()">USAGE HIGHEST</button>
+<button class="button" onclick="sortUsageHigh()">Usage Highest</button>
 
-<button class="filterBtn" onclick="sortUsageLow()">USAGE LOWEST</button>
+<button class="button" onclick="sortUsageLow()">Usage Lowest</button>
 
-<button class="filterBtn" onclick="resetList()">RESET</button>
+<button class="button" onclick="reset()">Reset</button>
 
-</div><div id="appsList"></div></div><script>
+</div><div id="appsList"></div></div></div><script>
 
 
 let apps=[];
@@ -360,11 +345,9 @@ reader.readAsText(this.files[0]);
 function process(data){
 
 apps=data;
-
 filtered=[...apps];
 
 inputScreen.style.display="none";
-
 viewer.classList.remove("hidden");
 
 render();
@@ -441,90 +424,22 @@ render();
 };
 
 
-/* SORT FUNCTIONS */
+/* SORT */
 
-function sortNewest(){
-
-filtered.sort((a,b)=>b.installed_date-a.installed_date);
-
-render();
-
-}
-
-function sortOldest(){
-
-filtered.sort((a,b)=>a.installed_date-b.installed_date);
-
-render();
-
-}
-
-function sortSizeHigh(){
-
-filtered.sort((a,b)=>b.app_size_bytes-a.app_size_bytes);
-
-render();
-
-}
-
-function sortSizeLow(){
-
-filtered.sort((a,b)=>a.app_size_bytes-b.app_size_bytes);
-
-render();
-
-}
-
-function sortUsageHigh(){
-
-filtered.sort((a,b)=>b.usage_time_ms-a.usage_time_ms);
-
-render();
-
-}
-
-function sortUsageLow(){
-
-filtered.sort((a,b)=>a.usage_time_ms-b.usage_time_ms);
-
-render();
-
-}
-
-function resetList(){
-
-filtered=[...apps];
-
-render();
-
-}
+function sortNewest(){filtered.sort((a,b)=>b.installed_date-a.installed_date);render();}
+function sortOldest(){filtered.sort((a,b)=>a.installed_date-b.installed_date);render();}
+function sortSizeHigh(){filtered.sort((a,b)=>b.app_size_bytes-a.app_size_bytes);render();}
+function sortSizeLow(){filtered.sort((a,b)=>a.app_size_bytes-b.app_size_bytes);render();}
+function sortUsageHigh(){filtered.sort((a,b)=>b.usage_time_ms-a.usage_time_ms);render();}
+function sortUsageLow(){filtered.sort((a,b)=>a.usage_time_ms-b.usage_time_ms);render();}
+function reset(){filtered=[...apps];render();}
 
 
 /* FORMAT */
 
-function size(b){
-
-return (b/1048576).toFixed(2)+" MB";
-
-}
-
-function date(t){
-
-if(!t)return"Never";
-
-return new Date(t).toLocaleString();
-
-}
-
-function time(ms){
-
-let m=Math.floor(ms/60000);
-
-let h=Math.floor(m/60);
-
-return h+"h "+(m%60)+"m";
-
-}
+function size(b){return (b/1048576).toFixed(2)+" MB";}
+function date(t){if(!t)return"Never";return new Date(t).toLocaleString();}
+function time(ms){let m=Math.floor(ms/60000);let h=Math.floor(m/60);return h+"h "+(m%60)+"m";}
 
 
 </script></body>
