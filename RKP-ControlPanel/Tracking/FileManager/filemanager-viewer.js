@@ -1,18 +1,17 @@
 /* =========================================================
-CONTROLTHEWORLD FILE MANAGER VIEWER v3.0
-FULLY FIXED — WORKS WITH FLAT FILESYSTEM JSON
+CONTROLTHEWORLD FILE MANAGER VIEWER v4.0
+TRUE FILESYSTEM TREE ENGINE — FULLY FIXED
 ========================================================= */
 
-let fm_allFiles = [];
+let fm_tree = {};
+let fm_currentNode = null;
 let fm_currentPath = "";
-let fm_filtered = [];
 
 let fm_state = {
 
 search: "",
 type: "all",
-hidden: "all",
-sort: "name"
+hidden: "all"
 
 };
 
@@ -26,34 +25,19 @@ function renderFileManager(container)
 if (!Array.isArray(currentJSON))
 {
     container.innerHTML =
-    "<div class='filemanager-empty'>Invalid file structure</div>";
+    "<div class='filemanager-empty'>Invalid filesystem</div>";
     return;
 }
 
 container.className = "filemanager-app";
 
-/* Normalize */
+/* BUILD TREE */
 
-fm_allFiles =
-currentJSON.map(f => ({
+fm_tree = buildFileTree(currentJSON);
 
-    name: f.name || "Unknown",
+fm_currentPath = fm_tree.path;
 
-    path: normalizePath(f.path),
-
-    directory: !!f.directory,
-
-    hidden: !!f.hidden,
-
-    size: f.size || 0,
-
-    modified: f.last_modified || 0
-
-}));
-
-/* DETECT ROOT */
-
-fm_currentPath = detectRoot();
+fm_currentNode = fm_tree;
 
 container.innerHTML = buildUI();
 
@@ -64,23 +48,83 @@ fm_render();
 }
 
 /* =========================================================
-DETECT ROOT
+BUILD TRUE TREE
 ========================================================= */
 
-function detectRoot()
+function buildFileTree(files)
 {
 
-if (fm_allFiles.length === 0)
-    return "/";
+const root =
+createNode("/", true);
 
-/* Find shortest path */
+files.forEach(file =>
+{
 
-let shortest =
-fm_allFiles.reduce((a,b)=>
-    a.path.length < b.path.length ? a : b
-).path;
+    const parts =
+    normalizePath(file.path)
+    .split("/")
+    .filter(Boolean);
 
-return shortest;
+    let current = root;
+
+    parts.forEach((part, index) =>
+    {
+
+        if (!current.children[part])
+        {
+
+            current.children[part] =
+            createNode(
+
+                "/" + parts.slice(0,index+1).join("/"),
+
+                index !== parts.length - 1
+                || file.directory
+
+            );
+
+        }
+
+        current =
+        current.children[part];
+
+    });
+
+    current.size = file.size || 0;
+    current.hidden = file.hidden || false;
+    current.modified =
+    file.last_modified || 0;
+
+});
+
+return root;
+
+}
+
+/* =========================================================
+CREATE NODE
+========================================================= */
+
+function createNode(path, directory)
+{
+
+return {
+
+path,
+
+name: path.split("/").pop() || "Root",
+
+directory,
+
+children: {},
+
+size: 0,
+
+hidden: false,
+
+modified: 0
+
+};
 
 }
 
@@ -96,7 +140,7 @@ return `
 <div class="filemanager-header">
 File Manager Intelligence
 </div><div class="filemanager-toolbar"><input id="fm-search"
-placeholder="Search files">
+placeholder="Search current folder">
 
 <select id="fm-type">
 <option value="all">All</option>
@@ -107,8 +151,7 @@ placeholder="Search files">
 <option value="visible">Visible</option>
 <option value="hidden">Hidden</option>
 </select></div><div id="fm-breadcrumb"
-class="filemanager-breadcrumb"></div><div id="fm-stats"
-class="filemanager-stats"></div><div id="fm-list"
+class="filemanager-breadcrumb"></div><div id="fm-list"
 class="filemanager-list"></div>`;
 
 }
@@ -147,76 +190,60 @@ fm_render();
 }
 
 /* =========================================================
-CORE FIX — GET DIRECT CHILDREN USING PATH PREFIX
-========================================================= */
-
-function getChildren(path)
-{
-
-const depth =
-path.split("/").length;
-
-return fm_allFiles.filter(file =>
-{
-
-    if (file.path === path)
-        return false;
-
-    if (!file.path.startsWith(path))
-        return false;
-
-    const fileDepth =
-    file.path.split("/").length;
-
-    return fileDepth === depth + 1;
-
-});
-
-}
-
-/* =========================================================
 RENDER
 ========================================================= */
 
 function fm_render()
 {
 
-let list =
-getChildren(fm_currentPath);
+renderBreadcrumb();
 
-/* FILTER */
+renderList();
 
-list =
-list.filter(file =>
+}
+
+/* =========================================================
+GET CURRENT CHILDREN
+========================================================= */
+
+function getCurrentChildren()
 {
 
-if (fm_state.type === "file" && file.directory)
+let list =
+Object.values(
+fm_currentNode.children
+);
+
+return list.filter(node =>
+{
+
+if (fm_state.type === "file"
+    && node.directory)
     return false;
 
-if (fm_state.type === "directory" && !file.directory)
+if (fm_state.type === "directory"
+    && !node.directory)
     return false;
 
-if (fm_state.hidden === "hidden" && !file.hidden)
+if (fm_state.hidden === "hidden"
+    && !node.hidden)
     return false;
 
-if (fm_state.hidden === "visible" && file.hidden)
+if (fm_state.hidden === "visible"
+    && node.hidden)
     return false;
 
 if (fm_state.search)
 {
-    return (
-        file.name.toLowerCase()
-        .includes(fm_state.search)
-    );
+    return node.name
+    .toLowerCase()
+    .includes(fm_state.search);
 }
 
 return true;
 
-});
-
-/* SORT */
-
-list.sort((a,b)=>
+})
+.sort((a,b)=>
 {
 
 if (a.directory !== b.directory)
@@ -225,14 +252,6 @@ if (a.directory !== b.directory)
 return a.name.localeCompare(b.name);
 
 });
-
-fm_filtered = list;
-
-renderBreadcrumb();
-
-renderStats();
-
-renderList();
 
 }
 
@@ -248,14 +267,17 @@ document.getElementById("fm-list");
 
 container.innerHTML = "";
 
-if (fm_filtered.length === 0)
+const list =
+getCurrentChildren();
+
+if (!list.length)
 {
 container.innerHTML =
 "<div class='filemanager-empty'>Empty folder</div>";
 return;
 }
 
-fm_filtered.forEach(file =>
+list.forEach(node =>
 {
 
 const div =
@@ -263,29 +285,38 @@ document.createElement("div");
 
 div.className =
 "filemanager-item" +
-(file.hidden ? " filemanager-hidden":"");
+(node.hidden ?
+" filemanager-hidden":"");
 
 div.innerHTML =
 `
 
 <div class="filemanager-icon">
-${file.directory ? "📁":"📄"}
+${node.directory ? "📁":"📄"}
 </div><div class="filemanager-info"><div class="filemanager-name">
-${escapeHTML(file.name)}
+${escapeHTML(node.name)}
 </div><div class="filemanager-meta">
-${file.directory
+${node.directory
 ?"Folder"
-:formatSize(file.size)}
+:formatSize(node.size)}
 </div></div>
-`;if (file.directory)
+`;if (node.directory)
 {
+
 div.onclick =
 () =>
 {
+
+fm_currentNode =
+node;
+
 fm_currentPath =
-file.path;
+node.path;
+
 fm_render();
+
 };
+
 }
 
 container.appendChild(div);
@@ -310,15 +341,15 @@ fm_currentPath.split("/").filter(Boolean);
 let html =
 "<span onclick="goRoot()">Root</span>";
 
-let path = "";
+let current = "";
 
-parts.forEach(p =>
+parts.forEach(part =>
 {
 
-path += "/" + p;
+current += "/" + part;
 
 html +=
-" / <span onclick="goPath('${path}')">${p}</span>";
+" / <span onclick="goPath('${current}')">${part}</span>";
 
 });
 
@@ -329,8 +360,11 @@ bc.innerHTML = html;
 function goRoot()
 {
 
+fm_currentNode =
+fm_tree;
+
 fm_currentPath =
-detectRoot();
+fm_tree.path;
 
 fm_render();
 
@@ -339,25 +373,30 @@ fm_render();
 function goPath(path)
 {
 
-fm_currentPath =
-path;
+const parts =
+path.split("/").filter(Boolean);
 
-fm_render();
+let current =
+fm_tree;
+
+for (const part of parts)
+{
+
+current =
+current.children[part];
+
+if (!current)
+return;
 
 }
 
-/* =========================================================
-STATS
-========================================================= */
+fm_currentNode =
+current;
 
-function renderStats()
-{
+fm_currentPath =
+current.path;
 
-const stats =
-document.getElementById("fm-stats");
-
-stats.innerHTML =
-"${fm_filtered.length} items";
+fm_render();
 
 }
 
@@ -367,9 +406,7 @@ HELPERS
 
 function normalizePath(path)
 {
-
 return path.replace(//+/g,"/");
-
 }
 
 function formatSize(bytes)
@@ -400,4 +437,4 @@ return str
 .replace(/</g,"<")
 .replace(/>/g,">");
 
-    }
+}
