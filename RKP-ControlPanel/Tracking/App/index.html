@@ -1,88 +1,370 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apps Viewer Elite</title><style>
 
-<title>Apps Viewer Pro</title>
+/* GLOBAL */
 
-<link rel="stylesheet" href="style.css">
+*{
+box-sizing:border-box;
+}
 
-</head>
-<body>
+body{
+margin:0;
+background:#02030a;
+color:#00ffd5;
+font-family:Consolas,monospace;
+min-height:100vh;
+}
 
 
-<!-- INPUT SCREEN -->
+/* INPUT SCREEN */
 
-<div id="inputScreen">
+#inputScreen{
+padding:20px;
+text-align:center;
+}
 
-<h1 class="title">APPS VIEWER</h1>
+.title{
+font-size:28px;
+margin-bottom:25px;
+background:linear-gradient(90deg,#00ffd5,#00ff88);
+-webkit-background-clip:text;
+color:transparent;
+font-weight:bold;
+}
 
-<div class="buttonGroup">
 
-<button class="mainButton" onclick="showLinkInput()">
-Load from Link
-</button>
+/* BUTTONS */
 
-<button class="mainButton" onclick="showTextInput()">
-Paste JSON Text
-</button>
+.btn{
+width:100%;
+padding:16px;
+margin-top:12px;
+border:none;
+border-radius:12px;
+font-size:16px;
+font-weight:bold;
+background:linear-gradient(45deg,#00ffd5,#00ff88);
+color:black;
+cursor:pointer;
+}
 
-<label class="mainButton fileButton">
-Select JSON File
-<input type="file" id="fileInput" hidden>
-</label>
+.btn:active{
+transform:scale(0.97);
+}
+
+
+/* INPUT BOX */
+
+.inputArea{
+margin-top:15px;
+display:none;
+}
+
+input,textarea{
+width:100%;
+padding:14px;
+margin-top:10px;
+border-radius:10px;
+border:1px solid #00ffd5;
+background:#02030a;
+color:#00ffd5;
+font-family:Consolas;
+}
+
+textarea{
+height:140px;
+}
+
+
+/* APPS SCREEN */
+
+#appsScreen{
+display:none;
+}
+
+
+/* TOP BAR */
+
+.topBar{
+padding:15px;
+background:#02030a;
+border-bottom:1px solid #00ffd5;
+position:sticky;
+top:0;
+}
+
+.count{
+color:#00ff88;
+}
+
+
+/* APP CARD */
+
+.app{
+padding:14px;
+border-bottom:1px solid #003a3a;
+}
+
+.appName{
+font-size:18px;
+color:#00ff88;
+font-weight:bold;
+}
+
+.package{
+font-size:12px;
+color:#00ffd5;
+margin-bottom:6px;
+}
+
+.meta{
+font-size:13px;
+color:#8afff3;
+line-height:1.5;
+}
+
+
+/* MOBILE OPTIMIZATION */
+
+@media(min-width:700px){
+
+#appsScreen{
+max-width:600px;
+margin:auto;
+}
+
+#inputScreen{
+max-width:600px;
+margin:auto;
+}
+
+}
+
+</style></head>
+<body><!-- INPUT SCREEN --><div id="inputScreen"><div class="title">APPS VIEWER ELITE</div><button class="btn" onclick="showLink()">Load from Link</button>
+
+<button class="btn" onclick="showText()">Paste JSON Text</button>
+
+<button class="btn" onclick="fileInput.click()">Select JSON File</button>
+
+<input type="file" id="fileInput" accept=".json" style="display:none"><div id="linkArea" class="inputArea"><input id="linkBox" placeholder="Paste GitHub Raw JSON Link"><button class="btn" onclick="loadLink()">LOAD</button>
+
+</div><div id="textArea" class="inputArea"><textarea id="textBox" placeholder="Paste JSON text here"></textarea><button class="btn" onclick="loadText()">LOAD</button>
+
+</div></div><!-- APPS SCREEN --><div id="appsScreen"><div class="topBar">Apps Loaded: <span id="count" class="count"></span>
+
+</div><div id="appsList"></div></div><script>
+
+
+let apps=[];
+
+
+/* SHOW INPUT */
+
+function showLink(){
+
+hideInputs();
+document.getElementById("linkArea").style.display="block";
+
+}
+
+function showText(){
+
+hideInputs();
+document.getElementById("textArea").style.display="block";
+
+}
+
+function hideInputs(){
+
+document.getElementById("linkArea").style.display="none";
+document.getElementById("textArea").style.display="none";
+
+}
+
+
+/* LOAD FROM LINK */
+
+async function loadLink(){
+
+try{
+
+const url=document.getElementById("linkBox").value.trim();
+
+if(!url) throw "Enter link";
+
+const res=await fetch(url);
+
+if(!res.ok) throw "Link failed";
+
+const data=await res.json();
+
+process(data);
+
+}catch(e){
+
+alert("Error loading link");
+
+}
+
+}
+
+
+/* LOAD FROM TEXT */
+
+function loadText(){
+
+try{
+
+const text=document.getElementById("textBox").value;
+
+const data=JSON.parse(text);
+
+process(data);
+
+}catch{
+
+alert("Invalid JSON");
+
+}
+
+}
+
+
+/* LOAD FROM FILE */
+
+fileInput.onchange=function(){
+
+const file=this.files[0];
+
+if(!file) return;
+
+const reader=new FileReader();
+
+reader.onload=function(){
+
+try{
+
+const data=JSON.parse(reader.result);
+
+process(data);
+
+}catch{
+
+alert("Invalid file");
+
+}
+
+};
+
+reader.readAsText(file);
+
+};
+
+
+/* PROCESS */
+
+function process(data){
+
+if(!Array.isArray(data)){
+
+alert("Invalid apps format");
+return;
+
+}
+
+apps=data;
+
+document.getElementById("inputScreen").style.display="none";
+document.getElementById("appsScreen").style.display="block";
+
+document.getElementById("count").innerText=apps.length;
+
+render();
+
+}
+
+
+/* RENDER */
+
+function render(){
+
+const list=document.getElementById("appsList");
+
+list.innerHTML="";
+
+apps.forEach(app=>{
+
+const div=document.createElement("div");
+
+div.className="app";
+
+div.innerHTML=`
+
+<div class="appName">${safe(app.app_name)}</div>
+
+<div class="package">${safe(app.package_name)}</div>
+
+<div class="meta">
+
+Version Name: ${safe(app.version_name)}<br>
+Version Code: ${safe(app.version_code)}<br>
+Installed: ${date(app.installed_date)}<br>
+Last Used: ${date(app.last_used)}<br>
+Size: ${size(app.app_size_bytes)}<br>
+Usage Time: ${time(app.usage_time_ms)}<br>
+Usage Hours: ${safe(app.usage_hours)}<br>
+Usage Minutes: ${safe(app.usage_minutes)}
 
 </div>
 
+`;
 
-<div id="linkBox" class="inputBox hidden">
+list.appendChild(div);
 
-<input type="text" id="linkInput"
-placeholder="Paste GitHub Raw JSON Link">
+});
 
-<button onclick="loadFromLink()" class="submitButton">
-Load Apps
-</button>
-
-</div>
+}
 
 
-<div id="textBox" class="inputBox hidden">
+/* FORMAT */
 
-<textarea id="textInput"
-placeholder="Paste JSON text here"></textarea>
+function safe(v){
 
-<button onclick="loadFromText()" class="submitButton">
-Load Apps
-</button>
+return v??"N/A";
 
-</div>
+}
 
-</div>
+function size(b){
+
+if(!b) return "0 MB";
+
+return (b/1048576).toFixed(2)+" MB";
+
+}
+
+function date(t){
+
+if(!t||t==0) return "Never";
+
+return new Date(t).toLocaleString();
+
+}
+
+function time(ms){
+
+if(!ms) return "0h 0m";
+
+let m=Math.floor(ms/60000);
+let h=Math.floor(m/60);
+
+return h+"h "+(m%60)+"m";
+
+}
 
 
-
-<!-- APPS SCREEN -->
-
-<div id="appsScreen" class="hidden">
-
-<div class="topBar">
-
-<div class="topTitle">Installed Apps</div>
-
-<div class="appCount" id="appCount"></div>
-
-</div>
-
-<div id="appsList"></div>
-
-</div>
-
-
-
-<script src="script.js"></script>
-
-</body>
+</script></body>
 </html>
