@@ -207,6 +207,7 @@ opacity:0.6;
 
 /* ---------- MESSAGE VIEW ---------- */
 
+
 #messageView{
 
 display:none;
@@ -215,7 +216,19 @@ flex-direction:column;
 
 height:100vh;
 
-overflow:hidden;
+}
+
+#messageHeader{
+
+flex-shrink:0;
+
+display:flex;
+
+align-items:center;
+
+gap:12px;
+
+padding:12px;
 
 }
 
@@ -227,12 +240,7 @@ overflow-y:auto;
 
 padding:16px;
 
-display:flex;
-
-flex-direction:column;
-
 }
-
 
 /* ---------- BUBBLES ---------- */
 
@@ -366,6 +374,15 @@ function closeSearch(){
 searchBox.style.display="none";
 
 }
+
+setTimeout(()=>{
+
+messages.lastElementChild?.scrollIntoView({
+block:"end"
+});
+
+},50);
+  
 
 function filterDate(type){
 
