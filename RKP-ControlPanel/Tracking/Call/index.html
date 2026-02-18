@@ -19,10 +19,9 @@ margin:auto;
 
 .title{
 text-align:center;
-margin-bottom:20px;
+margin-bottom:10px;
 font-weight:600;
 }
-
 
 /* Neumorphic */
 
@@ -34,20 +33,11 @@ box-shadow:
 -8px -8px 16px #ffffff;
 }
 
-.neu-inset{
-background:#e0e5ec;
-border-radius:12px;
-box-shadow:
-inset 4px 4px 8px #a3b1c6,
-inset -4px -4px 8px #ffffff;
-}
-
 .hidden{
 display:none;
 }
 
-
-/* Inputs */
+/* Load */
 
 .load{
 padding:20px;
@@ -70,7 +60,6 @@ font-size:14px;
 
 textarea{
 height:120px;
-resize:none;
 }
 
 button{
@@ -84,13 +73,6 @@ box-shadow:
 4px 4px 8px #a3b1c6,
 -4px -4px 8px #ffffff;
 }
-
-button:active{
-box-shadow:
-inset 4px 4px 8px #a3b1c6,
-inset -4px -4px 8px #ffffff;
-}
-
 
 /* Stats */
 
@@ -106,13 +88,17 @@ padding:15px;
 text-align:center;
 }
 
-.stat-value{
-font-size:22px;
-font-weight:bold;
+/* Toggle container */
+
+.toggle-container{
+display:flex;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+margin-bottom:20px;
 }
 
-
-/* Call Log */
+/* Call log */
 
 .section-label{
 margin:20px 0 10px 5px;
@@ -151,8 +137,69 @@ margin-top:3px;
 .rejected{color:#e67e22;}
 .blocked{color:#7f8c8d;}
 
-@media(max-width:600px){
-.title{font-size:20px;}
+
+/* YOUR SWITCH EXACT CODE */
+
+.container {
+display:flex;
+align-items:center;
+justify-content:center;
+--hue:220deg;
+--width:15rem;
+--accent-hue:22deg;
+--duration:0.6s;
+--easing:cubic-bezier(1,0,1,1);
+}
+
+.togglesw {
+display:none;
+}
+
+.switch {
+--shadow-offset:calc(var(--width)/20);
+position:relative;
+cursor:pointer;
+display:flex;
+align-items:center;
+width:var(--width);
+height:calc(var(--width)/2.5);
+border-radius:var(--width);
+box-shadow:inset 10px 10px 10px hsl(var(--hue) 20% 80%),
+inset -10px -10px 10px hsl(var(--hue) 20% 93%);
+}
+
+.indicator {
+position:absolute;
+width:40%;
+height:60%;
+transition:all var(--duration) var(--easing);
+}
+
+.indicator.left {
+left:10%;
+border-radius:100px 0 0 100px;
+background:linear-gradient(180deg,#ffd89b,#ff8c00);
+}
+
+.indicator.right {
+right:10%;
+border-radius:0 100px 100px 0;
+background:#ccc;
+}
+
+.button {
+position:absolute;
+z-index:1;
+width:55%;
+height:80%;
+left:5%;
+border-radius:100px;
+background:#e0e5ec;
+transition:all var(--duration) var(--easing);
+}
+
+.togglesw:checked ~ .button {
+left:40%;
 }
 
 </style></head>
@@ -172,14 +219,23 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 <label>Select File</label>
 <input type="file" id="fileInput" accept=".json">
 
-</div><div id="dashboard" class="hidden"><div class="stats"><div class="stat neu">
-<div id="contacts" class="stat-value">0</div>
+</div><div id="dashboard" class="hidden"><div class="toggle-container"><label>Hide Number</label>
+
+<div class="container">
+<label class="switch">
+<input id="hideToggle" class="togglesw" type="checkbox" checked>
+<div class="indicator left"></div>
+<div class="indicator right"></div>
+<div class="button"></div>
+</label>
+</div></div><div class="stats"><div class="stat neu">
+<div id="contacts">0</div>
 Contacts
 </div><div class="stat neu">
-<div id="calls" class="stat-value">0</div>
+<div id="calls">0</div>
 Calls
 </div><div class="stat neu">
-<div id="duration" class="stat-value">0</div>
+<div id="duration">0</div>
 Duration
 </div></div><div id="callLog"></div></div></div><script>
 
@@ -194,6 +250,50 @@ const TYPE_MAP={
 };
 
 
+/* MASK NUMBER */
+
+function maskNumber(num){
+
+num=num.replace(/\D/g,'');
+
+if(num.length<=4) return "***";
+
+let first=num.slice(0,2);
+let middle=num.slice(2,-2).replace(/./g,"*");
+let last=num.slice(-2);
+
+return first+middle+last;
+
+}
+
+
+/* DATE */
+
+function formatDate(ts){
+
+return new Date(ts).toLocaleDateString([],{
+day:"numeric",
+month:"short",
+year:"numeric"
+});
+
+}
+
+
+/* TIME */
+
+function formatTime(ts){
+
+return new Date(ts).toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+});
+
+}
+
+
+/* DURATION */
+
 function formatDuration(sec){
 
 if(sec===0) return "";
@@ -206,67 +306,33 @@ return m>0?`${m}m ${s}s`:`${s}s`;
 }
 
 
-function formatTime(ts){
-
-let d=new Date(ts);
-
-return d.toLocaleTimeString([],{
-hour:"2-digit",
-minute:"2-digit"
-});
-
-}
-
-function formatDate(ts){
-
-let d=new Date(ts);
-
-return d.toLocaleDateString([],{
-day:"numeric",
-month:"short",
-year:"numeric"
-});
-
-}
-
+/* GROUP */
 
 function getRelativeLabel(ts){
 
 let now=new Date();
+let d=new Date(ts);
 
-let date=new Date(ts);
+let diff=(now-d)/(1000*60*60*24);
 
-let diff=(now-date)/(1000*60*60*24);
-
-if(diff<1 && now.getDate()===date.getDate())
-return "Today";
-
-if(diff<2 && now.getDate()-date.getDate()===1)
-return "Yesterday";
-
-if(diff<=7)
-return "Last 7 Days";
-
-if(diff<=30)
-return "Last 30 Days";
+if(diff<1 && now.getDate()===d.getDate()) return "Today";
+if(diff<2 && now.getDate()-d.getDate()===1) return "Yesterday";
+if(diff<=7) return "Last 7 Days";
+if(diff<=30) return "Last 30 Days";
 
 return "Older";
 
 }
 
 
+/* LOAD */
+
 async function loadFromLink(){
 
-let url=linkInput.value;
-
-let res=await fetch(url);
-
-let text=await res.text();
-
-process(text);
+let res=await fetch(linkInput.value);
+process(await res.text());
 
 }
-
 
 function loadFromPaste(){
 
@@ -274,14 +340,13 @@ process(pasteInput.value);
 
 }
 
-
 fileInput.onchange=e=>{
 
-let reader=new FileReader();
+let r=new FileReader();
 
-reader.onload=x=>process(x.target.result);
+r.onload=x=>process(x.target.result);
 
-reader.readAsText(e.target.files[0]);
+r.readAsText(e.target.files[0]);
 
 };
 
@@ -301,68 +366,58 @@ renderLogs();
 }
 
 
+/* STATS */
+
 function renderStats(){
 
-let contacts=DATA.length;
-let calls=0;
-let duration=0;
+let calls=0,duration=0;
 
-DATA.forEach(c=>{
-
-c.calls.forEach(call=>{
-
+DATA.forEach(c=>c.calls.forEach(call=>{
 calls++;
 duration+=call.duration;
+}));
 
-});
-
-});
-
-document.getElementById("contacts").innerText=contacts;
-document.getElementById("calls").innerText=calls;
-document.getElementById("duration").innerText=formatDuration(duration);
+contacts.innerText=DATA.length;
+calls.innerText=calls;
+duration.innerText=formatDuration(duration);
 
 }
 
+
+/* LOGS */
+
+hideToggle.onchange=renderLogs;
 
 function renderLogs(){
 
-let allCalls=[];
+let hide=hideToggle.checked;
 
-DATA.forEach(contact=>{
+let all=[];
 
-contact.calls.forEach(call=>{
-
-allCalls.push({
-name:contact.name||"Unknown",
-number:contact.number,
-type:call.type,
-date:call.date,
-duration:call.duration
+DATA.forEach(c=>c.calls.forEach(call=>{
+all.push({
+name:c.name||"Unknown",
+number:c.number,
+...call
 });
+}));
 
-});
+all.sort((a,b)=>b.date-a.date);
 
-});
+let html="",last="";
 
-
-allCalls.sort((a,b)=>b.date-a.date);
-
-let html="";
-let lastLabel="";
-
-allCalls.forEach(call=>{
+all.forEach(call=>{
 
 let label=getRelativeLabel(call.date);
 
-if(label!==lastLabel){
-
+if(label!==last){
 html+=`<div class="section-label">${label}</div>`;
-lastLabel=label;
-
+last=label;
 }
 
-let typeInfo=TYPE_MAP[call.type]||{name:"Unknown",class:""};
+let t=TYPE_MAP[call.type]||{name:"Unknown",class:""};
+
+let number=hide?maskNumber(call.number):call.number;
 
 html+=`
 
@@ -371,19 +426,24 @@ html+=`
 <div class="call-row">
 
 <div>
+
 <div class="call-name">${call.name}</div>
-<div class="call-meta">
-${formatDate(call.date)}<br>
-${formatTime(call.date)}
+
+<div class="call-meta">${number}</div>
+
+<div class="call-type ${t.class}">
+${t.name}
+${call.duration?` • ${formatDuration(call.duration)}`:""}
 </div>
-<div class="call-type ${typeInfo.class}">
-${typeInfo.name}
-${call.duration?`• ${formatDuration(call.duration)}`:""}
-</div>
+
+<div class="call-meta">${formatDate(call.date)}</div>
+
 </div>
 
 <div class="call-meta">
+
 ${formatTime(call.date)}
+
 </div>
 
 </div>
