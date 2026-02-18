@@ -17,53 +17,61 @@ color:#1f2937;
 
 .neu{
 background:#e4e8ee;
-border-radius:20px;
+border-radius:24px;
 box-shadow:
-8px 8px 16px #c2c8d0,
--8px -8px 16px #ffffff;
+10px 10px 22px #c2c8d0,
+-10px -10px 22px #ffffff;
 }
 
-/* ---------- LOAD SCREEN ---------- */
+/* ---------- LOAD SCREEN FIXED SIZE ---------- */
 
 #loadScreen{
-padding:20px;
-max-width:600px;
+padding:30px;
+max-width:720px;   /* FIXED larger width */
 margin:auto;
 }
 
 .title{
 text-align:center;
-font-size:30px;
+font-size:34px;
 font-weight:700;
-margin:30px 0;
+margin:40px 0;
 }
 
 .card{
-padding:25px;
+padding:30px;
 }
 
 input,textarea{
 width:100%;
-padding:15px;
+padding:18px;
+margin-top:10px;
+margin-bottom:20px;
 border:none;
 outline:none;
-border-radius:12px;
+border-radius:16px;
 background:#e4e8ee;
+font-size:16px;
 box-shadow:
-inset 4px 4px 8px #c2c8d0,
-inset -4px -4px 8px #ffffff;
+inset 6px 6px 12px #c2c8d0,
+inset -6px -6px 12px #ffffff;
+}
+
+textarea{
+height:160px; /* FIXED larger textarea */
 }
 
 button{
-margin-top:15px;
-padding:12px 20px;
+padding:14px 28px;
 border:none;
-border-radius:12px;
+border-radius:14px;
 background:#e4e8ee;
 box-shadow:
 6px 6px 12px #c2c8d0,
 -6px -6px 12px #ffffff;
 cursor:pointer;
+margin-bottom:20px;
+font-size:15px;
 }
 
 /* ---------- APP ---------- */
@@ -79,8 +87,8 @@ flex-direction:column;
 .header{
 display:flex;
 align-items:center;
-gap:10px;
-padding:15px;
+gap:12px;
+padding:16px;
 }
 
 .header img{
@@ -89,9 +97,9 @@ height:28px;
 cursor:pointer;
 }
 
-.header .contactIcon{
-width:36px;
-height:36px;
+.contactIcon{
+width:40px;
+height:40px;
 border-radius:50%;
 }
 
@@ -100,21 +108,21 @@ border-radius:50%;
 #threadList{
 flex:1;
 overflow:auto;
-padding:10px;
+padding:12px;
 }
 
 .thread{
 display:flex;
 align-items:center;
-gap:12px;
-padding:12px;
-margin-bottom:10px;
+gap:14px;
+padding:14px;
+margin-bottom:12px;
 cursor:pointer;
 }
 
 .thread img{
-width:45px;
-height:45px;
+width:48px;
+height:48px;
 border-radius:50%;
 }
 
@@ -124,6 +132,7 @@ flex:1;
 
 .threadName{
 font-weight:600;
+font-size:16px;
 }
 
 .threadPreview{
@@ -147,7 +156,7 @@ height:100%;
 #messages{
 flex:1;
 overflow:auto;
-padding:15px;
+padding:16px;
 }
 
 /* ---------- BUBBLES ---------- */
@@ -166,10 +175,11 @@ justify-content:flex-end;
 }
 
 .bubble{
-padding:10px 14px;
+padding:12px 16px;
 border-radius:18px;
 max-width:75%;
 box-shadow:2px 2px 6px rgba(0,0,0,0.1);
+font-size:15px;
 }
 
 .inboxBubble{
@@ -184,7 +194,7 @@ background:#dcfce7;
 text-align:center;
 font-size:12px;
 opacity:0.6;
-margin:10px 0;
+margin:12px 0;
 }
 
 </style></head>
@@ -201,7 +211,7 @@ Paste JSON
 Select File
 <input type="file" id="fileInput">
 
-</div></div><!-- THREAD LIST --><div id="app"><div id="threadList"></div><div id="messageView"><div class="header neu"><img src="back.webp" onclick="showThreads()"><img src="contact.webp" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
+</div></div><!-- APP --><div id="app"><div id="threadList"></div><div id="messageView"><div class="header neu"><img src="back.webp" onclick="showThreads()"><img src="contact.webp" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
 
 /* ---------- GLOBAL ---------- */
 
@@ -298,7 +308,7 @@ div.innerHTML=`
 <img src="contact.webp">
 <div class="threadContent">
 <div class="threadName">${thread.name||thread.address}</div>
-<div class="threadPreview">${last.body.substring(0,50)}</div>
+<div class="threadPreview">${last.body.substring(0,60)}</div>
 </div>
 <div class="threadTime">${formatListTime(last.date)}</div>
 `;
@@ -341,10 +351,15 @@ bubble.className="bubble "+(msg.type_name=="SENT"?"sentBubble":"inboxBubble");
 bubble.innerText=msg.body;
 
 row.appendChild(bubble);
-
 messages.appendChild(row);
 
 });
+
+/* FIXED: auto scroll to newest message */
+
+setTimeout(()=>{
+messages.scrollTop=messages.scrollHeight;
+},50);
 
 }
 
