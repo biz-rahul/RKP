@@ -1,18 +1,17 @@
 /* =========================================================
-CONTROLTHEWORLD FILE MANAGER VIEWER v4.0
-TRUE FILESYSTEM TREE ENGINE — FULLY FIXED
+CONTROLTHEWORLD FILE MANAGER VIEWER v6.0
+TRUE ROOT "/" FILESYSTEM — COMPLETE FIX
+Shows ALL files, ALL folders, ALL depths
 ========================================================= */
 
-let fm_tree = {};
-let fm_currentNode = null;
-let fm_currentPath = "";
+let fm_root = null;
+let fm_current = null;
 
-let fm_state = {
-
+let fm_filter =
+{
 search: "",
 type: "all",
 hidden: "all"
-
 };
 
 /* =========================================================
@@ -31,73 +30,24 @@ if (!Array.isArray(currentJSON))
 
 container.className = "filemanager-app";
 
-/* BUILD TREE */
+/* CREATE TRUE ROOT "/" */
 
-fm_tree = buildFileTree(currentJSON);
+fm_root = createNode("/", true);
 
-fm_currentPath = fm_tree.path;
+/* INSERT ALL FILES */
 
-fm_currentNode = fm_tree;
+currentJSON.forEach(file =>
+insertPath(file));
+
+/* START FROM "/" */
+
+fm_current = fm_root;
 
 container.innerHTML = buildUI();
 
 attachEvents();
 
-fm_render();
-
-}
-
-/* =========================================================
-BUILD TRUE TREE
-========================================================= */
-
-function buildFileTree(files)
-{
-
-const root =
-createNode("/", true);
-
-files.forEach(file =>
-{
-
-    const parts =
-    normalizePath(file.path)
-    .split("/")
-    .filter(Boolean);
-
-    let current = root;
-
-    parts.forEach((part, index) =>
-    {
-
-        if (!current.children[part])
-        {
-
-            current.children[part] =
-            createNode(
-
-                "/" + parts.slice(0,index+1).join("/"),
-
-                index !== parts.length - 1
-                || file.directory
-
-            );
-
-        }
-
-        current =
-        current.children[part];
-
-    });
-
-    current.size = file.size || 0;
-    current.hidden = file.hidden || false;
-    current.modified =
-    file.last_modified || 0;
-
-});
-
-return root;
+renderFM();
 
 }
 
@@ -112,7 +62,10 @@ return {
 
 path,
 
-name: path.split("/").pop() || "Root",
+name:
+path === "/"
+? "/"
+: path.split("/").pop(),
 
 directory,
 
@@ -129,6 +82,57 @@ modified: 0
 }
 
 /* =========================================================
+INSERT PATH INTO TREE
+========================================================= */
+
+function insertPath(file)
+{
+
+const full =
+normalize(file.path);
+
+const parts =
+full.split("/")
+.filter(Boolean);
+
+let current = fm_root;
+
+let currentPath = "";
+
+parts.forEach((part,index)=>
+{
+
+    currentPath += "/" + part;
+
+    if (!current.children[part])
+    {
+
+        const isDir =
+        index < parts.length - 1
+        || file.directory;
+
+        current.children[part] =
+        createNode(currentPath, isDir);
+
+    }
+
+    current =
+    current.children[part];
+
+});
+
+current.size =
+file.size || 0;
+
+current.hidden =
+file.hidden || false;
+
+current.modified =
+file.last_modified || 0;
+
+}
+
+/* =========================================================
 BUILD UI
 ========================================================= */
 
@@ -138,7 +142,7 @@ function buildUI()
 return `
 
 <div class="filemanager-header">
-File Manager Intelligence
+File Manager
 </div><div class="filemanager-toolbar"><input id="fm-search"
 placeholder="Search current folder">
 
@@ -150,8 +154,8 @@ placeholder="Search current folder">
 <option value="all">All</option>
 <option value="visible">Visible</option>
 <option value="hidden">Hidden</option>
-</select></div><div id="fm-breadcrumb"
-class="filemanager-breadcrumb"></div><div id="fm-list"
+</select></div><div id="fm-path"
+class="filemanager-path"></div><div id="fm-list"
 class="filemanager-list"></div>`;
 
 }
@@ -166,25 +170,23 @@ function attachEvents()
 document.getElementById("fm-search")
 .oninput = e =>
 {
-fm_state.search =
+fm_filter.search =
 e.target.value.toLowerCase();
-fm_render();
+renderFM();
 };
 
 document.getElementById("fm-type")
 .onchange = e =>
 {
-fm_state.type =
-e.target.value;
-fm_render();
+fm_filter.type = e.target.value;
+renderFM();
 };
 
 document.getElementById("fm-hidden")
 .onchange = e =>
 {
-fm_state.hidden =
-e.target.value;
-fm_render();
+fm_filter.hidden = e.target.value;
+renderFM();
 };
 
 }
@@ -193,61 +195,125 @@ fm_render();
 RENDER
 ========================================================= */
 
-function fm_render()
+function renderFM()
 {
 
-renderBreadcrumb();
+renderPath();
 
 renderList();
 
 }
 
 /* =========================================================
-GET CURRENT CHILDREN
+PATH BAR
 ========================================================= */
 
-function getCurrentChildren()
+function renderPath()
 {
 
-let list =
-Object.values(
-fm_currentNode.children
-);
+document.getElementById("fm-path")
+.innerHTML =
+buildBreadcrumb(fm_current.path);
 
-return list.filter(node =>
-{
-
-if (fm_state.type === "file"
-    && node.directory)
-    return false;
-
-if (fm_state.type === "directory"
-    && !node.directory)
-    return false;
-
-if (fm_state.hidden === "hidden"
-    && !node.hidden)
-    return false;
-
-if (fm_state.hidden === "visible"
-    && node.hidden)
-    return false;
-
-if (fm_state.search)
-{
-    return node.name
-    .toLowerCase()
-    .includes(fm_state.search);
 }
+
+/* =========================================================
+BREADCRUMB NAVIGATION
+========================================================= */
+
+function buildBreadcrumb(path)
+{
+
+const parts =
+path.split("/").filter(Boolean);
+
+let html =
+"<span onclick="fm_go('/')">/</span>";
+
+let current = "";
+
+parts.forEach(part =>
+{
+
+current += "/" + part;
+
+html +=
+" / <span onclick="fm_go('${current}')">${part}</span>";
+
+});
+
+return html;
+
+}
+
+function fm_go(path)
+{
+
+const parts =
+path.split("/").filter(Boolean);
+
+let node = fm_root;
+
+for (const part of parts)
+{
+
+node =
+node.children[part];
+
+if (!node)
+return;
+
+}
+
+fm_current = node;
+
+renderFM();
+
+}
+
+/* =========================================================
+GET CHILDREN WITH FILTERS
+========================================================= */
+
+function getChildren()
+{
+
+return Object.values(
+fm_current.children)
+
+.filter(node =>
+{
+
+if (fm_filter.type==="file"
+&& node.directory)
+return false;
+
+if (fm_filter.type==="directory"
+&& !node.directory)
+return false;
+
+if (fm_filter.hidden==="hidden"
+&& !node.hidden)
+return false;
+
+if (fm_filter.hidden==="visible"
+&& node.hidden)
+return false;
+
+if (fm_filter.search &&
+!node.name.toLowerCase()
+.includes(fm_filter.search))
+return false;
 
 return true;
 
 })
+
 .sort((a,b)=>
 {
 
 if (a.directory !== b.directory)
-    return b.directory - a.directory;
+return b.directory - a.directory;
 
 return a.name.localeCompare(b.name);
 
@@ -265,55 +331,48 @@ function renderList()
 const container =
 document.getElementById("fm-list");
 
-container.innerHTML = "";
+container.innerHTML="";
 
-const list =
-getCurrentChildren();
+const children =
+getChildren();
 
-if (!list.length)
+if (!children.length)
 {
-container.innerHTML =
+
+container.innerHTML=
 "<div class='filemanager-empty'>Empty folder</div>";
+
 return;
+
 }
 
-list.forEach(node =>
+children.forEach(node =>
 {
 
 const div =
 document.createElement("div");
 
 div.className =
-"filemanager-item" +
-(node.hidden ?
-" filemanager-hidden":"");
+"filemanager-item";
 
-div.innerHTML =
+div.innerHTML=
 `
 
 <div class="filemanager-icon">
 ${node.directory ? "📁":"📄"}
-</div><div class="filemanager-info"><div class="filemanager-name">
+</div><div class="filemanager-name">
 ${escapeHTML(node.name)}
-</div><div class="filemanager-meta">
-${node.directory
-?"Folder"
-:formatSize(node.size)}
-</div></div>
+</div>
 `;if (node.directory)
 {
 
-div.onclick =
-() =>
+div.onclick=
+()=>
 {
 
-fm_currentNode =
-node;
+fm_current=node;
 
-fm_currentPath =
-node.path;
-
-fm_render();
+renderFM();
 
 };
 
@@ -326,115 +385,18 @@ container.appendChild(div);
 }
 
 /* =========================================================
-BREADCRUMB
-========================================================= */
-
-function renderBreadcrumb()
-{
-
-const bc =
-document.getElementById("fm-breadcrumb");
-
-const parts =
-fm_currentPath.split("/").filter(Boolean);
-
-let html =
-"<span onclick="goRoot()">Root</span>";
-
-let current = "";
-
-parts.forEach(part =>
-{
-
-current += "/" + part;
-
-html +=
-" / <span onclick="goPath('${current}')">${part}</span>";
-
-});
-
-bc.innerHTML = html;
-
-}
-
-function goRoot()
-{
-
-fm_currentNode =
-fm_tree;
-
-fm_currentPath =
-fm_tree.path;
-
-fm_render();
-
-}
-
-function goPath(path)
-{
-
-const parts =
-path.split("/").filter(Boolean);
-
-let current =
-fm_tree;
-
-for (const part of parts)
-{
-
-current =
-current.children[part];
-
-if (!current)
-return;
-
-}
-
-fm_currentNode =
-current;
-
-fm_currentPath =
-current.path;
-
-fm_render();
-
-}
-
-/* =========================================================
 HELPERS
 ========================================================= */
 
-function normalizePath(path)
+function normalize(path)
 {
 return path.replace(//+/g,"/");
 }
 
-function formatSize(bytes)
-{
-
-if(!bytes) return "0 B";
-
-const units =
-["B","KB","MB","GB"];
-
-let i=0;
-
-while(bytes>=1024)
-{
-bytes/=1024;
-i++;
-}
-
-return bytes.toFixed(1)+" "+units[i];
-
-}
-
 function escapeHTML(str)
 {
-
 return str
 .replace(/&/g,"&")
 .replace(/</g,"<")
 .replace(/>/g,">");
-
 }
