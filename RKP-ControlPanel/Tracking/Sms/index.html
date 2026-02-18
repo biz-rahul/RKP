@@ -1,0 +1,26 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Professional SMS Viewer</title>
+<link rel="stylesheet" href="styles.css">
+</head><body><header>
+<h1>Professional SMS JSON Viewer</h1>
+<div class="stats">
+<span id="statThreads"></span>
+<span id="statMessages"></span>
+<span id="statCredit"></span>
+<span id="statDebit"></span>
+<span id="statNet"></span>
+</div>
+</header><section class="controls"><textarea id="pasteBox" placeholder="Paste JSON here"></textarea><div class="buttons"><input type="file" id="fileInput"><input type="text" id="githubInput" placeholder="GitHub raw URL">
+<button onclick="loadGithub()">Fetch</button><button onclick="loadPaste()">Load Paste</button>
+
+</div><div class="filters"><input type="text" id="searchBox" placeholder="Search messages"><select id="typeFilter">
+<option value="">All</option>
+<option value="INBOX">Inbox</option>
+<option value="SENT">Sent</option>
+</select><input type="date" id="startDate">
+<input type="date" id="endDate"></div></section><main><div id="threadPanel"></div><div id="messagePanel">
+<h2>Select thread</h2>
+</div></main><script src="script.js"></script></body>
+</html>
