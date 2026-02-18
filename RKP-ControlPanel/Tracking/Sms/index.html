@@ -8,27 +8,19 @@
 
 body{
 margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+font-family:system-ui,-apple-system,Segoe UI,Roboto;
 background:#e4e8ee;
-color:#2d3748;
+color:#1f2937;
 }
 
 /* ---------- NEUMORPHIC ---------- */
 
 .neu{
+background:#e4e8ee;
 border-radius:20px;
-background:#e4e8ee;
 box-shadow:
-10px 10px 20px #c2c8d0,
--10px -10px 20px #ffffff;
-}
-
-.neu-inset{
-border-radius:15px;
-background:#e4e8ee;
-box-shadow:
-inset 6px 6px 12px #c2c8d0,
-inset -6px -6px 12px #ffffff;
+8px 8px 16px #c2c8d0,
+-8px -8px 16px #ffffff;
 }
 
 /* ---------- LOAD SCREEN ---------- */
@@ -41,7 +33,7 @@ margin:auto;
 
 .title{
 text-align:center;
-font-size:32px;
+font-size:30px;
 font-weight:700;
 margin:30px 0;
 }
@@ -50,42 +42,28 @@ margin:30px 0;
 padding:25px;
 }
 
-label{
-font-weight:600;
-display:block;
-margin:20px 0 10px;
-}
-
 input,textarea{
 width:100%;
 padding:15px;
 border:none;
 outline:none;
-font-size:16px;
-background:transparent;
-}
-
-textarea{
-height:120px;
-resize:none;
+border-radius:12px;
+background:#e4e8ee;
+box-shadow:
+inset 4px 4px 8px #c2c8d0,
+inset -4px -4px 8px #ffffff;
 }
 
 button{
 margin-top:15px;
-padding:12px 25px;
+padding:12px 20px;
 border:none;
 border-radius:12px;
-cursor:pointer;
 background:#e4e8ee;
 box-shadow:
 6px 6px 12px #c2c8d0,
 -6px -6px 12px #ffffff;
-}
-
-button:active{
-box-shadow:
-inset 4px 4px 8px #c2c8d0,
-inset -4px -4px 8px #ffffff;
+cursor:pointer;
 }
 
 /* ---------- APP ---------- */
@@ -96,62 +74,87 @@ height:100vh;
 flex-direction:column;
 }
 
-header{
-padding:15px;
-margin:10px;
-}
+/* ---------- HEADER ---------- */
 
-#stats{
-font-size:14px;
-margin-top:5px;
-}
-
-/* ---------- LAYOUT ---------- */
-
-#main{
-flex:1;
+.header{
 display:flex;
-overflow:hidden;
+align-items:center;
+gap:10px;
+padding:15px;
 }
 
-#threads{
-width:35%;
-max-width:320px;
+.header img{
+width:28px;
+height:28px;
+cursor:pointer;
+}
+
+.header .contactIcon{
+width:36px;
+height:36px;
+border-radius:50%;
+}
+
+/* ---------- THREAD LIST ---------- */
+
+#threadList{
+flex:1;
 overflow:auto;
 padding:10px;
 }
 
 .thread{
-padding:15px;
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px;
 margin-bottom:10px;
 cursor:pointer;
 }
 
-.thread.active{
-background:#dbeafe;
+.thread img{
+width:45px;
+height:45px;
+border-radius:50%;
+}
+
+.threadContent{
+flex:1;
+}
+
+.threadName{
+font-weight:600;
+}
+
+.threadPreview{
+font-size:14px;
+opacity:0.7;
+}
+
+.threadTime{
+font-size:12px;
+opacity:0.6;
+}
+
+/* ---------- MESSAGE VIEW ---------- */
+
+#messageView{
+display:none;
+flex-direction:column;
+height:100%;
 }
 
 #messages{
 flex:1;
 overflow:auto;
 padding:15px;
-display:flex;
-flex-direction:column;
 }
 
-/* ---------- WHATSAPP BUBBLES ---------- */
+/* ---------- BUBBLES ---------- */
 
 .msgRow{
 display:flex;
-margin:4px 0;
-}
-
-.msgBubble{
-padding:10px 14px;
-border-radius:18px;
-max-width:75%;
-font-size:15px;
-position:relative;
+margin:6px 0;
 }
 
 .inboxRow{
@@ -162,93 +165,61 @@ justify-content:flex-start;
 justify-content:flex-end;
 }
 
+.bubble{
+padding:10px 14px;
+border-radius:18px;
+max-width:75%;
+box-shadow:2px 2px 6px rgba(0,0,0,0.1);
+}
+
 .inboxBubble{
-background:#ffffff;
-box-shadow:3px 3px 6px rgba(0,0,0,0.1);
+background:white;
 }
 
 .sentBubble{
 background:#dcfce7;
-box-shadow:3px 3px 6px rgba(0,0,0,0.1);
 }
 
-.msgTime{
-font-size:11px;
-opacity:0.6;
-margin-top:4px;
-}
-
-/* ---------- CATEGORY ---------- */
-
-.category{
+.timeLabel{
 text-align:center;
-margin:15px 0 10px;
-font-size:13px;
-font-weight:600;
-opacity:0.7;
-}
-
-/* ---------- MOBILE ---------- */
-
-@media(max-width:700px){
-
-#main{
-flex-direction:column;
-}
-
-#threads{
-width:100%;
-max-width:none;
-height:40%;
-}
-
-#messages{
-height:60%;
-}
-
-.title{
-font-size:26px;
-}
-
+font-size:12px;
+opacity:0.6;
+margin:10px 0;
 }
 
 </style></head>
-<body><!-- LOAD SCREEN --><div id="loadScreen"><div class="title">Apps Analytics Viewer</div><div class="card neu"><label>Load from Link</label>
-<input id="linkInput" class="neu-inset"
+<body><!-- LOAD SCREEN --><div id="loadScreen"><div class="title">Apps Analytics Viewer</div><div class="card neu">Load from Link
+<input id="linkInput"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
+
 <button onclick="loadFromLink()">Load</button>
 
-<label>Paste JSON</label>
+Paste JSON
 
-<textarea id="pasteInput" class="neu-inset"></textarea><button onclick="loadFromPaste()">Load</button>
+<textarea id="pasteInput"></textarea><button onclick="loadFromPaste()">Load</button>
 
-<label>Select File</label>
-<input type="file" id="fileInput" class="neu-inset">
+Select File
+<input type="file" id="fileInput">
 
-</div></div><!-- APP --><div id="app"><header class="neu"><div id="threadTitle"><b>Messages</b></div>
-<div id="stats"></div></header><div id="main"><div id="threads"></div>
-<div id="messages"></div></div></div><script>
+</div></div><!-- THREAD LIST --><div id="app"><div id="threadList"></div><div id="messageView"><div class="header neu"><img src="back.webp" onclick="showThreads()"><img src="contact.webp" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
 
 /* ---------- GLOBAL ---------- */
 
-let smsData=[];
-let credit=0;
-let debit=0;
+let data=[];
 
 /* ---------- LOAD ---------- */
 
 function showApp(){
 
-document.getElementById("loadScreen").style.display="none";
-document.getElementById("app").style.display="flex";
+loadScreen.style.display="none";
+app.style.display="flex";
 
 }
 
 function loadJSON(text){
 
-smsData=JSON.parse(text);
+data=JSON.parse(text);
 
-calculateStats();
 renderThreads();
 showApp();
 
@@ -256,162 +227,133 @@ showApp();
 
 async function loadFromLink(){
 
-let res=await fetch(document.getElementById("linkInput").value);
-
+let res=await fetch(linkInput.value);
 let text=await res.text();
-
 loadJSON(text);
 
 }
 
 function loadFromPaste(){
 
-loadJSON(document.getElementById("pasteInput").value);
+loadJSON(pasteInput.value);
 
 }
 
 fileInput.onchange=e=>{
 
 let reader=new FileReader();
-
 reader.onload=x=>loadJSON(x.target.result);
-
 reader.readAsText(e.target.files[0]);
 
 };
 
-/* ---------- STATS ---------- */
+/* ---------- DATE FORMAT ---------- */
 
-function extractAmount(text){
+function formatListTime(timestamp){
 
-let m=text.match(/Rs\.?\s?([\d\.]+)/i);
+let d=new Date(timestamp);
+let now=new Date();
 
-return m?parseFloat(m[1]):0;
+if(d.toDateString()==now.toDateString())
+return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
 
-}
-
-function calculateStats(){
-
-credit=0;
-debit=0;
-
-smsData.forEach(t=>{
-
-t.messages.forEach(m=>{
-
-if(m.body.toLowerCase().includes("credited"))
-credit+=extractAmount(m.body);
-
-if(m.body.toLowerCase().includes("debited"))
-debit+=extractAmount(m.body);
-
-});
-
-});
-
-stats.innerText=
-"Credit ₹"+credit+"   Debit ₹"+debit+
-"   Net ₹"+(credit-debit);
+return d.toLocaleDateString();
 
 }
 
-/* ---------- THREADS ---------- */
+function formatMessageTime(timestamp){
+
+let d=new Date(timestamp);
+let now=new Date();
+
+if(d.toDateString()==now.toDateString())
+return d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+return d.toLocaleDateString()+" "+d.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+
+}
+
+/* ---------- THREAD LIST ---------- */
 
 function renderThreads(){
 
-threads.innerHTML="";
+threadList.innerHTML="";
 
-smsData.forEach(thread=>{
+let sorted=[...data].sort((a,b)=>{
+
+return Math.max(...b.messages.map(m=>m.date))
+-
+Math.max(...a.messages.map(m=>m.date));
+
+});
+
+sorted.forEach(thread=>{
+
+let last=thread.messages.reduce((a,b)=>a.date>b.date?a:b);
 
 let div=document.createElement("div");
-
 div.className="thread neu";
 
-div.innerHTML=
-"<b>"+(thread.name||thread.address)+"</b><br>"+
-thread.messages.length+" messages";
+div.innerHTML=`
+<img src="contact.webp">
+<div class="threadContent">
+<div class="threadName">${thread.name||thread.address}</div>
+<div class="threadPreview">${last.body.substring(0,50)}</div>
+</div>
+<div class="threadTime">${formatListTime(last.date)}</div>
+`;
 
-div.onclick=()=>selectThread(thread,div);
+div.onclick=()=>openThread(thread);
 
-threads.appendChild(div);
+threadList.appendChild(div);
 
 });
 
 }
 
-/* ---------- CATEGORY ---------- */
+/* ---------- OPEN THREAD ---------- */
 
-function getCategory(date){
+function openThread(thread){
 
-let now=new Date();
+threadList.style.display="none";
+messageView.style.display="flex";
 
-let d=new Date(date);
-
-let diff=(now-d)/(1000*60*60*24);
-
-if(diff<1) return "Today";
-if(diff<2) return "Yesterday";
-if(diff<7) return "This Week";
-if(diff<30) return "This Month";
-return "Older";
-
-}
-
-/* ---------- MESSAGES ---------- */
-
-function selectThread(thread,element){
-
-document.querySelectorAll(".thread")
-.forEach(e=>e.classList.remove("active"));
-
-element.classList.add("active");
-
-threadTitle.innerHTML="<b>"+(thread.name||thread.address)+"</b>";
+contactName.innerText=thread.name||thread.address;
 
 messages.innerHTML="";
 
-let msgs=[...thread.messages]
-.sort((a,b)=>b.date-a.date); // NEWEST FIRST
+let sorted=[...thread.messages].sort((a,b)=>a.date-b.date);
 
-let lastCategory="";
+sorted.forEach(msg=>{
 
-msgs.forEach(msg=>{
+let time=document.createElement("div");
+time.className="timeLabel";
+time.innerText=formatMessageTime(msg.date);
 
-let category=getCategory(msg.date);
-
-if(category!==lastCategory){
-
-let cat=document.createElement("div");
-cat.className="category";
-cat.innerText=category;
-
-messages.appendChild(cat);
-
-lastCategory=category;
-
-}
+messages.appendChild(time);
 
 let row=document.createElement("div");
-
-row.className="msgRow "+
-(msg.type_name==="SENT"?"sentRow":"inboxRow");
+row.className="msgRow "+(msg.type_name=="SENT"?"sentRow":"inboxRow");
 
 let bubble=document.createElement("div");
+bubble.className="bubble "+(msg.type_name=="SENT"?"sentBubble":"inboxBubble");
 
-bubble.className="msgBubble "+
-(msg.type_name==="SENT"?"sentBubble":"inboxBubble");
-
-bubble.innerHTML=
-msg.body+
-"<div class='msgTime'>"+
-new Date(msg.date).toLocaleString()+
-"</div>";
+bubble.innerText=msg.body;
 
 row.appendChild(bubble);
 
 messages.appendChild(row);
 
 });
+
+}
+
+/* ---------- BACK ---------- */
+
+function showThreads(){
+
+messageView.style.display="none";
+threadList.style.display="block";
 
 }
 
