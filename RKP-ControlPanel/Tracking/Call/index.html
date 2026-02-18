@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Pro Call Viewer</title>
+
+<link rel="stylesheet" href="viewer.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+
+<header>
+<h1>Pro Call Analytics Dashboard</h1>
+</header>
+
+<section class="input-section">
+
+<textarea id="jsonInput"></textarea>
+
+<button onclick="loadPaste()">Paste Load</button>
+
+<input type="file" id="fileInput">
+
+<input id="githubUrl" placeholder="GitHub Raw URL">
+
+<button onclick="loadGithub()">Fetch</button>
+
+</section>
+
+
+<section class="filters">
+
+<input id="searchName" placeholder="Search Name">
+
+<select id="typeFilter">
+<option value="">All Types</option>
+<option value="1">Incoming</option>
+<option value="2">Outgoing</option>
+<option value="3">Missed</option>
+<option value="5">Rejected</option>
+<option value="6">Blocked</option>
+</select>
+
+<input type="date" id="startDate">
+<input type="date" id="endDate">
+
+<select id="sortBy">
+<option value="name">Name</option>
+<option value="calls">Calls</option>
+<option value="duration">Duration</option>
+<option value="last">Last Call</option>
+</select>
+
+<button onclick="applyFilters()">Apply Filters</button>
+
+</section>
+
+
+<section id="stats"></section>
+
+<section class="charts">
+
+<canvas id="callTypeChart"></canvas>
+
+</section>
+
+<section id="viewer"></section>
+
+<script src="viewer.js"></script>
+
+</body>
+</html>
