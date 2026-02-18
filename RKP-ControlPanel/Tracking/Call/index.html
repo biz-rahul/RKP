@@ -195,8 +195,20 @@ height:80%;
 left:5%;
 border-radius:100px;
 background:#e0e5ec;
-transition:all var(--duration) var(--easing);
+
+transition:
+left 0.25s cubic-bezier(.4,0,.2,1),
+transform 0.25s cubic-bezier(.4,0,.2,1);
+
+will-change:left, transform;
+
+transform:translateZ(0);
+
+box-shadow:
+4px 4px 8px #a3b1c6,
+-4px -4px 8px #ffffff;
 }
+
 
 .togglesw:checked ~ .button {
 left:40%;
@@ -370,18 +382,25 @@ renderLogs();
 
 function renderStats(){
 
-let calls=0,duration=0;
+let totalCalls = 0;
+let totalDuration = 0;
 
-DATA.forEach(c=>c.calls.forEach(call=>{
-calls++;
-duration+=call.duration;
-}));
+DATA.forEach(contact => {
+contact.calls.forEach(call => {
+totalCalls++;
+totalDuration += call.duration;
+});
+});
 
-contacts.innerText=DATA.length;
-calls.innerText=calls;
-duration.innerText=formatDuration(duration);
+document.getElementById("contacts").innerText = DATA.length;
+
+document.getElementById("calls").innerText = totalCalls;
+
+document.getElementById("duration").innerText =
+formatDuration(totalDuration);
 
 }
+
 
 
 /* LOGS */
