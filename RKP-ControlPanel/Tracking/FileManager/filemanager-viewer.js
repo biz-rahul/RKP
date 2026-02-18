@@ -1,29 +1,14 @@
 /* =========================================================
-CONTROLTHEWORLD — FILE MANAGER INTELLIGENCE VIEWER JS v2.0
-Fully Fixed Root Detection + Advanced Intelligence Engine
-Zero main HTML modification required
-========================================================= */
-
-/* =========================================================
-GLOBAL STATE
+CONTROLTHEWORLD FILE MANAGER VIEWER v5.0
+FULLY FIXED VERSION WITH PARAMETER LOADER SUPPORT
 ========================================================= */
 
 let fm_allFiles = [];
 let fm_currentPath = "/";
-let fm_filtered = [];
-
-let fm_state = {
-
-search: "",
-type: "all",
-hidden: "all",
-sort: "name",
-order: "asc"
-
-};
+let fm_filteredFiles = [];
 
 /* =========================================================
-MAIN ENTRY
+MAIN RENDER FUNCTION
 ========================================================= */
 
 function renderFileManager(container)
@@ -32,388 +17,93 @@ function renderFileManager(container)
 if (!Array.isArray(currentJSON))
 {
     container.innerHTML =
-    "<div class='filemanager-empty'>Invalid file structure</div>";
+    "<div class='filemanager-empty'>Invalid file data</div>";
     return;
 }
 
-container.className = "filemanager-app";
-
-/* Normalize filesystem */
+/* NORMALIZE FILE STRUCTURE */
 
 fm_allFiles =
-currentJSON.map(file => ({
-
-    name: file.name || "Unknown",
-
-    path: normalizePath(file.path),
-
-    directory: !!file.directory,
-
-    hidden: !!file.hidden,
-
+currentJSON.map(file =>
+({
+    name: file.name,
+    path: file.path,
     size: file.size || 0,
-
     modified: file.last_modified || 0,
-
-    extension: getExtension(file.name),
-
-    parent: getParent(normalizePath(file.path))
-
+    hidden: file.hidden || false,
+    directory: file.directory || false,
+    parent: getParent(file.path)
 }));
 
-/* Detect correct root automatically */
+/* DETECT REAL ROOT */
 
-fm_currentPath = detectRootPath();
+fm_currentPath =
+detectRootPath();
 
-/* Build UI */
-
-container.innerHTML = buildFileManagerUI();
-
-attachFileManagerEvents();
-
-fm_render();
-
-}
-
-/* =========================================================
-BUILD UI
-========================================================= */
-
-function buildFileManagerUI()
-{
-
-return `
-
+container.innerHTML =
+`
 <div class="filemanager-header">
-    File Manager Intelligence
-</div><div class="filemanager-toolbar"><input id="fm-search"
-placeholder="Search name or path">
 
-<select id="fm-type">
-    <option value="all">All</option>
-    <option value="directory">Folders</option>
-    <option value="file">Files</option>
-</select>
+    <div class="filemanager-path" id="fmPath">
+        ${fm_currentPath}
+    </div>
 
-<select id="fm-hidden">
-    <option value="all">All</option>
-    <option value="visible">Visible</option>
-    <option value="hidden">Hidden</option>
-</select>
+    <input
+        type="text"
+        id="fmSearch"
+        class="filemanager-search"
+        placeholder="Search files...">
 
-<select id="fm-sort">
-    <option value="name">Sort: Name</option>
-    <option value="size">Sort: Size</option>
-    <option value="modified">Sort: Date</option>
-    <option value="extension">Sort: Type</option>
-</select>
+</div>
 
-<button id="fm-export">
-    Export
-</button>
+<div id="fmList"
+     class="filemanager-list"></div>
+`;
 
-</div><div id="fm-breadcrumb"
-class="filemanager-breadcrumb"></div><div id="fm-stats"
-class="filemanager-stats"></div><div id="fm-list"
-class="filemanager-list"></div>`;
-}
+document
+.getElementById("fmSearch")
+.addEventListener(
+    "input",
+    function()
+    {
+        renderFileList(
+            this.value.toLowerCase());
+    });
 
-/* =========================================================
-EVENT SYSTEM
-========================================================= */
-
-function attachFileManagerEvents()
-{
-
-document.getElementById("fm-search")
-.oninput = e =>
-{
-fm_state.search =
-e.target.value.toLowerCase();
-fm_render();
-};
-
-document.getElementById("fm-type")
-.onchange = e =>
-{
-fm_state.type = e.target.value;
-fm_render();
-};
-
-document.getElementById("fm-hidden")
-.onchange = e =>
-{
-fm_state.hidden = e.target.value;
-fm_render();
-};
-
-document.getElementById("fm-sort")
-.onchange = e =>
-{
-fm_state.sort = e.target.value;
-fm_render();
-};
-
-document.getElementById("fm-export")
-.onclick = () =>
-{
-exportJSON(fm_filtered);
-};
-
-}
-
-/* =========================================================
-MAIN RENDER PIPELINE
-========================================================= */
-
-function fm_render()
-{
-
-let list =
-fm_allFiles.filter(file =>
-file.parent === fm_currentPath
-);
-
-/* Apply filters */
-
-list =
-list.filter(file =>
-{
-
-if (fm_state.type === "file" && file.directory)
-    return false;
-
-if (fm_state.type === "directory" && !file.directory)
-    return false;
-
-if (fm_state.hidden === "hidden" && !file.hidden)
-    return false;
-
-if (fm_state.hidden === "visible" && file.hidden)
-    return false;
-
-if (fm_state.search)
-{
-    return (
-        file.name.toLowerCase().includes(fm_state.search)
-        ||
-        file.path.toLowerCase().includes(fm_state.search)
-    );
-}
-
-return true;
-
-});
-
-/* Sorting */
-
-list.sort((a,b)=>
-{
-
-let v1 = a[fm_state.sort];
-let v2 = b[fm_state.sort];
-
-if(typeof v1 === "string")
-return v1.localeCompare(v2);
-
-return v1 - v2;
-
-});
-
-/* Directories first */
-
-list.sort((a,b)=>
-b.directory - a.directory
-);
-
-fm_filtered = list;
-
-renderBreadcrumb();
-renderStats();
 renderFileList();
 
 }
 
 /* =========================================================
-FILE LIST RENDER
-========================================================= */
-
-function renderFileList()
-{
-
-const container =
-document.getElementById("fm-list");
-
-container.innerHTML = "";
-
-if(fm_filtered.length === 0)
-{
-container.innerHTML =
-"<div class='filemanager-empty'>No files found</div>";
-return;
-}
-
-fm_filtered.forEach(file =>
-{
-
-const div =
-document.createElement("div");
-
-div.className =
-"filemanager-item" +
-(file.hidden ? " filemanager-hidden": "");
-
-div.innerHTML =
-`
-
-<div class="filemanager-icon">
-${file.directory ? "📁" : getFileIcon(file.extension)}
-</div><div class="filemanager-info"><div class="filemanager-name">
-${escapeHTML(file.name)}
-</div><div class="filemanager-meta">${file.directory
-? "Folder"
-: formatSize(file.size)}
-
-•
-${formatDate(file.modified)}
-
-</div></div>
-`;if(file.directory)
-{
-div.onclick =
-() =>
-{
-fm_currentPath = file.path;
-fm_render();
-};
-}
-
-container.appendChild(div);
-
-});
-
-}
-
-/* =========================================================
-BREADCRUMB NAVIGATION
-========================================================= */
-
-function renderBreadcrumb()
-{
-
-const bc =
-document.getElementById("fm-breadcrumb");
-
-const parts =
-fm_currentPath.split("/").filter(Boolean);
-
-let html =
-"<span onclick="fm_goRoot()">Root</span>";
-
-let path = "";
-
-parts.forEach(p =>
-{
-
-path += "/" + p;
-
-html +=
-" / <span onclick="fm_goPath('${path}')">${p}</span>";
-
-});
-
-bc.innerHTML = html;
-
-}
-
-function fm_goRoot()
-{
-
-fm_currentPath = detectRootPath();
-fm_render();
-
-}
-
-function fm_goPath(path)
-{
-
-fm_currentPath = path;
-fm_render();
-
-}
-
-/* =========================================================
-STATS ENGINE
-========================================================= */
-
-function renderStats()
-{
-
-const stats =
-document.getElementById("fm-stats");
-
-const total =
-fm_filtered.length;
-
-const files =
-fm_filtered.filter(f=>!f.directory).length;
-
-const dirs =
-fm_filtered.filter(f=>f.directory).length;
-
-stats.innerHTML =
-"${total} items • ${files} files • ${dirs} folders";
-
-}
-
-/* =========================================================
-ROOT DETECTION ENGINE (FIXED)
+ROOT DETECTION
 ========================================================= */
 
 function detectRootPath()
 {
 
-if(fm_allFiles.length === 0)
+if(!fm_allFiles.length)
+    return "/";
+
+const first =
+    fm_allFiles[0].path;
+
+const parts =
+    first.split("/")
+    .filter(Boolean);
+
+if(parts.length >= 3)
+    return "/" +
+        parts[0] + "/" +
+        parts[1] + "/" +
+        parts[2];
+
 return "/";
-
-/* find shortest path */
-
-let shortest =
-fm_allFiles[0].path;
-
-fm_allFiles.forEach(f =>
-{
-
-if(f.path.length < shortest.length)
-shortest = f.path;
-
-});
-
-/* remove filename if file */
-
-if(!shortest.endsWith("/"))
-{
-const parent =
-getParent(shortest);
-return parent || "/";
-}
-
-return shortest;
 
 }
 
 /* =========================================================
-HELPERS
+GET PARENT PATH
 ========================================================= */
-
-function normalizePath(path)
-{
-
-if(!path) return "/";
-
-return path.replace(//+/g,"/");
-
-}
 
 function getParent(path)
 {
@@ -421,108 +111,164 @@ function getParent(path)
 if(!path) return "/";
 
 const parts =
-path.split("/");
+    path.split("/");
 
 parts.pop();
 
 const parent =
-parts.join("/");
+    parts.join("/");
 
-return parent || "/";
-
-}
-
-function getExtension(name)
-{
-
-if(!name) return "";
-
-const i =
-name.lastIndexOf(".");
-
-if(i === -1)
-return "";
-
-return name.substring(i+1).toLowerCase();
+return parent === ""
+    ? "/"
+    : parent;
 
 }
 
-function formatSize(bytes)
+/* =========================================================
+RENDER FILE LIST
+========================================================= */
+
+function renderFileList(search = "")
 {
 
-if(!bytes) return "0 B";
+const list =
+    document.getElementById("fmList");
 
-const units =
-["B","KB","MB","GB"];
+if(!list) return;
 
-let i = 0;
+list.innerHTML = "";
 
-while(bytes >= 1024 && i < units.length-1)
+fm_filteredFiles =
+fm_allFiles.filter(file =>
 {
-bytes /= 1024;
-i++;
+
+    if(file.parent !== fm_currentPath)
+        return false;
+
+    if(search &&
+       !file.name.toLowerCase()
+       .includes(search))
+        return false;
+
+    return true;
+
+});
+
+/* SORT: directories first */
+
+fm_filteredFiles.sort((a,b)=>
+{
+
+    if(a.directory && !b.directory)
+        return -1;
+
+    if(!a.directory && b.directory)
+        return 1;
+
+    return a.name.localeCompare(b.name);
+
+});
+
+/* BACK BUTTON */
+
+if(fm_currentPath !== detectRootPath())
+{
+
+    const back =
+    document.createElement("div");
+
+    back.className =
+    "filemanager-item";
+
+    back.innerHTML =
+    "📁 .. (Back)";
+
+    back.onclick =
+    function()
+    {
+        fm_currentPath =
+        getParent(fm_currentPath);
+
+        updatePath();
+
+        renderFileList();
+    };
+
+    list.appendChild(back);
 }
 
-return bytes.toFixed(1) + " " + units[i];
+/* FILE ITEMS */
+
+fm_filteredFiles.forEach(file =>
+{
+
+    const div =
+    document.createElement("div");
+
+    div.className =
+    "filemanager-item";
+
+    const icon =
+    file.directory
+    ? "📁"
+    : "📄";
+
+    div.innerHTML =
+    icon + " " +
+    file.name;
+
+    if(file.directory)
+    {
+        div.onclick =
+        function()
+        {
+            fm_currentPath =
+            file.path;
+
+            updatePath();
+
+            renderFileList();
+        };
+    }
+
+    list.appendChild(div);
+
+});
 
 }
 
-function formatDate(ts)
+/* =========================================================
+UPDATE PATH BAR
+========================================================= */
+
+function updatePath()
 {
+const el =
+document.getElementById(
+"fmPath");
 
-if(!ts) return "Unknown";
-
-return new Date(ts).toLocaleString();
+if(el)
+    el.innerHTML =
+    fm_currentPath;
 
 }
 
-function exportJSON(data)
+/* =========================================================
+PARAMETER LOADER BRIDGE FUNCTION
+THIS FIXES YOUR ISSUE
+========================================================= */
+
+window.onViewerData =
+function(data)
 {
 
-const blob =
-new Blob(
-[JSON.stringify(data,null,2)],
-{type:"application/json"}
-);
+window.currentJSON =
+    data;
 
-const a =
-document.createElement("a");
+const container =
+    document.getElementById(
+        "viewerRoot");
 
-a.href =
-URL.createObjectURL(blob);
+renderFileManager(container);
 
-a.download =
-"filemanager_export.json";
-
-a.click();
-
-}
-
-function escapeHTML(str)
-{
-
-return str
-.replace(/&/g,"&")
-.replace(/</g,"<")
-.replace(/>/g,">");
-
-}
-
-function getFileIcon(ext)
-{
-
-const map =
-{
-zip:"🗜",
-apk:"📦",
-json:"📄",
-mp3:"🎵",
-mp4:"🎬",
-jpg:"🖼",
-png:"🖼",
-txt:"📄"
 };
-
-return map[ext] || "📄";
-
-}
