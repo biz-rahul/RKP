@@ -13,7 +13,7 @@ background:#e4e8ee;
 color:#2d3748;
 }
 
-/* ---------- NEUMORPHIC CORE ---------- */
+/* ---------- NEUMORPHIC ---------- */
 
 .neu{
 border-radius:20px;
@@ -56,9 +56,7 @@ display:block;
 margin:20px 0 10px;
 }
 
-input[type=text],
-textarea,
-input[type=file]{
+input,textarea{
 width:100%;
 padding:15px;
 border:none;
@@ -90,7 +88,7 @@ inset 4px 4px 8px #c2c8d0,
 inset -4px -4px 8px #ffffff;
 }
 
-/* ---------- APP VIEW ---------- */
+/* ---------- APP ---------- */
 
 #app{
 display:none;
@@ -108,6 +106,8 @@ font-size:14px;
 margin-top:5px;
 }
 
+/* ---------- LAYOUT ---------- */
+
 #main{
 flex:1;
 display:flex;
@@ -116,7 +116,7 @@ overflow:hidden;
 
 #threads{
 width:35%;
-max-width:300px;
+max-width:320px;
 overflow:auto;
 padding:10px;
 }
@@ -139,20 +139,53 @@ display:flex;
 flex-direction:column;
 }
 
-.msg{
-padding:12px;
-margin:6px 0;
+/* ---------- WHATSAPP BUBBLES ---------- */
+
+.msgRow{
+display:flex;
+margin:4px 0;
+}
+
+.msgBubble{
+padding:10px 14px;
+border-radius:18px;
 max-width:75%;
-border-radius:12px;
+font-size:15px;
+position:relative;
 }
 
-.inbox{
-align-self:flex-start;
+.inboxRow{
+justify-content:flex-start;
 }
 
-.sent{
-align-self:flex-end;
+.sentRow{
+justify-content:flex-end;
+}
+
+.inboxBubble{
+background:#ffffff;
+box-shadow:3px 3px 6px rgba(0,0,0,0.1);
+}
+
+.sentBubble{
 background:#dcfce7;
+box-shadow:3px 3px 6px rgba(0,0,0,0.1);
+}
+
+.msgTime{
+font-size:11px;
+opacity:0.6;
+margin-top:4px;
+}
+
+/* ---------- CATEGORY ---------- */
+
+.category{
+text-align:center;
+margin:15px 0 10px;
+font-size:13px;
+font-weight:600;
+opacity:0.7;
 }
 
 /* ---------- MOBILE ---------- */
@@ -180,11 +213,9 @@ font-size:26px;
 }
 
 </style></head>
-<body><!-- LOAD SCREEN (MATCHES YOUR SCREENSHOT) --><div id="loadScreen"><div class="title">Apps Analytics Viewer</div><div class="card neu"><label>Load from Link</label>
-
+<body><!-- LOAD SCREEN --><div id="loadScreen"><div class="title">Apps Analytics Viewer</div><div class="card neu"><label>Load from Link</label>
 <input id="linkInput" class="neu-inset"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
-
 <button onclick="loadFromLink()">Load</button>
 
 <label>Paste JSON</label>
@@ -192,14 +223,17 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 <textarea id="pasteInput" class="neu-inset"></textarea><button onclick="loadFromPaste()">Load</button>
 
 <label>Select File</label>
+<input type="file" id="fileInput" class="neu-inset">
 
-<input type="file" id="fileInput" class="neu-inset"></div></div><!-- APP VIEW --><div id="app"><header class="neu"><div id="threadTitle"><b>Messages</b></div><div id="stats"></div></header><div id="main"><div id="threads"></div><div id="messages"></div></div></div><script>
+</div></div><!-- APP --><div id="app"><header class="neu"><div id="threadTitle"><b>Messages</b></div>
+<div id="stats"></div></header><div id="main"><div id="threads"></div>
+<div id="messages"></div></div></div><script>
 
 /* ---------- GLOBAL ---------- */
 
 let smsData=[];
-let totalCredit=0;
-let totalDebit=0;
+let credit=0;
+let debit=0;
 
 /* ---------- LOAD ---------- */
 
@@ -212,27 +246,17 @@ document.getElementById("app").style.display="flex";
 
 function loadJSON(text){
 
-try{
-
 smsData=JSON.parse(text);
 
 calculateStats();
 renderThreads();
 showApp();
 
-}catch{
-
-alert("Invalid JSON");
-
-}
-
 }
 
 async function loadFromLink(){
 
-let url=document.getElementById("linkInput").value;
-
-let res=await fetch(url);
+let res=await fetch(document.getElementById("linkInput").value);
 
 let text=await res.text();
 
@@ -242,19 +266,17 @@ loadJSON(text);
 
 function loadFromPaste(){
 
-let text=document.getElementById("pasteInput").value;
-
-loadJSON(text);
+loadJSON(document.getElementById("pasteInput").value);
 
 }
 
-document.getElementById("fileInput").onchange=function(){
+fileInput.onchange=e=>{
 
 let reader=new FileReader();
 
-reader.onload=e=>loadJSON(e.target.result);
+reader.onload=x=>loadJSON(x.target.result);
 
-reader.readAsText(this.files[0]);
+reader.readAsText(e.target.files[0]);
 
 };
 
@@ -270,26 +292,26 @@ return m?parseFloat(m[1]):0;
 
 function calculateStats(){
 
-totalCredit=0;
-totalDebit=0;
+credit=0;
+debit=0;
 
-smsData.forEach(thread=>{
+smsData.forEach(t=>{
 
-thread.messages.forEach(msg=>{
+t.messages.forEach(m=>{
 
-if(msg.body.toLowerCase().includes("credited"))
-totalCredit+=extractAmount(msg.body);
+if(m.body.toLowerCase().includes("credited"))
+credit+=extractAmount(m.body);
 
-if(msg.body.toLowerCase().includes("debited"))
-totalDebit+=extractAmount(msg.body);
-
-});
+if(m.body.toLowerCase().includes("debited"))
+debit+=extractAmount(m.body);
 
 });
 
-document.getElementById("stats").innerText=
-"Credit ₹"+totalCredit+"   Debit ₹"+totalDebit+
-"   Net ₹"+(totalCredit-totalDebit);
+});
+
+stats.innerText=
+"Credit ₹"+credit+"   Debit ₹"+debit+
+"   Net ₹"+(credit-debit);
 
 }
 
@@ -297,11 +319,9 @@ document.getElementById("stats").innerText=
 
 function renderThreads(){
 
-let container=document.getElementById("threads");
+threads.innerHTML="";
 
-container.innerHTML="";
-
-smsData.forEach((thread,i)=>{
+smsData.forEach(thread=>{
 
 let div=document.createElement("div");
 
@@ -313,9 +333,27 @@ thread.messages.length+" messages";
 
 div.onclick=()=>selectThread(thread,div);
 
-container.appendChild(div);
+threads.appendChild(div);
 
 });
+
+}
+
+/* ---------- CATEGORY ---------- */
+
+function getCategory(date){
+
+let now=new Date();
+
+let d=new Date(date);
+
+let diff=(now-d)/(1000*60*60*24);
+
+if(diff<1) return "Today";
+if(diff<2) return "Yesterday";
+if(diff<7) return "This Week";
+if(diff<30) return "This Month";
+return "Older";
 
 }
 
@@ -328,27 +366,50 @@ document.querySelectorAll(".thread")
 
 element.classList.add("active");
 
-document.getElementById("threadTitle").innerHTML=
-"<b>"+(thread.name||thread.address)+"</b>";
+threadTitle.innerHTML="<b>"+(thread.name||thread.address)+"</b>";
 
-let container=document.getElementById("messages");
+messages.innerHTML="";
 
-container.innerHTML="";
+let msgs=[...thread.messages]
+.sort((a,b)=>b.date-a.date); // NEWEST FIRST
 
-thread.messages
-.sort((a,b)=>a.date-b.date)
-.forEach(msg=>{
+let lastCategory="";
 
-let div=document.createElement("div");
+msgs.forEach(msg=>{
 
-div.className="msg neu "+
-(msg.type_name==="SENT"?"sent":"inbox");
+let category=getCategory(msg.date);
 
-div.innerHTML=
+if(category!==lastCategory){
+
+let cat=document.createElement("div");
+cat.className="category";
+cat.innerText=category;
+
+messages.appendChild(cat);
+
+lastCategory=category;
+
+}
+
+let row=document.createElement("div");
+
+row.className="msgRow "+
+(msg.type_name==="SENT"?"sentRow":"inboxRow");
+
+let bubble=document.createElement("div");
+
+bubble.className="msgBubble "+
+(msg.type_name==="SENT"?"sentBubble":"inboxBubble");
+
+bubble.innerHTML=
 msg.body+
-"<br><small>"+new Date(msg.date).toLocaleString()+"</small>";
+"<div class='msgTime'>"+
+new Date(msg.date).toLocaleString()+
+"</div>";
 
-container.appendChild(div);
+row.appendChild(bubble);
+
+messages.appendChild(row);
 
 });
 
