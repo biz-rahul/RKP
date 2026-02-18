@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Professional Apps Viewer</title>
+
+<link rel="stylesheet" href="style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+<header>
+
+<h1>Apps Analytics Dashboard</h1>
+
+<div class="header-controls">
+
+<input type="text" id="githubUrl" placeholder="GitHub Raw JSON URL">
+
+<button onclick="loadGithub()">Fetch</button>
+
+<input type="file" id="fileInput">
+
+<button onclick="exportFiltered()">Export Filtered</button>
+
+</div>
+
+</header>
+
+
+<section class="input-section">
+
+<textarea id="jsonPaste" placeholder="Paste JSON here"></textarea>
+
+<button onclick="loadPaste()">Load JSON</button>
+
+</section>
+
+
+<section class="dashboard">
+
+<div class="stat" id="statApps"></div>
+<div class="stat" id="statSize"></div>
+<div class="stat" id="statUsage"></div>
+<div class="stat" id="statLargest"></div>
+<div class="stat" id="statMostUsed"></div>
+
+</section>
+
+
+<section class="filters">
+
+<input type="text" id="searchBox" placeholder="Search apps">
+
+<select id="sortSelect">
+
+<option value="name">Sort by Name</option>
+<option value="size">Sort by Size</option>
+<option value="usage">Sort by Usage</option>
+<option value="installed">Sort by Installed Date</option>
+
+</select>
+
+<select id="viewMode">
+
+<option value="cards">Card View</option>
+<option value="table">Table View</option>
+
+</select>
+
+</section>
+
+
+<section class="charts">
+
+<canvas id="usageChart"></canvas>
+
+</section>
+
+
+<section id="appsContainer"></section>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
