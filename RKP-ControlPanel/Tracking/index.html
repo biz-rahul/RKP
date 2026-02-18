@@ -274,6 +274,16 @@ function selectFile(path,name)
 {
     selectedFile = path;
 
+    const detected = detect(name);
+
+    if(detected)
+    {
+        // AUTO REDIRECT instantly if detected
+        redirect(detected);
+        return;
+    }
+
+    // if not detected, show manual panel
     showViewerPanel(name);
 }
 
@@ -292,9 +302,11 @@ function showViewerPanel(filename)
     const detected = detect(filename);
 
     if(detected)
-    panel.appendChild(
-        viewerBtn(detected)
-    );
+    {
+        const auto = viewerBtn(detected);
+        auto.innerText = "AUTO DETECTED → OPEN " + detected.toUpperCase();
+        panel.appendChild(auto);
+    }
 
     [
         "Sms",
