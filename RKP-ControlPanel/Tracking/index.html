@@ -155,7 +155,25 @@ SCROLLBAR
 <body><div class="app"><div class="header">
 <div class="title">CONTROLTHEWORLD</div>
 <div class="subtitle">GitHub Remote File Manager</div>
-</div><div class="path-bar" id="pathBar">/</div><div class="file-container" id="fileList"></div></div><div class="viewer-panel" id="viewerPanel"></div><script>
+</div><div class="path-bar" id="pathBar">/</div><div class="file-container" id="fileList"></div></div><div class="viewer-panel" id="viewerPanel"></div><!-- REGULAR JSON VIEWER MODAL --><div id="jsonModal" style="
+position:fixed;
+top:0;
+left:0;
+right:0;
+bottom:0;
+background:black;
+display:none;
+flex-direction:column;
+z-index:9999;"><div style="padding:10px;border-bottom:1px solid #00ff9c55;display:flex;justify-content:space-between;align-items:center;">
+<span>REGULAR JSON VIEWER</span>
+<button onclick="closeJSONViewer()" style="background:black;color:#00ff9c;border:1px solid #00ff9c;padding:6px 12px;">CLOSE</button>
+</div><pre id="jsonContent" style="
+flex:1;
+overflow:auto;
+padding:15px;
+color:#00ff9c;
+white-space:pre-wrap;
+"></pre></div><script>
 
 /* =========================
 CONFIG
@@ -308,6 +326,9 @@ function showViewerPanel(filename)
         panel.appendChild(auto);
     }
 
+    // ADD REGULAR VIEWER FIRST
+    panel.appendChild(regularViewerBtn());
+
     [
         "Sms",
         "Call",
@@ -336,6 +357,23 @@ function viewerBtn(type)
     btn.innerText = "OPEN " + type.toUpperCase();
 
     btn.onclick = ()=> redirect(type);
+
+    return btn;
+}
+
+/* =========================
+REGULAR VIEWER BUTTON
+========================= */
+
+function regularViewerBtn()
+{
+    const btn = document.createElement("button");
+
+    btn.className = "viewer-btn";
+
+    btn.innerText = "OPEN REGULAR JSON VIEWER";
+
+    btn.onclick = ()=> openRegularViewer();
 
     return btn;
 }
@@ -388,6 +426,41 @@ function redirect(type)
     `${BASE}${type}?${param}=${encodeURIComponent(raw)}`;
 
     location.href = url;
+}
+
+/* =========================
+REGULAR JSON VIEWER
+========================= */
+
+async function openRegularViewer()
+{
+
+    const raw =
+    `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${selectedFile}`;
+
+    try
+    {
+
+        const text = await fetch(raw).then(r=>r.text());
+
+        const json = JSON.parse(text);
+
+        document.getElementById("jsonContent").textContent =
+        JSON.stringify(json,null,4);
+
+        document.getElementById("jsonModal").style.display = "flex";
+
+    }
+    catch
+    {
+        alert("Invalid JSON");
+    }
+
+}
+
+function closeJSONViewer()
+{
+    document.getElementById("jsonModal").style.display = "none";
 }
 
 </script></body>
