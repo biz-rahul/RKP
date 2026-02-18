@@ -482,5 +482,126 @@ callLog.innerHTML=html;
 
 }
 
+
+function searchCallLogs(){
+
+let query =
+document.getElementById("searchInput")
+.value
+.trim()
+.toLowerCase();
+
+if(!query){
+
+renderLogs();
+return;
+
+}
+
+let filtered = [];
+
+DATA.forEach(contact => {
+
+let nameMatch =
+(contact.name || "")
+.toLowerCase()
+.includes(query);
+
+let numberMatch =
+(contact.number || "")
+.includes(query);
+
+if(nameMatch || numberMatch){
+
+filtered.push(contact);
+
+}
+
+});
+
+renderLogsFromFiltered(filtered);
+
+}
+
+
+function clearSearch(){
+
+document.getElementById("searchInput").value="";
+
+renderLogs();
+
+}
+
+
+function renderLogsFromFiltered(filteredDATA){
+
+let hide = hideToggle.checked;
+
+let all=[];
+
+filteredDATA.forEach(c=>c.calls.forEach(call=>{
+
+all.push({
+name:c.name||"Unknown",
+number:c.number,
+...call
+});
+
+}));
+
+all.sort((a,b)=>b.date-a.date);
+
+let html="",last="";
+
+all.forEach(call=>{
+
+let label=getRelativeLabel(call.date);
+
+if(label!==last){
+html+=`<div class="section-label">${label}</div>`;
+last=label;
+}
+
+let t=TYPE_MAP[call.type]||{name:"Unknown",class:""};
+
+let number=hide?maskNumber(call.number):call.number;
+
+html+=`
+
+<div class="call neu">
+
+<div class="call-row">
+
+<div>
+
+<div class="call-name">${call.name}</div>
+
+<div class="call-meta">${number}</div>
+
+<div class="call-type ${t.class}">
+${t.name}
+${call.duration?` • ${formatDuration(call.duration)}`:""}
+</div>
+
+<div class="call-meta">${formatDate(call.date)}</div>
+
+</div>
+
+<div class="call-meta">
+${formatTime(call.date)}
+</div>
+
+</div>
+
+</div>
+
+`;
+
+});
+
+callLog.innerHTML=html;
+
+}
+
 </script></body>
 </html>
