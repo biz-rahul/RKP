@@ -1,23 +1,23 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apps Viewer Neumorphic</title><style>
+<title>Apps Analytics Viewer</title>
 
-/* ========================= */
-/* GLOBAL NEUMORPHIC LIGHT THEME */
-/* ========================= */
+<style>
+
+/* =========================
+   GLOBAL NEUMORPHIC SYSTEM
+========================= */
 
 :root{
-
---bg:#e6edf3;
---shadow-light:#ffffff;
---shadow-dark:#c8d0d8;
-
---primary:#4a90e2;
---text:#2d3436;
---subtext:#636e72;
-
+--bg:#e9eef5;
+--light:#ffffff;
+--dark:#c5ccd6;
+--text:#2c3e50;
+--accent:#4a90e2;
 }
 
 *{
@@ -27,106 +27,121 @@ box-sizing:border-box;
 body{
 
 margin:0;
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
-
 background:var(--bg);
-
+font-family:Segoe UI,system-ui;
 color:var(--text);
 
-overflow-x:hidden;
+}
+
+
+/* =========================
+   CENTER TITLE
+========================= */
+
+.pageTitle{
+
+text-align:center;
+font-size:28px;
+font-weight:600;
+margin-top:30px;
+margin-bottom:20px;
 
 }
 
 
-/* ========================= */
-/* CONTAINER */
-/* ========================= */
+/* =========================
+   MAIN PANEL (matches your screenshot)
+========================= */
 
-.container{
+.panel{
 
-max-width:700px;
+width:90%;
+max-width:900px;
 margin:auto;
-padding:15px;
 
-}
+padding:25px;
 
-
-/* ========================= */
-/* NEUMORPHIC CARD */
-/* ========================= */
-
-.neu{
+border-radius:20px;
 
 background:var(--bg);
 
-border-radius:18px;
-
 box-shadow:
 
-8px 8px 16px var(--shadow-dark),
--8px -8px 16px var(--shadow-light);
+12px 12px 24px var(--dark),
+-12px -12px 24px var(--light);
 
 }
 
 
-/* PRESSED */
+/* =========================
+   INPUT SECTIONS
+========================= */
 
-.neu-pressed{
+.section{
 
-box-shadow:
-
-inset 6px 6px 12px var(--shadow-dark),
-inset -6px -6px 12px var(--shadow-light);
-
-}
-
-
-/* ========================= */
-/* HEADER */
-/* ========================= */
-
-.header{
-
-padding:18px;
-margin-bottom:15px;
+margin-bottom:25px;
 
 }
 
-.title{
+.label{
 
-font-size:20px;
-font-weight:600;
+margin-bottom:8px;
+font-weight:500;
 
 }
 
+.input{
 
-/* ========================= */
-/* BUTTON */
-/* ========================= */
-
-.button{
+width:100%;
 
 padding:14px;
-margin-top:12px;
 
-border-radius:14px;
+border-radius:12px;
 
 border:none;
+outline:none;
 
 font-size:15px;
 
-font-weight:600;
+background:var(--bg);
+
+box-shadow:
+
+inset 6px 6px 12px var(--dark),
+inset -6px -6px 12px var(--light);
+
+}
+
+textarea.input{
+height:140px;
+resize:none;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.button{
+
+margin-top:10px;
+
+padding:10px 18px;
+
+border:none;
+
+border-radius:12px;
 
 background:var(--bg);
 
-color:var(--primary);
+font-weight:500;
 
 cursor:pointer;
 
 box-shadow:
 
-6px 6px 12px var(--shadow-dark),
--6px -6px 12px var(--shadow-light);
+6px 6px 12px var(--dark),
+-6px -6px 12px var(--light);
 
 }
 
@@ -134,191 +149,239 @@ box-shadow:
 
 box-shadow:
 
-inset 4px 4px 8px var(--shadow-dark),
-inset -4px -4px 8px var(--shadow-light);
+inset 4px 4px 8px var(--dark),
+inset -4px -4px 8px var(--light);
 
 }
 
 
-/* ========================= */
-/* INPUT */
-/* ========================= */
+/* =========================
+   FILTER BAR
+========================= */
 
-input, textarea{
+.filterBar{
 
-width:100%;
-padding:14px;
-margin-top:12px;
-
-border:none;
-
-outline:none;
-
-border-radius:14px;
-
-font-size:14px;
-
-background:var(--bg);
-
-box-shadow:
-
-inset 4px 4px 8px var(--shadow-dark),
-inset -4px -4px 8px var(--shadow-light);
-
-}
-
-textarea{
-
-height:120px;
-
-}
-
-
-/* ========================= */
-/* FILTER GRID */
-/* ========================= */
-
-.filters{
+width:95%;
+margin:30px auto;
 
 display:grid;
 
-grid-template-columns:1fr 1fr;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
 
-gap:10px;
-
-margin-bottom:15px;
+gap:15px;
 
 }
 
+.filterBtn{
 
-/* ========================= */
-/* APP CARD */
-/* ========================= */
+padding:14px;
 
-.app{
+border-radius:14px;
 
-padding:15px;
-margin-bottom:12px;
+border:none;
 
-border-radius:16px;
+background:var(--bg);
+
+font-weight:500;
 
 cursor:pointer;
 
 box-shadow:
 
-6px 6px 12px var(--shadow-dark),
--6px -6px 12px var(--shadow-light);
+6px 6px 12px var(--dark),
+-6px -6px 12px var(--light);
 
 }
 
-
-.app:active{
+.filterBtn:active{
 
 box-shadow:
 
-inset 4px 4px 8px var(--shadow-dark),
-inset -4px -4px 8px var(--shadow-light);
+inset 4px 4px 8px var(--dark),
+inset -4px -4px 8px var(--light);
 
 }
 
 
-.name{
+/* =========================
+   APPS LIST FULL WIDTH DESKTOP
+========================= */
 
+.appsContainer{
+
+width:95%;
+margin:auto;
+
+}
+
+
+/* GRID FOR DESKTOP */
+
+.appsGrid{
+
+display:grid;
+
+grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+
+gap:20px;
+
+}
+
+
+/* APP CARD */
+
+.appCard{
+
+padding:18px;
+
+border-radius:16px;
+
+background:var(--bg);
+
+cursor:pointer;
+
+box-shadow:
+
+6px 6px 12px var(--dark),
+-6px -6px 12px var(--light);
+
+}
+
+.appCard:active{
+
+box-shadow:
+
+inset 4px 4px 8px var(--dark),
+inset -4px -4px 8px var(--light);
+
+}
+
+.appName{
+
+font-size:17px;
 font-weight:600;
-font-size:16px;
 
 }
 
 .package{
 
 font-size:13px;
-color:var(--subtext);
+color:#666;
 
 }
 
 .version{
 
 font-size:13px;
-color:var(--primary);
+color:var(--accent);
 
-margin-top:2px;
+margin-top:4px;
 
 }
 
 .details{
 
-display:none;
-
 margin-top:10px;
 
 font-size:14px;
 
-color:var(--subtext);
+color:#555;
+
+display:none;
 
 line-height:1.5;
 
 }
 
 
-/* ========================= */
+/* =========================
+   HIDDEN
+========================= */
 
 .hidden{
 display:none;
 }
 
-</style></head>
-<body><div class="container"><!-- HEADER --><div class="header neu"><div class="title">Apps Viewer</div></div><!-- INPUT SCREEN --><div id="inputScreen"><button class="button" onclick="showLink()">Load from Link</button>
+</style>
 
-<button class="button" onclick="showText()">Paste JSON</button>
+</head>
+<body>
 
-<button class="button" onclick="fileInput.click()">Select File</button>
+<div class="pageTitle">Apps Analytics Viewer</div>
 
-<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden"><input id="linkInput" placeholder="Paste JSON link"><button class="button" onclick="loadLink()">Load</button>
+<!-- INPUT PANEL -->
 
-</div><div id="textBox" class="hidden"><textarea id="textInput"></textarea><button class="button" onclick="loadText()">Load</button>
+<div id="inputPanel" class="panel">
 
-</div></div><!-- VIEWER --><div id="viewer" class="hidden"><input id="searchInput" placeholder="Search app"><div class="filters"><button class="button" onclick="sortNewest()">Date Newest</button>
+<div class="section">
 
-<button class="button" onclick="sortOldest()">Date Oldest</button>
+<div class="label">Load from Link</div>
 
-<button class="button" onclick="sortSizeHigh()">Size Highest</button>
+<input id="linkInput" class="input">
 
-<button class="button" onclick="sortSizeLow()">Size Lowest</button>
+<button class="button" onclick="loadLink()">Load</button>
 
-<button class="button" onclick="sortUsageHigh()">Usage Highest</button>
+</div>
 
-<button class="button" onclick="sortUsageLow()">Usage Lowest</button>
+<div class="section">
 
-<button class="button" onclick="reset()">Reset</button>
+<div class="label">Paste JSON</div>
 
-</div><div id="appsList"></div></div></div><script>
+<textarea id="textInput" class="input"></textarea>
 
+<button class="button" onclick="loadText()">Load</button>
+
+</div>
+
+<div class="section">
+
+<div class="label">Select File</div>
+
+<input type="file" id="fileInput" class="input">
+
+</div>
+
+</div>
+
+<!-- FILTERS -->
+
+<div id="filterSection" class="hidden">
+
+<div class="filterBar">
+
+<input id="searchInput" class="input" placeholder="Search App">
+
+<button class="filterBtn" onclick="sortNewest()">Date Newest</button> <button class="filterBtn" onclick="sortOldest()">Date Oldest</button>
+
+<button class="filterBtn" onclick="sortSizeHigh()">Size Highest</button> <button class="filterBtn" onclick="sortSizeLow()">Size Lowest</button>
+
+<button class="filterBtn" onclick="sortUsageHigh()">Usage Highest</button> <button class="filterBtn" onclick="sortUsageLow()">Usage Lowest</button>
+
+<button class="filterBtn" onclick="resetApps()">Reset</button>
+
+</div>
+
+</div>
+
+<!-- APPS LIST -->
+
+<div class="appsContainer">
+
+<div id="appsGrid" class="appsGrid"></div>
+
+</div>
+
+<script>
 
 let apps=[];
 let filtered=[];
 
 
-/* INPUT */
-
-function showLink(){
-
-linkBox.classList.remove("hidden");
-textBox.classList.add("hidden");
-
-}
-
-function showText(){
-
-textBox.classList.remove("hidden");
-linkBox.classList.add("hidden");
-
-}
-
+/* LOAD METHODS */
 
 async function loadLink(){
 
 let res=await fetch(linkInput.value);
-
 process(await res.json());
 
 }
@@ -347,8 +410,8 @@ function process(data){
 apps=data;
 filtered=[...apps];
 
-inputScreen.style.display="none";
-viewer.classList.remove("hidden");
+inputPanel.style.display="none";
+filterSection.classList.remove("hidden");
 
 render();
 
@@ -359,25 +422,25 @@ render();
 
 function render(){
 
-appsList.innerHTML="";
+appsGrid.innerHTML="";
 
 filtered.forEach(app=>{
 
-let div=document.createElement("div");
+let card=document.createElement("div");
 
-div.className="app";
+card.className="appCard";
 
-div.onclick=()=>{
+card.onclick=function(){
 
-let d=div.querySelector(".details");
+let d=this.querySelector(".details");
 
 d.style.display=d.style.display=="block"?"none":"block";
 
 };
 
-div.innerHTML=`
+card.innerHTML=`
 
-<div class="name">${app.app_name}</div>
+<div class="appName">${app.app_name}</div>
 
 <div class="package">${app.package_name}</div>
 
@@ -386,20 +449,16 @@ div.innerHTML=`
 <div class="details">
 
 Version Code: ${app.version_code}<br>
-
 Installed: ${date(app.installed_date)}<br>
-
 Last Used: ${date(app.last_used)}<br>
-
 Size: ${size(app.app_size_bytes)}<br>
-
 Usage Time: ${time(app.usage_time_ms)}
 
 </div>
 
 `;
 
-appsList.appendChild(div);
+appsGrid.appendChild(card);
 
 });
 
@@ -413,10 +472,8 @@ searchInput.oninput=function(){
 let s=this.value.toLowerCase();
 
 filtered=apps.filter(a=>
-
-a.app_name.toLowerCase().includes(s)
-|| a.package_name.toLowerCase().includes(s)
-
+a.app_name.toLowerCase().includes(s) ||
+a.package_name.toLowerCase().includes(s)
 );
 
 render();
@@ -432,7 +489,7 @@ function sortSizeHigh(){filtered.sort((a,b)=>b.app_size_bytes-a.app_size_bytes);
 function sortSizeLow(){filtered.sort((a,b)=>a.app_size_bytes-b.app_size_bytes);render();}
 function sortUsageHigh(){filtered.sort((a,b)=>b.usage_time_ms-a.usage_time_ms);render();}
 function sortUsageLow(){filtered.sort((a,b)=>a.usage_time_ms-b.usage_time_ms);render();}
-function reset(){filtered=[...apps];render();}
+function resetApps(){filtered=[...apps];render();}
 
 
 /* FORMAT */
@@ -441,6 +498,7 @@ function size(b){return (b/1048576).toFixed(2)+" MB";}
 function date(t){if(!t)return"Never";return new Date(t).toLocaleString();}
 function time(ms){let m=Math.floor(ms/60000);let h=Math.floor(m/60);return h+"h "+(m%60)+"m";}
 
+</script>
 
-</script></body>
+</body>
 </html>
