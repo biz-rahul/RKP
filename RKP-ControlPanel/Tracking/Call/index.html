@@ -2,9 +2,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Premium Call Analytics Viewer</title><style>
-
-/* ========== BASE ========== */
+<title>Call Analytics Viewer</title><style>
 
 body{
 background:#e0e5ec;
@@ -26,7 +24,7 @@ font-weight:600;
 }
 
 
-/* ========== NEUMORPHISM ========== */
+/* Neumorphic */
 
 .neu{
 background:#e0e5ec;
@@ -44,21 +42,16 @@ inset 4px 4px 8px #a3b1c6,
 inset -4px -4px 8px #ffffff;
 }
 
+.hidden{
+display:none;
+}
 
-/* ========== LOAD SECTION ========== */
+
+/* Inputs */
 
 .load{
 padding:20px;
 margin-bottom:20px;
-}
-
-.input-group{
-margin-bottom:20px;
-}
-
-label{
-font-weight:500;
-font-size:14px;
 }
 
 input, textarea{
@@ -99,11 +92,7 @@ inset -4px -4px 8px #ffffff;
 }
 
 
-/* ========== DASHBOARD ========== */
-
-.hidden{
-display:none;
-}
+/* Stats */
 
 .stats{
 display:grid;
@@ -122,126 +111,141 @@ font-size:22px;
 font-weight:bold;
 }
 
-.stat-label{
-font-size:13px;
-}
 
+/* Call Log */
 
-/* ========== CONTACT CARDS ========== */
-
-.contact{
-padding:15px;
-margin-bottom:15px;
-}
-
-.contact-header{
-display:flex;
-justify-content:space-between;
-cursor:pointer;
-}
-
-.contact-name{
+.section-label{
+margin:20px 0 10px 5px;
 font-weight:bold;
-}
-
-.call-list{
-margin-top:10px;
-padding-left:10px;
+opacity:0.7;
 }
 
 .call{
-font-size:13px;
-margin-bottom:6px;
-padding:8px;
-border-radius:10px;
-background:#e0e5ec;
-box-shadow:
-inset 3px 3px 6px #a3b1c6,
-inset -3px -3px 6px #ffffff;
+padding:12px;
+margin-bottom:10px;
+border-radius:15px;
 }
 
+.call-row{
+display:flex;
+justify-content:space-between;
+}
 
-/* ========== MOBILE OPTIMIZATION ========== */
+.call-name{
+font-weight:600;
+}
+
+.call-meta{
+font-size:13px;
+opacity:0.7;
+}
+
+.call-type{
+font-size:13px;
+margin-top:3px;
+}
+
+.incoming{color:#2ecc71;}
+.outgoing{color:#3498db;}
+.missed{color:#e74c3c;}
+.rejected{color:#e67e22;}
+.blocked{color:#7f8c8d;}
 
 @media(max-width:600px){
-
-body{
-padding:10px;
-}
-
-.title{
-font-size:20px;
-}
-
-.stat-value{
-font-size:18px;
-}
-
+.title{font-size:20px;}
 }
 
 </style></head>
-<body><div class="app"><h2 class="title">Premium Call Analytics Viewer</h2><!-- LOAD SECTION --><div id="loadSection" class="load neu"><div class="input-group"><label>Load from Link</label>
-
+<body><div class="app"><h2 class="title">Call Analytics Viewer</h2><div id="loadSection" class="load neu"><label>Load from Link</label>
 <input id="linkInput"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
-
 <button onclick="loadFromLink()">Load</button>
 
-</div><div class="input-group"><label>Paste JSON</label>
+<br><br>
+
+<label>Paste JSON</label>
 
 <textarea id="pasteInput"></textarea><button onclick="loadFromPaste()">Load</button>
 
-</div><div class="input-group"><label>Select JSON File</label>
+<br><br>
 
-<input type="file" id="fileInput" accept=".json"></div></div><!-- DASHBOARD --><div id="dashboard" class="hidden"><div class="stats"><div class="stat neu">
-<div id="statContacts" class="stat-value">0</div>
-<div class="stat-label">Contacts</div>
-</div><div class="stat neu">
-<div id="statCalls" class="stat-value">0</div>
-<div class="stat-label">Calls</div>
-</div><div class="stat neu">
-<div id="statDuration" class="stat-value">0</div>
-<div class="stat-label">Total Duration</div>
-</div></div><div id="contacts"></div></div></div><script>
+<label>Select File</label>
+<input type="file" id="fileInput" accept=".json">
 
-/* ===== DATA STORAGE ===== */
+</div><div id="dashboard" class="hidden"><div class="stats"><div class="stat neu">
+<div id="contacts" class="stat-value">0</div>
+Contacts
+</div><div class="stat neu">
+<div id="calls" class="stat-value">0</div>
+Calls
+</div><div class="stat neu">
+<div id="duration" class="stat-value">0</div>
+Duration
+</div></div><div id="callLog"></div></div></div><script>
 
 let DATA=[];
 
-const CALL_TYPES={
-1:"Incoming",
-2:"Outgoing",
-3:"Missed",
-5:"Rejected",
-6:"Blocked"
+const TYPE_MAP={
+1:{name:"Incoming",class:"incoming"},
+2:{name:"Outgoing",class:"outgoing"},
+3:{name:"Missed",class:"missed"},
+5:{name:"Rejected",class:"rejected"},
+6:{name:"Blocked",class:"blocked"}
 };
 
 
-/* ===== FORMAT FUNCTIONS ===== */
-
 function formatDuration(sec){
+
+if(sec===0) return "";
 
 let m=Math.floor(sec/60);
 let s=sec%60;
 
-return m+"m "+s+"s";
-
-}
-
-function formatDate(ts){
-
-return new Date(ts).toLocaleString();
+return m>0?`${m}m ${s}s`:`${s}s`;
 
 }
 
 
-/* ===== LOAD HANDLERS ===== */
+function formatTime(ts){
+
+let d=new Date(ts);
+
+return d.toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit"
+});
+
+}
+
+
+function getRelativeLabel(ts){
+
+let now=new Date();
+
+let date=new Date(ts);
+
+let diff=(now-date)/(1000*60*60*24);
+
+if(diff<1 && now.getDate()===date.getDate())
+return "Today";
+
+if(diff<2 && now.getDate()-date.getDate()===1)
+return "Yesterday";
+
+if(diff<=7)
+return "Last 7 Days";
+
+if(diff<=30)
+return "Last 30 Days";
+
+return "Older";
+
+}
+
 
 async function loadFromLink(){
 
-try{
-
-let url=document.getElementById("linkInput").value;
+let url=linkInput.value;
 
 let res=await fetch(url);
 
@@ -249,31 +253,17 @@ let text=await res.text();
 
 process(text);
 
-}catch{
-
-alert("Failed to load link");
-
 }
 
-}
 
 function loadFromPaste(){
 
-try{
-
-let json=document.getElementById("pasteInput").value;
-
-process(json);
-
-}catch{
-
-alert("Invalid JSON");
+process(pasteInput.value);
 
 }
 
-}
 
-document.getElementById("fileInput").onchange=e=>{
+fileInput.onchange=e=>{
 
 let reader=new FileReader();
 
@@ -284,37 +274,24 @@ reader.readAsText(e.target.files[0]);
 };
 
 
-/* ===== PROCESS ===== */
-
 function process(json){
-
-try{
 
 DATA=JSON.parse(json);
 
-document.getElementById("loadSection").style.display="none";
+loadSection.style.display="none";
 
-document.getElementById("dashboard").classList.remove("hidden");
+dashboard.classList.remove("hidden");
 
 renderStats();
 
-renderContacts();
-
-}catch{
-
-alert("Invalid JSON format");
+renderLogs();
 
 }
 
-}
-
-
-/* ===== STATS ===== */
 
 function renderStats(){
 
 let contacts=DATA.length;
-
 let calls=0;
 let duration=0;
 
@@ -329,61 +306,70 @@ duration+=call.duration;
 
 });
 
-document.getElementById("statContacts").innerText=contacts;
-
-document.getElementById("statCalls").innerText=calls;
-
-document.getElementById("statDuration").innerText=formatDuration(duration);
+document.getElementById("contacts").innerText=contacts;
+document.getElementById("calls").innerText=calls;
+document.getElementById("duration").innerText=formatDuration(duration);
 
 }
 
 
-/* ===== CONTACTS ===== */
+function renderLogs(){
 
-function renderContacts(){
+let allCalls=[];
+
+DATA.forEach(contact=>{
+
+contact.calls.forEach(call=>{
+
+allCalls.push({
+name:contact.name||"Unknown",
+number:contact.number,
+type:call.type,
+date:call.date,
+duration:call.duration
+});
+
+});
+
+});
+
+
+allCalls.sort((a,b)=>b.date-a.date);
 
 let html="";
+let lastLabel="";
 
-DATA.forEach((contact,i)=>{
+allCalls.forEach(call=>{
 
-let total=contact.calls.reduce((a,b)=>a+b.duration,0);
+let label=getRelativeLabel(call.date);
+
+if(label!==lastLabel){
+
+html+=`<div class="section-label">${label}</div>`;
+lastLabel=label;
+
+}
+
+let typeInfo=TYPE_MAP[call.type]||{name:"Unknown",class:""};
 
 html+=`
 
-<div class="contact neu">
+<div class="call neu">
 
-<div class="contact-header" onclick="toggle(${i})">
-
-<div>
-
-<div class="contact-name">${contact.name || "Unknown"}</div>
-<div>${contact.number}</div>
-
-</div>
+<div class="call-row">
 
 <div>
-
-${contact.calls.length} calls<br>
-${formatDuration(total)}
-
+<div class="call-name">${call.name}</div>
+<div class="call-meta">${call.number}</div>
+<div class="call-type ${typeInfo.class}">
+${typeInfo.name}
+${call.duration?`• ${formatDuration(call.duration)}`:""}
+</div>
 </div>
 
+<div class="call-meta">
+${formatTime(call.date)}
 </div>
-
-
-<div id="calls-${i}" class="call-list hidden">
-
-${contact.calls.map(call=>`
-
-<div class="call">
-
-${CALL_TYPES[call.type] || call.type}<br>
-${formatDate(call.date)}<br>
-${formatDuration(call.duration)}
-
-</div>
-
-`).join("")}
 
 </div>
 
@@ -393,16 +379,7 @@ ${formatDuration(call.duration)}
 
 });
 
-document.getElementById("contacts").innerHTML=html;
-
-}
-
-
-/* ===== TOGGLE ===== */
-
-function toggle(i){
-
-document.getElementById("calls-"+i).classList.toggle("hidden");
+callLog.innerHTML=html;
 
 }
 
