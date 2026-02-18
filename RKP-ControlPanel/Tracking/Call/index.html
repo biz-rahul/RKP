@@ -335,6 +335,64 @@ minute:"2-digit"
 }
 
 
+function filterMissed(){
+
+let calls=getAllCalls();
+
+calls=calls.filter(call=>call.type==3);
+
+calls.sort((a,b)=>b.date-a.date);
+
+renderFromCallArray(calls);
+
+}
+
+
+
+function filterIncoming(){
+
+let calls=getAllCalls();
+
+calls=calls.filter(call=>call.type==1);
+
+calls.sort((a,b)=>b.date-a.date);
+
+renderFromCallArray(calls);
+
+}
+
+
+
+function filterOutgoing(){
+
+let calls=getAllCalls();
+
+calls=calls.filter(call=>call.type==2);
+
+calls.sort((a,b)=>b.date-a.date);
+
+renderFromCallArray(calls);
+
+}
+
+
+
+function filterUnknown(){
+
+let calls=getAllCalls();
+
+calls=calls.filter(call=>
+!call.name ||
+call.name.toLowerCase()=="unknown" ||
+call.name.trim()==""
+);
+
+calls.sort((a,b)=>b.date-a.date);
+
+renderFromCallArray(calls);
+
+}
+
 
 function getAllCalls(){
 
