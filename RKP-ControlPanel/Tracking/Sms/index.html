@@ -211,11 +211,36 @@ Paste JSON
 Select File
 <input type="file" id="fileInput">
 
-</div></div><!-- APP --><div id="app"><div id="threadList"></div><div id="messageView"><div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
+</div></div><!-- APP --><div id="app">
+  <div id="statsBar" style="padding:10px;font-weight:600;"></div>
+  <button onclick="openSearch()">Search</button>
+<div id="searchBox" style="display:none">
+<input id="searchInput">
+<button onclick="searchContact()">Contact</button>
+<button onclick="searchMessage()">Message</button>
+</div>
+  <button onclick="filterReal()">Real Person</button>
+  <button onclick="filterBank()">Bank</button>
+  <button onclick="filterDate('today')">Today</button>
+<button onclick="filterDate('yesterday')">Yesterday</button>
+<button onclick="filterDate('week')">This Week</button>
+<button onclick="filterDate('month')">This Month</button>
+<button onclick="resetFilters()">All</button>
+
+
+
+
+  <div id="threadList">
+    
+  </div><div id="messageView"><div class="header neu"><img src="back.png" onclick="showThreads()"><img src="hacker.png" class="contactIcon"><div id="contactName"></div></div><div id="messages"></div></div></div><script>
 
 /* ---------- GLOBAL ---------- */
 
 let data=[];
+let filteredData = [];
+let currentFilter = "all";
+let totalMessages = 0;
+
 
 /* ---------- LOAD ---------- */
 
@@ -226,6 +251,149 @@ app.style.display="flex";
 
 }
 
+function getDisplayName(thread){
+
+if(thread.name && thread.name !== "Unknown")
+return thread.name;
+
+return thread.address;
+
+}
+
+function filterDate(type){
+
+filteredData = data.filter(thread=>{
+
+let last = Math.max(...thread.messages.map(m=>m.date));
+
+return isInDateFilter(last,type);
+
+});
+
+renderThreads();
+
+}
+
+function openSearch(){
+searchBox.style.display="block";
+}
+
+function searchContact(){
+
+let q = searchInput.value.toLowerCase();
+
+filteredData = data.filter(t=>
+t.address.toLowerCase().includes(q) ||
+getDisplayName(t).toLowerCase().includes(q)
+);
+
+renderThreads();
+
+}
+
+function resetFilters(){
+
+filteredData=[];
+
+renderThreads();
+
+}
+
+
+function searchMessage(){
+
+let q = searchInput.value.toLowerCase();
+
+filteredData = data.filter(t=>
+t.messages.some(m=>m.body.toLowerCase().includes(q))
+);
+
+renderThreads();
+
+}
+
+function updateCounts(){
+
+let contacts = (filteredData.length || data.length);
+
+let messages = (filteredData.length || data)
+.reduce((sum,t)=>sum+t.messages.length,0);
+
+statsBar.innerText =
+`Contacts: ${contacts}   Messages: ${messages}`;
+
+}
+
+  
+function isRealPerson(address){
+
+let normalized = address
+.replace(/\s+/g,"")
+.replace(/-/g,"")
+.replace(/\(/g,"")
+.replace(/\)/g,"");
+
+return /^\+\d{8,15}$/.test(normalized);
+
+}
+
+function filterBank(){
+
+filteredData = data.filter(t=>isBankThread(t));
+
+renderThreads();
+
+}
+
+function isBankThread(thread){
+
+let keywords = [
+"bank","upi","credited","debited",
+"account","a/c","transaction","payment"
+];
+
+return thread.messages.some(msg=>{
+
+let text = msg.body.toLowerCase();
+
+return keywords.some(k=>text.includes(k));
+
+});
+
+}
+
+function filterReal(){
+
+filteredData = data.filter(t=>isRealPerson(t.address));
+
+renderThreads();
+
+}
+
+function isInDateFilter(timestamp,filter){
+
+let now = new Date();
+let msgDate = new Date(timestamp);
+
+let diffDays = (now - msgDate)/(1000*60*60*24);
+
+if(filter=="today")
+return msgDate.toDateString()==now.toDateString();
+
+if(filter=="yesterday")
+return diffDays>=1 && diffDays<2;
+
+if(filter=="week")
+return diffDays<=7;
+
+if(filter=="month")
+return diffDays<=30;
+
+return true;
+
+}
+
+  
 function loadJSON(text){
 
 data=JSON.parse(text);
@@ -289,7 +457,9 @@ function renderThreads(){
 
 threadList.innerHTML="";
 
-let sorted=[...data].sort((a,b)=>{
+let source = filteredData.length ? filteredData : data;
+
+let sorted=[...source].sort((a,b)=>{
 
 return Math.max(...b.messages.map(m=>m.date))
 -
@@ -301,15 +471,22 @@ sorted.forEach(thread=>{
 
 let last=thread.messages.reduce((a,b)=>a.date>b.date?a:b);
 
+let name = getDisplayName(thread);
+
 let div=document.createElement("div");
 div.className="thread neu";
 
 div.innerHTML=`
-<img src="hacker.png">
+<img src="contact.png" class="contactIcon">
+
 <div class="threadContent">
-<div class="threadName">${thread.name||thread.address}</div>
+
+<div class="threadName">${name}</div>
+
 <div class="threadPreview">${last.body.substring(0,60)}</div>
+
 </div>
+
 <div class="threadTime">${formatListTime(last.date)}</div>
 `;
 
@@ -319,7 +496,10 @@ threadList.appendChild(div);
 
 });
 
+updateCounts();
+
 }
+
 
 /* ---------- OPEN THREAD ---------- */
 
@@ -328,7 +508,17 @@ function openThread(thread){
 threadList.style.display="none";
 messageView.style.display="flex";
 
-contactName.innerText=thread.name||thread.address;
+let display = getDisplayName(thread);
+
+contactName.innerHTML =
+display +
+"<div style='font-size:13px;opacity:0.7'>" +
+thread.address +
+"</div>" +
+"<div style='font-size:12px;opacity:0.6'>" +
+"Messages: "+thread.messages.length +
+"</div>";
+
 
 messages.innerHTML="";
 
