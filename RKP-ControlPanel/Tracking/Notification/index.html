@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Notification Intelligence Viewer Pro</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<header>
+<h1>Notification Intelligence Viewer Pro</h1>
+</header>
+
+<div class="container">
+
+<div class="panel">
+
+<h3>Data Input</h3>
+
+<textarea id="jsonPaste" placeholder="Paste JSON here"></textarea>
+
+<button onclick="loadPaste()">Paste JSON</button>
+
+<input type="file" id="fileInput">
+
+<button onclick="loadFile()">Upload File</button>
+
+<input type="text" id="urlInput" placeholder="GitHub Raw URL">
+
+<button onclick="loadURL()">Fetch from GitHub</button>
+
+</div>
+
+<div class="panel">
+
+<h3>Advanced Filters</h3>
+
+<input id="searchBox" placeholder="Search text, sender, message">
+
+<select id="appFilter"></select>
+
+<select id="categoryFilter"></select>
+
+<input type="date" id="dateFrom">
+
+<input type="date" id="dateTo">
+
+<button onclick="applyFilters()">Apply Filters</button>
+<button onclick="clearFilters()">Clear Filters</button>
+
+</div>
+
+<div class="panel stats" id="stats"></div>
+
+<div class="panel">
+
+<h3>View Mode</h3>
+
+<button onclick="setView('card')">Card</button>
+<button onclick="setView('table')">Table</button>
+<button onclick="setView('chat')">Chat</button>
+<button onclick="setView('timeline')">Timeline</button>
+
+</div>
+
+<div id="viewer"></div>
+
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>
