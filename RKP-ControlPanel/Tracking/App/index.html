@@ -2,20 +2,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apps Viewer</title><style>
+<title>Apps Viewer Elite Hacker</title><style>
 
 /* GLOBAL */
-
-*{
-box-sizing:border-box;
-}
 
 body{
 margin:0;
 background:#02030a;
 color:#00ffd5;
 font-family:Consolas,monospace;
-min-height:100vh;
+}
+
+.hidden{
+display:none;
 }
 
 
@@ -28,110 +27,117 @@ text-align:center;
 
 .title{
 font-size:28px;
-margin-bottom:25px;
+margin-bottom:20px;
 background:linear-gradient(90deg,#00ffd5,#00ff88);
 -webkit-background-clip:text;
 color:transparent;
 font-weight:bold;
+letter-spacing:2px;
 }
-
-
-/* BUTTONS */
 
 .btn{
 width:100%;
-padding:16px;
+padding:15px;
 margin-top:12px;
 border:none;
-border-radius:12px;
-font-size:16px;
-font-weight:bold;
+border-radius:10px;
 background:linear-gradient(45deg,#00ffd5,#00ff88);
 color:black;
-cursor:pointer;
+font-weight:bold;
+font-size:16px;
 }
 
-.btn:active{
-transform:scale(0.97);
-}
-
-
-/* INPUT BOX */
-
-.inputArea{
-margin-top:15px;
-display:none;
-}
-
-input,textarea{
+input,textarea,select{
 width:100%;
-padding:14px;
+padding:12px;
 margin-top:10px;
-border-radius:10px;
+background:#01020a;
 border:1px solid #00ffd5;
-background:#02030a;
 color:#00ffd5;
-font-family:Consolas;
+border-radius:8px;
 }
 
 textarea{
-height:140px;
-}
-
-
-/* APPS SCREEN */
-
-#appsScreen{
-display:none;
+height:120px;
 }
 
 
 /* TOP BAR */
 
-.topBar{
-padding:15px;
-background:#02030a;
+#topBar{
+padding:10px;
+background:#01020a;
 border-bottom:1px solid #00ffd5;
 position:sticky;
 top:0;
+z-index:100;
 }
 
-.count{
-color:#00ff88;
+.search{
+width:100%;
+margin-bottom:8px;
+}
+
+.filters{
+display:flex;
+gap:5px;
 }
 
 
-/* APP CARD */
+/* APP LIST */
 
 .app{
-padding:14px;
+display:flex;
+gap:12px;
+padding:12px;
 border-bottom:1px solid #003a3a;
+cursor:pointer;
 }
 
-.appName{
-font-size:18px;
+.app:hover{
+background:#001a1a;
+}
+
+.icon{
+width:50px;
+height:50px;
+background:#00ffd5;
+border-radius:10px;
+}
+
+.info{
+flex:1;
+}
+
+.name{
 color:#00ff88;
+font-size:17px;
 font-weight:bold;
 }
 
 .package{
 font-size:12px;
 color:#00ffd5;
-margin-bottom:6px;
 }
 
-.meta{
+.version{
+font-size:12px;
+color:#8afff3;
+}
+
+.details{
 font-size:13px;
 color:#8afff3;
-line-height:1.5;
+margin-top:8px;
+display:none;
 }
 
 
-/* MOBILE OPTIMIZATION */
+/* MOBILE */
 
 @media(min-width:700px){
 
-#appsScreen{
+#viewer{
 max-width:600px;
 margin:auto;
 }
@@ -144,84 +150,89 @@ margin:auto;
 }
 
 </style></head>
-<body><!-- INPUT SCREEN --><div id="inputScreen"><div class="title">APPS VIEWER ELITE</div><button class="btn" onclick="showLink()">Load from Link</button>
+<body><!-- INPUT SCREEN --><div id="inputScreen"><div class="title">APPS DATABASE</div><button class="btn" onclick="showLink()">LOAD FROM LINK</button>
 
-<button class="btn" onclick="showText()">Paste JSON Text</button>
+<button class="btn" onclick="showText()">PASTE JSON</button>
 
-<button class="btn" onclick="fileInput.click()">Select JSON File</button>
+<button class="btn" onclick="fileInput.click()">SELECT FILE</button>
 
-<input type="file" id="fileInput" accept=".json" style="display:none"><div id="linkArea" class="inputArea"><input id="linkBox" placeholder="Paste GitHub Raw JSON Link"><button class="btn" onclick="loadLink()">LOAD</button>
-
-</div><div id="textArea" class="inputArea"><textarea id="textBox" placeholder="Paste JSON text here"></textarea><button class="btn" onclick="loadText()">LOAD</button>
-
-</div></div><!-- APPS SCREEN --><div id="appsScreen"><div class="topBar">Apps Loaded: <span id="count" class="count"></span>
-
-</div><div id="appsList"></div></div><script>
-
+<input type="file" id="fileInput" hidden><div id="linkBox" class="hidden">
+<input id="linkInput" placeholder="GitHub Raw JSON Link">
+<button class="btn" onclick="loadLink()">LOAD</button>
+</div><div id="textBox" class="hidden">
+<textarea id="textInput"></textarea>
+<button class="btn" onclick="loadText()">LOAD</button>
+</div></div><!-- VIEWER --><div id="viewer" class="hidden"><div id="topBar"><input class="search" id="searchInput" placeholder="Search app..."><div class="filters"><select id="sizeFilter">
+<option value="">Size Filter</option>
+<option value="small">< 10 MB</option>
+<option value="medium">10–100 MB</option>
+<option value="large">> 100 MB</option>
+</select><select id="usageFilter">
+<option value="">Usage Filter</option>
+<option value="unused">Unused</option>
+<option value="low">< 1 hr</option>
+<option value="high">> 1 hr</option>
+</select><select id="dateFilter">
+<option value="">Date Filter</option>
+<option value="new">Newest</option>
+<option value="old">Oldest</option>
+</select></div></div><div id="appsList"></div></div><script>
 
 let apps=[];
+let filtered=[];
 
 
-/* SHOW INPUT */
+/* INPUT UI */
 
 function showLink(){
 
 hideInputs();
-document.getElementById("linkArea").style.display="block";
+linkBox.classList.remove("hidden");
 
 }
 
 function showText(){
 
 hideInputs();
-document.getElementById("textArea").style.display="block";
+textBox.classList.remove("hidden");
 
 }
 
 function hideInputs(){
 
-document.getElementById("linkArea").style.display="none";
-document.getElementById("textArea").style.display="none";
+linkBox.classList.add("hidden");
+textBox.classList.add("hidden");
 
 }
 
 
-/* LOAD FROM LINK */
+/* LOAD METHODS */
 
 async function loadLink(){
 
 try{
 
-const url=document.getElementById("linkBox").value.trim();
+let url=linkInput.value.trim();
 
-if(!url) throw "Enter link";
+let res=await fetch(url);
 
-const res=await fetch(url);
-
-if(!res.ok) throw "Link failed";
-
-const data=await res.json();
+let data=await res.json();
 
 process(data);
 
-}catch(e){
+}catch{
 
-alert("Error loading link");
-
-}
+alert("Link failed");
 
 }
 
-
-/* LOAD FROM TEXT */
+}
 
 function loadText(){
 
 try{
 
-const text=document.getElementById("textBox").value;
-
-const data=JSON.parse(text);
+let data=JSON.parse(textInput.value);
 
 process(data);
 
@@ -233,30 +244,15 @@ alert("Invalid JSON");
 
 }
 
-
-/* LOAD FROM FILE */
-
 fileInput.onchange=function(){
 
-const file=this.files[0];
+let file=this.files[0];
 
-if(!file) return;
-
-const reader=new FileReader();
+let reader=new FileReader();
 
 reader.onload=function(){
 
-try{
-
-const data=JSON.parse(reader.result);
-
-process(data);
-
-}catch{
-
-alert("Invalid file");
-
-}
+process(JSON.parse(reader.result));
 
 };
 
@@ -269,19 +265,11 @@ reader.readAsText(file);
 
 function process(data){
 
-if(!Array.isArray(data)){
-
-alert("Invalid apps format");
-return;
-
-}
-
 apps=data;
+filtered=[...apps];
 
-document.getElementById("inputScreen").style.display="none";
-document.getElementById("appsScreen").style.display="block";
-
-document.getElementById("count").innerText=apps.length;
+inputScreen.style.display="none";
+viewer.classList.remove("hidden");
 
 render();
 
@@ -292,25 +280,36 @@ render();
 
 function render(){
 
-const list=document.getElementById("appsList");
+appsList.innerHTML="";
 
-list.innerHTML="";
+filtered.forEach((app,i)=>{
 
-apps.forEach(app=>{
-
-const div=document.createElement("div");
+let div=document.createElement("div");
 
 div.className="app";
 
+div.onclick=function(){
+
+let d=this.querySelector(".details");
+
+d.style.display=d.style.display=="block"?"none":"block";
+
+};
+
 div.innerHTML=`
 
-<div class="appName">${safe(app.app_name)}</div>
+<div class="icon"></div>
+
+<div class="info">
+
+<div class="name">${safe(app.app_name)}</div>
 
 <div class="package">${safe(app.package_name)}</div>
 
-<div class="meta">
+<div class="version">Version: ${safe(app.version_name)}</div>
 
-Version Name: ${safe(app.version_name)}<br>
+<div class="details">
+
 Version Code: ${safe(app.version_code)}<br>
 Installed: ${date(app.installed_date)}<br>
 Last Used: ${date(app.last_used)}<br>
@@ -321,26 +320,85 @@ Usage Minutes: ${safe(app.usage_minutes)}
 
 </div>
 
+</div>
+
 `;
 
-list.appendChild(div);
+appsList.appendChild(div);
 
 });
 
 }
 
 
-/* FORMAT */
+/* SEARCH */
 
-function safe(v){
+searchInput.oninput=function(){
 
-return v??"N/A";
+filterAll();
+
+};
+
+
+/* FILTERS */
+
+sizeFilter.onchange=filterAll;
+usageFilter.onchange=filterAll;
+dateFilter.onchange=filterAll;
+
+
+function filterAll(){
+
+let s=searchInput.value.toLowerCase();
+
+filtered=apps.filter(app=>{
+
+if(s && !app.app_name.toLowerCase().includes(s)
+&& !app.package_name.toLowerCase().includes(s))
+return false;
+
+
+/* SIZE */
+
+let sizeMB=app.app_size_bytes/1048576;
+
+if(sizeFilter.value=="small" && sizeMB>=10) return false;
+if(sizeFilter.value=="medium" && (sizeMB<10||sizeMB>100)) return false;
+if(sizeFilter.value=="large" && sizeMB<=100) return false;
+
+
+/* USAGE */
+
+let hr=app.usage_time_ms/3600000;
+
+if(usageFilter.value=="unused" && hr>0) return false;
+if(usageFilter.value=="low" && hr>=1) return false;
+if(usageFilter.value=="high" && hr<1) return false;
+
+return true;
+
+});
+
+
+/* DATE SORT */
+
+if(dateFilter.value=="new")
+filtered.sort((a,b)=>b.installed_date-a.installed_date);
+
+if(dateFilter.value=="old")
+filtered.sort((a,b)=>a.installed_date-b.installed_date);
+
+
+render();
 
 }
 
-function size(b){
 
-if(!b) return "0 MB";
+/* FORMAT */
+
+function safe(v){return v??"N/A";}
+
+function size(b){
 
 return (b/1048576).toFixed(2)+" MB";
 
@@ -348,7 +406,7 @@ return (b/1048576).toFixed(2)+" MB";
 
 function date(t){
 
-if(!t||t==0) return "Never";
+if(!t||t==0)return"Never";
 
 return new Date(t).toLocaleString();
 
@@ -356,15 +414,13 @@ return new Date(t).toLocaleString();
 
 function time(ms){
 
-if(!ms) return "0h 0m";
-
 let m=Math.floor(ms/60000);
+
 let h=Math.floor(m/60);
 
 return h+"h "+(m%60)+"m";
 
 }
-
 
 </script></body>
 </html>
