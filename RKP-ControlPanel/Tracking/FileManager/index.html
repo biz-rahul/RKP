@@ -1,5 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
+Kya maine sahi se update Kiya hai. Check karo. 
+
+
+
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -152,160 +155,22 @@ font-size:22px;
 }
 
 </style></head>
-<body>
-<!-- HEADER -->
-
-<div class="header">
+<body><div class="header">
 Apps Analytics Viewer
-</div>
-
-<!-- INPUT PANEL -->
-
-<div id="inputPanel" class="neu-card">
-
-<div>Load from Link</div>
-
-<input type="text"
-id="linkInput"
-class="neu-inset"
+</div><div id="inputPanel" class="neu-card"><div class="label">Load from Link</div><input class="neu-inset" type="text" id="linkInput"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
 <button class="neu-button" onclick="loadFromLink()">Load</button>
 
-<div>Paste JSON</div>
+<div class="label">Paste JSON</div><textarea class="neu-inset" id="pasteInput"></textarea><button class="neu-button" onclick="loadFromPaste()">Load</button>
 
-<textarea id="pasteInput" class="neu-inset"></textarea>
-
-<button class="neu-button" onclick="loadFromPaste()">Load</button>
-
-<div>Select File</div>
-
-<input type="file" id="fileInput" class="neu-inset">
-
-</div>
-
-<!-- EXPLORER -->
-
-<div id="explorerContainer">
-
-<!-- TOOLBAR -->
-
-<div id="toolbar" class="neu-card">
-
-<img src="icons/back.png" id="backBtn" width="30">
-
-<img src="icons/forward.png" id="forwardBtn" width="30">
-
-<input type="text"
-id="searchInput"
-class="neu-inset"
-placeholder="Search entire storage">
-
-<button id="searchBtn" class="neu-button">Search</button>
-
-<select id="viewMode" class="neu-inset">
-<option value="list">List</option>
-<option value="grid">Grid</option>
-<option value="compact">Compact</option>
-</select>
-
-<label>
-<input type="checkbox" id="hiddenToggle">
-Show Hidden
-</label>
-
-<button id="visualBtn" class="neu-button">Visualization</button>
-
-<button id="largestBtn" class="neu-button">Top 100 Largest</button>
-
-<button id="duplicateBtn" class="neu-button">Duplicates</button>
-
-<button id="statsBtn" class="neu-button">Extension Stats</button>
-
-</div>
-
-<!-- BREADCRUMB -->
-
-<div id="breadcrumbBar" class="neu-card"></div>
-
-<!-- FILTER BAR -->
-
-<div id="filterBar" class="neu-card">
-
-<select id="timeFilter" class="neu-inset">
-<option value="">All Time</option>
-<option value="24h">Last 24 Hours</option>
-<option value="7d">Last 7 Days</option>
-<option value="1m">Last 1 Month</option>
-<option value="1y">Last 1 Year</option>
-<option value="older">Older than 1 Year</option>
-<option value="custom">Custom</option>
-</select>
-
-<input type="date" id="dateFrom" class="neu-inset">
-
-<input type="date" id="dateTo" class="neu-inset">
-
-<select id="sizeFilter" class="neu-inset">
-<option value="">All Sizes</option>
-<option value="1gb">Greater than 1GB</option>
-<option value="500mb">Greater than 500MB</option>
-<option value="custom">Custom</option>
-</select>
-
-<input type="number" id="sizeMin" class="neu-inset" placeholder="Min bytes">
-
-<input type="number" id="sizeMax" class="neu-inset" placeholder="Max bytes">
-
-<select id="typeFilter" class="neu-inset">
-<option value="">All Types</option>
-<option value="pdf">PDF</option>
-<option value="jpg">Image</option>
-<option value="png">Image</option>
-<option value="mp4">Video</option>
-<option value="apk">APK</option>
-<option value="zip">ZIP</option>
-<option value="mp3">Audio</option>
-<option value="json">JSON</option>
-<option value="txt">Text</option>
-</select>
-
-</div>
-
-<!-- FILE VIEWER -->
-
-<div id="viewer" class="neu-card"></div>
-
-<!-- PANELS -->
-
-<div id="detailsPanel" class="neu-card"></div>
-
-<div id="visualPanel" class="neu-card"></div>
-
-<div id="statsPanel" class="neu-card"></div>
-
-</div>
-    
-<script>
+<div class="label">Select File</div><input class="neu-inset" type="file" id="fileInput"></div><div id="viewer"></div><script>
 
 /* ================= STATE ================= */
 
 let fileIndex = {};
 let childrenMap = {};
 let currentPath = "/storage/emulated/0";
-
-let historyStack = [];
-let historyIndex = -1;
-
-let showHidden = false;
-
-let currentFilter = {
-type:null,
-sizeMin:null,
-sizeMax:null,
-time:null
-};
-
 
 /* ================= FILE INPUT ================= */
 
@@ -324,6 +189,37 @@ reader.readAsText(file);
 });
 
 
+function calculateFolderSize(folderPath){
+
+let total = 0;
+
+const stack = [folderPath];
+
+while(stack.length){
+
+const current = stack.pop();
+
+const children = childrenMap[current] || [];
+
+children.forEach(item=>{
+
+if(item.directory){
+
+stack.push(item.path);
+
+}else{
+
+total += item.size || 0;
+
+}
+
+});
+
+}
+
+return total;
+
+}
 /* ================= LOAD METHODS ================= */
 
 function loadFromLink(){
@@ -341,7 +237,6 @@ processJSON(document.getElementById("pasteInput").value);
 
 }
 
-
 /* ================= PROCESS JSON ================= */
 
 function processJSON(text){
@@ -357,19 +252,20 @@ return;
 
 buildFileSystem(data);
 
-document.getElementById("inputPanel").style.display="none";
-
-document.getElementById("explorerContainer").style.display="block";
-
-if(!childrenMap[currentPath])
-currentPath="/";
+hideInput();
 
 renderDirectory(currentPath);
 
-buildStats();
-
 }
 
+/* ================= HIDE INPUT ================= */
+
+function hideInput(){
+
+document.getElementById("inputPanel").style.display="none";
+document.getElementById("viewer").style.display="block";
+
+}
 
 /* ================= BUILD FILESYSTEM ================= */
 
@@ -380,30 +276,44 @@ childrenMap = {};
 
 data.forEach(item=>{
 
-item.directory = item.is_directory;
-item.hidden = item.is_hidden;
-item.last_modified = item.modified || 0;
-
 fileIndex[item.path] = item;
 
-let parts = item.path.split("/").filter(Boolean);
+// create full parent chain
+let pathParts = item.path.split("/").filter(Boolean);
 
-for(let i=0;i<parts.length;i++){
+for(let i=0;i<pathParts.length;i++){
 
-let parent = "/" + parts.slice(0,i).join("/");
-let child = "/" + parts.slice(0,i+1).join("/");
+let parent = "/" + pathParts.slice(0,i).join("/");
+
+let child = "/" + pathParts.slice(0,i+1).join("/");
 
 if(parent==="") parent="/";
 
 if(!childrenMap[parent])
 childrenMap[parent]=[];
 
-let existing=fileIndex[child];
+if(!childrenMap[parent].some(x=>x.path===child)){
 
-if(existing && !childrenMap[parent].some(x=>x.path===child)){
+// create virtual folder if missing
+let existing = fileIndex[child];
+
+if(existing){
 
 childrenMap[parent].push(existing);
 
+}else{
+
+childrenMap[parent].push({
+name:pathParts[i],
+path:child,
+directory:true,
+size:0,
+hidden:false,
+virtual:true
+});
+
+}
+
 }
 
 }
@@ -412,176 +322,60 @@ childrenMap[parent].push(existing);
 
 }
 
+/* ================= GET PARENT ================= */
 
-/* ================= FOLDER SIZE ================= */
+function getParent(path){
 
-function calculateFolderSize(path){
+if(path==="/") return null;
 
-let total=0;
+let parts = path.split("/").filter(Boolean);
 
-let stack=[path];
+parts.pop();
 
-while(stack.length){
-
-let current=stack.pop();
-
-(childrenMap[current]||[]).forEach(item=>{
-
-if(item.directory)
-stack.push(item.path);
-else
-total+=item.size||0;
-
-});
+return parts.length ? "/" + parts.join("/") : "/";
 
 }
-
-return total;
-
-}
-
-
-/* ================= HISTORY ================= */
-
-function pushHistory(path){
-
-historyStack=historyStack.slice(0,historyIndex+1);
-
-historyStack.push(path);
-
-historyIndex++;
-
-}
-
-document.getElementById("backBtn").onclick=function(){
-
-if(historyIndex>0){
-
-historyIndex--;
-
-renderDirectory(historyStack[historyIndex],false);
-
-}
-
-};
-
-document.getElementById("forwardBtn").onclick=function(){
-
-if(historyIndex<historyStack.length-1){
-
-historyIndex++;
-
-renderDirectory(historyStack[historyIndex],false);
-
-}
-
-};
-
-
-/* ================= BREADCRUMB ================= */
-
-function renderBreadcrumb(path){
-
-const bar=document.getElementById("breadcrumbBar");
-
-bar.innerHTML="";
-
-let parts=path.split("/").filter(Boolean);
-
-let current="";
-
-let root=document.createElement("span");
-
-root.innerText="/";
-
-root.onclick=()=>renderDirectory("/");
-
-root.style.cursor="pointer";
-
-bar.appendChild(root);
-
-parts.forEach(part=>{
-
-current+="/"+part;
-
-bar.innerHTML+=" / ";
-
-let btn=document.createElement("span");
-
-btn.innerText=part;
-
-btn.style.cursor="pointer";
-
-btn.onclick=()=>renderDirectory(current);
-
-bar.appendChild(btn);
-
-});
-
-}
-
-
-/* ================= FILTER ================= */
-
-function applyFilters(list){
-
-return list.filter(item=>{
-
-if(!showHidden && item.hidden)
-return false;
-
-if(currentFilter.type){
-
-if(!item.name.toLowerCase().endsWith(currentFilter.type))
-return false;
-
-}
-
-if(currentFilter.sizeMin!=null){
-
-let size=item.directory?
-calculateFolderSize(item.path):item.size;
-
-if(size<currentFilter.sizeMin)
-return false;
-
-}
-
-if(currentFilter.sizeMax!=null){
-
-let size=item.directory?
-calculateFolderSize(item.path):item.size;
-
-if(size>currentFilter.sizeMax)
-return false;
-
-}
-
-return true;
-
-});
-
-}
-
 
 /* ================= RENDER ================= */
 
-function renderDirectory(path,addHistory=true){
+function renderDirectory(path){
 
-currentPath=path;
-
-if(addHistory)
-pushHistory(path);
-
-renderBreadcrumb(path);
+currentPath = path;
 
 const viewer=document.getElementById("viewer");
 
 viewer.innerHTML="";
 
-let list=childrenMap[path]||[];
+const card=document.createElement("div");
 
-list=applyFilters(list);
+card.className="file-card neu-card";
+
+/* ===== BACK BUTTON ===== */
+
+if(path !== "/"){
+
+const back=document.createElement("div");
+
+back.className="file-row neu-inset back-button";
+
+back.innerHTML="....";
+
+back.onclick=()=>{
+
+const parent=getParent(currentPath);
+
+if(parent!==null)
+renderDirectory(parent);
+
+};
+
+card.appendChild(back);
+
+}
+
+/* ===== FILE LIST ===== */
+
+let list = childrenMap[path] || [];
 
 list.sort((a,b)=>{
 
@@ -592,76 +386,44 @@ return a.name.localeCompare(b.name);
 
 });
 
-if(path!="/"){
-
-let back=document.createElement("div");
-
-back.className="file-row";
-
-back.innerHTML="....";
-
-back.onclick=()=>{
-
-let parent=getParent(path);
-
-if(parent) renderDirectory(parent);
-
-};
-
-viewer.appendChild(back);
-
-}
-
 list.forEach(item=>{
 
-let row=document.createElement("div");
+const row=document.createElement("div");
 
-row.className="file-row";
+row.className="file-row neu-inset";
 
 row.innerHTML=`
 
 <div>
+
+<div class="${item.directory?'folder':'file'}">
+
 ${item.directory?'📁':'📄'} ${item.name}
+
 </div>
 
-<div>
-${formatSize(item.directory?
-calculateFolderSize(item.path):
-item.size)}
+<div class="path">${item.path}</div>
+
+</div>
+
+<div class="${item.hidden?'hidden':''}">
+${item.directory 
+    ? formatSize(calculateFolderSize(item.path)) 
+    : formatSize(item.size)}
 </div>
 
 `;
 
-row.onclick=()=>{
-
 if(item.directory)
-renderDirectory(item.path);
-else
-showDetails(item);
+row.onclick=()=>renderDirectory(item.path);
 
-};
-
-viewer.appendChild(row);
+card.appendChild(row);
 
 });
 
-}
-
-
-/* ================= GET PARENT ================= */
-
-function getParent(path){
-
-if(path=="/") return null;
-
-let parts=path.split("/").filter(Boolean);
-
-parts.pop();
-
-return parts.length?"/"+parts.join("/"):"/";
+viewer.appendChild(card);
 
 }
-
 
 /* ================= SIZE FORMAT ================= */
 
@@ -675,199 +437,5 @@ return size+" B";
 
 }
 
-
-/* ================= SEARCH ================= */
-
-document.getElementById("searchBtn").onclick=function(){
-
-let query=document.getElementById("searchInput").value.toLowerCase();
-
-let results=Object.values(fileIndex)
-.filter(item=>item.name.toLowerCase().includes(query));
-
-showResults(results);
-
-};
-
-function showResults(results){
-
-const viewer=document.getElementById("viewer");
-
-viewer.innerHTML="";
-
-results.forEach(item=>{
-
-let row=document.createElement("div");
-
-row.className="file-row";
-
-row.innerHTML=item.name;
-
-row.onclick=()=>{
-
-if(item.directory)
-renderDirectory(item.path);
-else
-showDetails(item);
-
-};
-
-viewer.appendChild(row);
-
-});
-
-}
-
-
-/* ================= DETAILS ================= */
-
-function showDetails(item){
-
-const panel=document.getElementById("detailsPanel");
-
-panel.style.display="block";
-
-panel.innerHTML=`
-
-<h3>${item.name}</h3>
-
-Path: ${item.path}<br>
-
-Size: ${formatSize(item.directory?
-calculateFolderSize(item.path):
-item.size)}<br>
-
-Modified: ${new Date(item.last_modified)}<br>
-
-<button onclick="navigator.clipboard.writeText('${item.path}')">
-Copy Path
-</button>
-
-`;
-
-}
-
-
-/* ================= LARGEST FILES ================= */
-
-document.getElementById("largestBtn").onclick=function(){
-
-let files=Object.values(fileIndex)
-.filter(x=>!x.directory)
-.sort((a,b)=>b.size-a.size)
-.slice(0,100);
-
-showResults(files);
-
-};
-
-
-/* ================= DUPLICATES ================= */
-
-document.getElementById("duplicateBtn").onclick=function(){
-
-let map={};
-
-Object.values(fileIndex).forEach(file=>{
-
-if(file.directory) return;
-
-let key=file.size+"_"+file.name;
-
-if(!map[key]) map[key]=[];
-
-map[key].push(file);
-
-});
-
-let dup=[];
-
-Object.values(map).forEach(list=>{
-
-if(list.length>1)
-dup.push(...list);
-
-});
-
-showResults(dup);
-
-};
-
-
-/* ================= HIDDEN TOGGLE ================= */
-
-document.getElementById("hiddenToggle").onchange=function(){
-
-showHidden=this.checked;
-
-renderDirectory(currentPath);
-
-};
-
-
-/* ================= TYPE FILTER ================= */
-
-document.getElementById("typeFilter").onchange=function(){
-
-currentFilter.type=this.value||null;
-
-renderDirectory(currentPath);
-
-};
-
-
-/* ================= SIZE FILTER ================= */
-
-document.getElementById("sizeFilter").onchange=function(){
-
-if(this.value=="1gb")
-currentFilter.sizeMin=1e9;
-
-else if(this.value=="500mb")
-currentFilter.sizeMin=5e8;
-
-else
-currentFilter.sizeMin=null;
-
-renderDirectory(currentPath);
-
-};
-
-
-/* ================= STATS ================= */
-
-document.getElementById("statsBtn").onclick=function(){
-
-let stats={};
-
-Object.values(fileIndex).forEach(file=>{
-
-if(file.directory) return;
-
-let ext=file.name.split(".").pop();
-
-stats[ext]=(stats[ext]||0)+1;
-
-});
-
-let html="<h3>Extension Statistics</h3>";
-
-Object.entries(stats).forEach(([ext,count])=>{
-
-html+=ext+": "+count+"<br>";
-
-});
-
-let panel=document.getElementById("statsPanel");
-
-panel.innerHTML=html;
-
-panel.style.display="block";
-
-};
-
-
-</script>
-
-    </body>
+</script></body>
 </html>
