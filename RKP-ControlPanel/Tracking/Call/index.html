@@ -338,7 +338,46 @@ minute:"2-digit"
 
 }
 
+/* AUTO LOAD FROM PARAMETER */
 
+async function autoLoadFromParameter(){
+
+try{
+
+const params = new URLSearchParams(window.location.search);
+
+const url = params.get("url");
+
+if(!url) return;
+
+/* optional: show link in input box */
+
+const linkInputBox = document.getElementById("linkInput");
+
+if(linkInputBox){
+linkInputBox.value = url;
+}
+
+/* fetch automatically */
+
+const response = await fetch(url);
+
+const jsonText = await response.text();
+
+/* use your existing process function */
+
+process(jsonText);
+
+}
+catch(err){
+
+console.error("Parameter auto-load failed:", err);
+
+}
+
+}
+  
+window.addEventListener("DOMContentLoaded", autoLoadFromParameter);
 function filterMissed(){
 
 let calls=getAllCalls();
