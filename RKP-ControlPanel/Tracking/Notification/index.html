@@ -594,7 +594,21 @@ renderNotifications();
 
 }
 
+/* =========================
+APP NAME NORMALIZER
+========================= */
 
+function normalizeAppName(name)
+{
+if(!name) return "";
+
+return name
+.toLowerCase()
+.trim()
+.replace(/[^a-z0-9\s]/g," ")   // remove symbols
+.replace(/\s+/g," ");          // normalize spaces
+}
+  
 /* =========================
 GET ICON
 ========================= */
