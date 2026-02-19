@@ -151,24 +151,123 @@ font-size:22px;
 }
 
 </style></head>
-<body><div class="header">
+<body>
+    
+<div class="header">
 Apps Analytics Viewer
-</div><div id="inputPanel" class="neu-card"><div class="label">Load from Link</div><input class="neu-inset" type="text" id="linkInput"
+</div>
+
+<!-- ================= INPUT PANEL ================= -->
+
+<div id="inputPanel" class="neu-card">
+
+<div class="label">Load from Link</div>
+
+<input class="neu-inset" type="text" id="linkInput"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
 <button class="neu-button" onclick="loadFromLink()">Load</button>
 
-<div class="label">Paste JSON</div><textarea class="neu-inset" id="pasteInput"></textarea><button class="neu-button" onclick="loadFromPaste()">Load</button>
+<div class="label">Paste JSON</div>
 
-<div class="label">Select File</div><input class="neu-inset" type="file" id="fileInput"></div><div id="viewer"></div><script>
+<textarea class="neu-inset" id="pasteInput"></textarea>
+
+<button class="neu-button" onclick="loadFromPaste()">Load</button>
+
+<div class="label">Select File</div>
+
+<input class="neu-inset" type="file" id="fileInput">
+
+</div>
+
+<!-- ================= TOOLBAR (HIDDEN INITIALLY) ================= -->
+
+<div id="toolbar" class="neu-card" style="display:none;margin:10px;padding:10px;">
+
+<!-- SEARCH -->
+
+<div style="margin-bottom:10px;">
+
+<input 
+class="neu-inset" 
+type="text" 
+id="searchInput"
+placeholder="Search entire storage from root..."
+style="width:70%;padding:10px;">
+
+<button 
+class="neu-button"
+onclick="globalSearch(document.getElementById('searchInput').value)">
+Search </button>
+
+<button 
+class="neu-button"
+onclick="renderDirectory('/')">
+Reset </button>
+
+</div>
+
+<!-- TIME SORT -->
+
+<div style="display:flex;gap:10px;flex-wrap:wrap;">
+
+<select 
+class="neu-inset"
+style="padding:10px;"
+onchange="
+timeFilter=this.value;
+renderDirectory(currentPath);
+">
+
+<option value="all">All Time</option>
+<option value="24h">Last 24 Hours</option>
+<option value="7d">Last 7 Days</option>
+<option value="1m">Last 1 Month</option>
+<option value="1y">Last 1 Year</option>
+<option value="older">Older than 1 Year</option>
+<option value="custom">Custom Range</option>
+
+</select>
+
+<input 
+class="neu-inset"
+type="date"
+onchange="
+customDateStart=new Date(this.value).getTime();
+renderDirectory(currentPath);
+">
+
+<input 
+class="neu-inset"
+type="date"
+onchange="
+customDateEnd=new Date(this.value).getTime();
+renderDirectory(currentPath);
+">
+
+</div>
+
+</div>
+
+<!-- ================= FILE VIEWER ================= -->
+
+<div id="viewer"></div>
+<script>
 
 /* ================= STATE ================= */
 
 let fileIndex = {};
 let childrenMap = {};
 let currentPath = "/storage/emulated/0";
+let allPaths = []; // for global search
+let pressTimer = null;
+let longPressDuration = 500;
+let timeFilter = "all";
+let customDateStart = null;
+let customDateEnd = null;
 
-/* ================= FILE INPUT ================= */
+
+/* ================= REST ALL ================= */
 
 document.getElementById("fileInput").addEventListener("change", function(){
 
@@ -184,6 +283,219 @@ reader.readAsText(file);
 
 });
 
+function globalSearch(query){
+
+query = query.toLowerCase();
+
+const results = allPaths.filter(item =>
+item.name.toLowerCase().includes(query)
+);
+
+renderSearchResults(results);
+
+}
+
+function addPressEvents(element,item){
+
+element.onmousedown = element.ontouchstart = ()=>{
+
+pressTimer=setTimeout(()=>{
+
+showDetailsPanel(item);
+
+}, longPressDuration);
+
+};
+
+element.onmouseup = element.ontouchend = ()=>{
+
+clearTimeout(pressTimer);
+
+if(item.directory){
+
+renderDirectory(item.path);
+
+}else{
+
+showDetailsPanel(item);
+
+}
+
+};
+
+}
+
+function showDetailsPanel(item){
+
+let totalFiles=0;
+let totalFolders=0;
+let largestFile=null;
+let largestSize=0;
+
+if(item.directory){
+
+const stack=[item.path];
+
+while(stack.length){
+
+const current=stack.pop();
+
+(childrenMap[current]||[]).forEach(child=>{
+
+if(child.directory){
+
+totalFolders++;
+stack.push(child.path);
+
+}else{
+
+totalFiles++;
+
+if(child.size>largestSize){
+largestSize=child.size;
+largestFile=child.name;
+}
+
+}
+
+});
+
+}
+
+}
+
+const panel=document.createElement("div");
+
+panel.className="neu-card";
+
+panel.style.position="fixed";
+panel.style.bottom="20px";
+panel.style.left="20px";
+panel.style.right="20px";
+panel.style.padding="20px";
+panel.style.zIndex="999";
+
+panel.innerHTML=`
+
+<b>${item.name}</b><br>
+Path: ${item.path}<br>
+Size: ${formatSize(item.directory ? calculateFolderSize(item.path) : item.size)}<br>
+Modified: ${new Date(item.last_modified).toLocaleString()}<br>
+
+${item.directory ? `
+Files: ${totalFiles}<br>
+Folders: ${totalFolders}<br>
+Largest File: ${largestFile || "None"}<br>
+Largest Size: ${formatSize(largestSize)}
+`:""}
+
+<br><button onclick="this.parentElement.remove()">Close</button>
+`;
+
+document.body.appendChild(panel);
+
+}
+
+function renderSearchResults(results){
+
+const viewer=document.getElementById("viewer");
+
+viewer.innerHTML="";
+
+const card=document.createElement("div");
+card.className="file-card neu-card";
+
+results.forEach(item=>{
+
+const row=createFileRow(item);
+
+card.appendChild(row);
+
+});
+
+viewer.appendChild(card);
+
+}
+
+function createFileRow(item){
+
+const row=document.createElement("div");
+
+row.className="file-row neu-inset";
+
+const icon = item.directory 
+? "icons/folder.png"
+: "icons/file.png";
+
+row.innerHTML=`
+
+<div style="display:flex;align-items:center;gap:10px">
+
+<img src="${icon}" width="24">
+
+<div>
+
+<div class="${item.directory?'folder':'file'}">
+${item.name}
+</div>
+
+<div class="path">${item.path}</div>
+
+</div>
+
+</div>
+
+<div>
+${item.directory 
+? formatSize(calculateFolderSize(item.path))
+: formatSize(item.size)}
+</div>
+`;
+
+addPressEvents(row,item);
+
+return row;
+
+}
+
+
+function passesTimeFilter(item){
+
+if(timeFilter==="all") return true;
+
+const now = Date.now();
+const modified = item.last_modified || 0;
+
+const day = 86400000;
+
+switch(timeFilter){
+
+case "24h":
+return modified >= now - day;
+
+case "7d":
+return modified >= now - day*7;
+
+case "1m":
+return modified >= now - day*30;
+
+case "1y":
+return modified >= now - day*365;
+
+case "older":
+return modified < now - day*365;
+
+case "custom":
+
+if(!customDateStart || !customDateEnd) return true;
+
+return modified >= customDateStart && modified <= customDateEnd;
+
+}
+
+return true;
+
+}
 
 function calculateFolderSize(folderPath){
 
@@ -383,7 +695,7 @@ card.appendChild(back);
 
 /* ===== FILE LIST ===== */
 
-let list = childrenMap[path] || [];
+let list = (childrenMap[path] || []).filter(passesTimeFilter);
 
 list.sort((a,b)=>{
 
@@ -396,7 +708,10 @@ return a.name.localeCompare(b.name);
 
 list.forEach(item=>{
 
-const row=document.createElement("div");
+const row=createFileRow(item);
+
+card.appendChild(row);
+
 
 row.className="file-row neu-inset";
 
