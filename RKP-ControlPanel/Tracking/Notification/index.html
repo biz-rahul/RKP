@@ -3,332 +3,309 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Apps Analytics Viewer</title>
 
 <style>
 
-/* =========================
-NEUMORPHIC PREMIUM UI
-========================= */
+/* NEUMORPHIC PREMIUM UI */
 
-body
-{
+body{
 margin:0;
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
 background:#e6ebf2;
 color:#2d3748;
 }
 
-.container
-{
+.container{
 max-width:900px;
 margin:auto;
 padding:20px;
 }
 
-.title
-{
+.title{
 text-align:center;
 font-size:32px;
 font-weight:700;
 margin-bottom:20px;
 }
 
-.neu-card
-{
+.neu-card{
 background:#e6ebf2;
 border-radius:20px;
 padding:20px;
-
 box-shadow:
 10px 10px 20px #c5cad1,
 -10px -10px 20px #ffffff;
-
-margin-bottom:20px;
 }
 
-label
-{
+label{
 font-weight:600;
 display:block;
+margin-top:15px;
 margin-bottom:8px;
 }
 
-input, textarea
-{
+input,textarea{
 width:100%;
 padding:15px;
 border:none;
 border-radius:15px;
-outline:none;
-
 background:#e6ebf2;
-
 box-shadow:
 inset 5px 5px 10px #c5cad1,
 inset -5px -5px 10px #ffffff;
-
 font-size:16px;
+outline:none;
 }
 
-textarea
-{
+textarea{
 height:120px;
 resize:none;
 }
 
-button
-{
+button{
 margin-top:10px;
-padding:12px 20px;
+padding:12px;
 border:none;
 border-radius:15px;
-cursor:pointer;
-
 background:#e6ebf2;
-
 box-shadow:
 5px 5px 10px #c5cad1,
 -5px -5px 10px #ffffff;
-
 font-weight:600;
+cursor:pointer;
 }
 
-button:active
-{
+button:active{
 box-shadow:
 inset 5px 5px 10px #c5cad1,
 inset -5px -5px 10px #ffffff;
 }
 
-
-/* =========================
-VIEWER UI
-========================= */
-
-.viewer
-{
+.viewer{
 display:none;
 }
 
-.notification
-{
+.notification{
 margin-bottom:15px;
 padding:15px;
 border-radius:15px;
-
 background:#e6ebf2;
-
 box-shadow:
 5px 5px 10px #c5cad1,
 -5px -5px 10px #ffffff;
 }
 
-.app
-{
+.app{
 font-weight:700;
 font-size:18px;
 }
 
-.title-text
-{
+.sender{
 font-weight:600;
-margin-top:5px;
+margin-top:4px;
 }
 
-.msg
-{
-margin-top:5px;
-color:#4a5568;
+.message{
+margin-top:4px;
 }
 
-.time
-{
-margin-top:5px;
+.time{
 font-size:12px;
-color:#718096;
+margin-top:6px;
+color:#666;
 }
 
-/* mobile optimization */
-
-@media(max-width:600px)
-{
-.title
-{
-font-size:26px;
-}
-
-.container
-{
-padding:15px;
-}
+.error{
+color:red;
+font-weight:600;
+margin-top:10px;
 }
 
 </style>
 </head>
 <body>
 
-
 <div class="container">
-
 
 <div id="inputSection">
 
 <div class="title">Apps Analytics Viewer</div>
 
-
 <div class="neu-card">
 
 <label>Load from Link</label>
-
-<input id="linkInput" value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
-
+<input id="linkInput"
+value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 <button onclick="loadFromLink()">Load</button>
 
-
-<label style="margin-top:20px;">Paste JSON</label>
-
+<label>Paste JSON</label>
 <textarea id="pasteInput"></textarea>
-
 <button onclick="loadFromPaste()">Load</button>
 
-
-<label style="margin-top:20px;">Select File</label>
-
+<label>Select File</label>
 <input type="file" id="fileInput">
-
 <button onclick="loadFromFile()">Load</button>
 
+<div id="errorBox" class="error"></div>
 
 </div>
-
 </div>
-
-
 
 <div id="viewer" class="viewer"></div>
 
-
 </div>
-
-
 
 <script>
 
-/* =========================
-GLOBAL STATE
-========================= */
-
-let notifications = [];
+let notifications=[];
 
 
-/* =========================
-LOAD FUNCTIONS
-========================= */
+/* LOAD FROM LINK */
 
-async function loadFromLink()
-{
-const url = document.getElementById("linkInput").value;
+async function loadFromLink(){
 
-const res = await fetch(url);
+clearError();
 
-const text = await res.text();
+try{
 
-parseJSON(text);
+const url=document.getElementById("linkInput").value;
+
+const res=await fetch(url);
+
+const text=await res.text();
+
+processJSON(text);
+
+}catch(e){
+
+showError("Failed to load from link");
+
+}
+
 }
 
 
-function loadFromPaste()
-{
-const text = document.getElementById("pasteInput").value;
+/* LOAD FROM PASTE */
 
-parseJSON(text);
+function loadFromPaste(){
+
+clearError();
+
+const text=document.getElementById("pasteInput").value;
+
+processJSON(text);
+
 }
 
 
-function loadFromFile()
-{
-const file = document.getElementById("fileInput").files[0];
+/* LOAD FROM FILE */
 
-const reader = new FileReader();
+function loadFromFile(){
 
-reader.onload = e =>
-{
-parseJSON(e.target.result);
+clearError();
+
+const file=document.getElementById("fileInput").files[0];
+
+if(!file){
+
+showError("Please select file");
+
+return;
+
+}
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+
+processJSON(e.target.result);
+
 };
 
 reader.readAsText(file);
+
 }
 
 
-/* =========================
-PARSE AND SHOW
-========================= */
+/* SAFE JSON PROCESSOR */
 
-function parseJSON(text)
-{
+function processJSON(text){
 
-try
-{
+try{
 
-notifications = JSON.parse(text);
+const parsed=JSON.parse(text);
+
+/* VALIDATION */
+
+if(!Array.isArray(parsed)){
+
+showError("JSON must be array");
+
+return;
+
+}
+
+notifications=parsed;
+
+/* CHECK EMPTY */
+
+if(notifications.length===0){
+
+showError("No notifications found");
+
+return;
+
+}
+
+/* SUCCESS */
 
 hideInput();
 
-render();
+renderNotifications();
+
+}catch(e){
+
+showError("Invalid JSON or corrupted file");
 
 }
-catch
-{
-alert("Invalid JSON");
-}
 
-}
-
-
-/* =========================
-HIDE INPUT SECTION
-========================= */
-
-function hideInput()
-{
-document.getElementById("inputSection").style.display="none";
-
-document.getElementById("viewer").style.display="block";
 }
 
 
-/* =========================
-RENDER VIEW
-========================= */
+/* RENDER ENGINE */
 
-function render()
-{
+function renderNotifications(){
 
-const viewer = document.getElementById("viewer");
+const viewer=document.getElementById("viewer");
 
 viewer.innerHTML="";
 
+notifications.sort((a,b)=>b.posted_time-a.posted_time);
 
-notifications
-.sort((a,b)=>b.posted_time-a.posted_time)
-.forEach(n =>
-{
+notifications.forEach(n=>{
 
-viewer.innerHTML += `
+const app=n.app_name||"Unknown App";
+
+const sender=n.title||"";
+
+const message=n.text||n.big_text||n.ticker||"";
+
+const time=n.posted_time
+?new Date(n.posted_time).toLocaleString()
+:"";
+
+viewer.innerHTML+=`
 
 <div class="notification">
 
-<div class="app">${n.app_name || ""}</div>
+<div class="app">${escapeHTML(app)}</div>
 
-<div class="title-text">${n.title || ""}</div>
+<div class="sender">${escapeHTML(sender)}</div>
 
-<div class="msg">${n.text || n.big_text || ""}</div>
+<div class="message">${escapeHTML(message)}</div>
 
-<div class="time">
-${new Date(n.posted_time).toLocaleString()}
-</div>
+<div class="time">${escapeHTML(time)}</div>
 
 </div>
 
@@ -338,8 +315,56 @@ ${new Date(n.posted_time).toLocaleString()}
 
 }
 
-</script>
 
+/* UI CONTROL */
+
+function hideInput(){
+
+document.getElementById("inputSection").style.display="none";
+
+document.getElementById("viewer").style.display="block";
+
+}
+
+
+/* ERROR HANDLING */
+
+function showError(msg){
+
+document.getElementById("errorBox").innerText=msg;
+
+}
+
+function clearError(){
+
+document.getElementById("errorBox").innerText="";
+
+}
+
+
+/* SECURITY */
+
+function escapeHTML(str){
+
+if(!str) return "";
+
+return str.replace(/[&<>"']/g,function(m){
+
+return{
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+"\"":"&quot;",
+"'":"&#039;"
+
+}[m];
+
+});
+
+}
+
+</script>
 
 </body>
 </html>
