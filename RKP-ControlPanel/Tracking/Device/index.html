@@ -114,6 +114,85 @@ display:none;
    DASHBOARD
 ========================= */
 
+/* =========================
+   VISUAL LEVEL BARS
+========================= */
+
+.level-container{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.level-bar{
+flex:1;
+height:12px;
+border-radius:10px;
+background:#d1d9e6;
+box-shadow:
+inset 4px 4px 8px #c5cad1,
+inset -4px -4px 8px #ffffff;
+overflow:hidden;
+}
+
+.level-fill{
+
+height:100%;
+border-radius:10px;
+background:linear-gradient(90deg,#4facfe,#00f2fe);
+
+}
+
+.level-text{
+min-width:40px;
+text-align:right;
+font-weight:600;
+}
+
+/* =========================
+   BATTERY VISUAL
+========================= */
+
+.battery-box{
+
+width:60px;
+height:28px;
+border-radius:6px;
+border:2px solid #2d3748;
+position:relative;
+
+}
+
+.battery-fill{
+
+height:100%;
+background:linear-gradient(90deg,#00ff87,#60efff);
+
+}
+
+.battery-cap{
+
+width:4px;
+height:12px;
+background:#2d3748;
+position:absolute;
+right:-6px;
+top:6px;
+border-radius:2px;
+
+}
+
+/* =========================
+   ICON STYLE
+========================= */
+
+.icon{
+width:22px;
+height:22px;
+vertical-align:middle;
+margin-left:6px;
+}
+
 .dashboard{
 margin-top:20px;
 }
@@ -269,6 +348,22 @@ reader.readAsText(this.files[0]);
 
 });
 
+function createLevelBar(value,max=100){
+
+return `
+<div class="level-container">
+
+<div class="level-bar">
+<div class="level-fill" style="width:${(value/max)*100}%"></div>
+</div>
+
+<div class="level-text">${value}</div>
+
+</div>
+`;
+
+}
+
 /* =========================
    RENDER ENGINE
 ========================= */
@@ -282,11 +377,11 @@ dash.innerHTML="";
 createCard("Device",data.device);
 createCard("System",data.system);
 createCard("CPU",data.cpu);
-createCard("Battery",data.battery);
+createBatteryCard(data.battery);
 createCard("Network",data.network);
-createCard("Connectivity",data.connectivity);
-createCard("Display",data.display);
-createCard("Audio",data.audio);
+createConnectivityCard(data.connectivity);
+createDisplayCard(data.display);
+createAudioCard(data.audio);
 
 if(data.widgets){
 
@@ -366,6 +461,166 @@ html+="<hr>";
 });
 
 html+="</div>";
+
+dash.innerHTML+=html;
+
+}
+
+function createBatteryCard(battery){
+
+const dash=document.getElementById("dashboard");
+
+const icon =
+battery.status==="charging"
+? "icons/charging.png"
+: "icons/discharging.png";
+
+let html=`
+
+<div class="data-card">
+
+<div class="data-title">Battery</div>
+
+<div style="display:flex;align-items:center;gap:15px">
+
+<div class="battery-box">
+<div class="battery-fill" style="width:${battery.level_percent}%"></div>
+<div class="battery-cap"></div>
+</div>
+
+<div>
+${battery.level_percent}%
+<img src="${icon}" class="icon">
+</div>
+
+</div>
+
+<div class="data-row">
+<div>Status</div>
+<div>${battery.status}</div>
+</div>
+
+</div>
+`;
+
+dash.innerHTML+=html;
+
+}
+
+function createDisplayCard(display){
+
+const dash=document.getElementById("dashboard");
+
+let html=`
+
+<div class="data-card">
+
+<div class="data-title">Display</div>
+
+<div class="data-row">
+<div>Brightness</div>
+<div>${createLevelBar(display.brightness_level,255)}</div>
+</div>
+
+<div class="data-row">
+<div>Resolution</div>
+<div>${display.resolution}</div>
+</div>
+
+<div class="data-row">
+<div>Density DPI</div>
+<div>${display.density_dpi}</div>
+</div>
+
+</div>
+`;
+
+dash.innerHTML+=html;
+
+}
+
+function createAudioCard(audio){
+
+const dash=document.getElementById("dashboard");
+
+const ringerIcon={
+ringing:"icons/ringing.png",
+vibrate:"icons/vibrate.png",
+silent:"icons/silent.png"
+}[audio.ringer_mode] || "";
+
+let html=`
+
+<div class="data-card">
+
+<div class="data-title">Audio</div>
+
+<div class="data-row">
+<div>Music Volume</div>
+<div>${createLevelBar(audio.music_volume,15)}</div>
+</div>
+
+<div class="data-row">
+<div>Ring Volume</div>
+<div>${createLevelBar(audio.ring_volume,15)}</div>
+</div>
+
+<div class="data-row">
+<div>Alarm Volume</div>
+<div>${createLevelBar(audio.alarm_volume,15)}</div>
+</div>
+
+<div class="data-row">
+<div>Ringer Mode</div>
+<div>
+${audio.ringer_mode}
+<img src="${ringerIcon}" class="icon">
+</div>
+</div>
+
+</div>
+`;
+
+dash.innerHTML+=html;
+
+}
+
+function createConnectivityCard(conn){
+
+const dash=document.getElementById("dashboard");
+
+const wifiIcon = conn.wifi_connected
+? "icons/wifi_on.png"
+: "icons/wifi_off.png";
+
+const mobileIcon = conn.mobile_connected
+? "icons/mobile_on.png"
+: "icons/mobile_off.png";
+
+let html=`
+
+<div class="data-card">
+
+<div class="data-title">Connectivity</div>
+
+<div class="data-row">
+<div>WiFi</div>
+<div>
+${conn.wifi_connected}
+<img src="${wifiIcon}" class="icon">
+</div>
+</div>
+
+<div class="data-row">
+<div>Mobile Data</div>
+<div>
+${conn.mobile_connected}
+<img src="${mobileIcon}" class="icon">
+</div>
+</div>
+
+</div>
+`;
 
 dash.innerHTML+=html;
 
