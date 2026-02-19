@@ -324,11 +324,11 @@ function getParent(path){
 
 if(path==="/") return null;
 
-const parts = path.split("/").filter(Boolean);
+let parts = path.split("/").filter(Boolean);
 
 parts.pop();
 
-return "/" + parts.join("/");
+return parts.length ? "/" + parts.join("/") : "/";
 
 }
 
