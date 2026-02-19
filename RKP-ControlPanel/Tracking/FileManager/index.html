@@ -585,6 +585,7 @@ function buildFileSystem(data){
 
 fileIndex = {};
 childrenMap = {};
+allPaths = [];
 
 data.forEach(item=>{
 
@@ -594,6 +595,8 @@ item.hidden = item.is_hidden;
 item.last_modified = item.modified;
 
 fileIndex[item.path] = item;
+allPaths.push(item);   
+
 
 
 // create full parent chain
