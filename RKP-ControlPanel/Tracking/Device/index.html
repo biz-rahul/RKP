@@ -314,23 +314,28 @@ margin-bottom:10px;
 
 .data-row{
 
-display:flex;
-justify-content:space-between;
-padding:5px 0;
-border-bottom:1px solid rgba(0,0,0,0.05);
+display:grid;
+
+grid-template-columns: 180px 1fr;
 
 gap:10px;
-flex-wrap:wrap;
-word-break:break-word;
+
+padding:6px 0;
+
+border-bottom:1px solid rgba(0,0,0,0.05);
+
+align-items:center;
 
 }
 
 .data-row div{
 
-max-width:65%;
 word-break:break-word;
 
+overflow-wrap:anywhere;
+
 }
+
 
 
 .data-row:last-child{
