@@ -184,6 +184,22 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 
 <div id="toolbar" class="neu-card" style="display:none;margin:10px;padding:10px;">
 
+<!-- VIEW MODE -->
+
+<select class="neu-inset" onchange="setViewMode(this.value)">
+<option value="list">List View</option>
+<option value="grid">Grid View</option>
+</select>
+
+<button class="neu-button" onclick="showDuplicates()">
+Find Duplicates
+</button>
+
+<button class="neu-button" onclick="showExtensionStats()">
+File Statistics
+</button>
+
+
 <!-- ADVANCED FILTER BUTTONS -->
 
 <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;">
@@ -329,6 +345,7 @@ let typeFilter = "all";
 let sizeFilter = "all";
 let customMinSize = null;
 let customMaxSize = null;
+let viewMode = "list";
 
 
 
@@ -347,6 +364,101 @@ reader.onload = e => processJSON(e.target.result);
 reader.readAsText(file);
 
 });
+
+function showDuplicates(){
+
+const map = new Map();
+
+allPaths.forEach(file=>{
+
+if(file.directory) return;
+
+const key = file.size + "_" + file.name;
+
+if(!map.has(key)) map.set(key,[]);
+
+map.get(key).push(file);
+
+});
+
+const duplicates=[];
+
+map.forEach(list=>{
+
+if(list.length>1){
+
+duplicates.push(...list);
+
+}
+
+});
+
+renderSearchResults(duplicates);
+
+}
+
+function showExtensionStats(){
+
+const stats={};
+
+allPaths.forEach(file=>{
+
+if(file.directory) return;
+
+const ext = file.name.includes(".")
+? file.name.split(".").pop().toLowerCase()
+: "unknown";
+
+if(!stats[ext]) stats[ext]=0;
+
+stats[ext]++;
+
+});
+
+renderStats(stats);
+
+}
+
+function renderStats(stats){
+
+const viewer=document.getElementById("viewer");
+
+viewer.innerHTML="";
+
+const card=document.createElement("div");
+
+card.className="file-card neu-card";
+
+Object.entries(stats)
+.sort((a,b)=>b[1]-a[1])
+.forEach(([ext,count])=>{
+
+const row=document.createElement("div");
+
+row.className="file-row neu-inset";
+
+row.innerHTML=`
+
+<div>.${ext}</div>
+<div>${count} files</div>
+
+`;
+
+card.appendChild(row);
+
+});
+
+viewer.appendChild(card);
+
+}
+
+function setViewMode(mode){
+
+viewMode = mode;
+
+renderDirectory(currentPath);
+
+}
 
 function getFileType(name){
 
@@ -593,19 +705,26 @@ panel.style.zIndex="999";
 panel.innerHTML=`
 
 <b>${item.name}</b><br>
+
 Path: ${item.path}<br>
-Size: ${formatSize(item.directory ? calculateFolderSize(item.path) : item.size)}<br>
+
+Size: ${formatSize(item.directory
+? calculateFolderSize(item.path)
+: item.size)}<br>
+
 Modified: ${new Date(item.last_modified).toLocaleString()}<br>
 
-${item.directory ? `
-Files: ${totalFiles}<br>
-Folders: ${totalFolders}<br>
-Largest File: ${largestFile || "None"}<br>
-Largest Size: ${formatSize(largestSize)}
-`:""}
+<button onclick="
+navigator.clipboard.writeText('${item.path}');
+this.innerText='Copied';
+">
+Copy Full Path
+</button>
 
 <br><button onclick="this.parentElement.remove()">Close</button>
+
 `;
+
 
 document.body.appendChild(panel);
 
@@ -633,6 +752,40 @@ viewer.appendChild(card);
 }
 
 function createFileRow(item){
+
+if(viewMode==="grid"){
+
+const grid=document.createElement("div");
+
+grid.className="neu-inset";
+
+grid.style.width="45%";
+grid.style.display="inline-block";
+grid.style.margin="5px";
+grid.style.padding="10px";
+grid.style.verticalAlign="top";
+
+const icon=item.directory?"icons/folder.png":"icons/file.png";
+
+grid.innerHTML=`
+
+<img src="${icon}" width="48"><br>
+
+<div>${item.name}</div>
+
+<div style="font-size:12px;">
+${item.directory
+? formatSize(calculateFolderSize(item.path))
+: formatSize(item.size)}
+</div>
+
+`;
+
+addPressEvents(grid,item);
+
+return grid;
+
+}
 
 const row=document.createElement("div");
 
