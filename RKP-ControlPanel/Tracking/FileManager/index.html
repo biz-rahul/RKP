@@ -240,14 +240,47 @@ childrenMap = {};
 
 data.forEach(item=>{
 
-fileIndex[item.path]=item;
+fileIndex[item.path] = item;
 
-const parent = getParent(item.path);
+// create full parent chain
+let pathParts = item.path.split("/").filter(Boolean);
+
+for(let i=0;i<pathParts.length;i++){
+
+let parent = "/" + pathParts.slice(0,i).join("/");
+
+let child = "/" + pathParts.slice(0,i+1).join("/");
+
+if(parent==="") parent="/";
 
 if(!childrenMap[parent])
 childrenMap[parent]=[];
 
-childrenMap[parent].push(item);
+if(!childrenMap[parent].some(x=>x.path===child)){
+
+// create virtual folder if missing
+let existing = fileIndex[child];
+
+if(existing){
+
+childrenMap[parent].push(existing);
+
+}else{
+
+childrenMap[parent].push({
+name:pathParts[i],
+path:child,
+directory:true,
+size:0,
+hidden:false,
+virtual:true
+});
+
+}
+
+}
+
+}
 
 });
 
