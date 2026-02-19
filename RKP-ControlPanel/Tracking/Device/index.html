@@ -1,11 +1,15 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Apps Analytics Viewer</title><style>
+<title>Apps Analytics Viewer</title>
+
+<style>
 
 /* =========================
-NEUMORPHIC BASE
+   NEUMORPHIC BASE
 ========================= */
 
 body{
@@ -29,7 +33,7 @@ margin-bottom:25px;
 }
 
 /* =========================
-NEUMORPHIC CARD
+   NEUMORPHIC CARD
 ========================= */
 
 .neo-card{
@@ -37,10 +41,15 @@ background:#e6ebf2;
 border-radius:20px;
 padding:20px;
 margin-bottom:20px;
+
 box-shadow:
 8px 8px 16px #c5cad1,
 -8px -8px 16px #ffffff;
 }
+
+/* =========================
+   INPUTS
+========================= */
 
 .neo-input{
 width:100%;
@@ -48,11 +57,15 @@ padding:15px;
 border-radius:15px;
 border:none;
 outline:none;
+
 background:#e6ebf2;
+
 box-shadow:
 inset 6px 6px 12px #c5cad1,
 inset -6px -6px 12px #ffffff;
+
 margin-bottom:15px;
+
 font-size:16px;
 }
 
@@ -61,40 +74,61 @@ height:120px;
 resize:none;
 }
 
+/* =========================
+   BUTTON
+========================= */
+
 .neo-btn{
-padding:12px;
+
+padding:12px 20px;
 border-radius:12px;
 border:none;
+
 background:#e6ebf2;
+
 box-shadow:
 6px 6px 12px #c5cad1,
 -6px -6px 12px #ffffff;
+
+font-size:16px;
 cursor:pointer;
-width:100%;
 }
 
 .neo-btn:active{
+
 box-shadow:
 inset 6px 6px 12px #c5cad1,
 inset -6px -6px 12px #ffffff;
+
 }
+
+/* =========================
+   HIDDEN
+========================= */
 
 .hidden{
 display:none;
 }
 
 /* =========================
-DATA CARDS
+   DASHBOARD
 ========================= */
 
+.dashboard{
+margin-top:20px;
+}
+
 .data-card{
+
 background:#e6ebf2;
 border-radius:15px;
 padding:15px;
 margin-bottom:15px;
+
 box-shadow:
 6px 6px 12px #c5cad1,
 -6px -6px 12px #ffffff;
+
 }
 
 .data-title{
@@ -105,288 +139,239 @@ margin-bottom:10px;
 .data-row{
 display:flex;
 justify-content:space-between;
-align-items:center;
-padding:6px 0;
+padding:5px 0;
+border-bottom:1px solid rgba(0,0,0,0.05);
+}
+
+.data-row:last-child{
+border-bottom:none;
 }
 
 /* =========================
-VISUAL BARS
+   MOBILE OPTIMIZATION
 ========================= */
 
-.bar{
-height:14px;
-border-radius:10px;
-background:#d1d9e6;
-box-shadow:
-inset 3px 3px 6px #b8bec9,
-inset -3px -3px 6px #ffffff;
-overflow:hidden;
-margin-top:5px;
+@media(max-width:480px){
+
+.title{
+font-size:24px;
 }
 
-.bar-fill{
-height:100%;
-background:linear-gradient(90deg,#4facfe,#00f2fe);
-border-radius:10px;
 }
 
-/* =========================
-BATTERY VISUAL
-========================= */
+</style>
 
-.battery{
-width:60px;
-height:25px;
-border:2px solid #333;
-border-radius:5px;
-position:relative;
-margin-left:10px;
-}
+</head>
+<body>
 
-.battery::after{
-content:'';
-position:absolute;
-right:-6px;
-top:6px;
-width:4px;
-height:10px;
-background:#333;
-border-radius:2px;
-}
+<div class="container">
 
-.battery-fill{
-height:100%;
-background:linear-gradient(90deg,#00ff87,#60efff);
-}
+<div id="loaderUI">
 
-/* =========================
-ICON
-========================= */
+<div class="title">Apps Analytics Viewer</div>
 
-.icon{
-width:22px;
-height:22px;
-margin-left:8px;
-}
+<div class="neo-card">
 
-/* =========================
-ROW FLEX
-========================= */
+<div>Load from Link</div>
 
-.row-flex{
-display:flex;
-align-items:center;
-gap:10px;
-}
-
-</style></head>
-<body><div class="container"><div id="loaderUI"><div class="title">Apps Analytics Viewer</div><div class="neo-card"><div>Load from Link</div><input class="neo-input" id="linkInput"
-value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
+<input
+class="neo-input"
+id="linkInput"
+value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json"
+/>
 
 <button class="neo-btn" onclick="loadFromLink()">Load</button>
 
 <br><br>
 
-<div>Paste JSON</div><textarea class="neo-input neo-textarea" id="pasteInput"></textarea><button class="neo-btn" onclick="loadFromPaste()">Load</button>
+<div>Paste JSON</div>
+
+<textarea
+class="neo-input neo-textarea"
+id="pasteInput"
+></textarea>
+
+<button class="neo-btn" onclick="loadFromPaste()">Load</button>
 
 <br><br>
 
-<div>Select File</div><input type="file" class="neo-input" id="fileInput"></div></div><div id="dashboard" class="hidden"></div></div><script>
+<div>Select File</div>
+
+<input
+type="file"
+class="neo-input"
+id="fileInput"
+/>
+
+</div>
+
+</div>
+
+<div id="dashboard" class="dashboard hidden"></div>
+
+</div>
+
+<script>
 
 /* =========================
-ICON PATH CONFIG
-Replace with your PNG paths
-========================= */
-
-const ICONS={
-
-ringer:{
-ringing:"icons/ringing.png",
-vibrate:"icons/vibrate.png",
-silent:"icons/silent.png"
-},
-
-wifi:{
-true:"icons/wifi_on.png",
-false:"icons/wifi_off.png"
-},
-
-mobile:{
-true:"icons/mobile_on.png",
-false:"icons/mobile_off.png"
-},
-
-battery:{
-charging:"icons/charging.png",
-discharging:"icons/discharging.png"
-}
-
-};
-
-/* =========================
-LOAD FUNCTIONS
+   CORE LOAD FUNCTIONS
 ========================= */
 
 function hideLoader(){
 
-loaderUI.classList.add("hidden");
-dashboard.classList.remove("hidden");
+document.getElementById("loaderUI").classList.add("hidden");
+
+document.getElementById("dashboard").classList.remove("hidden");
 
 }
 
 async function loadFromLink(){
 
-const res=await fetch(linkInput.value);
+const url=document.getElementById("linkInput").value;
+
+const res=await fetch(url);
+
 const json=await res.json();
 
 hideLoader();
+
 render(json);
 
 }
 
 function loadFromPaste(){
 
-const json=JSON.parse(pasteInput.value);
+const text=document.getElementById("pasteInput").value;
+
+const json=JSON.parse(text);
 
 hideLoader();
+
 render(json);
 
 }
 
-fileInput.onchange=e=>{
+document.getElementById("fileInput").addEventListener("change",function(){
 
 const reader=new FileReader();
 
-reader.onload=()=>{
+reader.onload=function(){
+
 const json=JSON.parse(reader.result);
+
 hideLoader();
+
 render(json);
-};
-
-reader.readAsText(e.target.files[0]);
 
 };
+
+reader.readAsText(this.files[0]);
+
+});
 
 /* =========================
-RENDER
+   RENDER ENGINE
 ========================= */
 
 function render(data){
 
-dashboard.innerHTML="";
+const dash=document.getElementById("dashboard");
 
-createCard("Battery",
-`
-<div class="row-flex">
+dash.innerHTML="";
 
-${data.battery.level_percent}%
+createCard("Device",data.device);
+createCard("System",data.system);
+createCard("CPU",data.cpu);
+createCard("Battery",data.battery);
+createCard("Network",data.network);
+createCard("Connectivity",data.connectivity);
+createCard("Display",data.display);
+createCard("Audio",data.audio);
 
-<div class="battery">
-<div class="battery-fill" style="width:${data.battery.level_percent}%"></div>
-</div>
+if(data.widgets){
 
-<img class="icon" src="${ICONS.battery[data.battery.status]}">
+createArrayCard("Widgets ("+data.widgets.length+")",data.widgets);
 
-</div>
+}
 
-<div>Status: ${data.battery.status}</div>
-`
-);
+if(data.calendar_snapshot){
 
-createCard("Brightness",
-`
-${data.display.brightness_level}
+const formatted=data.calendar_snapshot.map(e=>({
 
-<div class="bar">
-<div class="bar-fill" style="width:${data.display.brightness_level}%"></div>
-</div>
-`
-);
+title:e.title,
+date:new Date(e.start).toLocaleString()
 
-createCard("Volumes",
+}));
 
-createVolume("Music",data.audio.music_volume)+
-createVolume("Ring",data.audio.ring_volume)+
-createVolume("Alarm",data.audio.alarm_volume)
+createArrayCard("Calendar",formatted);
 
-);
-
-createCard("Ringer Mode",
-
-`
-<div class="row-flex">
-
-${data.audio.ringer_mode}
-
-<img class="icon"
-src="${ICONS.ringer[data.audio.ringer_mode]}">
-
-</div>
-
-`
-
-);
-
-createCard("Connectivity",
-
-createConnection("WiFi",data.connectivity.wifi_connected,"wifi")+
-createConnection("Mobile",data.connectivity.mobile_connected,"mobile")
-
-);
+}
 
 }
 
 /* =========================
-HELPERS
+   CARD BUILDERS
 ========================= */
 
-function createCard(title,content){
+function createCard(title,obj){
 
-dashboard.innerHTML+=`
+const dash=document.getElementById("dashboard");
+
+let html=`
 <div class="data-card">
-
 <div class="data-title">${title}</div>
+`;
 
-${content}
+for(let k in obj){
 
+html+=`
+<div class="data-row">
+<div>${k}</div>
+<div>${obj[k]}</div>
 </div>
 `;
 
 }
 
-function createVolume(name,val){
+html+="</div>";
 
-return`
-<div>
+dash.innerHTML+=html;
 
-${name}: ${val}
+}
 
-<div class="bar">
+function createArrayCard(title,arr){
 
-<div class="bar-fill"
-style="width:${val*6}%"></div>
+const dash=document.getElementById("dashboard");
 
-</div>
+let html=`
+<div class="data-card">
+<div class="data-title">${title}</div>
+`;
 
+arr.forEach(item=>{
+
+for(let k in item){
+
+html+=`
+<div class="data-row">
+<div>${k}</div>
+<div>${item[k]}</div>
 </div>
 `;
 
 }
 
-function createConnection(name,state,type){
+html+="<hr>";
 
-return`
-<div class="row-flex">
+});
 
-${name}: ${state}
+html+="</div>";
 
-<img class="icon"
-src="${ICONS[type][state]}">
-
-</div>
-`;
+dash.innerHTML+=html;
 
 }
 
-</script></body>
+</script>
+
+</body>
 </html>
