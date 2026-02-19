@@ -415,15 +415,8 @@ function redirect(type)
 
     let param = "url";
 
-    if(type === "App"
-    || type === "Contact"
-    || type === "Call")
 
-    param = "github";
-
-
-    const url =
-    `${BASE}${type}?${param}=${encodeURIComponent(raw)}`;
+    const url = `${BASE}${type}?url=${encodeURIComponent(raw)}`;
 
     location.href = url;
 }
