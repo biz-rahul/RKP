@@ -472,8 +472,8 @@ const dash=document.getElementById("dashboard");
 
 const icon =
 battery.status==="charging"
-? "icons/charging.png"
-: "icons/discharging.png";
+? "icons/phone.png"
+: "icons/charge.png";
 
 let html=`
 
@@ -544,8 +544,8 @@ function createAudioCard(audio){
 const dash=document.getElementById("dashboard");
 
 const ringerIcon={
-ringing:"icons/ringing.png",
-vibrate:"icons/vibrate.png",
+ringing:"icons/bell.png",
+vibrate:"icons/vibration.png",
 silent:"icons/silent.png"
 }[audio.ringer_mode] || "";
 
@@ -590,12 +590,12 @@ function createConnectivityCard(conn){
 const dash=document.getElementById("dashboard");
 
 const wifiIcon = conn.wifi_connected
-? "icons/wifi_on.png"
-: "icons/wifi_off.png";
+? "icons/wifi.png"
+: "icons/no-wifi.png";
 
 const mobileIcon = conn.mobile_connected
-? "icons/mobile_on.png"
-: "icons/mobile_off.png";
+? "icons/mobile-data.png"
+: "icons/no-data.png";
 
 let html=`
 
