@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Apps Analytics Viewer</title>
 
 <style>
@@ -37,11 +38,12 @@ border:none;
 border-radius:15px;
 background:#e6ebf2;
 box-shadow:inset 5px 5px 10px #c5cad1,inset -5px -5px 10px white;
+margin-bottom:10px;
 }
 
 .button{
 padding:10px;
-margin-top:10px;
+margin:5px 5px 5px 0;
 border:none;
 border-radius:12px;
 background:#e6ebf2;
@@ -69,48 +71,31 @@ margin-bottom:5px;
 
 .numberRow{
 display:flex;
-align-items:center;
 justify-content:space-between;
+align-items:center;
 margin-bottom:4px;
 }
 
 .icons img{
-width:20px;
-margin-left:10px;
+width:22px;
+margin-left:12px;
 cursor:pointer;
 }
-
-/* alphabet sidebar */
-
-.sidebar{
-position:fixed;
-right:5px;
-top:100px;
-font-size:12px;
-}
-
-.sidebar div{
-padding:2px;
-cursor:pointer;
-}
-
-/* stats */
 
 .stats{
-font-size:14px;
 margin-bottom:10px;
+font-size:14px;
 }
-
-/* country filter */
 
 .country{
 display:inline-block;
-padding:5px 10px;
-margin:3px;
+padding:6px 12px;
+margin:4px;
 border-radius:10px;
 background:#e6ebf2;
 box-shadow:5px 5px 10px #c5cad1,-5px -5px 10px white;
 cursor:pointer;
+font-size:13px;
 }
 
 </style>
@@ -121,16 +106,22 @@ cursor:pointer;
 
 <div class="card" id="loader">
 
-Load JSON link:
+<div>Load from Link:</div>
 
 <input id="linkInput" class="input"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
 <button class="button" onclick="loadFromLink()">Load</button>
 
+<div>Paste JSON:</div>
+
 <textarea id="pasteInput" class="input"></textarea>
 
-<input type="file" onchange="loadFile(event)" class="input">
+<button class="button" onclick="loadFromPaste()">Load Paste</button>
+
+<div>Select File:</div>
+
+<input type="file" id="fileInput" class="input" accept=".json">
 
 </div>
 
@@ -138,16 +129,14 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 
 <div class="stats" id="stats"></div>
 
-<input class="input" id="search" placeholder="Search..."
-oninput="search()">
+<input id="searchInput" class="input" placeholder="Search name or number">
 
-<br><br>
-
+<div>
 <button class="button" onclick="showDuplicates()">Show Only Duplicates</button>
-
-<button class="button" onclick="sortAZ()">Sort A-Z</button>
-
-<button class="button" onclick="sortZA()">Sort Z-A</button>
+<button class="button" onclick="sortAZ()">Sort A → Z</button>
+<button class="button" onclick="sortZA()">Sort Z → A</button>
+<button class="button" onclick="resetView()">Show All</button>
+</div>
 
 <div id="countryFilter"></div>
 
@@ -155,34 +144,36 @@ oninput="search()">
 
 </div>
 
-<div class="sidebar" id="sidebar"></div>
-
 <script>
 
 let contacts=[]
 let filtered=[]
 let countryStats={}
 
-/* normalize */
+/* normalize number */
 
 function normalize(num){
-return num.replace(/\D/g,'').slice(-10)
+return (num||"").replace(/\D/g,'').slice(-10)
 }
 
-/* format */
+/* format number */
 
 function format(num){
+
 let n=normalize(num)
+
+if(n.length!==10) return num
+
 return "+91 "+n.slice(0,5)+" "+n.slice(5)
+
 }
 
-/* country detect */
+/* detect country */
 
 function detectCountry(num){
 
-let digits=num.replace(/\D/g,'')
+let digits=(num||"").replace(/\D/g,'')
 
-if(digits.startsWith("91")) return "India"
 if(digits.startsWith("977")) return "Nepal"
 if(digits.startsWith("1")) return "USA"
 if(digits.startsWith("44")) return "UK"
@@ -191,38 +182,42 @@ if(digits.startsWith("49")) return "Germany"
 if(digits.startsWith("33")) return "France"
 if(digits.startsWith("971")) return "UAE"
 if(digits.startsWith("65")) return "Singapore"
+if(digits.startsWith("91")) return "India"
 
 return "Other"
 
 }
 
-/* merge */
+/* process contacts */
 
 function process(data){
 
-let map=new Map()
+let nameMap=new Map()
 
 data.forEach(c=>{
 
-let name=c.name||"Unknown"
-let norm=normalize(c.number)
+let name=(c.name||"Unknown").trim()
 
-if(!map.has(name))
-map.set(name,new Set())
+let number=normalize(c.number)
 
-map.get(name).add(norm)
+if(!number) return
+
+if(!nameMap.has(name))
+nameMap.set(name,new Set())
+
+nameMap.get(name).add(number)
 
 })
 
 contacts=[]
 
-map.forEach((numbers,name)=>{
+nameMap.forEach((numbers,name)=>{
 
 numbers=[...numbers]
 
 contacts.push({
-name,
-numbers,
+name:name,
+numbers:numbers,
 duplicate:numbers.length>1
 })
 
@@ -231,6 +226,8 @@ duplicate:numbers.length>1
 filtered=[...contacts]
 
 buildCountryStats()
+
+showViewer()
 
 render()
 
@@ -249,7 +246,7 @@ html+=`<div class="contact">
 
 c.numbers.forEach(n=>{
 
-let full="+91"+n
+let full="91"+n
 
 html+=`
 <div class="numberRow">
@@ -293,29 +290,24 @@ let totalContacts=contacts.length
 let totalNumbers=contacts.reduce((a,c)=>a+c.numbers.length,0)
 
 document.getElementById("stats").innerHTML=
-`Total Contacts: ${totalContacts}
-<br>
-Total Numbers: ${totalNumbers}`
+`Total Contacts: ${totalContacts} | Total Numbers: ${totalNumbers}`
 
 }
 
 /* search */
 
-function search(){
+document.getElementById("searchInput").addEventListener("input",function(){
 
-let q=document.getElementById("search").value.toLowerCase()
+let q=this.value.toLowerCase()
 
-filtered=contacts.filter(c=>{
-
-if(c.name.toLowerCase().includes(q)) return true
-
-return c.numbers.some(n=>n.includes(q))
-
-})
+filtered=contacts.filter(c=>
+c.name.toLowerCase().includes(q) ||
+c.numbers.some(n=>n.includes(q))
+)
 
 render()
 
-}
+})
 
 /* duplicate filter */
 
@@ -332,6 +324,7 @@ render()
 function sortAZ(){
 
 filtered.sort((a,b)=>a.name.localeCompare(b.name))
+
 render()
 
 }
@@ -339,6 +332,17 @@ render()
 function sortZA(){
 
 filtered.sort((a,b)=>b.name.localeCompare(a.name))
+
+render()
+
+}
+
+/* reset */
+
+function resetView(){
+
+filtered=[...contacts]
+
 render()
 
 }
@@ -363,17 +367,14 @@ countryStats[country]=(countryStats[country]||0)+1
 
 let html=""
 
-Object.entries(countryStats)
-.forEach(([country,count])=>{
+Object.entries(countryStats).forEach(([country,count])=>{
 
-html+=`
-<div class="country"
+html+=`<span class="country"
 onclick="filterCountry('${country}')">
 
 ${country} (${count})
 
-</div>
-`
+</span>`
 
 })
 
@@ -388,29 +389,6 @@ c.numbers.some(n=>detectCountry(n)==country)
 )
 
 render()
-
-}
-
-/* alphabet sidebar */
-
-let letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-let sidebar=""
-
-letters.split("").forEach(l=>{
-
-sidebar+=`<div onclick="jump('${l}')">${l}</div>`
-
-})
-
-document.getElementById("sidebar").innerHTML=sidebar
-
-function jump(letter){
-
-let el=[...document.getElementsByClassName("contact")]
-.find(e=>e.innerText.startsWith(letter))
-
-if(el) el.scrollIntoView()
 
 }
 
@@ -430,39 +408,84 @@ window.open("https://wa.me/"+n)
 
 function copy(n){
 
-navigator.clipboard.writeText(n)
+navigator.clipboard.writeText(format(n))
 
 }
 
-/* load */
+/* show viewer */
 
-async function loadFromLink(){
-
-let res=await fetch(document.getElementById("linkInput").value)
-
-let json=await res.json()
+function showViewer(){
 
 document.getElementById("loader").style.display="none"
 
 document.getElementById("viewer").style.display="block"
 
+}
+
+/* load from link */
+
+async function loadFromLink(){
+
+try{
+
+let url=document.getElementById("linkInput").value
+
+let res=await fetch(url)
+
+let json=await res.json()
+
+process(json)
+
+}catch{
+
+alert("Failed to load JSON")
+
+}
+
+}
+
+/* load paste */
+
+function loadFromPaste(){
+
+try{
+
+let json=JSON.parse(
+document.getElementById("pasteInput").value
+)
+
+process(json)
+
+}catch{
+
+alert("Invalid JSON")
+
+}
+
+}
+
+/* load file */
+
+document.getElementById("fileInput")
+.addEventListener("change",function(){
+
+let file=this.files[0]
+
+if(!file) return
+
+let reader=new FileReader()
+
+reader.onload=function(e){
+
+let json=JSON.parse(e.target.result)
+
 process(json)
 
 }
 
-function loadFile(e){
+reader.readAsText(file)
 
-let reader=new FileReader()
-
-reader.onload=x=>{
-
-process(JSON.parse(x.target.result))
-
-}
-
-reader.readAsText(e.target.files[0])
-
-}
+})
 
 </script>
 
