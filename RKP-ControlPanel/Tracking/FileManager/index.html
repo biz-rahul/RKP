@@ -433,6 +433,57 @@ reader.readAsText(file);
 
 });
 
+
+/* ================= AUTO LOAD FROM URL PARAM ================= */
+
+function autoLoadFromParameter(){
+
+const params = new URLSearchParams(window.location.search);
+
+const url = params.get("url");
+
+if(!url) return;
+
+// optional: fill input box for visibility
+const input = document.getElementById("linkInput");
+
+if(input){
+input.value = url;
+}
+
+// auto fetch and load JSON
+
+fetch(url)
+.then(response=>{
+
+if(!response.ok)
+throw new Error("Failed to fetch JSON");
+
+return response.text();
+
+})
+.then(jsonText=>{
+
+processJSON(jsonText);
+
+})
+.catch(error=>{
+
+console.error("Auto load failed:", error);
+
+alert("Failed to auto load JSON from parameter.");
+
+});
+
+}
+    
+/* ================= INITIALIZE AUTO LOAD ================= */
+
+window.addEventListener("DOMContentLoaded", ()=>{
+
+autoLoadFromParameter();
+
+});
 function showDuplicates(){
 
 const map = new Map();
