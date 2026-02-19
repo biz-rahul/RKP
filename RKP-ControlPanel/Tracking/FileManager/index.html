@@ -324,6 +324,12 @@ let longPressDuration = 500;
 let timeFilter = "all";
 let customDateStart = null;
 let customDateEnd = null;
+let showHidden = true;
+let typeFilter = "all";
+let sizeFilter = "all";
+let customMinSize = null;
+let customMaxSize = null;
+
 
 
 /* ================= REST ALL ================= */
@@ -341,6 +347,156 @@ reader.onload = e => processJSON(e.target.result);
 reader.readAsText(file);
 
 });
+
+function getFileType(name){
+
+const ext = name.split(".").pop().toLowerCase();
+
+if(["jpg","jpeg","png","gif","webp"].includes(ext)) return "image";
+
+if(["mp4","mkv","avi","mov"].includes(ext)) return "video";
+
+if(["zip","rar","7z"].includes(ext)) return "zip";
+
+if(["apk"].includes(ext)) return "apk";
+
+if(["mp3","wav"].includes(ext)) return "audio";
+
+if(["pdf","doc","docx","txt"].includes(ext)) return "doc";
+
+return ext;
+
+}
+
+function filterByType(type){
+
+typeFilter = type;
+
+renderDirectory(currentPath);
+
+}
+
+function passesTypeFilter(item){
+
+if(typeFilter==="all") return true;
+
+if(item.directory) return true;
+
+return getFileType(item.name)===typeFilter;
+
+}
+
+function filterBySizePreset(preset){
+
+sizeFilter = preset;
+
+renderDirectory(currentPath);
+
+}
+
+function passesSizeFilter(item){
+
+let size = item.directory
+? calculateFolderSize(item.path)
+: item.size;
+
+switch(sizeFilter){
+
+case "1gb":
+return size >= 1024*1024*1024;
+
+case "500mb":
+return size >= 500*1024*1024;
+
+case "100mb":
+return size >= 100*1024*1024;
+
+}
+
+if(customMinSize && size < customMinSize) return false;
+
+if(customMaxSize && size > customMaxSize) return false;
+
+return true;
+
+}
+
+function applyCustomSizeFilter(){
+
+renderDirectory(currentPath);
+
+}
+
+function showTopLargestFiles(){
+
+const files = allPaths
+.filter(f=>!f.directory)
+.sort((a,b)=>b.size-a.size)
+.slice(0,100);
+
+renderSearchResults(files);
+
+}
+
+function showVisualization(){
+
+const viewer = document.getElementById("viewer");
+
+viewer.innerHTML="";
+
+const card=document.createElement("div");
+
+card.className="file-card neu-card";
+
+const folders = Object.values(fileIndex)
+.filter(f=>f.directory);
+
+folders.forEach(folder=>{
+
+const size = calculateFolderSize(folder.path);
+
+const bar=document.createElement("div");
+
+bar.style.margin="10px";
+
+bar.innerHTML=`
+
+<div>${folder.path}</div>
+
+<div style="
+background:#ddd;
+height:20px;
+border-radius:10px;
+overflow:hidden;
+">
+
+<div style="
+width:${Math.min(size/10000000,100)}%;
+background:#4ade80;
+height:100%;
+"></div>
+
+</div>
+
+<div>${formatSize(size)}</div>
+
+`;
+
+card.appendChild(bar);
+
+});
+
+viewer.appendChild(card);
+
+}
+
+function toggleHiddenFiles(){
+
+showHidden = !showHidden;
+
+renderDirectory(currentPath);
+
+}
 
 function globalSearch(query){
 
@@ -761,7 +917,19 @@ card.appendChild(back);
 
 /* ===== FILE LIST ===== */
 
-let list = (childrenMap[path] || []).filter(passesTimeFilter);
+let list = (childrenMap[path] || []).filter(item=>{
+
+if(!passesTimeFilter(item)) return false;
+
+if(!showHidden && item.hidden) return false;
+
+if(!passesTypeFilter(item)) return false;
+
+if(!passesSizeFilter(item)) return false;
+
+return true;
+
+});
 
 list.sort((a,b)=>{
 
