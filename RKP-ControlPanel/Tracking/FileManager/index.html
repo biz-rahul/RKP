@@ -184,6 +184,38 @@ reader.readAsText(file);
 
 });
 
+
+function calculateFolderSize(folderPath){
+
+let total = 0;
+
+const stack = [folderPath];
+
+while(stack.length){
+
+const current = stack.pop();
+
+const children = childrenMap[current] || [];
+
+children.forEach(item=>{
+
+if(item.directory){
+
+stack.push(item.path);
+
+}else{
+
+total += item.size || 0;
+
+}
+
+});
+
+}
+
+return total;
+
+}
 /* ================= LOAD METHODS ================= */
 
 function loadFromLink(){
