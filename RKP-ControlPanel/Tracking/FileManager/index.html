@@ -17,6 +17,73 @@ background:#e6edf5;
 color:#2d3748;
 }
 
+
+/* ================= COMPACT PINK TOOLBAR ================= */
+
+#toolbar{
+
+position:sticky;
+top:0;
+
+margin:8px;
+padding:10px;
+
+border-radius:15px;
+
+/* Pink neumorphic background */
+background:#f8eaf4;
+
+box-shadow:
+6px 6px 12px #d6c2cf,
+-6px -6px 12px #ffffff;
+
+display:flex;
+flex-wrap:wrap;
+align-items:center;
+gap:8px;
+
+z-index:100;
+
+}
+
+/* compact inputs inside toolbar */
+
+#toolbar input,
+#toolbar select{
+
+padding:6px 10px;
+font-size:13px;
+border-radius:10px;
+
+}
+
+/* compact buttons */
+
+#toolbar .neu-button{
+
+padding:6px 12px;
+font-size:13px;
+margin:0;
+
+}
+
+/* compact search box */
+
+#searchInput{
+
+flex:1;
+min-width:180px;
+
+}
+
+/* date inputs compact */
+
+#toolbar input[type="date"]{
+
+width:140px;
+
+}
+
 /* ================= HEADER ================= */
 
 .header{
@@ -152,7 +219,6 @@ font-size:22px;
 
 </style></head>
 <body>
-    
 <div class="header">
 Apps Analytics Viewer
 </div>
@@ -180,11 +246,14 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 
 </div>
 
-<!-- ================= TOOLBAR (HIDDEN INITIALLY) ================= -->
+<!-- ================= COMPACT HORIZONTAL TOOLBAR ================= -->
 
-<div id="toolbar" class="neu-card" style="display:none;margin:10px;padding:10px;">
+<div id="toolbar" class="neu-card"
+style="display:none;margin:8px;padding:10px;border-radius:15px;">
 
-<!-- VIEW MODE -->
+<!-- ===== ROW 1 : VIEW + CORE ACTIONS ===== -->
+
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
 
 <select class="neu-inset" onchange="setViewMode(this.value)">
 <option value="list">List View</option>
@@ -198,11 +267,6 @@ Find Duplicates
 <button class="neu-button" onclick="showExtensionStats()">
 File Statistics
 </button>
-
-
-<!-- ADVANCED FILTER BUTTONS -->
-
-<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;">
 
 <button class="neu-button" onclick="showTopLargestFiles()">
 Top 100 Largest Files
@@ -218,9 +282,9 @@ Toggle Hidden Files
 
 </div>
 
-<!-- FILE TYPE FILTER -->
+<!-- ===== ROW 2 : TYPE + SIZE FILTER ===== -->
 
-<div style="margin-top:10px;">
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;">
 
 <select class="neu-inset" onchange="filterByType(this.value)">
 <option value="all">All Types</option>
@@ -234,12 +298,6 @@ Toggle Hidden Files
 <option value="other">Other</option>
 </select>
 
-</div>
-
-<!-- SIZE FILTER -->
-
-<div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
-
 <select class="neu-inset" onchange="filterBySizePreset(this.value)">
 <option value="all">All Sizes</option>
 <option value="1gb">Larger than 1GB</option>
@@ -247,48 +305,49 @@ Toggle Hidden Files
 <option value="100mb">Larger than 100MB</option>
 </select>
 
-<input class="neu-inset" type="number" placeholder="Min Size MB"
+<input class="neu-inset" type="number"
+placeholder="Min MB"
+style="width:90px;"
 onchange="customMinSize=this.value*1024*1024">
 
-<input class="neu-inset" type="number" placeholder="Max Size MB"
+<input class="neu-inset" type="number"
+placeholder="Max MB"
+style="width:90px;"
 onchange="customMaxSize=this.value*1024*1024">
 
 <button class="neu-button" onclick="applyCustomSizeFilter()">
-Apply Size Filter
+Apply Size
 </button>
 
 </div>
 
-<!-- SEARCH -->
+<!-- ===== ROW 3 : SEARCH ===== -->
 
-<div style="margin-bottom:10px;">
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;">
 
 <input 
 class="neu-inset" 
 type="text" 
 id="searchInput"
-placeholder="Search entire storage from root..."
-style="width:70%;padding:10px;">
+placeholder="Search entire storage..."
+style="flex:1;min-width:200px;">
 
-<button 
-class="neu-button"
+<button class="neu-button"
 onclick="globalSearch(document.getElementById('searchInput').value)">
 Search </button>
 
-<button 
-class="neu-button"
+<button class="neu-button"
 onclick="renderDirectory('/')">
 Reset </button>
 
 </div>
 
-<!-- TIME SORT -->
+<!-- ===== ROW 4 : TIME FILTER ===== -->
 
-<div style="display:flex;gap:10px;flex-wrap:wrap;">
+<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px;">
 
 <select 
 class="neu-inset"
-style="padding:10px;"
 onchange="
 timeFilter=this.value;
 renderDirectory(currentPath);
@@ -327,6 +386,8 @@ renderDirectory(currentPath);
 <!-- ================= FILE VIEWER ================= -->
 
 <div id="viewer"></div>
+    
+
 <script>
 
 /* ================= STATE ================= */
