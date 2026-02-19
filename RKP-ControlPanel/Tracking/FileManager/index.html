@@ -184,6 +184,65 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 
 <div id="toolbar" class="neu-card" style="display:none;margin:10px;padding:10px;">
 
+<!-- ADVANCED FILTER BUTTONS -->
+
+<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;">
+
+<button class="neu-button" onclick="showTopLargestFiles()">
+Top 100 Largest Files
+</button>
+
+<button class="neu-button" onclick="showVisualization()">
+Visualization
+</button>
+
+<button class="neu-button" onclick="toggleHiddenFiles()">
+Toggle Hidden Files
+</button>
+
+</div>
+
+<!-- FILE TYPE FILTER -->
+
+<div style="margin-top:10px;">
+
+<select class="neu-inset" onchange="filterByType(this.value)">
+<option value="all">All Types</option>
+<option value="pdf">PDF</option>
+<option value="image">Images</option>
+<option value="video">Video</option>
+<option value="zip">ZIP</option>
+<option value="apk">APK</option>
+<option value="audio">Audio</option>
+<option value="doc">Documents</option>
+<option value="other">Other</option>
+</select>
+
+</div>
+
+<!-- SIZE FILTER -->
+
+<div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+
+<select class="neu-inset" onchange="filterBySizePreset(this.value)">
+<option value="all">All Sizes</option>
+<option value="1gb">Larger than 1GB</option>
+<option value="500mb">Larger than 500MB</option>
+<option value="100mb">Larger than 100MB</option>
+</select>
+
+<input class="neu-inset" type="number" placeholder="Min Size MB"
+onchange="customMinSize=this.value*1024*1024">
+
+<input class="neu-inset" type="number" placeholder="Max Size MB"
+onchange="customMaxSize=this.value*1024*1024">
+
+<button class="neu-button" onclick="applyCustomSizeFilter()">
+Apply Size Filter
+</button>
+
+</div>
+
 <!-- SEARCH -->
 
 <div style="margin-bottom:10px;">
