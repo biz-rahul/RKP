@@ -3,74 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Apps Analytics Viewer</title>
 
 <style>
 
 body{
 margin:0;
-font-family:system-ui,-apple-system,Segoe UI,Roboto;
+font-family:system-ui;
 background:#e6ebf2;
-color:#2d3748;
 }
 
 .header{
 text-align:center;
-padding:25px 15px 10px;
-font-size:28px;
-font-weight:600;
+font-size:26px;
+padding:20px;
+font-weight:bold;
 }
+
+/* neumorphic card */
 
 .card{
 margin:15px;
 padding:20px;
 border-radius:20px;
 background:#e6ebf2;
-box-shadow:
-8px 8px 16px #c5cad1,
--8px -8px 16px #ffffff;
-}
-
-.group{
-margin-bottom:25px;
-}
-
-.label{
-margin-bottom:10px;
-font-weight:500;
+box-shadow:8px 8px 16px #c5cad1,-8px -8px 16px white;
 }
 
 .input{
 width:100%;
-padding:14px;
-border-radius:15px;
+padding:12px;
 border:none;
-outline:none;
-font-size:15px;
+border-radius:15px;
 background:#e6ebf2;
-box-shadow:
-inset 5px 5px 10px #c5cad1,
-inset -5px -5px 10px #ffffff;
+box-shadow:inset 5px 5px 10px #c5cad1,inset -5px -5px 10px white;
 }
 
 .button{
-margin-top:12px;
-padding:12px 20px;
+padding:10px;
+margin-top:10px;
 border:none;
-border-radius:15px;
-font-size:15px;
+border-radius:12px;
 background:#e6ebf2;
-box-shadow:
-5px 5px 10px #c5cad1,
--5px -5px 10px #ffffff;
+box-shadow:5px 5px 10px #c5cad1,-5px -5px 10px white;
 cursor:pointer;
-}
-
-.button:active{
-box-shadow:
-inset 5px 5px 10px #c5cad1,
-inset -5px -5px 10px #ffffff;
 }
 
 .viewer{
@@ -78,35 +54,63 @@ display:none;
 padding:10px;
 }
 
-.searchBox{
-margin-bottom:15px;
-}
-
 .contact{
 padding:15px;
 margin-bottom:12px;
 border-radius:15px;
 background:#e6ebf2;
-box-shadow:
-5px 5px 10px #c5cad1,
--5px -5px 10px #ffffff;
+box-shadow:5px 5px 10px #c5cad1,-5px -5px 10px white;
 }
 
 .contactName{
-font-weight:600;
-font-size:17px;
-margin-bottom:8px;
+font-weight:bold;
+margin-bottom:5px;
 }
 
-.contactNumber{
-font-size:14px;
-color:#4a5568;
+.numberRow{
+display:flex;
+align-items:center;
+justify-content:space-between;
+margin-bottom:4px;
+}
+
+.icons img{
+width:20px;
 margin-left:10px;
+cursor:pointer;
 }
 
-@media(max-width:600px){
-.header{font-size:22px;}
-.card{margin:10px;padding:15px;}
+/* alphabet sidebar */
+
+.sidebar{
+position:fixed;
+right:5px;
+top:100px;
+font-size:12px;
+}
+
+.sidebar div{
+padding:2px;
+cursor:pointer;
+}
+
+/* stats */
+
+.stats{
+font-size:14px;
+margin-bottom:10px;
+}
+
+/* country filter */
+
+.country{
+display:inline-block;
+padding:5px 10px;
+margin:3px;
+border-radius:10px;
+background:#e6ebf2;
+box-shadow:5px 5px 10px #c5cad1,-5px -5px 10px white;
+cursor:pointer;
 }
 
 </style>
@@ -115,252 +119,349 @@ margin-left:10px;
 
 <div class="header">Apps Analytics Viewer</div>
 
-<div id="loaderUI" class="card">
+<div class="card" id="loader">
 
-<div class="group">
-<div class="label">Load from Link</div>
+Load JSON link:
 
-<input id="linkInput"
-class="input"
+<input id="linkInput" class="input"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
 <button class="button" onclick="loadFromLink()">Load</button>
-</div>
 
-<div class="group">
-<div class="label">Paste JSON</div>
+<textarea id="pasteInput" class="input"></textarea>
 
-<textarea id="pasteInput"
-class="input"
-rows="5"></textarea>
-
-<button class="button" onclick="loadFromPaste()">Load</button>
-</div>
-
-<div class="group">
-<div class="label">Select File</div>
-
-<input type="file"
-class="input"
-accept=".json"
-onchange="loadFromFile(event)">
-</div>
+<input type="file" onchange="loadFile(event)" class="input">
 
 </div>
 
-<div id="viewer" class="viewer">
+<div class="viewer" id="viewer">
 
-<div class="searchBox">
-<input type="text"
-id="searchInput"
-class="input"
-placeholder="Search by name or number..."
-oninput="searchContacts()">
+<div class="stats" id="stats"></div>
+
+<input class="input" id="search" placeholder="Search..."
+oninput="search()">
+
+<br><br>
+
+<button class="button" onclick="showDuplicates()">Show Only Duplicates</button>
+
+<button class="button" onclick="sortAZ()">Sort A-Z</button>
+
+<button class="button" onclick="sortZA()">Sort Z-A</button>
+
+<div id="countryFilter"></div>
+
+<div id="contacts"></div>
+
 </div>
 
-<div id="contactsContainer"></div>
-
-</div>
+<div class="sidebar" id="sidebar"></div>
 
 <script>
 
-/* ========= GLOBAL ========= */
+let contacts=[]
+let filtered=[]
+let countryStats={}
 
-let mergedContacts=[];
-let displayedContacts=[];
+/* normalize */
 
-/* ========= NORMALIZE ========= */
-
-function normalizeNumber(num)
-{
-let digits=(num||"").replace(/\D/g,'');
-return digits.slice(-10);
+function normalize(num){
+return num.replace(/\D/g,'').slice(-10)
 }
 
-/* ========= FORMAT NUMBER ========= */
+/* format */
 
-function formatNumber(num)
-{
-let digits=normalizeNumber(num);
-
-if(digits.length!==10)
-return num;
-
-return "+91 " +
-digits.slice(0,5) +
-" " +
-digits.slice(5);
+function format(num){
+let n=normalize(num)
+return "+91 "+n.slice(0,5)+" "+n.slice(5)
 }
 
-/* ========= MERGE ========= */
+/* country detect */
 
-function mergeContacts(data)
-{
+function detectCountry(num){
 
-let nameMap=new Map();
+let digits=num.replace(/\D/g,'')
 
-data.forEach(c =>
-{
+if(digits.startsWith("91")) return "India"
+if(digits.startsWith("977")) return "Nepal"
+if(digits.startsWith("1")) return "USA"
+if(digits.startsWith("44")) return "UK"
+if(digits.startsWith("61")) return "Australia"
+if(digits.startsWith("49")) return "Germany"
+if(digits.startsWith("33")) return "France"
+if(digits.startsWith("971")) return "UAE"
+if(digits.startsWith("65")) return "Singapore"
 
-let name=(c.name||"Unknown").trim();
-
-let normalized=normalizeNumber(c.number);
-
-if(!normalized) return;
-
-if(!nameMap.has(name))
-nameMap.set(name,new Set());
-
-nameMap.get(name).add(normalized);
-
-});
-
-mergedContacts=[];
-
-nameMap.forEach((numberSet,name)=>
-{
-
-mergedContacts.push({
-name:name,
-numbers:Array.from(numberSet)
-});
-
-});
-
-mergedContacts.sort((a,b)=>
-a.name.localeCompare(b.name)
-);
+return "Other"
 
 }
 
-/* ========= RENDER ========= */
+/* merge */
 
-function renderContacts(list)
-{
+function process(data){
 
-const container=document.getElementById("contactsContainer");
+let map=new Map()
 
-container.innerHTML="";
+data.forEach(c=>{
 
-list.forEach(contact =>
-{
+let name=c.name||"Unknown"
+let norm=normalize(c.number)
 
-let div=document.createElement("div");
+if(!map.has(name))
+map.set(name,new Set())
 
-div.className="contact";
+map.get(name).add(norm)
 
-let numbersHTML="";
+})
 
-contact.numbers.forEach(num =>
-{
-numbersHTML+=
-`<div class="contactNumber">${formatNumber(num)}</div>`;
-});
+contacts=[]
 
-div.innerHTML=
+map.forEach((numbers,name)=>{
+
+numbers=[...numbers]
+
+contacts.push({
+name,
+numbers,
+duplicate:numbers.length>1
+})
+
+})
+
+filtered=[...contacts]
+
+buildCountryStats()
+
+render()
+
+}
+
+/* render */
+
+function render(){
+
+let html=""
+
+filtered.forEach(c=>{
+
+html+=`<div class="contact">
+<div class="contactName">${c.name}</div>`
+
+c.numbers.forEach(n=>{
+
+let full="+91"+n
+
+html+=`
+<div class="numberRow">
+
+<div>${format(n)}</div>
+
+<div class="icons">
+
+<img src="call.png"
+onclick="call('${full}')">
+
+<img src="whatsapp.png"
+onclick="whatsapp('${full}')">
+
+<img src="copy.png"
+onclick="copy('${full}')">
+
+</div>
+
+</div>
 `
-<div class="contactName">${contact.name}</div>
-${numbersHTML}
-`;
 
-container.appendChild(div);
+})
 
-});
+html+="</div>"
 
-}
+})
 
-/* ========= SEARCH ========= */
+document.getElementById("contacts").innerHTML=html
 
-function searchContacts()
-{
-
-let queryRaw=
-document.getElementById("searchInput").value.toLowerCase();
-
-let queryDigits=queryRaw.replace(/\D/g,'');
-
-if(!queryRaw)
-{
-displayedContacts=mergedContacts;
-renderContacts(displayedContacts);
-return;
-}
-
-displayedContacts=mergedContacts.filter(c =>
-{
-
-if(c.name.toLowerCase().includes(queryRaw))
-return true;
-
-return c.numbers.some(num =>
-num.includes(queryDigits)
-);
-
-});
-
-renderContacts(displayedContacts);
+updateStats()
 
 }
 
-/* ========= LOAD ========= */
+/* stats */
 
-function loadContacts(data)
-{
+function updateStats(){
 
-mergeContacts(data);
+let totalContacts=contacts.length
 
-displayedContacts=mergedContacts;
+let totalNumbers=contacts.reduce((a,c)=>a+c.numbers.length,0)
 
-document.getElementById("loaderUI").style.display="none";
-
-document.getElementById("viewer").style.display="block";
-
-renderContacts(displayedContacts);
+document.getElementById("stats").innerHTML=
+`Total Contacts: ${totalContacts}
+<br>
+Total Numbers: ${totalNumbers}`
 
 }
 
-/* ========= LOAD METHODS ========= */
+/* search */
 
-async function loadFromLink()
-{
-try{
-let url=document.getElementById("linkInput").value;
-let res=await fetch(url);
-let json=await res.json();
-loadContacts(json);
-}
-catch{
-alert("Failed to load JSON");
-}
-}
+function search(){
 
-function loadFromPaste()
-{
-try{
-let json=JSON.parse(
-document.getElementById("pasteInput").value
-);
-loadContacts(json);
-}
-catch{
-alert("Invalid JSON");
-}
+let q=document.getElementById("search").value.toLowerCase()
+
+filtered=contacts.filter(c=>{
+
+if(c.name.toLowerCase().includes(q)) return true
+
+return c.numbers.some(n=>n.includes(q))
+
+})
+
+render()
+
 }
 
-function loadFromFile(e)
-{
-let file=e.target.files[0];
-if(!file) return;
+/* duplicate filter */
 
-let reader=new FileReader();
+function showDuplicates(){
 
-reader.onload=function(ev)
-{
-let json=JSON.parse(ev.target.result);
-loadContacts(json);
-};
+filtered=contacts.filter(c=>c.duplicate)
 
-reader.readAsText(file);
+render()
+
+}
+
+/* sort */
+
+function sortAZ(){
+
+filtered.sort((a,b)=>a.name.localeCompare(b.name))
+render()
+
+}
+
+function sortZA(){
+
+filtered.sort((a,b)=>b.name.localeCompare(a.name))
+render()
+
+}
+
+/* country stats */
+
+function buildCountryStats(){
+
+countryStats={}
+
+contacts.forEach(c=>{
+
+c.numbers.forEach(n=>{
+
+let country=detectCountry(n)
+
+countryStats[country]=(countryStats[country]||0)+1
+
+})
+
+})
+
+let html=""
+
+Object.entries(countryStats)
+.forEach(([country,count])=>{
+
+html+=`
+<div class="country"
+onclick="filterCountry('${country}')">
+
+${country} (${count})
+
+</div>
+`
+
+})
+
+document.getElementById("countryFilter").innerHTML=html
+
+}
+
+function filterCountry(country){
+
+filtered=contacts.filter(c=>
+c.numbers.some(n=>detectCountry(n)==country)
+)
+
+render()
+
+}
+
+/* alphabet sidebar */
+
+let letters="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+let sidebar=""
+
+letters.split("").forEach(l=>{
+
+sidebar+=`<div onclick="jump('${l}')">${l}</div>`
+
+})
+
+document.getElementById("sidebar").innerHTML=sidebar
+
+function jump(letter){
+
+let el=[...document.getElementsByClassName("contact")]
+.find(e=>e.innerText.startsWith(letter))
+
+if(el) el.scrollIntoView()
+
+}
+
+/* buttons */
+
+function call(n){
+
+location.href="tel:"+n
+
+}
+
+function whatsapp(n){
+
+window.open("https://wa.me/"+n)
+
+}
+
+function copy(n){
+
+navigator.clipboard.writeText(n)
+
+}
+
+/* load */
+
+async function loadFromLink(){
+
+let res=await fetch(document.getElementById("linkInput").value)
+
+let json=await res.json()
+
+document.getElementById("loader").style.display="none"
+
+document.getElementById("viewer").style.display="block"
+
+process(json)
+
+}
+
+function loadFile(e){
+
+let reader=new FileReader()
+
+reader.onload=x=>{
+
+process(JSON.parse(x.target.result))
+
+}
+
+reader.readAsText(e.target.files[0])
+
 }
 
 </script>
