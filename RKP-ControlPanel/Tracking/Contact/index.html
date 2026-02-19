@@ -3,11 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Apps Analytics Viewer</title>
 
 <style>
-
-/* ========= BASE ========= */
 
 body{
 margin:0;
@@ -16,16 +15,12 @@ background:#e6ebf2;
 color:#2d3748;
 }
 
-/* ========= HEADER ========= */
-
 .header{
 text-align:center;
 padding:25px 15px 10px;
 font-size:28px;
 font-weight:600;
 }
-
-/* ========= CARD ========= */
 
 .card{
 margin:15px;
@@ -37,8 +32,6 @@ box-shadow:
 -8px -8px 16px #ffffff;
 }
 
-/* ========= GROUP ========= */
-
 .group{
 margin-bottom:25px;
 }
@@ -47,8 +40,6 @@ margin-bottom:25px;
 margin-bottom:10px;
 font-weight:500;
 }
-
-/* ========= INPUT ========= */
 
 .input{
 width:100%;
@@ -62,8 +53,6 @@ box-shadow:
 inset 5px 5px 10px #c5cad1,
 inset -5px -5px 10px #ffffff;
 }
-
-/* ========= BUTTON ========= */
 
 .button{
 margin-top:12px;
@@ -84,20 +73,14 @@ inset 5px 5px 10px #c5cad1,
 inset -5px -5px 10px #ffffff;
 }
 
-/* ========= VIEWER ========= */
-
 .viewer{
 display:none;
 padding:10px;
 }
 
-/* ========= SEARCH ========= */
-
 .searchBox{
 margin-bottom:15px;
 }
-
-/* ========= CONTACT ========= */
 
 .contact{
 padding:15px;
@@ -121,8 +104,6 @@ color:#4a5568;
 margin-left:10px;
 }
 
-/* ========= MOBILE ========= */
-
 @media(max-width:600px){
 .header{font-size:22px;}
 .card{margin:10px;padding:15px;}
@@ -139,7 +120,8 @@ margin-left:10px;
 <div class="group">
 <div class="label">Load from Link</div>
 
-<input id="linkInput" class="input"
+<input id="linkInput"
+class="input"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
 <button class="button" onclick="loadFromLink()">Load</button>
@@ -148,7 +130,9 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 <div class="group">
 <div class="label">Paste JSON</div>
 
-<textarea id="pasteInput" class="input" rows="5"></textarea>
+<textarea id="pasteInput"
+class="input"
+rows="5"></textarea>
 
 <button class="button" onclick="loadFromPaste()">Load</button>
 </div>
@@ -156,7 +140,9 @@ value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/E
 <div class="group">
 <div class="label">Select File</div>
 
-<input type="file" class="input" accept=".json"
+<input type="file"
+class="input"
+accept=".json"
 onchange="loadFromFile(event)">
 </div>
 
@@ -180,23 +166,33 @@ oninput="searchContacts()">
 
 /* ========= GLOBAL ========= */
 
-let allContacts=[];
 let mergedContacts=[];
 let displayedContacts=[];
 
-/* ========= NORMALIZE NUMBER ========= */
-/* removes spaces, symbols, country code differences */
+/* ========= NORMALIZE ========= */
 
 function normalizeNumber(num)
 {
 let digits=(num||"").replace(/\D/g,'');
-
-/* keep last 10 digits for accurate duplicate detection */
-
 return digits.slice(-10);
 }
 
-/* ========= MERGE CONTACTS ========= */
+/* ========= FORMAT NUMBER ========= */
+
+function formatNumber(num)
+{
+let digits=normalizeNumber(num);
+
+if(digits.length!==10)
+return num;
+
+return "+91 " +
+digits.slice(0,5) +
+" " +
+digits.slice(5);
+}
+
+/* ========= MERGE ========= */
 
 function mergeContacts(data)
 {
@@ -208,41 +204,28 @@ data.forEach(c =>
 
 let name=(c.name||"Unknown").trim();
 
-let originalNumber=(c.number||"").trim();
-
-let normalized=normalizeNumber(originalNumber);
+let normalized=normalizeNumber(c.number);
 
 if(!normalized) return;
 
 if(!nameMap.has(name))
-nameMap.set(name,new Map());
+nameMap.set(name,new Set());
 
-let numberMap=nameMap.get(name);
-
-/* only store if normalized number not exists */
-
-if(!numberMap.has(normalized))
-{
-numberMap.set(normalized, originalNumber);
-}
+nameMap.get(name).add(normalized);
 
 });
 
-/* convert to array */
-
 mergedContacts=[];
 
-nameMap.forEach((numberMap,name)=>
+nameMap.forEach((numberSet,name)=>
 {
 
 mergedContacts.push({
 name:name,
-numbers:Array.from(numberMap.values())
+numbers:Array.from(numberSet)
 });
 
 });
-
-/* A-Z SORT */
 
 mergedContacts.sort((a,b)=>
 a.name.localeCompare(b.name)
@@ -270,7 +253,8 @@ let numbersHTML="";
 
 contact.numbers.forEach(num =>
 {
-numbersHTML+=`<div class="contactNumber">${num}</div>`;
+numbersHTML+=
+`<div class="contactNumber">${formatNumber(num)}</div>`;
 });
 
 div.innerHTML=
@@ -290,13 +274,12 @@ container.appendChild(div);
 function searchContacts()
 {
 
-let query=
-document.getElementById("searchInput")
-.value
-.toLowerCase()
-.replace(/\D/g,'');
+let queryRaw=
+document.getElementById("searchInput").value.toLowerCase();
 
-if(!query)
+let queryDigits=queryRaw.replace(/\D/g,'');
+
+if(!queryRaw)
 {
 displayedContacts=mergedContacts;
 renderContacts(displayedContacts);
@@ -306,11 +289,11 @@ return;
 displayedContacts=mergedContacts.filter(c =>
 {
 
-if(c.name.toLowerCase().includes(query))
+if(c.name.toLowerCase().includes(queryRaw))
 return true;
 
 return c.numbers.some(num =>
-normalizeNumber(num).includes(query)
+num.includes(queryDigits)
 );
 
 });
@@ -319,14 +302,12 @@ renderContacts(displayedContacts);
 
 }
 
-/* ========= LOAD CONTACTS ========= */
+/* ========= LOAD ========= */
 
 function loadContacts(data)
 {
 
-allContacts=data;
-
-mergeContacts(allContacts);
+mergeContacts(data);
 
 displayedContacts=mergedContacts;
 
@@ -338,72 +319,48 @@ renderContacts(displayedContacts);
 
 }
 
-/* ========= LOAD FROM LINK ========= */
+/* ========= LOAD METHODS ========= */
 
 async function loadFromLink()
 {
-
 try{
-
 let url=document.getElementById("linkInput").value;
-
 let res=await fetch(url);
-
 let json=await res.json();
-
 loadContacts(json);
-
 }
-catch(e)
-{
+catch{
 alert("Failed to load JSON");
 }
-
 }
-
-/* ========= LOAD FROM PASTE ========= */
 
 function loadFromPaste()
 {
-
 try{
-
 let json=JSON.parse(
 document.getElementById("pasteInput").value
 );
-
 loadContacts(json);
-
 }
-catch(e)
-{
+catch{
 alert("Invalid JSON");
 }
-
 }
-
-/* ========= LOAD FROM FILE ========= */
 
 function loadFromFile(e)
 {
-
 let file=e.target.files[0];
-
 if(!file) return;
 
 let reader=new FileReader();
 
 reader.onload=function(ev)
 {
-
 let json=JSON.parse(ev.target.result);
-
 loadContacts(json);
-
 };
 
 reader.readAsText(file);
-
 }
 
 </script>
