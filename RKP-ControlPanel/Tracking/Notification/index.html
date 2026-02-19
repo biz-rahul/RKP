@@ -584,6 +584,74 @@ container.appendChild(div);
 
 }
 
+/* =========================
+AUTO LOAD JSON FROM URL PARAMETER
+========================= */
+
+async function autoLoadFromParameter()
+{
+
+try
+{
+
+/* read parameter */
+const params = new URLSearchParams(window.location.search);
+
+const url = params.get("url");
+
+/* if no parameter, do nothing */
+if(!url) return;
+
+
+/* optional: show loading indicator */
+console.log("Auto-loading JSON from:", url);
+
+
+/* fetch JSON */
+const response = await fetch(url);
+
+
+/* validate response */
+if(!response.ok)
+{
+console.error("Failed to fetch JSON");
+return;
+}
+
+
+/* get text */
+const text = await response.text();
+
+
+/* pass into your existing parser */
+processJSON(text);
+
+
+/* hide input UI automatically (optional safety) */
+if(typeof hideInput === "function")
+hideInput();
+
+
+}
+catch(error)
+{
+
+console.error("Parameter auto-load error:", error);
+
+}
+
+}
+
+/* =========================
+INITIALIZE AUTO PARAMETER LOADER
+========================= */
+
+document.addEventListener("DOMContentLoaded", function()
+{
+
+autoLoadFromParameter();
+
+});
 </script>
 <script src="icons.js"></script>
 </body>
