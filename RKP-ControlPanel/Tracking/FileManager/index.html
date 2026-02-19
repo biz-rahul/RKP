@@ -403,7 +403,9 @@ ${item.directory?'📁':'📄'} ${item.name}
 </div>
 
 <div class="${item.hidden?'hidden':''}">
-${formatSize(item.size)}
+${item.directory 
+    ? formatSize(calculateFolderSize(item.path)) 
+    : formatSize(item.size)}
 </div>
 
 `;
