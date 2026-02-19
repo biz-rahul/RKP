@@ -565,6 +565,57 @@ function size(b){return (b/1048576).toFixed(2)+" MB";}
 function date(t){if(!t)return"Never";return new Date(t).toLocaleString();}
 function time(ms){let m=Math.floor(ms/60000);let h=Math.floor(m/60);return h+"h "+(m%60)+"m";}
 
+/* =========================
+   AUTO LOAD FROM URL PARAMETER
+========================= */
+
+window.addEventListener("DOMContentLoaded", async function(){
+
+try{
+
+// get parameter
+
+const params = new URLSearchParams(window.location.search);
+
+const url = params.get("url");
+
+// if parameter exists
+
+if(url){
+
+console.log("Auto loading from parameter:", url);
+
+// optional: show url in input box
+
+const linkInputBox = document.getElementById("linkInput");
+
+if(linkInputBox){
+linkInputBox.value = url;
+}
+
+// fetch json automatically
+
+const response = await fetch(url);
+
+if(!response.ok){
+throw new Error("Failed to fetch JSON");
+}
+
+const data = await response.json();
+
+// call your existing process function
+
+process(data);
+
+}
+
+}catch(error){
+
+console.error("Parameter auto load failed:", error);
+
+}
+
+});
 </script>
 
 </body>
