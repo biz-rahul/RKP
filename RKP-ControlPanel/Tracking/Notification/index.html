@@ -610,16 +610,74 @@ return name
 }
   
 /* =========================
-GET ICON
+SMART ICON DETECTION ENGINE
 ========================= */
 
-function getIcon(app){
+function getIcon(appName)
+{
 
-if(!app) return iconMap.default;
+if(!appName) return iconMap.default;
 
-const key=app.toLowerCase();
+/* normalize */
+const normalized = normalizeAppName(appName);
 
-return iconMap[key]||iconMap.default;
+/* split into words */
+const words = normalized.split(" ");
+
+
+/* =========================
+STEP 1: EXACT MATCH (highest priority)
+Example: "google photos"
+========================= */
+
+if(iconMap[normalized])
+return iconMap[normalized];
+
+
+/* =========================
+STEP 2: FULL WORD MATCH
+Example:
+"facebook world" → facebook
+========================= */
+
+for(const key in iconMap)
+{
+
+const normalizedKey = normalizeAppName(key);
+
+const keyWords = normalizedKey.split(" ");
+
+/* check if ALL key words exist in app name */
+
+const match = keyWords.every(word => words.includes(word));
+
+if(match)
+return iconMap[key];
+
+}
+
+
+/* =========================
+STEP 3: SINGLE WORD MATCH
+Example:
+facebook world → facebook
+telegram x → telegram
+========================= */
+
+for(const word of words)
+{
+
+if(iconMap[word])
+return iconMap[word];
+
+}
+
+
+/* =========================
+STEP 4: NO MATCH → DEFAULT ICON
+========================= */
+
+return iconMap.default;
 
 }
 
