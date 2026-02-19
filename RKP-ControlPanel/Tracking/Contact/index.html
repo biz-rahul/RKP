@@ -511,6 +511,56 @@ reader.readAsText(file)
 
 })
 
+
+/* ===============================
+AUTO LOAD JSON FROM URL PARAMETER
+=============================== */
+
+function autoLoadFromParameter()
+{
+try
+{
+const params = new URLSearchParams(window.location.search);
+
+const url = params.get("url");
+
+if(!url) return;
+
+/* put url into input field */
+
+const input = document.getElementById("linkInput");
+
+if(input)
+input.value = url;
+
+/* fetch automatically */
+
+fetch(url)
+.then(response =>
+{
+if(!response.ok)
+throw new Error("Fetch failed");
+
+return response.json();
+})
+.then(json =>
+{
+process(json); // your existing function
+})
+.catch(error =>
+{
+console.error("Auto load failed:", error);
+});
+}
+catch(e)
+{
+console.error("Parameter load error:", e);
+}
+}
+
+/* run automatically when page loads */
+
+window.addEventListener("DOMContentLoaded", autoLoadFromParameter);
 </script>
 
 </body>
