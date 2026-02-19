@@ -294,12 +294,17 @@ let fileIndex = {};
 let childrenMap = {};
 let currentPath = "/storage/emulated/0";
 
-/* NEW STATES (added safely) */
-
 let historyStack = [];
 let historyIndex = -1;
-let showHiddenFiles = true;
-let selectedItem = null;
+
+let showHidden = false;
+
+let currentFilter = {
+type:null,
+sizeMin:null,
+sizeMax:null,
+time:null
+};
 
 
 /* ================= FILE INPUT ================= */
@@ -317,41 +322,6 @@ reader.onload = e => processJSON(e.target.result);
 reader.readAsText(file);
 
 });
-
-
-/* ================= FOLDER SIZE ================= */
-
-function calculateFolderSize(folderPath){
-
-let total = 0;
-
-const stack = [folderPath];
-
-while(stack.length){
-
-const current = stack.pop();
-
-const children = childrenMap[current] || [];
-
-children.forEach(item=>{
-
-if(item.directory){
-
-stack.push(item.path);
-
-}else{
-
-total += item.size || 0;
-
-}
-
-});
-
-}
-
-return total;
-
-}
 
 
 /* ================= LOAD METHODS ================= */
@@ -387,26 +357,16 @@ return;
 
 buildFileSystem(data);
 
-hideInput();
-
-if(!childrenMap[currentPath]){
-currentPath="/";
-}
-
-renderDirectory(currentPath);
-
-buildTreeSidebar();
-
-}
-
-
-/* ================= HIDE INPUT ================= */
-
-function hideInput(){
-
 document.getElementById("inputPanel").style.display="none";
 
 document.getElementById("explorerContainer").style.display="block";
+
+if(!childrenMap[currentPath])
+currentPath="/";
+
+renderDirectory(currentPath);
+
+buildStats();
 
 }
 
@@ -426,41 +386,24 @@ item.last_modified = item.modified || 0;
 
 fileIndex[item.path] = item;
 
-let pathParts = item.path.split("/").filter(Boolean);
+let parts = item.path.split("/").filter(Boolean);
 
-for(let i=0;i<pathParts.length;i++){
+for(let i=0;i<parts.length;i++){
 
-let parent = "/" + pathParts.slice(0,i).join("/");
-
-let child = "/" + pathParts.slice(0,i+1).join("/");
+let parent = "/" + parts.slice(0,i).join("/");
+let child = "/" + parts.slice(0,i+1).join("/");
 
 if(parent==="") parent="/";
 
 if(!childrenMap[parent])
 childrenMap[parent]=[];
 
-if(!childrenMap[parent].some(x=>x.path===child)){
+let existing=fileIndex[child];
 
-let existing = fileIndex[child];
-
-if(existing){
+if(existing && !childrenMap[parent].some(x=>x.path===child)){
 
 childrenMap[parent].push(existing);
 
-}else{
-
-childrenMap[parent].push({
-name:pathParts[i],
-path:child,
-directory:true,
-hidden:false,
-size:0,
-last_modified:0,
-virtual:true
-});
-
-}
-
 }
 
 }
@@ -470,17 +413,30 @@ virtual:true
 }
 
 
-/* ================= GET PARENT ================= */
+/* ================= FOLDER SIZE ================= */
 
-function getParent(path){
+function calculateFolderSize(path){
 
-if(path==="/") return null;
+let total=0;
 
-let parts = path.split("/").filter(Boolean);
+let stack=[path];
 
-parts.pop();
+while(stack.length){
 
-return parts.length ? "/" + parts.join("/") : "/";
+let current=stack.pop();
+
+(childrenMap[current]||[]).forEach(item=>{
+
+if(item.directory)
+stack.push(item.path);
+else
+total+=item.size||0;
+
+});
+
+}
+
+return total;
 
 }
 
@@ -489,7 +445,7 @@ return parts.length ? "/" + parts.join("/") : "/";
 
 function pushHistory(path){
 
-historyStack = historyStack.slice(0, historyIndex+1);
+historyStack=historyStack.slice(0,historyIndex+1);
 
 historyStack.push(path);
 
@@ -497,25 +453,25 @@ historyIndex++;
 
 }
 
-document.getElementById("backBtn").onclick = function(){
+document.getElementById("backBtn").onclick=function(){
 
-if(historyIndex > 0){
+if(historyIndex>0){
 
 historyIndex--;
 
-renderDirectory(historyStack[historyIndex], false);
+renderDirectory(historyStack[historyIndex],false);
 
 }
 
 };
 
-document.getElementById("forwardBtn").onclick = function(){
+document.getElementById("forwardBtn").onclick=function(){
 
-if(historyIndex < historyStack.length - 1){
+if(historyIndex<historyStack.length-1){
 
 historyIndex++;
 
-renderDirectory(historyStack[historyIndex], false);
+renderDirectory(historyStack[historyIndex],false);
 
 }
 
@@ -526,33 +482,31 @@ renderDirectory(historyStack[historyIndex], false);
 
 function renderBreadcrumb(path){
 
-const bar = document.getElementById("breadcrumbBar");
-
-if(!bar) return;
+const bar=document.getElementById("breadcrumbBar");
 
 bar.innerHTML="";
 
-let parts = path.split("/").filter(Boolean);
+let parts=path.split("/").filter(Boolean);
 
 let current="";
 
-const root = document.createElement("span");
+let root=document.createElement("span");
 
 root.innerText="/";
 
-root.style.cursor="pointer";
-
 root.onclick=()=>renderDirectory("/");
+
+root.style.cursor="pointer";
 
 bar.appendChild(root);
 
 parts.forEach(part=>{
 
-current += "/" + part;
+current+="/"+part;
 
-bar.innerHTML += " / ";
+bar.innerHTML+=" / ";
 
-const btn=document.createElement("span");
+let btn=document.createElement("span");
 
 btn.innerText=part;
 
@@ -567,39 +521,157 @@ bar.appendChild(btn);
 }
 
 
-/* ================= TREE SIDEBAR ================= */
+/* ================= FILTER ================= */
 
-function buildTreeSidebar(){
+function applyFilters(list){
 
-const tree=document.getElementById("treeSidebar");
+return list.filter(item=>{
 
-if(!tree) return;
+if(!showHidden && item.hidden)
+return false;
 
-tree.innerHTML="";
+if(currentFilter.type){
 
-function addNode(path, level){
+if(!item.name.toLowerCase().endsWith(currentFilter.type))
+return false;
 
-(childrenMap[path]||[])
-.filter(x=>x.directory)
-.forEach(item=>{
+}
 
-const div=document.createElement("div");
+if(currentFilter.sizeMin!=null){
 
-div.style.paddingLeft=(level*15)+"px";
+let size=item.directory?
+calculateFolderSize(item.path):item.size;
 
-div.innerText="📁 "+item.name;
+if(size<currentFilter.sizeMin)
+return false;
 
-div.onclick=()=>renderDirectory(item.path);
+}
 
-tree.appendChild(div);
+if(currentFilter.sizeMax!=null){
 
-addNode(item.path, level+1);
+let size=item.directory?
+calculateFolderSize(item.path):item.size;
+
+if(size>currentFilter.sizeMax)
+return false;
+
+}
+
+return true;
 
 });
 
 }
 
-addNode("/",0);
+
+/* ================= RENDER ================= */
+
+function renderDirectory(path,addHistory=true){
+
+currentPath=path;
+
+if(addHistory)
+pushHistory(path);
+
+renderBreadcrumb(path);
+
+const viewer=document.getElementById("viewer");
+
+viewer.innerHTML="";
+
+let list=childrenMap[path]||[];
+
+list=applyFilters(list);
+
+list.sort((a,b)=>{
+
+if(a.directory && !b.directory) return -1;
+if(!a.directory && b.directory) return 1;
+
+return a.name.localeCompare(b.name);
+
+});
+
+if(path!="/"){
+
+let back=document.createElement("div");
+
+back.className="file-row";
+
+back.innerHTML="....";
+
+back.onclick=()=>{
+
+let parent=getParent(path);
+
+if(parent) renderDirectory(parent);
+
+};
+
+viewer.appendChild(back);
+
+}
+
+list.forEach(item=>{
+
+let row=document.createElement("div");
+
+row.className="file-row";
+
+row.innerHTML=`
+
+<div>
+${item.directory?'📁':'📄'} ${item.name}
+</div>
+
+<div>
+${formatSize(item.directory?
+calculateFolderSize(item.path):
+item.size)}
+</div>
+
+`;
+
+row.onclick=()=>{
+
+if(item.directory)
+renderDirectory(item.path);
+else
+showDetails(item);
+
+};
+
+viewer.appendChild(row);
+
+});
+
+}
+
+
+/* ================= GET PARENT ================= */
+
+function getParent(path){
+
+if(path=="/") return null;
+
+let parts=path.split("/").filter(Boolean);
+
+parts.pop();
+
+return parts.length?"/"+parts.join("/"):"/";
+
+}
+
+
+/* ================= SIZE FORMAT ================= */
+
+function formatSize(size){
+
+if(size>1e9) return (size/1e9).toFixed(2)+" GB";
+if(size>1e6) return (size/1e6).toFixed(2)+" MB";
+if(size>1e3) return (size/1e3).toFixed(2)+" KB";
+
+return size+" B";
 
 }
 
@@ -608,17 +680,16 @@ addNode("/",0);
 
 document.getElementById("searchBtn").onclick=function(){
 
-const query=document.getElementById("searchInput").value.toLowerCase();
+let query=document.getElementById("searchInput").value.toLowerCase();
 
-const results=Object.values(fileIndex).filter(item=>
-item.name.toLowerCase().includes(query)
-);
+let results=Object.values(fileIndex)
+.filter(item=>item.name.toLowerCase().includes(query));
 
-renderSearchResults(results);
+showResults(results);
 
 };
 
-function renderSearchResults(results){
+function showResults(results){
 
 const viewer=document.getElementById("viewer");
 
@@ -626,22 +697,33 @@ viewer.innerHTML="";
 
 results.forEach(item=>{
 
-viewer.appendChild(createRow(item));
+let row=document.createElement("div");
+
+row.className="file-row";
+
+row.innerHTML=item.name;
+
+row.onclick=()=>{
+
+if(item.directory)
+renderDirectory(item.path);
+else
+showDetails(item);
+
+};
+
+viewer.appendChild(row);
 
 });
 
 }
 
 
-/* ================= DETAILS PANEL ================= */
+/* ================= DETAILS ================= */
 
 function showDetails(item){
 
-selectedItem = item;
-
 const panel=document.getElementById("detailsPanel");
-
-if(!panel) return;
 
 panel.style.display="block";
 
@@ -651,30 +733,33 @@ panel.innerHTML=`
 
 Path: ${item.path}<br>
 
-Size: ${formatSize(item.directory ? calculateFolderSize(item.path) : item.size)}<br>
+Size: ${formatSize(item.directory?
+calculateFolderSize(item.path):
+item.size)}<br>
 
 Modified: ${new Date(item.last_modified)}<br>
 
-Hidden: ${item.hidden}<br>
-
-<button onclick="copyPath()">Copy Path</button>
+<button onclick="navigator.clipboard.writeText('${item.path}')">
+Copy Path
+</button>
 
 `;
 
 }
 
 
-/* ================= COPY PATH ================= */
+/* ================= LARGEST FILES ================= */
 
-function copyPath(){
+document.getElementById("largestBtn").onclick=function(){
 
-if(!selectedItem) return;
+let files=Object.values(fileIndex)
+.filter(x=>!x.directory)
+.sort((a,b)=>b.size-a.size)
+.slice(0,100);
 
-navigator.clipboard.writeText(selectedItem.path);
+showResults(files);
 
-alert("Copied");
-
-}
+};
 
 
 /* ================= DUPLICATES ================= */
@@ -704,21 +789,7 @@ dup.push(...list);
 
 });
 
-renderSearchResults(dup);
-
-};
-
-
-/* ================= LARGEST FILES ================= */
-
-document.getElementById("largestBtn").onclick=function(){
-
-let files=Object.values(fileIndex)
-.filter(f=>!f.directory)
-.sort((a,b)=>b.size-a.size)
-.slice(0,100);
-
-renderSearchResults(files);
+showResults(dup);
 
 };
 
@@ -727,147 +798,74 @@ renderSearchResults(files);
 
 document.getElementById("hiddenToggle").onchange=function(){
 
-showHiddenFiles=this.checked;
+showHidden=this.checked;
 
 renderDirectory(currentPath);
 
 };
 
 
-/* ================= CREATE ROW ================= */
+/* ================= TYPE FILTER ================= */
 
-function createRow(item){
+document.getElementById("typeFilter").onchange=function(){
 
-const row=document.createElement("div");
+currentFilter.type=this.value||null;
 
-row.className="file-row neu-inset";
+renderDirectory(currentPath);
 
-row.innerHTML=`
+};
 
-<div>
 
-<div class="${item.directory?'folder':'file'}">
+/* ================= SIZE FILTER ================= */
 
-${item.directory?'📁':'📄'} ${item.name}
+document.getElementById("sizeFilter").onchange=function(){
 
-</div>
+if(this.value=="1gb")
+currentFilter.sizeMin=1e9;
 
-<div class="path">${item.path}</div>
+else if(this.value=="500mb")
+currentFilter.sizeMin=5e8;
 
-</div>
-
-<div class="${item.hidden?'hidden':''}">
-
-${item.directory 
-? formatSize(calculateFolderSize(item.path)) 
-: formatSize(item.size)}
-
-</div>
-
-`;
-
-row.onclick=()=>{
-
-if(item.directory)
-renderDirectory(item.path);
 else
-showDetails(item);
+currentFilter.sizeMin=null;
+
+renderDirectory(currentPath);
 
 };
 
-row.oncontextmenu=(e)=>{
 
-e.preventDefault();
+/* ================= STATS ================= */
 
-showDetails(item);
+document.getElementById("statsBtn").onclick=function(){
 
-};
+let stats={};
 
-return row;
+Object.values(fileIndex).forEach(file=>{
 
-}
+if(file.directory) return;
 
+let ext=file.name.split(".").pop();
 
-/* ================= RENDER ================= */
-
-function renderDirectory(path, addHistory=true){
-
-currentPath = path;
-
-if(addHistory)
-pushHistory(path);
-
-renderBreadcrumb(path);
-
-const viewer=document.getElementById("viewer");
-
-viewer.innerHTML="";
-
-const card=document.createElement("div");
-
-card.className="file-card neu-card";
-
-/* BACK BUTTON */
-
-if(path !== "/"){
-
-const back=document.createElement("div");
-
-back.className="file-row neu-inset back-button";
-
-back.innerHTML="....";
-
-back.onclick=()=>{
-
-const parent=getParent(currentPath);
-
-if(parent!==null)
-renderDirectory(parent);
-
-};
-
-card.appendChild(back);
-
-}
-
-/* FILE LIST */
-
-let list = childrenMap[path] || [];
-
-if(!showHiddenFiles)
-list=list.filter(x=>!x.hidden);
-
-list.sort((a,b)=>{
-
-if(a.directory && !b.directory) return -1;
-if(!a.directory && b.directory) return 1;
-
-return a.name.localeCompare(b.name);
+stats[ext]=(stats[ext]||0)+1;
 
 });
 
-list.forEach(item=>{
+let html="<h3>Extension Statistics</h3>";
 
-card.appendChild(createRow(item));
+Object.entries(stats).forEach(([ext,count])=>{
+
+html+=ext+": "+count+"<br>";
 
 });
 
-viewer.appendChild(card);
+let panel=document.getElementById("statsPanel");
 
-}
+panel.innerHTML=html;
 
+panel.style.display="block";
 
-/* ================= SIZE FORMAT ================= */
+};
 
-function formatSize(size){
-
-if(size>1e9) return (size/1e9).toFixed(2)+" GB";
-if(size>1e6) return (size/1e6).toFixed(2)+" MB";
-if(size>1e3) return (size/1e3).toFixed(2)+" KB";
-
-return size+" B";
-
-}
 
 </script>
 
