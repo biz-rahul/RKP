@@ -1,7 +1,3 @@
-Kya maine sahi se update Kiya hai. Check karo. 
-
-
-
 <!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -254,6 +250,10 @@ buildFileSystem(data);
 
 hideInput();
 
+if(!childrenMap[currentPath]){
+currentPath="/";
+}
+
 renderDirectory(currentPath);
 
 }
@@ -276,7 +276,13 @@ childrenMap = {};
 
 data.forEach(item=>{
 
+// normalize new JSON fields to old viewer format
+item.directory = item.is_directory;
+item.hidden = item.is_hidden;
+item.last_modified = item.modified;
+
 fileIndex[item.path] = item;
+
 
 // create full parent chain
 let pathParts = item.path.split("/").filter(Boolean);
@@ -307,10 +313,12 @@ childrenMap[parent].push({
 name:pathParts[i],
 path:child,
 directory:true,
-size:0,
 hidden:false,
+size:0,
+last_modified:0,
 virtual:true
 });
+
 
 }
 
