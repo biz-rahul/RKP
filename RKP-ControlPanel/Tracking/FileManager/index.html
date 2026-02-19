@@ -250,6 +250,10 @@ buildFileSystem(data);
 
 hideInput();
 
+if(!childrenMap[currentPath]){
+currentPath="/";
+}
+
 renderDirectory(currentPath);
 
 }
@@ -271,6 +275,11 @@ fileIndex = {};
 childrenMap = {};
 
 data.forEach(item=>{
+
+// normalize new JSON fields to old viewer format
+item.directory = item.is_directory;
+item.hidden = item.is_hidden;
+item.last_modified = item.modified;
 
 fileIndex[item.path] = item;
 
@@ -303,8 +312,9 @@ childrenMap[parent].push({
 name:pathParts[i],
 path:child,
 directory:true,
-size:0,
 hidden:false,
+size:0,
+last_modified:0,
 virtual:true
 });
 
