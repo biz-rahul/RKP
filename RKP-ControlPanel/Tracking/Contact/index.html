@@ -1,69 +1,333 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Advanced Contacts Viewer</title>
-<link rel="stylesheet" href="style.css">
-</head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Apps Analytics Viewer</title>
+
+<style>
+
+/* ========== BASE ========== */
+
+body
+{
+margin:0;
+font-family: system-ui, -apple-system, Segoe UI, Roboto;
+background:#e6ebf2;
+color:#2d3748;
+}
+
+/* ========== HEADER ========== */
+
+.header
+{
+text-align:center;
+padding:25px 15px 10px;
+font-size:28px;
+font-weight:600;
+}
+
+/* ========== MAIN CARD ========== */
+
+.card
+{
+margin:15px;
+padding:20px;
+border-radius:20px;
+background:#e6ebf2;
+box-shadow:
+8px 8px 16px #c5cad1,
+-8px -8px 16px #ffffff;
+}
+
+/* ========== INPUT GROUP ========== */
+
+.group
+{
+margin-bottom:25px;
+}
+
+.label
+{
+margin-bottom:10px;
+font-weight:500;
+}
+
+/* ========== NEUMORPHIC INPUT ========== */
+
+.input
+{
+width:100%;
+padding:14px;
+border-radius:15px;
+border:none;
+outline:none;
+font-size:15px;
+background:#e6ebf2;
+box-shadow:
+inset 5px 5px 10px #c5cad1,
+inset -5px -5px 10px #ffffff;
+}
+
+/* ========== BUTTON ========== */
+
+.button
+{
+margin-top:12px;
+padding:12px 20px;
+border:none;
+border-radius:15px;
+font-size:15px;
+background:#e6ebf2;
+box-shadow:
+5px 5px 10px #c5cad1,
+-5px -5px 10px #ffffff;
+cursor:pointer;
+}
+
+.button:active
+{
+box-shadow:
+inset 5px 5px 10px #c5cad1,
+inset -5px -5px 10px #ffffff;
+}
+
+/* ========== CONTACTS VIEW ========== */
+
+.viewer
+{
+display:none;
+padding:15px;
+}
+
+.contact
+{
+padding:15px;
+margin-bottom:12px;
+border-radius:15px;
+background:#e6ebf2;
+box-shadow:
+5px 5px 10px #c5cad1,
+-5px -5px 10px #ffffff;
+}
+
+.name
+{
+font-weight:600;
+font-size:16px;
+}
+
+.number
+{
+margin-top:5px;
+font-size:14px;
+color:#4a5568;
+}
+
+/* MOBILE OPTIMIZATION */
+
+@media(max-width:600px)
+{
+.header
+{
+font-size:22px;
+}
+
+.card
+{
+margin:10px;
+padding:15px;
+}
+
+}
+
+</style>
+</head>
 <body>
 
-<h1>Advanced Contacts JSON Viewer</h1>
+<div class="header">
+Apps Analytics Viewer
+</div>
 
-<div class="panel">
+<div id="loaderUI" class="card">
 
-<h2>Load JSON</h2>
+<div class="group">
 
-<textarea id="jsonPaste" placeholder="Paste JSON here"></textarea>
+<div class="label">Load from Link</div>
 
-<input type="file" id="fileInput">
+<input id="linkInput"
+class="input"
+value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
-<input type="text" id="githubUrl"
-placeholder="GitHub RAW URL">
-
-<button onclick="loadPaste()">Load Paste</button>
-<button onclick="loadFile()">Load File</button>
-<button onclick="loadGitHub()">Load GitHub</button>
+<button class="button" onclick="loadFromLink()">Load</button>
 
 </div>
 
-<div class="panel">
+<div class="group">
 
-<h2>Filters</h2>
+<div class="label">Paste JSON</div>
 
-<input id="nameFilter" placeholder="Name filter">
+<textarea id="pasteInput"
+class="input"
+rows="5"></textarea>
 
-<input id="numberFilter" placeholder="Number filter">
-
-<select id="duplicateFilter">
-<option value="all">All</option>
-<option value="unique">Unique</option>
-<option value="duplicate">Duplicate</option>
-</select>
-
-<select id="sortFilter">
-<option value="name">Sort by Name</option>
-<option value="number">Sort by Number</option>
-</select>
-
-<button onclick="applyFilters()">Apply</button>
+<button class="button" onclick="loadFromPaste()">Load</button>
 
 </div>
 
-<div class="panel">
+<div class="group">
 
-<h2>Analytics</h2>
+<div class="label">Select File</div>
 
-<div id="stats"></div>
-
-<button onclick="exportCSV()">Export CSV</button>
-<button onclick="exportJSON()">Export JSON</button>
+<input type="file"
+class="input"
+id="fileInput"
+accept=".json"
+onchange="loadFromFile()">
 
 </div>
 
-<div id="contactsContainer"></div>
+</div>
 
-<script src="script.js"></script>
+<div id="viewer" class="viewer"></div>
+
+<script>
+
+/* ========= GLOBAL ========= */
+
+let contacts=[];
+
+/* ========= NORMALIZE ========= */
+
+function normalizeNumber(num)
+{
+return (num || "").replace(/\D/g,'');
+}
+
+/* ========= HIDE LOADER ========= */
+
+function hideLoader()
+{
+document.getElementById("loaderUI").style.display="none";
+
+document.getElementById("viewer").style.display="block";
+}
+
+/* ========= RENDER ========= */
+
+function renderContacts()
+{
+const viewer=document.getElementById("viewer");
+
+viewer.innerHTML="";
+
+contacts.forEach(contact =>
+{
+
+const div=document.createElement("div");
+
+div.className="contact";
+
+div.innerHTML=`
+<div class="name">${contact.name || "Unknown"}</div>
+<div class="number">${contact.number || "No number"}</div>
+`;
+
+viewer.appendChild(div);
+
+});
+
+}
+
+/* ========= LOAD CONTACTS ========= */
+
+function loadContacts(data)
+{
+
+contacts=data.map(c => ({
+name:c.name,
+number:c.number,
+normalized:normalizeNumber(c.number)
+}));
+
+hideLoader();
+
+renderContacts();
+
+}
+
+/* ========= LOAD FROM LINK ========= */
+
+async function loadFromLink()
+{
+
+try
+{
+
+const url=document.getElementById("linkInput").value;
+
+const res=await fetch(url);
+
+const json=await res.json();
+
+loadContacts(json);
+
+}
+catch(e)
+{
+alert("Failed to load JSON");
+}
+
+}
+
+/* ========= LOAD FROM PASTE ========= */
+
+function loadFromPaste()
+{
+
+try
+{
+
+const json=JSON.parse(
+document.getElementById("pasteInput").value
+);
+
+loadContacts(json);
+
+}
+catch(e)
+{
+alert("Invalid JSON");
+}
+
+}
+
+/* ========= LOAD FROM FILE ========= */
+
+function loadFromFile()
+{
+
+const file=document.getElementById("fileInput").files[0];
+
+if(!file) return;
+
+const reader=new FileReader();
+
+reader.onload=function(e)
+{
+
+const json=JSON.parse(e.target.result);
+
+loadContacts(json);
+
+};
+
+reader.readAsText(file);
+
+}
+
+</script>
 
 </body>
 </html>
