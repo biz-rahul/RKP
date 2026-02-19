@@ -373,7 +373,7 @@ allPaths.forEach(file=>{
 
 if(file.directory) return;
 
-const key = file.size + "_" + file.name;
+const key = file.size;
 
 if(!map.has(key)) map.set(key,[]);
 
