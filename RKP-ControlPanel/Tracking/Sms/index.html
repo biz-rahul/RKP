@@ -419,6 +419,63 @@ renderThreads();
 
 }
 
+
+  /* ---------- AUTO LOAD FROM PARAMETER ---------- */
+
+function autoLoadFromParameter(){
+
+const params = new URLSearchParams(window.location.search);
+
+const url = params.get("url");
+
+if(!url) return;
+
+/* optional: set in input box if exists */
+
+const linkInput = document.getElementById("linkInput");
+
+if(linkInput){
+
+linkInput.value = url;
+
+}
+
+/* fetch automatically */
+
+fetch(url)
+
+.then(res=>{
+
+if(!res.ok)
+throw new Error("Invalid JSON link");
+
+return res.json();
+
+})
+
+.then(json=>{
+
+/* your existing render function */
+
+loadJSONData(json);
+
+/* hide load UI if needed */
+
+document.getElementById("loadContainer")?.style.display="none";
+
+})
+
+.catch(err=>{
+
+console.error("Auto load failed:",err);
+
+});
+
+}
+  
+window.addEventListener("DOMContentLoaded",autoLoadFromParameter);
+
+  
 function updateCounts(){
 
 let contacts = (filteredData.length || data.length);
