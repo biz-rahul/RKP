@@ -151,16 +151,190 @@ font-size:22px;
 }
 
 </style></head>
-<body><div class="header">
+<body>
+<!-- HEADER -->
+<div class="header">
 Apps Analytics Viewer
-</div><div id="inputPanel" class="neu-card"><div class="label">Load from Link</div><input class="neu-inset" type="text" id="linkInput"
+</div>
+
+<!-- INPUT PANEL -->
+
+<div id="inputPanel" class="neu-card">
+
+<div>Load from Link</div>
+
+<input type="text"
+id="linkInput"
+class="neu-inset"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
-<button class="neu-button" onclick="loadFromLink()">Load</button>
+<button class="neu-button" onclick="loadFromLink()">
+Load
+</button>
 
-<div class="label">Paste JSON</div><textarea class="neu-inset" id="pasteInput"></textarea><button class="neu-button" onclick="loadFromPaste()">Load</button>
+<div>Paste JSON</div>
 
-<div class="label">Select File</div><input class="neu-inset" type="file" id="fileInput"></div><div id="viewer"></div><script>
+<textarea id="pasteInput" class="neu-inset"></textarea>
+
+<button class="neu-button" onclick="loadFromPaste()">
+Load
+</button>
+
+<div>Select File</div>
+
+<input type="file" id="fileInput" class="neu-inset">
+
+</div>
+
+<!-- EXPLORER CONTAINER -->
+
+<div id="explorerContainer">
+
+<!-- TOOLBAR -->
+
+<div id="toolbar" class="neu-card">
+
+<img src="icons/back.png" id="backBtn" width="30">
+
+<img src="icons/forward.png" id="forwardBtn" width="30">
+
+<input type="text"
+id="searchInput"
+class="neu-inset"
+placeholder="Search entire storage">
+
+<button id="searchBtn" class="neu-button">
+Search
+</button>
+
+<select id="viewMode" class="neu-inset">
+<option value="list">List</option>
+<option value="grid">Grid</option>
+<option value="compact">Compact</option>
+</select>
+
+<label>
+<input type="checkbox" id="hiddenToggle">
+Show Hidden
+</label>
+
+<button id="visualBtn" class="neu-button">
+Visualization
+</button>
+
+<button id="largestBtn" class="neu-button">
+Top 100 Largest
+</button>
+
+<button id="duplicateBtn" class="neu-button">
+Duplicates
+</button>
+
+<button id="statsBtn" class="neu-button">
+Extension Stats
+</button>
+
+</div>
+
+<!-- BREADCRUMB -->
+
+<div id="breadcrumbBar" class="neu-card">
+</div>
+
+<!-- FILTER BAR -->
+
+<div id="filterBar" class="neu-card">
+
+<select id="timeFilter" class="neu-inset">
+<option value="">All Time</option>
+<option value="24h">Last 24 Hours</option>
+<option value="7d">Last 7 Days</option>
+<option value="1m">Last 1 Month</option>
+<option value="1y">Last 1 Year</option>
+<option value="older">Older than 1 Year</option>
+<option value="custom">Custom</option>
+</select>
+
+<input type="date" id="dateFrom" class="neu-inset">
+
+<input type="date" id="dateTo" class="neu-inset">
+
+<select id="sizeFilter" class="neu-inset">
+
+<option value="">All Sizes</option>
+<option value="1gb">Greater than 1GB</option>
+<option value="500mb">Greater than 500MB</option>
+<option value="custom">Custom</option>
+
+</select>
+
+<input type="number"
+id="sizeMin"
+class="neu-inset"
+placeholder="Min bytes">
+
+<input type="number"
+id="sizeMax"
+class="neu-inset"
+placeholder="Max bytes">
+
+<select id="typeFilter" class="neu-inset">
+
+<option value="">All Types</option>
+
+<option value="pdf">PDF</option>
+
+<option value="jpg">Image</option>
+<option value="png">Image</option>
+<option value="jpeg">Image</option>
+
+<option value="mp4">Video</option>
+<option value="mkv">Video</option>
+
+<option value="apk">APK</option>
+
+<option value="zip">ZIP</option>
+<option value="rar">ZIP</option>
+
+<option value="mp3">Audio</option>
+
+<option value="json">JSON</option>
+
+<option value="txt">Text</option>
+
+</select>
+
+</div>
+
+<!-- MAIN AREA -->
+
+<div id="mainArea">
+
+<div id="treeSidebar" class="neu-card">
+</div>
+
+<div id="viewer">
+</div>
+
+</div>
+
+<!-- DETAILS PANEL -->
+
+<div id="detailsPanel" class="neu-card">
+</div>
+
+<!-- VISUAL PANEL -->
+
+<div id="visualPanel" class="neu-card">
+</div>
+
+<!-- STATS PANEL -->
+
+<div id="statsPanel" class="neu-card">
+</div>
+
+</div>
+    <script>
 
 /* ================= STATE ================= */
 
