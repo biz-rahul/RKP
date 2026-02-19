@@ -419,62 +419,71 @@ renderThreads();
 
 }
 
-
-  /* ---------- AUTO LOAD FROM PARAMETER ---------- */
+/* ---------- AUTO LOAD FROM PARAMETER (FIXED VERSION) ---------- */
 
 function autoLoadFromParameter(){
 
 const params = new URLSearchParams(window.location.search);
 
-const url = params.get("url");
+let url = params.get("url");
 
 if(!url) return;
 
-/* optional: set in input box if exists */
+/* IMPORTANT: decode URL */
+
+url = decodeURIComponent(url);
+
+console.log("Auto loading JSON from:", url);
+
+/* optional: set input box */
 
 const linkInput = document.getElementById("linkInput");
 
 if(linkInput){
-
 linkInput.value = url;
-
 }
 
-/* fetch automatically */
+/* fetch JSON */
 
 fetch(url)
+.then(response => {
 
-.then(res=>{
+if(!response.ok){
+throw new Error("Network response not ok");
+}
 
-if(!res.ok)
-throw new Error("Invalid JSON link");
-
-return res.json();
+return response.json();
 
 })
+.then(json => {
 
-.then(json=>{
+console.log("JSON loaded successfully");
 
-/* your existing render function */
+/* call your main render function */
 
 loadJSONData(json);
 
-/* hide load UI if needed */
+/* hide load container */
 
-document.getElementById("loadContainer")?.style.display="none";
+const loadContainer = document.getElementById("loadContainer");
+
+if(loadContainer){
+loadContainer.style.display = "none";
+}
 
 })
+.catch(error => {
 
-.catch(err=>{
+console.error("Auto load error:", error);
 
-console.error("Auto load failed:",err);
+alert("Failed to load JSON from parameter.");
 
 });
 
 }
-  
-window.addEventListener("DOMContentLoaded",autoLoadFromParameter);
 
+  
+window.addEventListener("DOMContentLoaded", autoLoadFromParameter);
   
 function updateCounts(){
 
