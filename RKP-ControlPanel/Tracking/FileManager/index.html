@@ -487,6 +487,50 @@ renderStats(stats);
 
 }
 
+
+function fullReset(){
+
+// reset search
+document.getElementById("searchInput").value = "";
+
+// reset filters
+timeFilter = "all";
+typeFilter = "all";
+sizeFilter = "all";
+
+customMinSize = null;
+customMaxSize = null;
+
+customDateStart = null;
+customDateEnd = null;
+
+showHidden = true;
+
+// reset dropdowns
+document.querySelectorAll("#toolbar select").forEach(select=>{
+select.selectedIndex = 0;
+});
+
+// reset date inputs
+document.querySelectorAll("#toolbar input[type=date]").forEach(input=>{
+input.value = "";
+});
+
+// reset size inputs
+document.querySelectorAll("#toolbar input[type=number]").forEach(input=>{
+input.value = "";
+});
+
+// reset view mode
+viewMode = "list";
+
+// go back to default directory
+currentPath = "/storage/emulated/0";
+
+renderDirectory(currentPath);
+
+}
+
 function renderStats(stats){
 
 const viewer=document.getElementById("viewer");
