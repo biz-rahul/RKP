@@ -3,15 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Apps Analytics Viewer</title>
 
 <style>
 
 /* ========= BASE ========= */
 
-body
-{
+body{
 margin:0;
 font-family:system-ui,-apple-system,Segoe UI,Roboto;
 background:#e6ebf2;
@@ -20,8 +18,7 @@ color:#2d3748;
 
 /* ========= HEADER ========= */
 
-.header
-{
+.header{
 text-align:center;
 padding:25px 15px 10px;
 font-size:28px;
@@ -30,8 +27,7 @@ font-weight:600;
 
 /* ========= CARD ========= */
 
-.card
-{
+.card{
 margin:15px;
 padding:20px;
 border-radius:20px;
@@ -43,21 +39,18 @@ box-shadow:
 
 /* ========= GROUP ========= */
 
-.group
-{
+.group{
 margin-bottom:25px;
 }
 
-.label
-{
+.label{
 margin-bottom:10px;
 font-weight:500;
 }
 
 /* ========= INPUT ========= */
 
-.input
-{
+.input{
 width:100%;
 padding:14px;
 border-radius:15px;
@@ -72,8 +65,7 @@ inset -5px -5px 10px #ffffff;
 
 /* ========= BUTTON ========= */
 
-.button
-{
+.button{
 margin-top:12px;
 padding:12px 20px;
 border:none;
@@ -86,8 +78,7 @@ box-shadow:
 cursor:pointer;
 }
 
-.button:active
-{
+.button:active{
 box-shadow:
 inset 5px 5px 10px #c5cad1,
 inset -5px -5px 10px #ffffff;
@@ -95,23 +86,20 @@ inset -5px -5px 10px #ffffff;
 
 /* ========= VIEWER ========= */
 
-.viewer
-{
+.viewer{
 display:none;
 padding:10px;
 }
 
 /* ========= SEARCH ========= */
 
-.searchBox
-{
+.searchBox{
 margin-bottom:15px;
 }
 
 /* ========= CONTACT ========= */
 
-.contact
-{
+.contact{
 padding:15px;
 margin-bottom:12px;
 border-radius:15px;
@@ -121,15 +109,13 @@ box-shadow:
 -5px -5px 10px #ffffff;
 }
 
-.contactName
-{
+.contactName{
 font-weight:600;
 font-size:17px;
 margin-bottom:8px;
 }
 
-.contactNumber
-{
+.contactNumber{
 font-size:14px;
 color:#4a5568;
 margin-left:10px;
@@ -137,18 +123,9 @@ margin-left:10px;
 
 /* ========= MOBILE ========= */
 
-@media(max-width:600px)
-{
-.header
-{
-font-size:22px;
-}
-
-.card
-{
-margin:10px;
-padding:15px;
-}
+@media(max-width:600px){
+.header{font-size:22px;}
+.card{margin:10px;padding:15px;}
 }
 
 </style>
@@ -160,38 +137,27 @@ padding:15px;
 <div id="loaderUI" class="card">
 
 <div class="group">
-
 <div class="label">Load from Link</div>
 
-<input id="linkInput"
-class="input"
+<input id="linkInput" class="input"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
 <button class="button" onclick="loadFromLink()">Load</button>
-
 </div>
 
 <div class="group">
-
 <div class="label">Paste JSON</div>
 
-<textarea id="pasteInput"
-class="input"
-rows="5"></textarea>
+<textarea id="pasteInput" class="input" rows="5"></textarea>
 
 <button class="button" onclick="loadFromPaste()">Load</button>
-
 </div>
 
 <div class="group">
-
 <div class="label">Select File</div>
 
-<input type="file"
-class="input"
-accept=".json"
+<input type="file" class="input" accept=".json"
 onchange="loadFromFile(event)">
-
 </div>
 
 </div>
@@ -199,8 +165,7 @@ onchange="loadFromFile(event)">
 <div id="viewer" class="viewer">
 
 <div class="searchBox">
-<input
-type="text"
+<input type="text"
 id="searchInput"
 class="input"
 placeholder="Search by name or number..."
@@ -219,11 +184,16 @@ let allContacts=[];
 let mergedContacts=[];
 let displayedContacts=[];
 
-/* ========= NORMALIZE ========= */
+/* ========= NORMALIZE NUMBER ========= */
+/* removes spaces, symbols, country code differences */
 
 function normalizeNumber(num)
 {
-return (num||"").replace(/\D/g,'');
+let digits=(num||"").replace(/\D/g,'');
+
+/* keep last 10 digits for accurate duplicate detection */
+
+return digits.slice(-10);
 }
 
 /* ========= MERGE CONTACTS ========= */
@@ -231,33 +201,48 @@ return (num||"").replace(/\D/g,'');
 function mergeContacts(data)
 {
 
-let map=new Map();
+let nameMap=new Map();
 
 data.forEach(c =>
 {
 
 let name=(c.name||"Unknown").trim();
 
-let number=(c.number||"").trim();
+let originalNumber=(c.number||"").trim();
 
-if(!map.has(name))
-map.set(name,new Set());
+let normalized=normalizeNumber(originalNumber);
 
-map.get(name).add(number);
+if(!normalized) return;
+
+if(!nameMap.has(name))
+nameMap.set(name,new Map());
+
+let numberMap=nameMap.get(name);
+
+/* only store if normalized number not exists */
+
+if(!numberMap.has(normalized))
+{
+numberMap.set(normalized, originalNumber);
+}
 
 });
+
+/* convert to array */
 
 mergedContacts=[];
 
-map.forEach((numbers,name)=>
+nameMap.forEach((numberMap,name)=>
 {
+
 mergedContacts.push({
 name:name,
-numbers:Array.from(numbers)
-});
+numbers:Array.from(numberMap.values())
 });
 
-/* SORT A-Z */
+});
+
+/* A-Z SORT */
 
 mergedContacts.sort((a,b)=>
 a.name.localeCompare(b.name)
@@ -288,7 +273,8 @@ contact.numbers.forEach(num =>
 numbersHTML+=`<div class="contactNumber">${num}</div>`;
 });
 
-div.innerHTML=`
+div.innerHTML=
+`
 <div class="contactName">${contact.name}</div>
 ${numbersHTML}
 `;
@@ -307,7 +293,8 @@ function searchContacts()
 let query=
 document.getElementById("searchInput")
 .value
-.toLowerCase();
+.toLowerCase()
+.replace(/\D/g,'');
 
 if(!query)
 {
@@ -323,7 +310,7 @@ if(c.name.toLowerCase().includes(query))
 return true;
 
 return c.numbers.some(num =>
-num.includes(query)
+normalizeNumber(num).includes(query)
 );
 
 });
@@ -332,7 +319,7 @@ renderContacts(displayedContacts);
 
 }
 
-/* ========= LOAD ========= */
+/* ========= LOAD CONTACTS ========= */
 
 function loadContacts(data)
 {
@@ -366,7 +353,8 @@ let json=await res.json();
 
 loadContacts(json);
 
-}catch(e)
+}
+catch(e)
 {
 alert("Failed to load JSON");
 }
@@ -386,7 +374,8 @@ document.getElementById("pasteInput").value
 
 loadContacts(json);
 
-}catch(e)
+}
+catch(e)
 {
 alert("Invalid JSON");
 }
