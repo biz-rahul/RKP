@@ -3,11 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Apps Analytics Viewer</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 
-/* NEUMORPHIC PREMIUM UI */
+/* =========================
+PREMIUM NEUMORPHIC UI
+========================= */
 
 body{
 margin:0;
@@ -19,107 +25,127 @@ color:#2d3748;
 .container{
 max-width:900px;
 margin:auto;
-padding:20px;
+padding:15px;
 }
 
 .title{
 text-align:center;
-font-size:32px;
+font-size:28px;
 font-weight:700;
-margin-bottom:20px;
+margin-bottom:15px;
 }
 
-.neu-card{
+.card{
 background:#e6ebf2;
-border-radius:20px;
-padding:20px;
-box-shadow:
-10px 10px 20px #c5cad1,
--10px -10px 20px #ffffff;
-}
-
-label{
-font-weight:600;
-display:block;
-margin-top:15px;
-margin-bottom:8px;
-}
-
-input,textarea{
-width:100%;
 padding:15px;
-border:none;
-border-radius:15px;
-background:#e6ebf2;
+border-radius:18px;
+
 box-shadow:
-inset 5px 5px 10px #c5cad1,
-inset -5px -5px 10px #ffffff;
-font-size:16px;
-outline:none;
+8px 8px 16px #c5cad1,
+-8px -8px 16px #ffffff;
+
+margin-bottom:15px;
 }
 
-textarea{
-height:120px;
-resize:none;
+input,textarea,select{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#e6ebf2;
+box-shadow:
+inset 4px 4px 8px #c5cad1,
+inset -4px -4px 8px #ffffff;
+margin-bottom:10px;
 }
 
 button{
-margin-top:10px;
-padding:12px;
+padding:10px 15px;
 border:none;
-border-radius:15px;
+border-radius:12px;
 background:#e6ebf2;
 box-shadow:
-5px 5px 10px #c5cad1,
--5px -5px 10px #ffffff;
-font-weight:600;
+4px 4px 8px #c5cad1,
+-4px -4px 8px #ffffff;
 cursor:pointer;
+margin:5px;
 }
 
 button:active{
 box-shadow:
-inset 5px 5px 10px #c5cad1,
-inset -5px -5px 10px #ffffff;
+inset 4px 4px 8px #c5cad1,
+inset -4px -4px 8px #ffffff;
 }
 
 .viewer{
 display:none;
 }
 
+/* FILTER BAR */
+
+.filter-bar{
+display:flex;
+overflow-x:auto;
+gap:10px;
+margin-bottom:10px;
+}
+
+.filter-bar button{
+white-space:nowrap;
+}
+
+/* APP FILTER */
+
+.app-filter{
+margin-bottom:10px;
+}
+
+/* NOTIFICATION */
+
 .notification{
-margin-bottom:15px;
 padding:15px;
+margin-bottom:10px;
 border-radius:15px;
 background:#e6ebf2;
 box-shadow:
 5px 5px 10px #c5cad1,
 -5px -5px 10px #ffffff;
+cursor:pointer;
 }
 
-.app{
+.notification-header{
+display:flex;
+align-items:center;
+gap:10px;
+}
+
+.icon{
+font-size:20px;
+width:30px;
+text-align:center;
+}
+
+.app-name{
 font-weight:700;
-font-size:18px;
-}
-
-.sender{
-font-weight:600;
-margin-top:4px;
 }
 
 .message{
-margin-top:4px;
+margin-top:5px;
 }
 
 .time{
 font-size:12px;
-margin-top:6px;
 color:#666;
+margin-top:5px;
 }
 
-.error{
-color:red;
-font-weight:600;
+.details{
 margin-top:10px;
+font-size:13px;
+display:none;
+background:#dde3ea;
+padding:10px;
+border-radius:10px;
 }
 
 </style>
@@ -132,44 +158,100 @@ margin-top:10px;
 
 <div class="title">Apps Analytics Viewer</div>
 
-<div class="neu-card">
+<div class="card">
 
-<label>Load from Link</label>
 <input id="linkInput"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
-<button onclick="loadFromLink()">Load</button>
 
-<label>Paste JSON</label>
-<textarea id="pasteInput"></textarea>
-<button onclick="loadFromPaste()">Load</button>
+<button onclick="loadFromLink()">Load from Link</button>
 
-<label>Select File</label>
+<textarea id="pasteInput" placeholder="Paste JSON"></textarea>
+
+<button onclick="loadFromPaste()">Load JSON</button>
+
 <input type="file" id="fileInput">
-<button onclick="loadFromFile()">Load</button>
 
-<div id="errorBox" class="error"></div>
+<button onclick="loadFromFile()">Load File</button>
 
 </div>
+
 </div>
 
-<div id="viewer" class="viewer"></div>
+
+<div id="viewer" class="viewer">
+
+<div class="filter-bar">
+
+<button onclick="filterTime('today')">Today</button>
+<button onclick="filterTime('yesterday')">Yesterday</button>
+<button onclick="filterTime('week')">This Week</button>
+<button onclick="filterTime('month')">This Month</button>
+<button onclick="filterTime('older')">Older</button>
+<button onclick="filterTime('all')">All</button>
+
+</div>
+
+<select id="appFilter" class="app-filter"
+onchange="filterByApp()">
+
+<option value="all">All Apps</option>
+
+</select>
+
+<div id="notificationList"></div>
+
+</div>
 
 </div>
 
 <script>
 
-let notifications=[];
+/* =========================
+GLOBAL STATE
+========================= */
+
+let allNotifications=[];
+let filteredNotifications=[];
 
 
-/* LOAD FROM LINK */
+/* =========================
+FONT AWESOME ICON MAP
+TOP 20 APPS
+========================= */
+
+const iconMap={
+
+snapchat:"fa-brands fa-snapchat",
+whatsapp:"fa-brands fa-whatsapp",
+telegram:"fa-brands fa-telegram",
+facebook:"fa-brands fa-facebook",
+instagram:"fa-brands fa-instagram",
+twitter:"fa-brands fa-x-twitter",
+youtube:"fa-brands fa-youtube",
+gmail:"fa-solid fa-envelope",
+chrome:"fa-brands fa-chrome",
+google:"fa-brands fa-google",
+call:"fa-solid fa-phone",
+phone:"fa-solid fa-phone",
+messages:"fa-solid fa-comment",
+discord:"fa-brands fa-discord",
+linkedin:"fa-brands fa-linkedin",
+amazon:"fa-brands fa-amazon",
+spotify:"fa-brands fa-spotify",
+reddit:"fa-brands fa-reddit",
+tiktok:"fa-brands fa-tiktok",
+default:"fa-solid fa-bell"
+
+};
+
+
+/* =========================
+LOAD FUNCTIONS
+========================= */
 
 async function loadFromLink(){
 
-clearError();
-
-try{
-
-const url=document.getElementById("linkInput").value;
+const url=linkInput.value;
 
 const res=await fetch(url);
 
@@ -177,188 +259,285 @@ const text=await res.text();
 
 processJSON(text);
 
-}catch(e){
-
-showError("Failed to load from link");
-
 }
-
-}
-
-
-/* LOAD FROM PASTE */
 
 function loadFromPaste(){
 
-clearError();
-
-const text=document.getElementById("pasteInput").value;
-
-processJSON(text);
+processJSON(pasteInput.value);
 
 }
-
-
-/* LOAD FROM FILE */
 
 function loadFromFile(){
 
-clearError();
-
-const file=document.getElementById("fileInput").files[0];
-
-if(!file){
-
-showError("Please select file");
-
-return;
-
-}
+const file=fileInput.files[0];
 
 const reader=new FileReader();
 
-reader.onload=function(e){
-
-processJSON(e.target.result);
-
-};
+reader.onload=e=>processJSON(e.target.result);
 
 reader.readAsText(file);
 
 }
 
 
-/* SAFE JSON PROCESSOR */
+/* =========================
+PROCESS JSON
+========================= */
 
 function processJSON(text){
 
 try{
 
-const parsed=JSON.parse(text);
+const data=JSON.parse(text);
 
-/* VALIDATION */
+if(!Array.isArray(data)) throw "Invalid";
 
-if(!Array.isArray(parsed)){
+allNotifications=data;
 
-showError("JSON must be array");
-
-return;
-
-}
-
-notifications=parsed;
-
-/* CHECK EMPTY */
-
-if(notifications.length===0){
-
-showError("No notifications found");
-
-return;
-
-}
-
-/* SUCCESS */
+filteredNotifications=[...data];
 
 hideInput();
 
+populateAppFilter();
+
 renderNotifications();
 
-}catch(e){
+}catch{
 
-showError("Invalid JSON or corrupted file");
-
-}
+alert("Invalid JSON");
 
 }
 
+}
 
-/* RENDER ENGINE */
 
-function renderNotifications(){
+/* =========================
+HIDE INPUT
+========================= */
 
-const viewer=document.getElementById("viewer");
+function hideInput(){
 
-viewer.innerHTML="";
+inputSection.style.display="none";
 
-notifications.sort((a,b)=>b.posted_time-a.posted_time);
+viewer.style.display="block";
 
-notifications.forEach(n=>{
+}
 
-const app=n.app_name||"Unknown App";
 
-const sender=n.title||"";
+/* =========================
+APP FILTER AUTO FETCH
+========================= */
 
-const message=n.text||n.big_text||n.ticker||"";
+function populateAppFilter(){
 
-const time=n.posted_time
-?new Date(n.posted_time).toLocaleString()
-:"";
+const apps=[...new Set(allNotifications.map(n=>n.app_name))];
 
-viewer.innerHTML+=`
+const select=document.getElementById("appFilter");
 
-<div class="notification">
+apps.forEach(app=>{
 
-<div class="app">${escapeHTML(app)}</div>
+const option=document.createElement("option");
 
-<div class="sender">${escapeHTML(sender)}</div>
+option.value=app;
 
-<div class="message">${escapeHTML(message)}</div>
+option.textContent=app;
 
-<div class="time">${escapeHTML(time)}</div>
-
-</div>
-
-`;
+select.appendChild(option);
 
 });
 
 }
 
 
-/* UI CONTROL */
+function filterByApp(){
 
-function hideInput(){
+const selected=appFilter.value;
 
-document.getElementById("inputSection").style.display="none";
+if(selected==="all")
 
-document.getElementById("viewer").style.display="block";
+filteredNotifications=[...allNotifications];
 
-}
+else
 
+filteredNotifications=allNotifications.filter(
+n=>n.app_name===selected
+);
 
-/* ERROR HANDLING */
-
-function showError(msg){
-
-document.getElementById("errorBox").innerText=msg;
-
-}
-
-function clearError(){
-
-document.getElementById("errorBox").innerText="";
+renderNotifications();
 
 }
 
 
-/* SECURITY */
+/* =========================
+TIME FILTER
+========================= */
 
-function escapeHTML(str){
+function filterTime(type){
 
-if(!str) return "";
+const now=new Date();
 
-return str.replace(/[&<>"']/g,function(m){
+filteredNotifications=allNotifications.filter(n=>{
 
-return{
+const date=new Date(n.posted_time);
 
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-"\"":"&quot;",
-"'":"&#039;"
+if(type==="today")
 
-}[m];
+return date.toDateString()===now.toDateString();
+
+if(type==="yesterday"){
+
+const y=new Date();
+
+y.setDate(now.getDate()-1);
+
+return date.toDateString()===y.toDateString();
+
+}
+
+if(type==="week"){
+
+const week=new Date();
+
+week.setDate(now.getDate()-7);
+
+return date>=week;
+
+}
+
+if(type==="month"){
+
+const month=new Date();
+
+month.setMonth(now.getMonth()-1);
+
+return date>=month;
+
+}
+
+if(type==="older"){
+
+const month=new Date();
+
+month.setMonth(now.getMonth()-1);
+
+return date<month;
+
+}
+
+return true;
+
+});
+
+renderNotifications();
+
+}
+
+
+/* =========================
+GET ICON
+========================= */
+
+function getIcon(app){
+
+if(!app) return iconMap.default;
+
+const key=app.toLowerCase();
+
+return iconMap[key]||iconMap.default;
+
+}
+
+
+/* =========================
+RENDER NOTIFICATIONS
+========================= */
+
+function renderNotifications(){
+
+const container=document.getElementById(
+"notificationList"
+);
+
+container.innerHTML="";
+
+filteredNotifications
+.sort((a,b)=>b.posted_time-a.posted_time)
+.forEach((n,i)=>{
+
+const icon=getIcon(n.app_name);
+
+const message=
+n.text||n.big_text||n.ticker||"";
+
+const div=document.createElement("div");
+
+div.className="notification";
+
+div.innerHTML=`
+
+<div class="notification-header">
+
+<i class="icon ${icon}"></i>
+
+<div>
+
+<div class="app-name">
+${n.app_name||""}
+</div>
+
+<div class="message">
+${n.title||""} ${message}
+</div>
+
+<div class="time">
+${new Date(
+n.posted_time
+).toLocaleString()}
+</div>
+
+</div>
+
+</div>
+
+<div class="details">
+
+<b>Package:</b> ${n.package}<br>
+
+<b>ID:</b> ${n.id}<br>
+
+<b>Category:</b> ${n.category}<br>
+
+<b>Title:</b> ${n.title}<br>
+
+<b>Text:</b> ${n.text}<br>
+
+<b>Big Text:</b> ${n.big_text}<br>
+
+<b>Ticker:</b> ${n.ticker}<br>
+
+<b>Posted:</b> ${new Date(
+n.posted_time
+).toLocaleString()}<br>
+
+<b>Captured:</b> ${new Date(
+n.captured_time
+).toLocaleString()}
+
+</div>
+
+`;
+
+div.onclick=function(){
+
+const d=this.querySelector(".details");
+
+d.style.display=
+d.style.display==="block"
+?"none":"block";
+
+};
+
+container.appendChild(div);
 
 });
 
