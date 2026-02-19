@@ -154,6 +154,7 @@ font-size:22px;
 </style></head>
 <body>
 <!-- HEADER -->
+
 <div class="header">
 Apps Analytics Viewer
 </div>
@@ -169,17 +170,13 @@ id="linkInput"
 class="neu-inset"
 value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
 
-<button class="neu-button" onclick="loadFromLink()">
-Load
-</button>
+<button class="neu-button" onclick="loadFromLink()">Load</button>
 
 <div>Paste JSON</div>
 
 <textarea id="pasteInput" class="neu-inset"></textarea>
 
-<button class="neu-button" onclick="loadFromPaste()">
-Load
-</button>
+<button class="neu-button" onclick="loadFromPaste()">Load</button>
 
 <div>Select File</div>
 
@@ -187,7 +184,7 @@ Load
 
 </div>
 
-<!-- EXPLORER CONTAINER -->
+<!-- EXPLORER -->
 
 <div id="explorerContainer">
 
@@ -204,9 +201,7 @@ id="searchInput"
 class="neu-inset"
 placeholder="Search entire storage">
 
-<button id="searchBtn" class="neu-button">
-Search
-</button>
+<button id="searchBtn" class="neu-button">Search</button>
 
 <select id="viewMode" class="neu-inset">
 <option value="list">List</option>
@@ -219,28 +214,19 @@ Search
 Show Hidden
 </label>
 
-<button id="visualBtn" class="neu-button">
-Visualization
-</button>
+<button id="visualBtn" class="neu-button">Visualization</button>
 
-<button id="largestBtn" class="neu-button">
-Top 100 Largest
-</button>
+<button id="largestBtn" class="neu-button">Top 100 Largest</button>
 
-<button id="duplicateBtn" class="neu-button">
-Duplicates
-</button>
+<button id="duplicateBtn" class="neu-button">Duplicates</button>
 
-<button id="statsBtn" class="neu-button">
-Extension Stats
-</button>
+<button id="statsBtn" class="neu-button">Extension Stats</button>
 
 </div>
 
 <!-- BREADCRUMB -->
 
-<div id="breadcrumbBar" class="neu-card">
-</div>
+<div id="breadcrumbBar" class="neu-card"></div>
 
 <!-- FILTER BAR -->
 
@@ -261,81 +247,45 @@ Extension Stats
 <input type="date" id="dateTo" class="neu-inset">
 
 <select id="sizeFilter" class="neu-inset">
-
 <option value="">All Sizes</option>
 <option value="1gb">Greater than 1GB</option>
 <option value="500mb">Greater than 500MB</option>
 <option value="custom">Custom</option>
-
 </select>
 
-<input type="number"
-id="sizeMin"
-class="neu-inset"
-placeholder="Min bytes">
+<input type="number" id="sizeMin" class="neu-inset" placeholder="Min bytes">
 
-<input type="number"
-id="sizeMax"
-class="neu-inset"
-placeholder="Max bytes">
+<input type="number" id="sizeMax" class="neu-inset" placeholder="Max bytes">
 
 <select id="typeFilter" class="neu-inset">
-
 <option value="">All Types</option>
-
 <option value="pdf">PDF</option>
-
 <option value="jpg">Image</option>
 <option value="png">Image</option>
-<option value="jpeg">Image</option>
-
 <option value="mp4">Video</option>
-<option value="mkv">Video</option>
-
 <option value="apk">APK</option>
-
 <option value="zip">ZIP</option>
-<option value="rar">ZIP</option>
-
 <option value="mp3">Audio</option>
-
 <option value="json">JSON</option>
-
 <option value="txt">Text</option>
-
 </select>
 
 </div>
 
-<!-- MAIN AREA -->
+<!-- FILE VIEWER -->
 
-<div id="mainArea">
+<div id="viewer" class="neu-card"></div>
 
-<div id="treeSidebar" class="neu-card">
-</div>
+<!-- PANELS -->
 
-<div id="viewer">
-</div>
+<div id="detailsPanel" class="neu-card"></div>
 
-</div>
+<div id="visualPanel" class="neu-card"></div>
 
-<!-- DETAILS PANEL -->
-
-<div id="detailsPanel" class="neu-card">
-</div>
-
-<!-- VISUAL PANEL -->
-
-<div id="visualPanel" class="neu-card">
-</div>
-
-<!-- STATS PANEL -->
-
-<div id="statsPanel" class="neu-card">
-</div>
+<div id="statsPanel" class="neu-card"></div>
 
 </div>
-
+    
 <script>
 
 /* ================= STATE ================= */
