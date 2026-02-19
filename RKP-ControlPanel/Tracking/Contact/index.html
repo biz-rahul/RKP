@@ -170,24 +170,48 @@ return "+91 "+n.slice(0,5)+" "+n.slice(5)
 
 /* detect country */
 
-function detectCountry(num){
+function detectCountry(originalNumber)
+{
+if(!originalNumber) return "Other";
 
-let digits=(num||"").replace(/\D/g,'')
+let num = originalNumber.trim();
 
-if(digits.startsWith("977")) return "Nepal"
-if(digits.startsWith("1")) return "USA"
-if(digits.startsWith("44")) return "UK"
-if(digits.startsWith("61")) return "Australia"
-if(digits.startsWith("49")) return "Germany"
-if(digits.startsWith("33")) return "France"
-if(digits.startsWith("971")) return "UAE"
-if(digits.startsWith("65")) return "Singapore"
-if(digits.startsWith("91")) return "India"
+/* SHORT SERVICE NUMBERS → assume India */
 
-return "Other"
+let digitsOnly = num.replace(/\D/g,'');
+
+if(digitsOnly.length <= 6)
+return "India";
+
+/* INTERNATIONAL FORMAT */
+
+if(num.startsWith("+"))
+{
+
+if(num.startsWith("+91")) return "India";
+if(num.startsWith("+977")) return "Nepal";
+if(num.startsWith("+1")) return "USA";
+if(num.startsWith("+44")) return "UK";
+if(num.startsWith("+61")) return "Australia";
+if(num.startsWith("+49")) return "Germany";
+if(num.startsWith("+33")) return "France";
+if(num.startsWith("+971")) return "UAE";
+if(num.startsWith("+65")) return "Singapore";
+
+return "Other";
 
 }
 
+/* WITHOUT COUNTRY CODE → assume India */
+
+if(digitsOnly.length == 10)
+return "India";
+
+/* FALLBACK */
+
+return "Other";
+}
+  
 /* process contacts */
 
 function process(data){
