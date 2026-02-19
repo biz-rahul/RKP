@@ -1,79 +1,345 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Notification Intelligence Viewer Pro</title>
+<title>Apps Analytics Viewer</title>
 
-<link rel="stylesheet" href="style.css">
+<style>
 
+/* =========================
+NEUMORPHIC PREMIUM UI
+========================= */
+
+body
+{
+margin:0;
+font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+background:#e6ebf2;
+color:#2d3748;
+}
+
+.container
+{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+.title
+{
+text-align:center;
+font-size:32px;
+font-weight:700;
+margin-bottom:20px;
+}
+
+.neu-card
+{
+background:#e6ebf2;
+border-radius:20px;
+padding:20px;
+
+box-shadow:
+10px 10px 20px #c5cad1,
+-10px -10px 20px #ffffff;
+
+margin-bottom:20px;
+}
+
+label
+{
+font-weight:600;
+display:block;
+margin-bottom:8px;
+}
+
+input, textarea
+{
+width:100%;
+padding:15px;
+border:none;
+border-radius:15px;
+outline:none;
+
+background:#e6ebf2;
+
+box-shadow:
+inset 5px 5px 10px #c5cad1,
+inset -5px -5px 10px #ffffff;
+
+font-size:16px;
+}
+
+textarea
+{
+height:120px;
+resize:none;
+}
+
+button
+{
+margin-top:10px;
+padding:12px 20px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+
+background:#e6ebf2;
+
+box-shadow:
+5px 5px 10px #c5cad1,
+-5px -5px 10px #ffffff;
+
+font-weight:600;
+}
+
+button:active
+{
+box-shadow:
+inset 5px 5px 10px #c5cad1,
+inset -5px -5px 10px #ffffff;
+}
+
+
+/* =========================
+VIEWER UI
+========================= */
+
+.viewer
+{
+display:none;
+}
+
+.notification
+{
+margin-bottom:15px;
+padding:15px;
+border-radius:15px;
+
+background:#e6ebf2;
+
+box-shadow:
+5px 5px 10px #c5cad1,
+-5px -5px 10px #ffffff;
+}
+
+.app
+{
+font-weight:700;
+font-size:18px;
+}
+
+.title-text
+{
+font-weight:600;
+margin-top:5px;
+}
+
+.msg
+{
+margin-top:5px;
+color:#4a5568;
+}
+
+.time
+{
+margin-top:5px;
+font-size:12px;
+color:#718096;
+}
+
+/* mobile optimization */
+
+@media(max-width:600px)
+{
+.title
+{
+font-size:26px;
+}
+
+.container
+{
+padding:15px;
+}
+}
+
+</style>
 </head>
-
 <body>
 
-<header>
-<h1>Notification Intelligence Viewer Pro</h1>
-</header>
 
 <div class="container">
 
-<div class="panel">
 
-<h3>Data Input</h3>
+<div id="inputSection">
 
-<textarea id="jsonPaste" placeholder="Paste JSON here"></textarea>
+<div class="title">Apps Analytics Viewer</div>
 
-<button onclick="loadPaste()">Paste JSON</button>
+
+<div class="neu-card">
+
+<label>Load from Link</label>
+
+<input id="linkInput" value="https://raw.githubusercontent.com/MOFO-UG/ControlTheWorld/main/SM-E156B/Example/18-02-2026/example.json">
+
+<button onclick="loadFromLink()">Load</button>
+
+
+<label style="margin-top:20px;">Paste JSON</label>
+
+<textarea id="pasteInput"></textarea>
+
+<button onclick="loadFromPaste()">Load</button>
+
+
+<label style="margin-top:20px;">Select File</label>
 
 <input type="file" id="fileInput">
 
-<button onclick="loadFile()">Upload File</button>
+<button onclick="loadFromFile()">Load</button>
 
-<input type="text" id="urlInput" placeholder="GitHub Raw URL">
-
-<button onclick="loadURL()">Fetch from GitHub</button>
 
 </div>
 
-<div class="panel">
+</div>
 
-<h3>Advanced Filters</h3>
 
-<input id="searchBox" placeholder="Search text, sender, message">
 
-<select id="appFilter"></select>
+<div id="viewer" class="viewer"></div>
 
-<select id="categoryFilter"></select>
-
-<input type="date" id="dateFrom">
-
-<input type="date" id="dateTo">
-
-<button onclick="applyFilters()">Apply Filters</button>
-<button onclick="clearFilters()">Clear Filters</button>
 
 </div>
 
-<div class="panel stats" id="stats"></div>
 
-<div class="panel">
 
-<h3>View Mode</h3>
+<script>
 
-<button onclick="setView('card')">Card</button>
-<button onclick="setView('table')">Table</button>
-<button onclick="setView('chat')">Chat</button>
-<button onclick="setView('timeline')">Timeline</button>
+/* =========================
+GLOBAL STATE
+========================= */
+
+let notifications = [];
+
+
+/* =========================
+LOAD FUNCTIONS
+========================= */
+
+async function loadFromLink()
+{
+const url = document.getElementById("linkInput").value;
+
+const res = await fetch(url);
+
+const text = await res.text();
+
+parseJSON(text);
+}
+
+
+function loadFromPaste()
+{
+const text = document.getElementById("pasteInput").value;
+
+parseJSON(text);
+}
+
+
+function loadFromFile()
+{
+const file = document.getElementById("fileInput").files[0];
+
+const reader = new FileReader();
+
+reader.onload = e =>
+{
+parseJSON(e.target.result);
+};
+
+reader.readAsText(file);
+}
+
+
+/* =========================
+PARSE AND SHOW
+========================= */
+
+function parseJSON(text)
+{
+
+try
+{
+
+notifications = JSON.parse(text);
+
+hideInput();
+
+render();
+
+}
+catch
+{
+alert("Invalid JSON");
+}
+
+}
+
+
+/* =========================
+HIDE INPUT SECTION
+========================= */
+
+function hideInput()
+{
+document.getElementById("inputSection").style.display="none";
+
+document.getElementById("viewer").style.display="block";
+}
+
+
+/* =========================
+RENDER VIEW
+========================= */
+
+function render()
+{
+
+const viewer = document.getElementById("viewer");
+
+viewer.innerHTML="";
+
+
+notifications
+.sort((a,b)=>b.posted_time-a.posted_time)
+.forEach(n =>
+{
+
+viewer.innerHTML += `
+
+<div class="notification">
+
+<div class="app">${n.app_name || ""}</div>
+
+<div class="title-text">${n.title || ""}</div>
+
+<div class="msg">${n.text || n.big_text || ""}</div>
+
+<div class="time">
+${new Date(n.posted_time).toLocaleString()}
+</div>
 
 </div>
 
-<div id="viewer"></div>
+`;
 
-</div>
+});
 
-<script src="app.js"></script>
+}
+
+</script>
+
 
 </body>
 </html>
