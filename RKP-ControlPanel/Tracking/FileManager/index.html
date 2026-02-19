@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -334,13 +335,22 @@ placeholder="Max bytes">
 </div>
 
 </div>
-    <script>
+
+<script>
 
 /* ================= STATE ================= */
 
 let fileIndex = {};
 let childrenMap = {};
 let currentPath = "/storage/emulated/0";
+
+/* NEW STATES (added safely) */
+
+let historyStack = [];
+let historyIndex = -1;
+let showHiddenFiles = true;
+let selectedItem = null;
+
 
 /* ================= FILE INPUT ================= */
 
@@ -358,6 +368,8 @@ reader.readAsText(file);
 
 });
 
+
+/* ================= FOLDER SIZE ================= */
 
 function calculateFolderSize(folderPath){
 
@@ -390,6 +402,8 @@ total += item.size || 0;
 return total;
 
 }
+
+
 /* ================= LOAD METHODS ================= */
 
 function loadFromLink(){
@@ -406,6 +420,7 @@ function loadFromPaste(){
 processJSON(document.getElementById("pasteInput").value);
 
 }
+
 
 /* ================= PROCESS JSON ================= */
 
@@ -430,16 +445,21 @@ currentPath="/";
 
 renderDirectory(currentPath);
 
+buildTreeSidebar();
+
 }
+
 
 /* ================= HIDE INPUT ================= */
 
 function hideInput(){
 
 document.getElementById("inputPanel").style.display="none";
-document.getElementById("viewer").style.display="block";
+
+document.getElementById("explorerContainer").style.display="block";
 
 }
+
 
 /* ================= BUILD FILESYSTEM ================= */
 
@@ -450,14 +470,12 @@ childrenMap = {};
 
 data.forEach(item=>{
 
-// normalize new JSON fields to old viewer format
 item.directory = item.is_directory;
 item.hidden = item.is_hidden;
-item.last_modified = item.modified;
+item.last_modified = item.modified || 0;
 
 fileIndex[item.path] = item;
 
-// create full parent chain
 let pathParts = item.path.split("/").filter(Boolean);
 
 for(let i=0;i<pathParts.length;i++){
@@ -473,7 +491,6 @@ childrenMap[parent]=[];
 
 if(!childrenMap[parent].some(x=>x.path===child)){
 
-// create virtual folder if missing
 let existing = fileIndex[child];
 
 if(existing){
@@ -502,6 +519,7 @@ virtual:true
 
 }
 
+
 /* ================= GET PARENT ================= */
 
 function getParent(path){
@@ -516,11 +534,320 @@ return parts.length ? "/" + parts.join("/") : "/";
 
 }
 
+
+/* ================= HISTORY ================= */
+
+function pushHistory(path){
+
+historyStack = historyStack.slice(0, historyIndex+1);
+
+historyStack.push(path);
+
+historyIndex++;
+
+}
+
+document.getElementById("backBtn").onclick = function(){
+
+if(historyIndex > 0){
+
+historyIndex--;
+
+renderDirectory(historyStack[historyIndex], false);
+
+}
+
+};
+
+document.getElementById("forwardBtn").onclick = function(){
+
+if(historyIndex < historyStack.length - 1){
+
+historyIndex++;
+
+renderDirectory(historyStack[historyIndex], false);
+
+}
+
+};
+
+
+/* ================= BREADCRUMB ================= */
+
+function renderBreadcrumb(path){
+
+const bar = document.getElementById("breadcrumbBar");
+
+if(!bar) return;
+
+bar.innerHTML="";
+
+let parts = path.split("/").filter(Boolean);
+
+let current="";
+
+const root = document.createElement("span");
+
+root.innerText="/";
+
+root.style.cursor="pointer";
+
+root.onclick=()=>renderDirectory("/");
+
+bar.appendChild(root);
+
+parts.forEach(part=>{
+
+current += "/" + part;
+
+bar.innerHTML += " / ";
+
+const btn=document.createElement("span");
+
+btn.innerText=part;
+
+btn.style.cursor="pointer";
+
+btn.onclick=()=>renderDirectory(current);
+
+bar.appendChild(btn);
+
+});
+
+}
+
+
+/* ================= TREE SIDEBAR ================= */
+
+function buildTreeSidebar(){
+
+const tree=document.getElementById("treeSidebar");
+
+if(!tree) return;
+
+tree.innerHTML="";
+
+function addNode(path, level){
+
+(childrenMap[path]||[])
+.filter(x=>x.directory)
+.forEach(item=>{
+
+const div=document.createElement("div");
+
+div.style.paddingLeft=(level*15)+"px";
+
+div.innerText="📁 "+item.name;
+
+div.onclick=()=>renderDirectory(item.path);
+
+tree.appendChild(div);
+
+addNode(item.path, level+1);
+
+});
+
+}
+
+addNode("/",0);
+
+}
+
+
+/* ================= SEARCH ================= */
+
+document.getElementById("searchBtn").onclick=function(){
+
+const query=document.getElementById("searchInput").value.toLowerCase();
+
+const results=Object.values(fileIndex).filter(item=>
+item.name.toLowerCase().includes(query)
+);
+
+renderSearchResults(results);
+
+};
+
+function renderSearchResults(results){
+
+const viewer=document.getElementById("viewer");
+
+viewer.innerHTML="";
+
+results.forEach(item=>{
+
+viewer.appendChild(createRow(item));
+
+});
+
+}
+
+
+/* ================= DETAILS PANEL ================= */
+
+function showDetails(item){
+
+selectedItem = item;
+
+const panel=document.getElementById("detailsPanel");
+
+if(!panel) return;
+
+panel.style.display="block";
+
+panel.innerHTML=`
+
+<h3>${item.name}</h3>
+
+Path: ${item.path}<br>
+
+Size: ${formatSize(item.directory ? calculateFolderSize(item.path) : item.size)}<br>
+
+Modified: ${new Date(item.last_modified)}<br>
+
+Hidden: ${item.hidden}<br>
+
+<button onclick="copyPath()">Copy Path</button>
+
+`;
+
+}
+
+
+/* ================= COPY PATH ================= */
+
+function copyPath(){
+
+if(!selectedItem) return;
+
+navigator.clipboard.writeText(selectedItem.path);
+
+alert("Copied");
+
+}
+
+
+/* ================= DUPLICATES ================= */
+
+document.getElementById("duplicateBtn").onclick=function(){
+
+let map={};
+
+Object.values(fileIndex).forEach(file=>{
+
+if(file.directory) return;
+
+let key=file.size+"_"+file.name;
+
+if(!map[key]) map[key]=[];
+
+map[key].push(file);
+
+});
+
+let dup=[];
+
+Object.values(map).forEach(list=>{
+
+if(list.length>1)
+dup.push(...list);
+
+});
+
+renderSearchResults(dup);
+
+};
+
+
+/* ================= LARGEST FILES ================= */
+
+document.getElementById("largestBtn").onclick=function(){
+
+let files=Object.values(fileIndex)
+.filter(f=>!f.directory)
+.sort((a,b)=>b.size-a.size)
+.slice(0,100);
+
+renderSearchResults(files);
+
+};
+
+
+/* ================= HIDDEN TOGGLE ================= */
+
+document.getElementById("hiddenToggle").onchange=function(){
+
+showHiddenFiles=this.checked;
+
+renderDirectory(currentPath);
+
+};
+
+
+/* ================= CREATE ROW ================= */
+
+function createRow(item){
+
+const row=document.createElement("div");
+
+row.className="file-row neu-inset";
+
+row.innerHTML=`
+
+<div>
+
+<div class="${item.directory?'folder':'file'}">
+
+${item.directory?'📁':'📄'} ${item.name}
+
+</div>
+
+<div class="path">${item.path}</div>
+
+</div>
+
+<div class="${item.hidden?'hidden':''}">
+
+${item.directory 
+? formatSize(calculateFolderSize(item.path)) 
+: formatSize(item.size)}
+
+</div>
+
+`;
+
+row.onclick=()=>{
+
+if(item.directory)
+renderDirectory(item.path);
+else
+showDetails(item);
+
+};
+
+row.oncontextmenu=(e)=>{
+
+e.preventDefault();
+
+showDetails(item);
+
+};
+
+return row;
+
+}
+
+
 /* ================= RENDER ================= */
 
-function renderDirectory(path){
+function renderDirectory(path, addHistory=true){
 
 currentPath = path;
+
+if(addHistory)
+pushHistory(path);
+
+renderBreadcrumb(path);
 
 const viewer=document.getElementById("viewer");
 
@@ -530,7 +857,7 @@ const card=document.createElement("div");
 
 card.className="file-card neu-card";
 
-/* ===== BACK BUTTON ===== */
+/* BACK BUTTON */
 
 if(path !== "/"){
 
@@ -553,9 +880,12 @@ card.appendChild(back);
 
 }
 
-/* ===== FILE LIST ===== */
+/* FILE LIST */
 
 let list = childrenMap[path] || [];
+
+if(!showHiddenFiles)
+list=list.filter(x=>!x.hidden);
 
 list.sort((a,b)=>{
 
@@ -568,42 +898,14 @@ return a.name.localeCompare(b.name);
 
 list.forEach(item=>{
 
-const row=document.createElement("div");
-
-row.className="file-row neu-inset";
-
-row.innerHTML=`
-
-<div>
-
-<div class="${item.directory?'folder':'file'}">
-
-${item.directory?'📁':'📄'} ${item.name}
-
-</div>
-
-<div class="path">${item.path}</div>
-
-</div>
-
-<div class="${item.hidden?'hidden':''}">
-${item.directory 
-    ? formatSize(calculateFolderSize(item.path)) 
-    : formatSize(item.size)}
-</div>
-
-`;
-
-if(item.directory)
-row.onclick=()=>renderDirectory(item.path);
-
-card.appendChild(row);
+card.appendChild(createRow(item));
 
 });
 
 viewer.appendChild(card);
 
 }
+
 
 /* ================= SIZE FORMAT ================= */
 
@@ -617,5 +919,7 @@ return size+" B";
 
 }
 
-</script></body>
+</script>
+
+    </body>
 </html>
