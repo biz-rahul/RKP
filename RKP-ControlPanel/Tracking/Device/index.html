@@ -858,6 +858,47 @@ dash.innerHTML+=html;
 
 }
 
+/* =========================
+   AUTO LOAD FROM URL PARAMETER
+========================= */
+
+async function autoLoadFromParameter(){
+
+const params = new URLSearchParams(window.location.search);
+
+const url = params.get("url");
+
+if(!url) return;
+
+// put link into input box (optional)
+const input = document.getElementById("linkInput");
+
+if(input){
+input.value = url;
+}
+
+try{
+
+const res = await fetch(url);
+
+const json = await res.json();
+
+// hide loader UI
+hideLoader();
+
+// render dashboard
+render(json);
+
+}
+catch(err){
+
+console.error("Parameter auto-load failed:", err);
+
+}
+
+}
+
+autoLoadFromParameter();
 </script>
 
 </body>
