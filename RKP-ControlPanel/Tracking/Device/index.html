@@ -407,6 +407,81 @@ id="fileInput"
 </div>
 
 <script>
+/* =========================
+   KEYBOARD DETECTION LIST
+========================= */
+
+const KEYBOARD_MAP = {
+
+"com.google.android.inputmethod.latin": "Gboard",
+
+"com.samsung.android.honeyboard": "Samsung Keyboard",
+
+"com.swiftkey": "Microsoft SwiftKey",
+
+"com.touchtype.swiftkey": "Microsoft SwiftKey",
+
+"com.emoji.keyboard.touchpal": "TouchPal Keyboard",
+
+"com.touchpal.keyboard": "TouchPal Keyboard",
+
+"com.grammarly.android.keyboard": "Grammarly Keyboard",
+
+"com.fleksy.keyboard": "Fleksy Keyboard",
+
+"com.kikaoem.kikakeyboard": "Kika Keyboard",
+
+"com.facemoji.lite.xiaomi": "Facemoji Keyboard",
+
+"com.facemoji.unicode.keyboard": "Facemoji Keyboard",
+
+"com.jb.emoji.gokeyboard": "GO Keyboard",
+
+"com.baidu.input": "Baidu Keyboard",
+
+"com.iflytek.inputmethod": "iFly Keyboard",
+
+"com.typany.ime": "Typany Keyboard",
+
+"com.ai.type": "ai.type Keyboard",
+
+"com.minuum.keyboard": "Minuum Keyboard",
+
+"com.chrooma.keyboard": "Chrooma Keyboard",
+
+"com.blackberry.keyboard": "BlackBerry Keyboard",
+
+"com.htc.sense.ime": "HTC Sense Keyboard",
+
+"com.lge.ime": "LG Keyboard",
+
+"com.sonyericsson.textinput.uxp": "Sony Keyboard",
+
+"com.huawei.ime": "Huawei Keyboard",
+
+"com.miui.inputmethod": "MIUI Keyboard",
+
+"com.oppo.keyboard": "OPPO Keyboard"
+
+};
+
+function detectKeyboardName(rawValue){
+
+if(!rawValue) return "Unknown";
+
+for(const pkg in KEYBOARD_MAP){
+
+if(rawValue.includes(pkg)){
+
+return KEYBOARD_MAP[pkg];
+
+}
+
+}
+
+return rawValue; // fallback to original
+
+}
 
 /* =========================
    CORE LOAD FUNCTIONS
@@ -565,14 +640,22 @@ let html=`
 
 for(let k in obj){
 
+let value = obj[k];
+
+// keyboard detection fix
+if(k === "default_keyboard"){
+value = detectKeyboardName(obj[k]);
+}
+
 html+=`
 <div class="data-row">
 <div>${k}</div>
-<div>${obj[k]}</div>
+<div>${value}</div>
 </div>
 `;
 
 }
+
 
 html+="</div>";
 
