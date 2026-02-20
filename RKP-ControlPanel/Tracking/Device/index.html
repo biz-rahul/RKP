@@ -617,6 +617,24 @@ id="fileInput"
 </div>
 
 <div id="popup" class="popup hidden"></div>
+
+<div id="menuPanel" class="popup hidden">
+
+<div class="popup-close" onclick="closeMenu()">X</div>
+
+<h3>Filter Events</h3>
+
+<div class="event-pill" onclick="setFilter('all')">All Events</div>
+
+<div class="event-pill" onclick="setFilter('birthday')">Birthdays</div>
+
+<div class="event-pill" onclick="setFilter('holiday')">Holidays</div>
+
+<div class="event-pill" onclick="setFilter('observance')">Observances</div>
+
+<div class="event-pill" onclick="setFilter('custom')">Custom</div>
+
+</div>
 </div>
 
 <script>
@@ -809,9 +827,138 @@ return Array.from(map.values());
 
 document.getElementById("searchBox").oninput=function(){
 
-renderCalendar(this.value.toLowerCase());
+const query=this.value.trim().toLowerCase();
+
+/* If empty → return to normal calendar view */
+
+if(query.length===0){
+
+renderCalendar();
+
+return;
+
+}
+
+/* Search across ALL eventsData (all years, all months) */
+
+const results=eventsData.filter(e=>{
+
+return (
+(e.title && e.title.toLowerCase().includes(query)) ||
+
+(e.description && e.description.toLowerCase().includes(query)) ||
+
+(e.calendar && e.calendar.toLowerCase().includes(query))
+
+);
+
+});
+
+/* Show results in same Neumorphic popup */
+
+const popup=document.getElementById("popup");
+
+if(results.length===0){
+
+popup.innerHTML=`
+<div class="popup-close" onclick="closePopup()">X</div>
+<h3>No results found</h3>
+`;
+
+popup.classList.remove("hidden");
+
+return;
+
+}
+
+let html=`
+<div class="popup-close" onclick="closePopup()">X</div>
+<h3>Search Results (${results.length})</h3>
+`;
+
+results.forEach(e=>{
+
+html+=`
+<div class="event-pill">
+
+<b>${e.title}</b><br>
+
+Calendar: ${e.calendar || "Unknown"}<br>
+
+Start: ${new Date(e.start).toLocaleString()}<br>
+
+End: ${new Date(e.end).toLocaleString()}<br>
+
+${e.description || ""}
+
+</div>
+`;
+
+});
+
+popup.innerHTML=html;
+
+popup.classList.remove("hidden");
 
 };
+
+/* =========================
+GLOBAL SEARCH ENGINE
+========================= */
+
+function showSearchResults(query){
+
+const popup=document.getElementById("popup");
+
+const results=eventsData.filter(e=>
+
+e.title.toLowerCase().includes(query) ||
+(e.description && e.description.toLowerCase().includes(query)) ||
+(e.calendar && e.calendar.toLowerCase().includes(query))
+
+);
+
+if(results.length===0){
+
+popup.innerHTML="<div class='popup-close' onclick='closePopup()'>X</div>No results";
+
+popup.classList.remove("hidden");
+
+return;
+
+}
+
+let html="<div class='popup-close' onclick='closePopup()'>X</div>";
+
+html+="<h3>Search Results ("+results.length+")</h3>";
+
+results.forEach(e=>{
+
+html+=`
+
+<div class="event-pill">
+
+<b>${e.title}</b><br>
+
+Calendar: ${e.calendar}<br>
+
+Start: ${new Date(e.start).toLocaleString()}<br>
+
+End: ${new Date(e.end).toLocaleString()}<br>
+
+${e.description || ""}
+
+</div>
+
+`;
+
+});
+
+popup.innerHTML=html;
+
+popup.classList.remove("hidden");
+
+}
 
 /* RENDER */
 
@@ -895,12 +1042,54 @@ return eventsData.filter(e=>{
 
 const d=new Date(e.start);
 
-return d.getDate()===date &&
+const matchDate =
+d.getDate()===date &&
 d.getMonth()===currentMonth &&
-d.getFullYear()===currentYear &&
-e.title.toLowerCase().includes(filter);
+d.getFullYear()===currentYear;
+
+if(!matchDate) return false;
+
+if(activeFilter==="all") return true;
+
+if(activeFilter==="birthday")
+return e.title.toLowerCase().includes("birthday");
+
+if(activeFilter==="holiday")
+return e.calendar.toLowerCase().includes("holiday");
+
+if(activeFilter==="observance")
+return e.description && e.description.toLowerCase().includes("observance");
+
+return true;
 
 });
+}
+
+/* =========================
+HAMBURGER MENU SYSTEM
+========================= */
+
+let activeFilter="all";
+
+menuBtn.onclick=function(){
+
+document.getElementById("menuPanel").classList.remove("hidden");
+
+};
+
+function closeMenu(){
+
+document.getElementById("menuPanel").classList.add("hidden");
+
+}
+
+function setFilter(filter){
+
+activeFilter=filter;
+
+closeMenu();
+
+renderCalendar();
 
 }
 
