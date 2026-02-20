@@ -10,27 +10,45 @@
 
 <style>
 
-*{box-sizing:border-box;margin:0;padding:0;}
+/* =========================
+GLOBAL RESET
+========================= */
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+}
+
+/* =========================
+ROOT VARIABLES
+========================= */
 
 :root{
 
---bg:#e6e9ef;
---bg-soft:#eef1f6;
---bg-light:#ffffff;
+--bg:#0b1220;
+--bg-soft:#111827;
+--bg-soft-2:#172036;
 
---text:#2d3748;
---accent:#3b82f6;
+--accent:#00ffff;
+--accent2:#ff00ff;
 
---shadow-dark:#c9ced6;
---shadow-light:#ffffff;
+--text:#d9faff;
 
---radius:18px;
+--shadow-dark:#020617;
+--shadow-light:#1e293b;
+
+--radius:16px;
 
 }
 
+/* =========================
+BODY LAYOUT FIX
+========================= */
+
 body{
 
-background:var(--bg);
+background:linear-gradient(180deg,#020617,#0b1220);
 
 color:var(--text);
 
@@ -38,22 +56,31 @@ font-family:'Rajdhani',sans-serif;
 
 min-height:100vh;
 
-padding-bottom:100px;
+/* CRITICAL DESKTOP FIX */
+display:flex;
+flex-direction:column;
+align-items:center;
 
 }
 
-/* TOP BUTTON */
+/* =========================
+TOP BAR
+========================= */
+
 .topbar{
-padding:10px;
-text-align:center;
-border-bottom:1px solid #00ffff33;
+
+width:100%;
+
+padding:18px;
+
+display:flex;
+justify-content:center;
+
 }
 
 .topbtn{
 
-display:inline-block;
-
-padding:12px 20px;
+padding:12px 28px;
 
 border-radius:var(--radius);
 
@@ -66,67 +93,58 @@ text-decoration:none;
 font-family:'Orbitron';
 
 box-shadow:
-6px 6px 12px var(--shadow-dark),
--6px -6px 12px var(--shadow-light);
-
-transition:0.2s;
+6px 6px 14px var(--shadow-dark),
+-6px -6px 14px var(--shadow-light);
 
 }
 
-.topbtn:active{
-
-box-shadow:
-inset 4px 4px 8px var(--shadow-dark),
-inset -4px -4px 8px var(--shadow-light);
-
-}
-
-.topbtn:hover{
-background:#00ffff;
-color:black;
-box-shadow:0 0 15px #00ffff;
-}
+/* =========================
+HEADER
+========================= */
 
 .header{
+
 font-family:'Orbitron';
-font-size:22px;
-letter-spacing:2px;
+
+font-size:clamp(20px,3vw,34px);
+
+letter-spacing:3px;
+
 text-align:center;
-padding:15px;
-text-shadow:0 0 10px #00ffff;
+
+margin-bottom:20px;
+
+text-shadow:0 0 15px #00ffff44;
+
 }
+
+/* =========================
+CONTAINER DESKTOP FIX
+========================= */
 
 .container{
 
 width:100%;
 
+/* THIS IS THE CRITICAL FIX */
 max-width:1400px;
 
-margin:auto;
-
+/* desktop padding */
 padding:20px;
 
-}
+/* center horizontally */
+margin:auto;
 
-@media (min-width:900px){
-
-.container{
-
+/* desktop grid spacing */
 display:grid;
-
-grid-template-columns:1fr 1fr;
 
 gap:20px;
 
 }
 
-.panel:last-child{
-
-grid-column:1 / -1;
-
-}
-
-}
+/* =========================
+PANEL
+========================= */
 
 .panel{
 
@@ -137,108 +155,108 @@ border-radius:var(--radius);
 padding:20px;
 
 box-shadow:
-
-8px 8px 16px var(--shadow-dark),
-
--8px -8px 16px var(--shadow-light);
-
-transition:0.3s;
+8px 8px 18px var(--shadow-dark),
+-8px -8px 18px var(--shadow-light);
 
 }
-  
+
+/* =========================
+PANEL TITLE
+========================= */
 
 .panel-title{
+
 font-family:'Orbitron';
-font-size:13px;
-margin-bottom:10px;
-color:#ff00ff;
+
+font-size:14px;
+
+margin-bottom:15px;
+
+color:var(--accent2);
+
 letter-spacing:2px;
-text-shadow:0 0 5px #ff00ff;
+
 }
+
+/* =========================
+GRID SYSTEM
+========================= */
 
 .grid{
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-
 gap:12px;
 
+/* mobile default */
+grid-template-columns:1fr;
+
 }
+
+/* tablet */
+@media(min-width:600px){
+
+.grid{
+
+grid-template-columns:1fr 1fr;
+
+}
+
+}
+
+/* desktop */
+@media(min-width:1000px){
+
+.grid{
+
+grid-template-columns:repeat(3,1fr);
+
+}
+
+}
+
+/* ultra wide */
+@media(min-width:1400px){
+
+.grid{
+
+grid-template-columns:repeat(4,1fr);
+
+}
+
+}
+
+/* =========================
+TILE
+========================= */
 
 .tile{
 
 display:flex;
+
 align-items:center;
-gap:10px;
 
-padding:12px;
-
-border-radius:var(--radius);
-
-background:var(--bg-soft);
-
-box-shadow:
-5px 5px 10px var(--shadow-dark),
--5px -5px 10px var(--shadow-light);
-
-cursor:pointer;
-transition:0.2s;
-
-}
-
-.tile:active{
-
-box-shadow:
-inset 4px 4px 8px var(--shadow-dark),
-inset -4px -4px 8px var(--shadow-light);
-
-}
-
-.tile:hover{
-border:1px solid #00ffff;
-box-shadow:0 0 10px #00ffff88;
-}
-
-.tile input{
-appearance:none;
-width:18px;
-height:18px;
-border:1px solid #00ffff;
-background:black;
-cursor:pointer;
-}
-
-.tile input:checked{
-background:#00ffff;
-box-shadow:0 0 10px #00ffff;
-}
-
-.input{
-
-width:100%;
+gap:12px;
 
 padding:14px;
 
-margin-top:10px;
-
-border:none;
-
 border-radius:var(--radius);
 
 background:var(--bg-soft);
 
-color:var(--text);
+cursor:pointer;
 
 box-shadow:
-
-inset 5px 5px 10px var(--shadow-dark),
-
-inset -5px -5px 10px var(--shadow-light);
+5px 5px 12px var(--shadow-dark),
+-5px -5px 12px var(--shadow-light);
 
 }
 
-.btn{
+/* =========================
+INPUT
+========================= */
+
+.input{
 
 width:100%;
 
@@ -254,40 +272,55 @@ background:var(--bg-soft);
 
 color:var(--accent);
 
-font-family:'Orbitron';
+font-size:16px;
 
 box-shadow:
+inset 5px 5px 12px var(--shadow-dark),
+inset -5px -5px 12px var(--shadow-light);
 
-6px 6px 12px var(--shadow-dark),
+}
 
--6px -6px 12px var(--shadow-light);
+/* =========================
+BUTTON
+========================= */
+
+.btn{
+
+width:100%;
+
+padding:14px;
+
+margin-top:14px;
+
+border:none;
+
+border-radius:var(--radius);
+
+background:var(--bg-soft);
+
+color:var(--accent);
+
+font-family:'Orbitron';
+
+font-size:15px;
 
 cursor:pointer;
 
-}
-
-.btn:active{
-
 box-shadow:
-
-inset 4px 4px 8px var(--shadow-dark),
-
-inset -4px -4px 8px var(--shadow-light);
+6px 6px 14px var(--shadow-dark),
+-6px -6px 14px var(--shadow-light);
 
 }
 
-.btn:hover{
-
-box-shadow:
-inset 4px 4px 8px var(--shadow-dark),
-inset -4px -4px 8px var(--shadow-light);
-
-}
+/* =========================
+OUTPUT
+========================= */
 
 .output{
 
 width:100%;
-height:150px;
+
+height:180px;
 
 background:var(--bg-soft);
 
@@ -301,36 +334,108 @@ color:#00ffcc;
 
 font-family:monospace;
 
+font-size:15px;
+
 box-shadow:
-inset 6px 6px 12px var(--shadow-dark),
-inset -6px -6px 12px var(--shadow-light);
+inset 6px 6px 14px var(--shadow-dark),
+inset -6px -6px 14px var(--shadow-light);
 
 }
+
+/* =========================
+NOTIFICATION BOX
+========================= */
 
 .notification-box{
-border:1px solid #ff00ff55;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
+
+padding:15px;
+
+margin-top:15px;
+
+border-radius:var(--radius);
+
+background:var(--bg-soft-2);
+
 }
+
+/* =========================
+BOTTOM ACTION BAR FIX
+========================= */
 
 .action{
 
-position:fixed;
+position:sticky;
 
 bottom:0;
 
-left:0;
-
 width:100%;
 
-padding:16px;
+max-width:1400px;
 
-background:var(--bg);
+padding:20px;
 
-box-shadow:
+margin:auto;
 
-0 -5px 20px rgba(0,0,0,0.08);
+background:transparent;
+
+}
+
+/* =========================
+DESKTOP PANEL GRID
+========================= */
+
+@media(min-width:1100px){
+
+.container{
+
+grid-template-columns:repeat(2,1fr);
+
+}
+
+}
+
+/* ultra wide layout */
+@media(min-width:1600px){
+
+.container{
+
+grid-template-columns:repeat(3,1fr);
+
+}
+
+}
+
+/* =========================
+SMALL MOBILE FIX
+========================= */
+
+@media(max-width:500px){
+
+.container{
+
+padding:12px;
+
+}
+
+.panel{
+
+padding:14px;
+
+}
+
+}
+
+/* =========================
+ULTRA WIDE SCREEN CENTER FIX
+========================= */
+
+@media(min-width:1800px){
+
+.container{
+
+max-width:1600px;
+
+}
 
 }
 
