@@ -619,7 +619,7 @@ date:new Date(e.start).toLocaleString()
 
 }));
 
-createArrayCard("Calendar",formatted);
+createCalendarCard(data.calendar_snapshot);
 
 }
 
@@ -808,6 +808,53 @@ let html=`
 
 </div>
 `;
+
+dash.innerHTML+=html;
+
+}
+
+function createCalendarCard(events){
+
+const dash=document.getElementById("dashboard");
+
+let html=`
+
+<div class="data-card">
+
+<div class="data-title">Calendar (${events.length})</div>
+
+`;
+
+events.forEach(event=>{
+
+html+=`
+
+<div class="data-row">
+<div>Title</div>
+<div>${event.title}</div>
+</div>
+
+<div class="data-row">
+<div>Start</div>
+<div>${new Date(event.start).toLocaleString()}</div>
+</div>
+
+<div class="data-row">
+<div>End</div>
+<div>${new Date(event.end).toLocaleString()}</div>
+</div>
+
+<div class="data-row">
+<div>Calendar</div>
+<div>${event.calendar}</div>
+</div>
+
+<hr>
+`;
+
+});
+
+html+="</div>";
 
 dash.innerHTML+=html;
 
