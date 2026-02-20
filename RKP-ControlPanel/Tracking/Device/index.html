@@ -1640,6 +1640,7 @@ function createConnectivityCard(conn){
 
 const dash=document.getElementById("dashboard");
 
+/* Existing icons */
 const wifiIcon = conn.wifi_connected
 ? "icons/wifi.png"
 : "icons/no-wifi.png";
@@ -1647,6 +1648,34 @@ const wifiIcon = conn.wifi_connected
 const mobileIcon = conn.mobile_connected
 ? "icons/mobile-data.png"
 : "icons/no-data.png";
+
+/* New icons */
+
+const bluetoothIcon = conn.bluetooth_on
+? "icons/bluetooth.png"
+: "icons/no-bluetooth.png";
+
+const headphonesIcon = conn.headphones_connected
+? "icons/headphones.png"
+: "icons/no-headphones.png";
+
+const dndIcon = conn.dnd_on
+? "icons/dnd.png"
+: "icons/no-dnd.png";
+
+const hotspotIcon = conn.hotspot_on
+? "icons/hotspot.png"
+: "icons/no-hotspot.png";
+
+/* Torch has 3 states */
+
+let torchIcon="icons/torch-unknown.png";
+
+if(conn.torch_on===true)
+torchIcon="icons/torch.png";
+
+else if(conn.torch_on===false)
+torchIcon="icons/no-torch.png";
 
 let html=`
 
@@ -1672,27 +1701,42 @@ ${conn.mobile_connected}
 
 <div class="data-row">
 <div>Bluetooth</div>
-<div>${conn.bluetooth_on}</div>
+<div>
+${conn.bluetooth_on}
+<img src="${bluetoothIcon}" class="icon">
+</div>
 </div>
 
 <div class="data-row">
 <div>Headphones</div>
-<div>${conn.headphones_connected}</div>
+<div>
+${conn.headphones_connected}
+<img src="${headphonesIcon}" class="icon">
+</div>
 </div>
 
 <div class="data-row">
 <div>DND Mode</div>
-<div>${conn.dnd_on}</div>
+<div>
+${conn.dnd_on}
+<img src="${dndIcon}" class="icon">
+</div>
 </div>
 
 <div class="data-row">
 <div>Hotspot</div>
-<div>${conn.hotspot_on}</div>
+<div>
+${conn.hotspot_on}
+<img src="${hotspotIcon}" class="icon">
+</div>
 </div>
 
 <div class="data-row">
 <div>Torch</div>
-<div>${conn.torch_on}</div>
+<div>
+${conn.torch_on}
+<img src="${torchIcon}" class="icon">
+</div>
 </div>
 
 </div>
@@ -1701,7 +1745,6 @@ ${conn.mobile_connected}
 dash.innerHTML+=html;
 
 }
-
 /* =========================
    AUTO LOAD FROM URL PARAMETER
 ========================= */
