@@ -599,7 +599,7 @@ createCard("Device",data.device);
 createCard("System",data.system);
 createCard("CPU",data.cpu);
 createBatteryCard(data.battery);
-createCard("Network",data.network);
+createNetworkCard(data.network);
 createConnectivityCard(data.connectivity);
 createDisplayCard(data.display);
 createAudioCard(data.audio);
@@ -771,6 +771,48 @@ dash.innerHTML+=html;
 
 }
 
+function createNetworkCard(network){
+
+const dash=document.getElementById("dashboard");
+
+let html=`
+
+<div class="data-card">
+
+<div class="data-title">Network</div>
+
+<div class="data-row">
+<div>Private IPv4</div>
+<div>${network.private_ipv4 || "Unknown"}</div>
+</div>
+
+<div class="data-row">
+<div>Private IPv6</div>
+<div>${network.private_ipv6 || "Unknown"}</div>
+</div>
+
+<div class="data-row">
+<div>Public IPv4</div>
+<div>${network.public_ipv4 || "Unknown"}</div>
+</div>
+
+<div class="data-row">
+<div>Public IPv6</div>
+<div>${network.public_ipv6 || "Unknown"}</div>
+</div>
+
+<div class="data-row">
+<div>VPN Active</div>
+<div>${network.vpn_active}</div>
+</div>
+
+</div>
+`;
+
+dash.innerHTML+=html;
+
+}
+
 function createAudioCard(audio){
 
 const dash=document.getElementById("dashboard");
@@ -789,17 +831,17 @@ let html=`
 
 <div class="data-row">
 <div>Music Volume</div>
-<div>${createLevelBar(audio.music_volume,15)}</div>
+<div>${createLevelBar(audio.music_volume_percent,100)}</div>
 </div>
 
 <div class="data-row">
 <div>Ring Volume</div>
-<div>${createLevelBar(audio.ring_volume,15)}</div>
+<div>${createLevelBar(audio.ring_volume_percent,100)}</div>
 </div>
 
 <div class="data-row">
 <div>Alarm Volume</div>
-<div>${createLevelBar(audio.alarm_volume,15)}</div>
+<div>${createLevelBar(audio.alarm_volume_percent,100)}</div>
 </div>
 
 <div class="data-row">
