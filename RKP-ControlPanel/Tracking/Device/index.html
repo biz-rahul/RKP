@@ -354,78 +354,197 @@ font-size:24px;
 
 }
 
+/* =========================
+NEUMORPHIC CALENDAR CORE
+========================= */
+
+.calendar-container{
+
+margin-top:30px;
+padding:25px;
+
+border-radius:20px;
+
+background:#e6ebf2;
+
+box-shadow:
+10px 10px 20px #c5cad1,
+-10px -10px 20px #ffffff;
+
+}
+
+/* Header */
+
 .calendar-header{
 
 display:flex;
 align-items:center;
-justify-content:center;
-gap:15px;
-font-size:20px;
-margin-bottom:10px;
+justify-content:space-between;
+margin-bottom:15px;
 
 }
 
-.month-title{
+.calendar-title{
 
+font-size:22px;
 font-weight:bold;
-min-width:180px;
-text-align:center;
+
+padding:10px 20px;
+
+border-radius:15px;
+
+box-shadow:
+inset 5px 5px 10px #c5cad1,
+inset -5px -5px 10px #ffffff;
 
 }
 
-.calendar-days{
+/* Search */
+
+.calendar-search{
+
+padding:10px;
+
+border:none;
+outline:none;
+
+border-radius:12px;
+
+background:#e6ebf2;
+
+box-shadow:
+inset 5px 5px 10px #c5cad1,
+inset -5px -5px 10px #ffffff;
+
+}
+
+/* Grid */
+
+.calendar-grid{
 
 display:grid;
+
 grid-template-columns:repeat(7,1fr);
-text-align:center;
+
+gap:12px;
+
+}
+
+/* Cell */
+
+.calendar-cell{
+
+height:110px;
+
+padding:8px;
+
+border-radius:15px;
+
+background:#e6ebf2;
+
+box-shadow:
+6px 6px 12px #c5cad1,
+-6px -6px 12px #ffffff;
+
+cursor:pointer;
+
+transition:0.2s;
+
+}
+
+.calendar-cell:hover{
+
+transform:translateY(-3px);
+
+}
+
+/* Date number */
+
+.calendar-date{
+
 font-weight:bold;
 margin-bottom:5px;
 
 }
 
-.calendar-grid{
+/* Today circle */
 
-display:grid;
-grid-template-columns:repeat(7,1fr);
-grid-template-rows:repeat(5,100px);
-gap:5px;
+.today{
 
-}
-
-.calendar-cell{
-
-background:#e6ebf2;
-border-radius:10px;
-padding:5px;
-position:relative;
-cursor:pointer;
-
-}
-
-.calendar-date{
-
-font-weight:bold;
-}
-
-.today-circle{
-
-border:2px solid #007aff;
-border-radius:50%;
-padding:4px;
 display:inline-block;
 
+padding:4px 9px;
+
+border-radius:50%;
+
+box-shadow:
+inset 3px 3px 6px #c5cad1,
+inset -3px -3px 6px #ffffff;
+
 }
 
-.event{
+/* Event pill */
+
+.event-pill{
+
+padding:3px 6px;
+margin-top:3px;
+
+border-radius:8px;
 
 font-size:11px;
-background:#7cc6b8;
-border-radius:5px;
-padding:2px;
-margin-top:2px;
-overflow:hidden;
-white-space:nowrap;
-text-overflow:ellipsis;
+
+background:#e6ebf2;
+
+box-shadow:
+inset 3px 3px 6px #c5cad1,
+inset -3px -3px 6px #ffffff;
+
+}
+
+/* Popup */
+
+.popup{
+
+position:fixed;
+top:50%;
+left:50%;
+
+transform:translate(-50%,-50%);
+
+padding:25px;
+
+width:350px;
+max-height:400px;
+
+overflow:auto;
+
+border-radius:20px;
+
+background:#e6ebf2;
+
+box-shadow:
+15px 15px 30px #c5cad1,
+-15px -15px 30px #ffffff;
+
+z-index:1000;
+
+}
+
+.popup-close{
+
+float:right;
+cursor:pointer;
+font-weight:bold;
+font-size:18px;
+
+padding:5px 10px;
+
+border-radius:10px;
+
+box-shadow:
+5px 5px 10px #c5cad1,
+-5px -5px 10px #ffffff;
 
 }
 </style>
@@ -477,29 +596,27 @@ id="fileInput"
 </div>
 
 <div id="dashboard" class="dashboard hidden"></div>
-<div id="calendarContainer" class="hidden">
+<div id="calendar" class="calendar-container hidden">
 
 <div class="calendar-header">
 
-<img src="icons/menu.png" id="menuBtn" class="icon-btn">
+<div id="menuBtn">☰</div>
 
-<img src="icons/back.png" id="prevMonth" class="icon-btn">
+<div id="prevBtn">◀</div>
 
-<div id="monthTitle" class="month-title"></div>
+<div id="monthTitle" class="calendar-title"></div>
 
-<img src="icons/forward.png" id="nextMonth" class="icon-btn">
+<div id="nextBtn">▶</div>
 
-<img src="icons/search.png" id="searchBtn" class="icon-btn">
+<input type="text" id="searchBox" class="calendar-search" placeholder="Search events...">
 
-</div>
-
-<div class="calendar-days">
-Sun Mon Tue Wed Thu Fri Sat
 </div>
 
 <div id="calendarGrid" class="calendar-grid"></div>
 
 </div>
+
+<div id="popup" class="popup hidden"></div>
 </div>
 
 <script>
@@ -651,43 +768,66 @@ return `
 
 }
 
-/* ======================
-CALENDAR ENGINE
-====================== */
 
-let currentMonth = new Date().getMonth();
-let currentYear = new Date().getFullYear();
+/* =========================
+NEUMORPHIC CALENDAR ENGINE
+========================= */
 
-let calendarEvents = [];
+let eventsData=[];
+let currentMonth=new Date().getMonth();
+let currentYear=new Date().getFullYear();
 
 function initCalendar(events){
 
-calendarEvents = events;
+eventsData=mergeEvents(events);
 
-document.getElementById("calendarContainer").classList.remove("hidden");
+document.getElementById("calendar").classList.remove("hidden");
 
 renderCalendar();
 
 }
 
-function renderCalendar(){
+/* MERGE DUPLICATES */
+
+function mergeEvents(events){
+
+const map=new Map();
+
+events.forEach(e=>{
+
+const key=e.title+"_"+e.start;
+
+if(!map.has(key)) map.set(key,e);
+
+});
+
+return Array.from(map.values());
+
+}
+
+/* SEARCH */
+
+document.getElementById("searchBox").oninput=function(){
+
+renderCalendar(this.value.toLowerCase());
+
+};
+
+/* RENDER */
+
+function renderCalendar(filter=""){
 
 const grid=document.getElementById("calendarGrid");
 
 grid.innerHTML="";
 
-const title=document.getElementById("monthTitle");
+const monthNames=["January","February","March","April","May","June","July","August","September","October","November","December"];
 
-const monthNames=[
-"January","February","March","April","May","June",
-"July","August","September","October","November","December"
-];
-
-title.innerText=monthNames[currentMonth]+" "+currentYear;
+document.getElementById("monthTitle").innerText=monthNames[currentMonth]+" "+currentYear;
 
 const firstDay=new Date(currentYear,currentMonth,1).getDay();
 
-const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+const days=new Date(currentYear,currentMonth+1,0).getDate();
 
 let date=1;
 
@@ -697,7 +837,9 @@ const cell=document.createElement("div");
 
 cell.className="calendar-cell";
 
-if(i>=firstDay && date<=daysInMonth){
+if(i>=firstDay && date<=days){
+
+const d=date;
 
 const dateDiv=document.createElement("div");
 
@@ -705,43 +847,35 @@ dateDiv.className="calendar-date";
 
 const today=new Date();
 
-if(date===today.getDate() &&
+if(d===today.getDate() &&
 currentMonth===today.getMonth() &&
 currentYear===today.getFullYear()){
 
-dateDiv.innerHTML=`<span class="today-circle">${date}</span>`;
+dateDiv.innerHTML=`<span class="today">${d}</span>`;
 
 }else{
 
-dateDiv.innerText=date;
+dateDiv.innerText=d;
 
 }
 
 cell.appendChild(dateDiv);
 
-const events=getEventsForDate(date);
+const dayEvents=getEvents(d,filter);
 
-events.forEach(ev=>{
+dayEvents.forEach(ev=>{
 
-const evDiv=document.createElement("div");
+const pill=document.createElement("div");
 
-evDiv.className="event";
+pill.className="event-pill";
 
-evDiv.innerText=ev.title;
+pill.innerText=ev.title;
 
-evDiv.onclick=(e)=>{
-
-e.stopPropagation();
-
-showEventDetails(date);
-
-};
-
-cell.appendChild(evDiv);
+cell.appendChild(pill);
 
 });
 
-cell.onclick=()=>showEventDetails(date);
+cell.onclick=()=>showPopup(d);
 
 date++;
 
@@ -753,51 +887,73 @@ grid.appendChild(cell);
 
 }
 
-function getEventsForDate(date){
+/* GET EVENTS */
 
-return calendarEvents.filter(ev=>{
+function getEvents(date,filter){
 
-const d=new Date(ev.start);
+return eventsData.filter(e=>{
+
+const d=new Date(e.start);
 
 return d.getDate()===date &&
 d.getMonth()===currentMonth &&
-d.getFullYear()===currentYear;
+d.getFullYear()===currentYear &&
+e.title.toLowerCase().includes(filter);
 
 });
 
 }
 
-function showEventDetails(date){
+/* POPUP */
 
-const events=getEventsForDate(date);
+function showPopup(date){
 
-if(events.length===0){
+const popup=document.getElementById("popup");
 
-alert("No events");
+const dayEvents=getEvents(date,"");
+
+if(dayEvents.length===0){
+
+popup.innerHTML="<div class='popup-close' onclick='closePopup()'>X</div>No events";
+
+popup.classList.remove("hidden");
 
 return;
 
 }
 
-let text="Events on "+date+"\\n\\n";
+let html="<div class='popup-close' onclick='closePopup()'>X</div>";
 
-events.forEach(ev=>{
+html+="<h3>"+date+"</h3>";
 
-text+=
-"Title: "+ev.title+"\\n"+
-"Calendar: "+ev.calendar+"\\n"+
-"Start: "+new Date(ev.start)+"\\n"+
-"End: "+new Date(ev.end)+"\\n\\n";
+dayEvents.forEach(e=>{
+
+html+=`
+<div class="event-pill">
+<b>${e.title}</b><br>
+Calendar: ${e.calendar}<br>
+Start: ${new Date(e.start).toLocaleString()}<br>
+End: ${new Date(e.end).toLocaleString()}
+</div>
+`;
 
 });
 
-alert(text);
+popup.innerHTML=html;
+
+popup.classList.remove("hidden");
 
 }
 
-/* navigation */
+function closePopup(){
 
-document.getElementById("prevMonth").onclick=()=>{
+document.getElementById("popup").classList.add("hidden");
+
+}
+
+/* NAVIGATION */
+
+prevBtn.onclick=()=>{
 
 currentMonth--;
 
@@ -805,6 +961,21 @@ if(currentMonth<0){
 
 currentMonth=11;
 currentYear--;
+
+}
+
+renderCalendar();
+
+};
+
+nextBtn.onclick=()=>{
+
+currentMonth++;
+
+if(currentMonth>11){
+
+currentMonth=0;
+currentYear++;
 
 }
 
