@@ -612,13 +612,6 @@ createArrayCard("Widgets ("+data.widgets.length+")",data.widgets);
 
 if(data.calendar_snapshot){
 
-const formatted=data.calendar_snapshot.map(e=>({
-
-title:e.title,
-date:new Date(e.start).toLocaleString()
-
-}));
-
 createCalendarCard(data.calendar_snapshot);
 
 }
@@ -878,17 +871,17 @@ let html=`
 
 <div class="data-row">
 <div>Music Volume</div>
-<div>${createLevelBar(audio.music_volume_percent,100)}</div>
+<div>${createLevelBar(audio.music_volume_percent ?? 0,100)}</div>
 </div>
 
 <div class="data-row">
 <div>Ring Volume</div>
-<div>${createLevelBar(audio.ring_volume_percent,100)}</div>
+<div>${createLevelBar(audio.ring_volume_percent ?? 0,100)}</div>
 </div>
 
 <div class="data-row">
 <div>Alarm Volume</div>
-<div>${createLevelBar(audio.alarm_volume_percent,100)}</div>
+<div>${createLevelBar(audio.alarm_volume_percent ?? 0,100)}</div>
 </div>
 
 <div class="data-row">
