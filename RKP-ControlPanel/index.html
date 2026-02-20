@@ -13,25 +13,33 @@
 *{box-sizing:border-box;margin:0;padding:0;}
 
 :root{
---bg:#0f172a;
---bg-soft:#111827;
---bg-light:#1f2937;
---accent:#00ffff;
---accent-soft:#00ffff55;
---text:#e6f1ff;
 
---shadow-dark:#020617;
---shadow-light:#1e293b;
+--bg:#e6e9ef;
+--bg-soft:#eef1f6;
+--bg-light:#ffffff;
 
---radius:16px;
+--text:#2d3748;
+--accent:#3b82f6;
+
+--shadow-dark:#c9ced6;
+--shadow-light:#ffffff;
+
+--radius:18px;
+
 }
 
 body{
+
 background:var(--bg);
+
 color:var(--text);
+
 font-family:'Rajdhani',sans-serif;
+
 min-height:100vh;
-padding-bottom:80px;
+
+padding-bottom:100px;
+
 }
 
 /* TOP BUTTON */
@@ -89,23 +97,53 @@ text-shadow:0 0 10px #00ffff;
 }
 
 .container{
-max-width:700px;
+
+width:100%;
+
+max-width:1400px;
+
 margin:auto;
-padding:14px;
+
+padding:20px;
+
+}
+
+@media (min-width:900px){
+
+.container{
+
+display:grid;
+
+grid-template-columns:1fr 1fr;
+
+gap:20px;
+
+}
+
+.panel:last-child{
+
+grid-column:1 / -1;
+
+}
+
 }
 
 .panel{
-background:var(--bg-soft);
-border-radius:var(--radius);
-padding:16px;
-margin-bottom:16px;
 
-/* Neumorphic shadow */
+background:var(--bg-soft);
+
+border-radius:var(--radius);
+
+padding:20px;
+
 box-shadow:
+
 8px 8px 16px var(--shadow-dark),
+
 -8px -8px 16px var(--shadow-light);
 
 transition:0.3s;
+
 }
   
 
@@ -119,9 +157,13 @@ text-shadow:0 0 5px #ff00ff;
 }
 
 .grid{
+
 display:grid;
-grid-template-columns:1fr 1fr;
-gap:8px;
+
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+
+gap:12px;
+
 }
 
 .tile{
@@ -176,7 +218,7 @@ box-shadow:0 0 10px #00ffff;
 
 width:100%;
 
-padding:12px;
+padding:14px;
 
 margin-top:10px;
 
@@ -186,34 +228,52 @@ border-radius:var(--radius);
 
 background:var(--bg-soft);
 
-color:var(--accent);
-
-outline:none;
+color:var(--text);
 
 box-shadow:
+
 inset 5px 5px 10px var(--shadow-dark),
+
 inset -5px -5px 10px var(--shadow-light);
 
 }
 
 .btn{
+
 width:100%;
-padding:12px;
+
+padding:14px;
+
 margin-top:12px;
+
 border:none;
+
 border-radius:var(--radius);
 
 background:var(--bg-soft);
+
 color:var(--accent);
 
 font-family:'Orbitron';
 
 box-shadow:
+
 6px 6px 12px var(--shadow-dark),
+
 -6px -6px 12px var(--shadow-light);
 
 cursor:pointer;
-transition:0.2s;
+
+}
+
+.btn:active{
+
+box-shadow:
+
+inset 4px 4px 8px var(--shadow-dark),
+
+inset -4px -4px 8px var(--shadow-light);
+
 }
 
 .btn:hover{
@@ -260,14 +320,17 @@ position:fixed;
 
 bottom:0;
 
+left:0;
+
 width:100%;
+
+padding:16px;
 
 background:var(--bg);
 
-padding:14px;
-
 box-shadow:
-0 -4px 12px #00000055;
+
+0 -5px 20px rgba(0,0,0,0.08);
 
 }
 
