@@ -797,11 +797,71 @@ let currentYear=new Date().getFullYear();
 
 function initCalendar(events){
 
-eventsData=mergeEvents(events);
+/* Step A: expand recurring events ±10 years */
+
+const expanded = expandRecurringEvents(events);
+
+/* Step B: merge duplicates safely */
+
+eventsData = mergeEvents(expanded);
+
+/* show calendar */
 
 document.getElementById("calendar").classList.remove("hidden");
 
 renderCalendar();
+
+}
+
+/* =========================
+EXPAND EVENTS ±10 YEARS
+========================= */
+
+function expandRecurringEvents(events){
+
+const result=[];
+
+const currentYear=new Date().getFullYear();
+
+const startYear=currentYear-10;
+const endYear=currentYear+10;
+
+events.forEach(event=>{
+
+const originalDate=new Date(event.start);
+
+const month=originalDate.getMonth();
+const day=originalDate.getDate();
+
+for(let year=startYear;year<=endYear;year++){
+
+const newStart=new Date(year,month,day).getTime();
+
+const newEnd = event.end
+? new Date(year,month,day).getTime()
+: null;
+
+/* create new event clone */
+
+const clone={
+
+...event,
+
+start:newStart,
+
+end:newEnd,
+
+};
+
+result.push(clone);
+
+}
+
+});
+
+/* also include original events */
+
+return [...events,...result];
 
 }
 
@@ -813,9 +873,16 @@ const map=new Map();
 
 events.forEach(e=>{
 
-const key=e.title+"_"+e.start;
+const d=new Date(e.start);
 
-if(!map.has(key)) map.set(key,e);
+const key=
+e.title+"_"+d.getFullYear()+"_"+d.getMonth()+"_"+d.getDate();
+
+if(!map.has(key)){
+
+map.set(key,e);
+
+}
 
 });
 
