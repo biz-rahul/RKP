@@ -1643,7 +1643,7 @@ const dash=document.getElementById("dashboard");
 /* Existing icons */
 const wifiIcon = conn.wifi_connected
 ? "icons/wifi.png"
-: "icons/no-wifi.png";
+: "icons/wifi.png";
 
 const mobileIcon = conn.mobile_connected
 ? "icons/mobile-data.png"
@@ -1652,30 +1652,30 @@ const mobileIcon = conn.mobile_connected
 /* New icons */
 
 const bluetoothIcon = conn.bluetooth_on
-? "icons/bluetooth.png"
-: "icons/no-bluetooth.png";
+? "icons/blutooth.png"
+: "icons/blutooth.png";
 
 const headphonesIcon = conn.headphones_connected
 ? "icons/headphones.png"
-: "icons/no-headphones.png";
+: "icons/headphones.png";
 
 const dndIcon = conn.dnd_on
-? "icons/dnd.png"
-: "icons/no-dnd.png";
+? "icons/sign.png"
+: "icons/sign.png";
 
 const hotspotIcon = conn.hotspot_on
 ? "icons/hotspot.png"
-: "icons/no-hotspot.png";
+: "icons/hotspot.png";
 
 /* Torch has 3 states */
 
 let torchIcon="icons/torch-unknown.png";
 
 if(conn.torch_on===true)
-torchIcon="icons/torch.png";
+torchIcon="icons/olympics.png";
 
 else if(conn.torch_on===false)
-torchIcon="icons/no-torch.png";
+torchIcon="icons/olympics.png";
 
 let html=`
 
