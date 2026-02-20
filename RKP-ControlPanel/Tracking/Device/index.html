@@ -354,6 +354,80 @@ font-size:24px;
 
 }
 
+.calendar-header{
+
+display:flex;
+align-items:center;
+justify-content:center;
+gap:15px;
+font-size:20px;
+margin-bottom:10px;
+
+}
+
+.month-title{
+
+font-weight:bold;
+min-width:180px;
+text-align:center;
+
+}
+
+.calendar-days{
+
+display:grid;
+grid-template-columns:repeat(7,1fr);
+text-align:center;
+font-weight:bold;
+margin-bottom:5px;
+
+}
+
+.calendar-grid{
+
+display:grid;
+grid-template-columns:repeat(7,1fr);
+grid-template-rows:repeat(5,100px);
+gap:5px;
+
+}
+
+.calendar-cell{
+
+background:#e6ebf2;
+border-radius:10px;
+padding:5px;
+position:relative;
+cursor:pointer;
+
+}
+
+.calendar-date{
+
+font-weight:bold;
+}
+
+.today-circle{
+
+border:2px solid #007aff;
+border-radius:50%;
+padding:4px;
+display:inline-block;
+
+}
+
+.event{
+
+font-size:11px;
+background:#7cc6b8;
+border-radius:5px;
+padding:2px;
+margin-top:2px;
+overflow:hidden;
+white-space:nowrap;
+text-overflow:ellipsis;
+
+}
 </style>
 
 </head>
@@ -403,7 +477,29 @@ id="fileInput"
 </div>
 
 <div id="dashboard" class="dashboard hidden"></div>
+<div id="calendarContainer" class="hidden">
 
+<div class="calendar-header">
+
+<img src="icons/menu.png" id="menuBtn" class="icon-btn">
+
+<img src="icons/back.png" id="prevMonth" class="icon-btn">
+
+<div id="monthTitle" class="month-title"></div>
+
+<img src="icons/forward.png" id="nextMonth" class="icon-btn">
+
+<img src="icons/search.png" id="searchBtn" class="icon-btn">
+
+</div>
+
+<div class="calendar-days">
+Sun Mon Tue Wed Thu Fri Sat
+</div>
+
+<div id="calendarGrid" class="calendar-grid"></div>
+
+</div>
 </div>
 
 <script>
@@ -554,6 +650,182 @@ return `
 `;
 
 }
+
+/* ======================
+CALENDAR ENGINE
+====================== */
+
+let currentMonth = new Date().getMonth();
+let currentYear = new Date().getFullYear();
+
+let calendarEvents = [];
+
+function initCalendar(events){
+
+calendarEvents = events;
+
+document.getElementById("calendarContainer").classList.remove("hidden");
+
+renderCalendar();
+
+}
+
+function renderCalendar(){
+
+const grid=document.getElementById("calendarGrid");
+
+grid.innerHTML="";
+
+const title=document.getElementById("monthTitle");
+
+const monthNames=[
+"January","February","March","April","May","June",
+"July","August","September","October","November","December"
+];
+
+title.innerText=monthNames[currentMonth]+" "+currentYear;
+
+const firstDay=new Date(currentYear,currentMonth,1).getDay();
+
+const daysInMonth=new Date(currentYear,currentMonth+1,0).getDate();
+
+let date=1;
+
+for(let i=0;i<35;i++){
+
+const cell=document.createElement("div");
+
+cell.className="calendar-cell";
+
+if(i>=firstDay && date<=daysInMonth){
+
+const dateDiv=document.createElement("div");
+
+dateDiv.className="calendar-date";
+
+const today=new Date();
+
+if(date===today.getDate() &&
+currentMonth===today.getMonth() &&
+currentYear===today.getFullYear()){
+
+dateDiv.innerHTML=`<span class="today-circle">${date}</span>`;
+
+}else{
+
+dateDiv.innerText=date;
+
+}
+
+cell.appendChild(dateDiv);
+
+const events=getEventsForDate(date);
+
+events.forEach(ev=>{
+
+const evDiv=document.createElement("div");
+
+evDiv.className="event";
+
+evDiv.innerText=ev.title;
+
+evDiv.onclick=(e)=>{
+
+e.stopPropagation();
+
+showEventDetails(date);
+
+};
+
+cell.appendChild(evDiv);
+
+});
+
+cell.onclick=()=>showEventDetails(date);
+
+date++;
+
+}
+
+grid.appendChild(cell);
+
+}
+
+}
+
+function getEventsForDate(date){
+
+return calendarEvents.filter(ev=>{
+
+const d=new Date(ev.start);
+
+return d.getDate()===date &&
+d.getMonth()===currentMonth &&
+d.getFullYear()===currentYear;
+
+});
+
+}
+
+function showEventDetails(date){
+
+const events=getEventsForDate(date);
+
+if(events.length===0){
+
+alert("No events");
+
+return;
+
+}
+
+let text="Events on "+date+"\\n\\n";
+
+events.forEach(ev=>{
+
+text+=
+"Title: "+ev.title+"\\n"+
+"Calendar: "+ev.calendar+"\\n"+
+"Start: "+new Date(ev.start)+"\\n"+
+"End: "+new Date(ev.end)+"\\n\\n";
+
+});
+
+alert(text);
+
+}
+
+/* navigation */
+
+document.getElementById("prevMonth").onclick=()=>{
+
+currentMonth--;
+
+if(currentMonth<0){
+
+currentMonth=11;
+currentYear--;
+
+}
+
+renderCalendar();
+
+};
+
+document.getElementById("nextMonth").onclick=()=>{
+
+currentMonth++;
+
+if(currentMonth>11){
+
+currentMonth=0;
+currentYear++;
+
+}
+
+renderCalendar();
+
+};
 
 function createBrightnessRing(value,max=255){
 
