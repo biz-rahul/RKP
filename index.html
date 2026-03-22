@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Rahul Kumar Puri — Web Developer · Writer · Poet</title>
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #0f0f18;
+    --card: #12121e;
+    --card2: #1a1a2e;
+    --accent: #c9a84c;
+    --accent2: #e8c97a;
+    --accent3: #7b5ea7;
+    --text: #e8e4da;
+    --muted: #7a7870;
+    --border: rgba(201,168,76,0.15);
+    --glow: rgba(201,168,76,0.08);
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9999;
+    transition: transform 0.1s;
+    mix-blend-mode: difference;
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1px solid rgba(201,168,76,0.5);
+    border-radius: 50%;
+    position: fixed; top: 0; left: 0;
+    pointer-events: none; z-index: 9998;
+    transition: all 0.18s ease;
+  }
+
+  /* Noise overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    opacity: 0.4;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 22px 60px;
+    display: flex; align-items: center; justify-content: space-between;
+    background: linear-gradient(180deg, rgba(10,10,15,0.95) 0%, transparent 100%);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+  }
+  .nav-links { display: flex; gap: 36px; list-style: none; }
+  .nav-links a {
+    text-decoration: none; color: var(--muted);
+    font-size: 0.78rem; letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0;
+    width: 0; height: 1px; background: var(--accent);
+    transition: width 0.3s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-links a:hover::after { width: 100%; }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 120px 60px 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; right: -200px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(123,94,167,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px; left: 10%;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-text { z-index: 2; }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 40px; height: 1px;
+    background: var(--accent);
+  }
+
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.2rem, 6vw, 6rem);
+    font-weight: 900;
+    line-height: 1.0;
+    margin-bottom: 12px;
+    letter-spacing: -0.02em;
+  }
+  .hero h1 .name-line {
+    display: block;
+  }
+  .hero h1 .gold {
+    color: var(--accent);
+    font-style: italic;
+  }
+
+  .hero-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--muted);
+    margin: 20px 0 36px;
+    line-height: 1.6;
+  }
+
+  .hero-desc {
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #9f9b94;
+    max-width: 500px;
+    margin-bottom: 48px;
+  }
+
+  .hero-cta {
+    display: flex; gap: 18px; flex-wrap: wrap;
+  }
+  .btn-primary {
+    padding: 14px 34px;
+    background: var(--accent);
+    color: #0a0a0f;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--accent2);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary span { position: relative; z-index: 1; }
+
+  .btn-outline {
+    padding: 14px 34px;
+    border: 1px solid var(--border);
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: all 0.3s;
+    cursor: none;
+  }
+  .btn-outline:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  /* Hero Image side */
+  .hero-visual {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .photo-frame {
+    position: relative;
+    width: 380px;
+    height: 480px;
+  }
+  .photo-frame::before {
+    content: '';
+    position: absolute;
+    top: -14px; right: -14px;
+    width: 100%; height: 100%;
+    border: 1.5px solid var(--accent);
+    opacity: 0.4;
+    transition: all 0.4s;
+  }
+  .photo-frame::after {
+    content: '';
+    position: absolute;
+    top: -28px; right: -28px;
+    width: 100%; height: 100%;
+    border: 1px solid rgba(201,168,76,0.15);
+  }
+  .photo-frame:hover::before {
+    top: -20px; right: -20px;
+    opacity: 0.7;
+  }
+  .photo-placeholder {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, var(--card2) 0%, var(--card) 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+  .photo-placeholder img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: grayscale(20%) contrast(1.05);
+    transition: filter 0.4s;
+  }
+  .photo-placeholder:hover img { filter: grayscale(0%) contrast(1.1); }
+  .photo-initials {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.15);
+    letter-spacing: -0.04em;
+  }
+  .photo-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+  .photo-badge {
+    position: absolute;
+    bottom: -20px; left: -20px;
+    background: var(--accent);
+    color: #0a0a0f;
+    padding: 10px 20px;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 3;
+  }
+
+  /* Floating tags */
+  .float-tag {
+    position: absolute;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    white-space: nowrap;
+    animation: float 6s ease-in-out infinite;
+  }
+  .float-tag:nth-child(1) { top: 20%; right: -30px; animation-delay: 0s; }
+  .float-tag:nth-child(2) { top: 60%; right: -40px; animation-delay: 2s; }
+  .float-tag:nth-child(3) { bottom: 10%; left: -20px; animation-delay: 4s; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  /* SECTION COMMON */
+  section {
+    padding: 100px 60px;
+    position: relative;
+  }
+  .section-header {
+    margin-bottom: 60px;
+  }
+  .section-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 16px;
+  }
+  .section-tag::before {
+    content: ''; width: 30px; height: 1px;
+    background: var(--accent);
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 4vw, 3.6rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .section-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  /* DIVIDER */
+  .divider {
+    width: 100%; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.2;
+    margin: 0 60px;
+    width: calc(100% - 120px);
+  }
+
+  /* BOOKS */
+  .books-section { background: var(--bg2); }
+
+  .books-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    max-width: 900px;
+  }
+  .book-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 36px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: none;
+    text-decoration: none;
+    display: block;
+    color: inherit;
+  }
+  .book-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201,168,76,0.05) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .book-card:hover { transform: translateY(-6px); border-color: rgba(201,168,76,0.4); }
+  .book-card:hover::before { opacity: 1; }
+
+  .book-number {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.08);
+    line-height: 1;
+    margin-bottom: 12px;
+    position: absolute;
+    top: 16px; right: 24px;
+  }
+  .book-lang {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+    background: rgba(201,168,76,0.1);
+    display: inline-block;
+    padding: 3px 10px;
+  }
+  .book-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.2;
+  }
+  .book-desc {
+    font-size: 0.85rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+  }
+  .book-link {
+    font-size: 0.72rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex; align-items: center; gap: 8px;
+    transition: gap 0.3s;
+  }
+  .book-card:hover .book-link { gap: 14px; }
+
+  /* POETRY CARD — special wide */
+  .books-poetry {
+    grid-column: 1 / -1;
+  }
+  .poetry-card {
+    background: linear-gradient(135deg, var(--card2) 0%, var(--card) 100%);
+    border: 1px solid var(--border);
+    padding: 44px 52px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+    text-decoration: none;
+    color: inherit;
+    cursor: none;
+  }
+  .poetry-card::before {
+    content: '"';
+    position: absolute;
+    font-family: 'Playfair Display', serif;
+    font-size: 18rem;
+    font-weight: 900;
+    color: rgba(201,168,76,0.04);
+    top: -60px; left: -20px;
+    line-height: 1;
+  }
+  .poetry-card:hover { border-color: rgba(201,168,76,0.5); transform: translateY(-4px); }
+  .poetry-card-content { position: relative; z-index: 1; }
+  .poetry-tag {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(201,168,76,0.1);
+    display: inline-block;
+    padding: 3px 10px;
+    margin-bottom: 14px;
+  }
+  .poetry-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+  .poetry-desc {
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 500px;
+  }
+  .poetry-cta {
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .poetry-cta .btn-primary { display: inline-block; white-space: nowrap; }
+
+  /* INTERESTS */
+  .interests-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+  .interest-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 36px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s;
+  }
+  .interest-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 0; height: 2px;
+    background: var(--accent);
+    transition: width 0.4s;
+  }
+  .interest-card:hover { transform: translateY(-4px); background: var(--card2); }
+  .interest-card:hover::after { width: 100%; }
+
+  .interest-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: block;
+    filter: grayscale(20%);
+    transition: transform 0.3s;
+  }
+  .interest-card:hover .interest-icon { transform: scale(1.2) rotate(-5deg); }
+  .interest-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .interest-desc {
+    font-size: 0.83rem;
+    color: var(--muted);
+    line-height: 1.75;
+  }
+
+  /* FAQ */
+  .faq-section { background: var(--bg2); }
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .faq-item {
+    border: 1px solid var(--border);
+    background: var(--card);
+    overflow: hidden;
+    transition: border-color 0.3s;
+  }
+  .faq-item:hover { border-color: rgba(201,168,76,0.35); }
+  .faq-q {
+    padding: 24px 28px;
+    cursor: none;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: color 0.3s;
+    user-select: none;
+  }
+  .faq-q:hover { color: var(--accent); }
+  .faq-q-text { flex: 1; }
+  .faq-icon {
+    width: 24px; height: 24px;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem;
+    color: var(--accent);
+    flex-shrink: 0;
+    transition: all 0.3s;
+  }
+  .faq-item.open .faq-icon { transform: rotate(45deg); background: var(--accent); color: #0a0a0f; }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s;
+    font-size: 0.87rem;
+    color: var(--muted);
+    line-height: 1.8;
+    padding: 0 28px;
+  }
+  .faq-item.open .faq-a {
+    max-height: 200px;
+    padding: 0 28px 24px;
+  }
+
+  /* BIRTHDAY */
+  .birthday-section {
+    text-align: center;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .birthday-section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 50% at 50% 50%, rgba(201,168,76,0.05) 0%, transparent 70%);
+  }
+  .birthday-inner { position: relative; z-index: 2; }
+  .birthday-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid var(--border);
+    padding: 8px 22px;
+    margin-bottom: 32px;
+  }
+  .birthday-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .birthday-title em { color: var(--accent); font-style: italic; }
+  .birthday-sub {
+    font-size: 1rem;
+    color: var(--muted);
+    margin-bottom: 44px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+  }
+  .btn-birthday {
+    display: inline-flex;
+    align-items: center; gap: 14px;
+    padding: 18px 44px;
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+    cursor: none;
+  }
+  .btn-birthday::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .btn-birthday:hover::before { transform: scaleX(1); }
+  .btn-birthday:hover { color: #0a0a0f; }
+  .btn-birthday span { position: relative; z-index: 1; }
+  .btn-birthday .arrow { font-size: 1.2rem; position: relative; z-index: 1; transition: transform 0.3s; }
+  .btn-birthday:hover .arrow { transform: translateX(5px); }
+
+  /* CONTACT */
+  .contact-section {
+    background: var(--bg2);
+  }
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  .contact-left .section-title { margin-bottom: 20px; }
+  .contact-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 40px;
+  }
+  .contact-actions {
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .contact-btn {
+    display: flex;
+    align-items: center; gap: 16px;
+    padding: 18px 28px;
+    text-decoration: none;
+    border: 1px solid var(--border);
+    color: var(--text);
+    transition: all 0.3s;
+    background: var(--card);
+    cursor: none;
+    font-size: 0.9rem;
+  }
+  .contact-btn:hover { border-color: var(--accent); color: var(--accent); transform: translateX(6px); }
+  .contact-btn-icon { font-size: 1.3rem; flex-shrink: 0; }
+  .contact-btn-text { flex: 1; }
+  .contact-btn-text strong { display: block; font-size: 0.82rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .contact-btn-text span { font-size: 0.78rem; color: var(--muted); }
+  .contact-arrow { font-size: 1rem; color: var(--accent); opacity: 0; transition: all 0.3s; }
+  .contact-btn:hover .contact-arrow { opacity: 1; transform: translateX(3px); }
+
+  .contact-right {
+    padding: 44px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .contact-right::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 120px; height: 120px;
+    background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%);
+  }
+  .contact-right h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .contact-right p {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 32px;
+    line-height: 1.7;
+  }
+
+  .form-group { margin-bottom: 20px; }
+  .form-group input,
+  .form-group textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 14px 18px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.3s;
+    resize: none;
+    cursor: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus { border-color: var(--accent); }
+  .form-group textarea { height: 100px; }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: var(--muted); }
+  .form-submit {
+    width: 100%;
+    padding: 15px;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.3s;
+  }
+  .form-submit:hover { background: var(--accent2); }
+
+  /* FOOTER */
+  footer {
+    background: #070710;
+    border-top: 1px solid var(--border);
+    padding: 70px 60px 36px;
+  }
+  .footer-main {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 60px;
+  }
+  .footer-brand .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 14px;
+  }
+  .footer-tagline {
+    font-size: 0.8rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+  .footer-roles {
+    display: flex; flex-wrap: wrap; gap: 8px;
+  }
+  .role-tag {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    transition: all 0.3s;
+  }
+  .role-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+  .footer-col h4 {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .footer-col h4::after {
+    content: ''; flex: 1; height: 1px;
+    background: var(--border);
+  }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+  .footer-links a {
+    text-decoration: none;
+    font-size: 0.87rem;
+    color: var(--muted);
+    transition: all 0.3s;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .footer-links a:hover { color: var(--accent); transform: translateX(4px); }
+  .social-icon { font-size: 1rem; }
+
+  .footer-address {
+    font-size: 0.82rem;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-top: 12px;
+  }
+  .footer-address strong {
+    display: block;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+    font-weight: 400;
+  }
+
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 28px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-copy {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .footer-made {
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+  }
+
+  /* Scroll fade in */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.7s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .fade-in-delay-1 { transition-delay: 0.1s; }
+  .fade-in-delay-2 { transition-delay: 0.2s; }
+  .fade-in-delay-3 { transition-delay: 0.3s; }
+  .fade-in-delay-4 { transition-delay: 0.4s; }
+  .fade-in-delay-5 { transition-delay: 0.5s; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--accent); }
+
+  /* Mobile */
+  @media (max-width: 900px) {
+    nav { padding: 20px 28px; }
+    .nav-links { display: none; }
+    .hero { grid-template-columns: 1fr; padding: 100px 28px 60px; }
+    .hero-visual { order: -1; margin-bottom: 40px; }
+    .photo-frame { width: 260px; height: 320px; }
+    section { padding: 70px 28px; }
+    .books-grid { grid-template-columns: 1fr; }
+    .books-poetry { grid-column: 1; }
+    .poetry-card { grid-template-columns: 1fr; }
+    .interests-grid { grid-template-columns: 1fr 1fr; }
+    .faq-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .footer-main { grid-template-columns: 1fr; gap: 40px; }
+    .divider { margin: 0 28px; width: calc(100% - 56px); }
+  }
+  @media (max-width: 600px) {
+    .interests-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+  }
+</style>
+  </head>
+  <body>
+
+	<!-- Custom cursor -->
+	<div class="cursor" id="cursor"></div>
+	<div class="cursor-ring" id="cursorRing"></div>
+
+	<!-- NAV -->
+	<nav>
+	  <div class="nav-logo">RKP</div>
+	  <ul class="nav-links">
+		<li><a href="#about">About</a></li>
+		<li><a href="#books">Books</a></li>
+		<li><a href="#interests">Interests</a></li>
+		<li><a href="#faq">FAQ</a></li>
+		<li><a href="#contact">Contact</a></li>
+	  </ul>
+	</nav>
+
+	<!-- HERO -->
+	<section class="hero" id="about">
+	  <div class="hero-text fade-in">
+		<div class="hero-eyebrow">Motihari, Bihar, India</div>
+		<h1>
+		  <span class="name-line">Rahul</span>
+		  <span class="name-line gold">Kumar</span>
+		  <span class="name-line">Puri</span>
+		</h1>
+		<p class="hero-subtitle">Web Developer · Writer · Poet · Digital Professional</p>
+		<p class="hero-desc">
+		  A passionate creator blending web development, design, and technology with the art of storytelling. 
+		  Beyond code, a Poet, Men's Rights Activist, and explorer of Guanxi & Mianzi — the Chinese cultural concepts 
+		  shaping leadership, business, and human psychology.
+		</p>
+		<div class="hero-cta">
+		  <a href="#books" class="btn-primary"><span>Explore My Work</span></a>
+		  <a href="#contact" class="btn-outline">Get In Touch</a>
+		</div>
+	  </div>
+	  <div class="hero-visual fade-in fade-in-delay-2">
+		<div class="photo-frame">
+		  <div class="photo-placeholder">
+			<!-- Replace src below with actual photo URL -->
+			<img src="https://rahulpuri.fun/images/rahul.jpg" 
+			  alt="Rahul Kumar Puri"
+			  onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+			<div style="display:none; flex-direction:column; align-items:center; justify-content:center; height:100%; gap:12px;">
+			  <div class="photo-initials">RKP</div>
+			  <div class="photo-label">Rahul Kumar Puri</div>
+			</div>
+		  </div>
+		  <div class="photo-badge">Poet · Developer · Activist</div>
+		  <div class="float-tag">Web Development</div>
+		  <div class="float-tag">Guanxi & Mianzi</div>
+		  <div class="float-tag">Men's Rights</div>
+		</div>
+	  </div>
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- BOOKS -->
+	<section class="books-section" id="books">
+	  <div class="section-header fade-in">
+		<div class="section-tag">Literary Works</div>
+		<h2 class="section-title">Books by <em>Rahul</em></h2>
+	  </div>
+
+	  <div class="books-grid">
+		<!-- Book 1 -->
+		<a href="https://rahulpuri.fun/Books/BhanwraAurFul/" target="_blank" class="book-card fade-in fade-in-delay-1">
+		  <div class="book-number">01</div>
+		  <div class="book-lang">Hindi · Poetry</div>
+		  <div class="book-title">भंवरा और फूल</div>
+		  <div class="book-desc">
+			A lyrical exploration of love, desire, and nature's timeless dance between the bee and the flower — 
+			written in the rich cadence of Hindi verse.
+		  </div>
+		  <div class="book-link">Read Now →</div>
+		</a>
+
+		<!-- Book 2 -->
+		<a href="https://rahulpuri.fun/Books/Bik_gaya_insaan.html" target="_blank" class="book-card fade-in fade-in-delay-2">
+		  <div class="book-number">02</div>
+		  <div class="book-lang">Hindi · Social Commentary</div>
+		  <div class="book-title">बिक गया इंसान</div>
+		  <div class="book-desc">
+			A bold, unfiltered commentary on modern society where human values, dignity, and relationships 
+			are sold in the marketplace of convenience and greed.
+		  </div>
+		  <div class="book-link">Read Now →</div>
+		</a>
+
+		<!-- Book 3 -->
+		<a href="https://rahulpuri.fun/Books/Shikayten.html" target="_blank" class="book-card fade-in fade-in-delay-3">
+		  <div class="book-number">03</div>
+		  <div class="book-lang">Hindi · Emotions</div>
+		  <div class="book-title">शिकायते</div>
+		  <div class="book-desc">
+			Heartfelt complaints whispered to the universe — a collection of raw emotions, unspoken truths, 
+			and the quiet anguish of unfulfilled expectations.
+		  </div>
+		  <div class="book-link">Read Now →</div>
+		</a>
+
+		<!-- Poetry Collection — Special Wide Card -->
+		<div class="books-poetry fade-in fade-in-delay-4">
+		  <a href="https://rahulpuri.fun/Books/read-my-poetry/" target="_blank" class="poetry-card">
+			<div class="poetry-card-content">
+			  <div class="poetry-tag">Complete Collection</div>
+			  <div class="poetry-title">Read My Poetry</div>
+			  <div class="poetry-desc">
+				Dive into the complete world of Rahul's poetry — a journey through emotions, society, love, 
+				struggle, and the beauty of the human spirit. Each verse, a universe in itself.
+			  </div>
+			</div>
+			<div class="poetry-cta">
+			  <a href="https://rahulpuri.fun/Books/read-my-poetry/" target="_blank" class="btn-primary" onclick="event.stopPropagation()">
+				<span>Explore All Poetry</span>
+			  </a>
+			</div>
+		  </a>
+		</div>
+	  </div>
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- INTERESTS -->
+	<section id="interests">
+	  <div class="section-header fade-in">
+		<div class="section-tag">Areas of Passion</div>
+		<h2 class="section-title">My <em>Interests</em></h2>
+	  </div>
+
+	  <div class="interests-grid">
+		<div class="interest-card fade-in fade-in-delay-1">
+		  <span class="interest-icon">💻</span>
+		  <div class="interest-name">Web Development</div>
+		  <div class="interest-desc">
+			Crafting fast, modern, and intuitive digital experiences. From clean architecture to pixel-perfect UI, 
+			I build websites that don't just function — they captivate and convert.
+		  </div>
+		</div>
+		<div class="interest-card fade-in fade-in-delay-2">
+		  <span class="interest-icon">✍️</span>
+		  <div class="interest-name">Writing & Poetry</div>
+		  <div class="interest-desc">
+			Words are my second code. I write Hindi poetry that speaks to the soul — exploring love, loss, 
+			society, and the profound complexity of human emotion with unflinching honesty.
+		  </div>
+		</div>
+		<div class="interest-card fade-in fade-in-delay-3">
+		  <span class="interest-icon">⚖️</span>
+		  <div class="interest-name">Men's Rights Activism</div>
+		  <div class="interest-desc">
+			A vocal advocate for fairness, equality, and balanced discourse. I believe true justice is gender-neutral 
+			and work towards dismantling biases that harm men silently in modern society.
+		  </div>
+		</div>
+		<div class="interest-card fade-in fade-in-delay-1">
+		  <span class="interest-icon">🐉</span>
+		  <div class="interest-name">Guanxi & Mianzi</div>
+		  <div class="interest-desc">
+			Deeply fascinated by Chinese cultural philosophy. Guanxi (关系) — the art of relationships — and 
+			Mianzi (面子) — the currency of face and reputation — profoundly influence leadership and business worldwide.
+		  </div>
+		</div>
+		<div class="interest-card fade-in fade-in-delay-2">
+		  <span class="interest-icon">🧠</span>
+		  <div class="interest-name">Psychology & Behavior</div>
+		  <div class="interest-desc">
+			Exploring the hidden mechanics of the human mind — why people think, decide, and act the way they do. 
+			This curiosity directly informs my writing, advocacy, and design philosophy.
+		  </div>
+		</div>
+		<div class="interest-card fade-in fade-in-delay-3">
+		  <span class="interest-icon">🌐</span>
+		  <div class="interest-name">Digital Strategy</div>
+		  <div class="interest-desc">
+			Merging creativity with data-driven thinking to build meaningful digital presence. From SEO to 
+			user experience, I understand that great strategy is the bridge between vision and impact.
+		  </div>
+		</div>
+	  </div>
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- FAQ -->
+	<section class="faq-section" id="faq">
+	  <div class="section-header fade-in">
+		<div class="section-tag">Common Questions</div>
+		<h2 class="section-title">Frequently <em>Asked</em></h2>
+	  </div>
+
+	  <div class="faq-grid">
+		<div class="faq-item fade-in fade-in-delay-1">
+		  <div class="faq-q">
+			<span class="faq-q-text">Who is Rahul Kumar Puri?</span>
+			<span class="faq-icon">+</span>
+		  </div>
+		  <div class="faq-a">
+			Rahul Kumar Puri is a Web Developer, Writer, Poet, and Digital Professional from Motihari, Bihar, India. 
+			He specializes in building modern websites and is also known for his Hindi poetry, Men's Rights Activism, 
+			and deep study of Chinese cultural concepts like Guanxi and Mianzi.
+		  </div>
+		</div>
+
+		<div class="faq-item fade-in fade-in-delay-2">
+		  <div class="faq-q">
+			<span class="faq-q-text">What kind of websites does Rahul build?</span>
+			<span class="faq-icon">+</span>
+		  </div>
+		  <div class="faq-a">
+			Rahul creates fast, responsive, and visually compelling websites — ranging from personal portfolios 
+			and business landing pages to full digital experiences. His approach blends clean code, modern design 
+			aesthetics, and user-first thinking to deliver websites that truly stand out.
+		  </div>
+		</div>
+
+		<div class="faq-item fade-in fade-in-delay-3">
+		  <div class="faq-q">
+			<span class="faq-q-text">What is Guanxi & Mianzi, and why is Rahul interested?</span>
+			<span class="faq-icon">+</span>
+		  </div>
+		  <div class="faq-a">
+			Guanxi (关系) refers to the cultivation of deep personal relationships as social capital in Chinese culture. 
+			Mianzi (面子) is the concept of "face" — one's reputation and social standing. Rahul studies these because 
+			they offer powerful insights into leadership, business negotiations, and human psychology globally.
+		  </div>
+		</div>
+
+		<div class="faq-item fade-in fade-in-delay-4">
+		  <div class="faq-q">
+			<span class="faq-q-text">How can I read Rahul's books and poetry?</span>
+			<span class="faq-icon">+</span>
+		  </div>
+		  <div class="faq-a">
+			All of Rahul's literary works are freely accessible online. You can visit his Books section above 
+			to explore individual works like "भंवरा और फूल", "बिक गया इंसान", "शिकायते", and his full poetry 
+			collection at rahulpuri.fun.
+		  </div>
+		</div>
+
+		<div class="faq-item fade-in fade-in-delay-1">
+		  <div class="faq-q">
+			<span class="faq-q-text">What is Rahul's Men's Rights Activism about?</span>
+			<span class="faq-icon">+</span>
+		  </div>
+		  <div class="faq-a">
+			Rahul advocates for fairness and equality in society with a focus on issues that disproportionately 
+			affect men — including legal biases, mental health stigma, and social double standards. He believes 
+			genuine equality must be inclusive of all genders without political agenda.
+		  </div>
+		</div>
+
+		<div class="faq-item fade-in fade-in-delay-2">
+		  <div class="faq-q">
+			<span class="faq-q-text">How can I hire Rahul or collaborate with him?</span>
+			<span class="faq-icon">+</span>
+		  </div>
+		  <div class="faq-a">
+			You can reach out directly via the Contact section below — either by sending a message or calling. 
+			Rahul is open to web development projects, writing collaborations, speaking engagements, and 
+			consulting on digital strategy or cultural psychology topics.
+		  </div>
+		</div>
+	  </div>
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- BIRTHDAY COUNTDOWN -->
+	<section class="birthday-section">
+	  <div class="birthday-inner fade-in">
+		<div class="birthday-badge">✦ Special Feature ✦</div>
+		<h2 class="birthday-title">My Birthday<br><em>Countdown</em></h2>
+		<p class="birthday-sub">See how many days are left until the celebration begins…</p>
+		<a href="https://rahulpuri.fun/Birthday/" target="_blank" class="btn-birthday">
+		  <span>🎂 View Birthday Countdown</span>
+		  <span class="arrow">→</span>
+		</a>
+	  </div>
+	</section>
+
+	<div class="divider"></div>
+
+	<!-- CONTACT -->
+	<section class="contact-section" id="contact">
+	  <div class="contact-grid">
+		<div class="contact-left fade-in">
+		  <div class="section-tag">Let's Connect</div>
+		  <h2 class="section-title">Send a <em>Message</em><br>or Call Me</h2>
+		  <p class="contact-tagline">
+			Have a project in mind, a question to ask, or just want to say hello? 
+			I'm always open to meaningful conversations.
+		  </p>
+		  <div class="contact-actions">
+			<a href="https://rahulpuri.fun/Contact" target="_blank" class="contact-btn">
+			  <span class="contact-btn-icon">✉️</span>
+			  <span class="contact-btn-text">
+				<strong>Send a Message</strong>
+				<span>Write to Rahul directly</span>
+			  </span>
+			  <span class="contact-arrow">→</span>
+			</a>
+			<a href="https://rahulpuri.fun/Contact" target="_blank" class="contact-btn">
+			  <span class="contact-btn-icon">📞</span>
+			  <span class="contact-btn-text">
+				<strong>Call Me</strong>
+				<span>Schedule a conversation</span>
+			  </span>
+			  <span class="contact-arrow">→</span>
+			</a>
+			<a href="https://instagram.com/rahulkumarpurix" target="_blank" class="contact-btn">
+			  <span class="contact-btn-icon">📸</span>
+			  <span class="contact-btn-text">
+				<strong>Instagram</strong>
+				<span>@rahulkumarpurix</span>
+			  </span>
+			  <span class="contact-arrow">→</span>
+			</a>
+			<a href="https://www.linkedin.com/in/rahulkumarpuri" target="_blank" class="contact-btn">
+			  <span class="contact-btn-icon">💼</span>
+			  <span class="contact-btn-text">
+				<strong>LinkedIn</strong>
+				<span>Professional Network</span>
+			  </span>
+			  <span class="contact-arrow">→</span>
+			</a>
+		  </div>
+		</div>
+
+		<div class="contact-right fade-in fade-in-delay-2">
+		  <h3>Quick Message</h3>
+		  <p>Drop a quick note — I'll get back to you soon.</p>
+		  <div class="form-group">
+			<input type="text" placeholder="Your Name">
+		  </div>
+		  <div class="form-group">
+			<input type="email" placeholder="Your Email">
+		  </div>
+		  <div class="form-group">
+			<textarea placeholder="Your Message…"></textarea>
+		  </div>
+		  <button class="form-submit" onclick="handleSubmit(this)">Send Message</button>
+		</div>
+	  </div>
+	</section>
+
+	<!-- FOOTER -->
+	<footer>
+	  <div class="footer-main">
+		<div class="footer-brand">
+		  <span class="footer-logo">Rahul Kumar Puri</span>
+		  <p class="footer-tagline">
+			Building digital experiences that inspire and empower.<br>
+			Writing words that speak to the soul.
+		  </p>
+		  <div class="footer-roles">
+			<span class="role-tag">Web Developer</span>
+			<span class="role-tag">Men Activist</span>
+			<span class="role-tag">Writer</span>
+			<span class="role-tag">Poet</span>
+			<span class="role-tag">Guanxi & Mianzi Expert</span>
+		  </div>
+		</div>
+
+		<div class="footer-col">
+		  <h4>Social</h4>
+		  <ul class="footer-links">
+			<li>
+			  <a href="https://instagram.com/rahulkumarpurix" target="_blank">
+				<span class="social-icon">📸</span> Instagram
+			  </a>
+			</li>
+			<li>
+			  <a href="https://www.linkedin.com/in/rahulkumarpuri" target="_blank">
+				<span class="social-icon">💼</span> LinkedIn
+			  </a>
+			</li>
+			<li>
+			  <a href="https://www.snapchat.com/add/rahulkumarpurix" target="_blank">
+				<span class="social-icon">👻</span> Snapchat
+			  </a>
+			</li>
+		  </ul>
+		</div>
+
+		<div class="footer-col">
+		  <h4>Location</h4>
+		  <div class="footer-address">
+			<strong>📍 Address</strong>
+			Madhubani Ghat Road,<br>
+			Motihari, Bihar,<br>
+			India
+		  </div>
+		</div>
+	  </div>
+
+	  <div class="footer-bottom">
+		<div class="footer-copy">© 2026 Rahul Kumar Puri — All rights reserved.</div>
+		<div class="footer-made">Made by RKP ✦</div>
+	  </div>
+	</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 5 + 'px';
+    cursor.style.top = my - 5 + 'px';
+  });
+
+  function animateRing() {
+    rx += (mx - rx - 18) * 0.15;
+    ry += (my - ry - 18) * 0.15;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button, .faq-q, .book-card, .interest-card, .contact-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'scale(2)';
+      ring.style.transform = 'scale(1.5)';
+      ring.style.borderColor = 'rgba(201,168,76,0.8)';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'scale(1)';
+      ring.style.transform = 'scale(1)';
+      ring.style.borderColor = 'rgba(201,168,76,0.5)';
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(q => {
+    q.addEventListener('click', () => {
+      const item = q.parentElement;
+      const wasOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!wasOpen) item.classList.add('open');
+    });
+  });
+
+  // Scroll fade in
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Form submit
+  function handleSubmit(btn) {
+    const originalText = btn.textContent;
+    btn.textContent = 'Sending…';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.textContent = '✓ Message Sent!';
+      btn.style.background = '#4caf50';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    }, 1500);
+  }
+
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    const nav = document.querySelector('nav');
+    if (window.scrollY > 50) {
+      nav.style.background = 'rgba(7,7,16,0.97)';
+    } else {
+      nav.style.background = 'linear-gradient(180deg, rgba(10,10,15,0.95) 0%, transparent 100%)';
+    }
+  });
+</script>
+  </body>
+</html>
