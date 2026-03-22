@@ -1,0 +1,59 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Secret Message</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+body{height:100vh;background:linear-gradient(135deg,#1f1c2c,#928dab);display:flex;justify-content:center;align-items:center}
+.card{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;width:360px;color:#fff;box-shadow:0 20px 40px rgba(0,0,0,0.4)}
+h2{text-align:center;margin-bottom:10px}
+.subtitle{text-align:center;font-size:13px;opacity:.8;margin-bottom:20px}
+textarea{width:100%;margin:10px 0;padding:12px;border-radius:10px;border:none;outline:none;height:120px}
+button{width:100%;padding:12px;border:none;border-radius:10px;background:#ff4d6d;color:#fff;font-weight:bold;cursor:pointer;transition:.3s}
+button:hover{background:#ff1e4d}
+.note{font-size:12px;opacity:.8;margin-top:10px;text-align:center}
+</style>
+</head>
+<body><div class="card">
+<h2>Send Secret Message 🔒</h2>
+<div class="subtitle">This is a fully anonymous message. Your identity is not collected.</div><textarea id="message" placeholder="Write your secret message..."></textarea><button onclick="sendSecret()">Send Secret Message</button>
+
+<div class="note">No name. No number. 100% confidential.</div>
+</div><script>
+// Obfuscated credentials
+const encodedToken = "ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==";
+const encodedChatId = "NjI3NzQzMjM1Ng==";
+
+function decode(str){return atob(str)}
+
+function sendSecret(){
+const message=document.getElementById('message').value.trim();
+
+if(message.length<5){
+alert('Message too short');
+return;
+}
+
+const finalMessage=`🔒 Secret Message\n${message}`;
+
+const botToken=decode(encodedToken);
+const chatId=decode(encodedChatId);
+
+fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({chat_id:chatId,text:finalMessage})
+})
+.then(res=>res.json())
+.then(data=>{
+if(data.ok){
+alert('Secret message sent!');
+document.getElementById('message').value='';
+}else{alert('Error sending message')}
+})
+.catch(()=>alert('Network error'));
+}
+</script></body>
+</html>
