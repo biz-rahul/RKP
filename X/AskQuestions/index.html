@@ -1,0 +1,69 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask a Question</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+body{height:100vh;background:linear-gradient(135deg,#141e30,#243b55);display:flex;justify-content:center;align-items:center}
+.card{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;width:370px;color:#fff;box-shadow:0 20px 40px rgba(0,0,0,0.4)}
+h2{text-align:center;margin-bottom:10px}
+.subtitle{text-align:center;font-size:13px;opacity:.85;margin-bottom:20px}
+input,textarea{width:100%;margin:10px 0;padding:12px;border-radius:10px;border:none;outline:none}
+textarea{height:120px}
+button{width:100%;padding:12px;border:none;border-radius:10px;background:#6c5ce7;color:#fff;font-weight:bold;cursor:pointer;transition:.3s}
+button:hover{background:#4b3fd1}
+.note{font-size:12px;opacity:.8;margin-top:10px;text-align:center}
+</style>
+</head>
+<body><div class="card">
+<h2>Ask a Question ❓</h2>
+<div class="subtitle">Submit your question and get a response</div><input type="text" id="name" placeholder="Your Name"><textarea id="question" placeholder="Write your question..."></textarea><button onclick="sendQuestion()">Submit Question</button>
+
+<div class="note">Your question will be reviewed soon.</div>
+</div><script>
+// Obfuscated credentials
+const encodedToken="ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==";
+const encodedChatId="NjI3NzQzMjM1Ng==";
+
+function decode(str){return atob(str)}
+
+function isValidName(name){return name.length>=2}
+
+function sendQuestion(){
+const name=document.getElementById('name').value.trim();
+const question=document.getElementById('question').value.trim();
+
+if(!isValidName(name)){
+alert('Enter valid name');
+return;
+}
+
+if(question.length<8){
+alert('Please enter a proper question');
+return;
+}
+
+const finalMessage=`❓ New Question\nFrom: ${name}\nQuestion: ${question}`;
+
+const botToken=decode(encodedToken);
+const chatId=decode(encodedChatId);
+
+fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({chat_id:chatId,text:finalMessage})
+})
+.then(res=>res.json())
+.then(data=>{
+if(data.ok){
+alert('Question sent successfully!');
+document.getElementById('name').value='';
+document.getElementById('question').value='';
+}else{alert('Error sending question')}
+})
+.catch(()=>alert('Network error'));
+}
+</script></body>
+</html>
