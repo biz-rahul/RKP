@@ -655,6 +655,10 @@ Men Activist | Guanxi and Mianzi Enthu |</title>
   .btn-birthday .arrow { font-size: 1.2rem; position: relative; z-index: 1; transition: transform 0.3s; }
   .btn-birthday:hover .arrow { transform: translateX(5px); }
 
+	.hidden-btn {
+  display: none !important;
+	}
+	
   /* CONTACT */
   .contact-section {
     background: var(--bg2);
@@ -1159,19 +1163,40 @@ Men Activist | Guanxi and Mianzi Enthu |</p>
 
 	<div class="divider"></div>
 
-	<!-- BIRTHDAY COUNTDOWN -->
-	<section class="birthday-section">
-	  <div class="birthday-inner fade-in">
-		<div class="birthday-badge">✦ Special Feature ✦</div>
-		<h2 class="birthday-title">My Birthday<br><em>Countdown</em></h2>
-		<p class="birthday-sub">See how many days are left until the celebration begins…</p>
-		<a href="https://rahulpuri.fun/Birthday/" target="_blank" class="btn-birthday">
-		  <span>🎂 View Birthday Countdown</span>
-		  <span class="arrow">→</span>
-		</a>
-	  </div>
-	</section>
+	
+<!-- BIRTHDAY COUNTDOWN -->
+<section class="birthday-section">
+  <div class="birthday-inner fade-in">
+    
+    <div class="birthday-badge">✦ Special Feature ✦</div>
+    
+    <h2 class="birthday-title">My Birthday<br><em>Countdown</em></h2>
+    
+    <p class="birthday-sub">
+      My Birthday: <strong>25 July</strong>
+    </p>
 
+    <!-- NEW: Countdown Display -->
+    <div id="countdown-box" style="margin-top:20px;">
+      <p><strong>Time Remaining:</strong></p>
+      <div id="countdown" style="font-size: 1.5rem; font-weight: bold;"></div>
+    </div>
+
+    <!-- NEW: Exact Age -->
+    <div id="age-box" style="margin-top:20px;">
+      <p><strong>My Exact Age:</strong></p>
+      <div id="age" style="font-size: 1.3rem;"></div>
+    </div>
+
+    <!-- EXISTING BUTTON (HIDDEN, NOT REMOVED) -->
+    <a href="https://rahulpuri.fun/Birthday/" target="_blank" class="btn-birthday hidden-btn">
+      <span>🎂 View Birthday Countdown</span>
+      <span class="arrow">→</span>
+    </a>
+
+  </div>
+</section>
+	  
 	<div class="divider"></div>
 
 	<!-- CONTACT -->
@@ -1345,6 +1370,67 @@ Men Activist | Guanxi and Mianzi Enthu |</p>
       nav.style.background = 'linear-gradient(180deg, rgba(10,10,15,0.95) 0%, transparent 100%)';
     }
   });
+
+
+	const birthDate = new Date("2007-07-25T00:00:00");
+
+function updateCountdown() {
+  const now = new Date();
+  let nextBirthday = new Date(now.getFullYear(), 6, 25); // July = 6 index
+
+  if (now > nextBirthday) {
+    nextBirthday = new Date(now.getFullYear() + 1, 6, 25);
+  }
+
+  const diff = nextBirthday - now;
+
+  const months = Math.floor(diff / (1000 * 60 * 60 * 24 * 30));
+  const days = Math.floor((diff / (1000 * 60 * 60 * 24)) % 30);
+  const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+  const minutes = Math.floor((diff / (1000 * 60)) % 60);
+  const seconds = Math.floor((diff / 1000) % 60);
+
+  document.getElementById("countdown").innerHTML = `
+    ${months} Months <br>
+    ${days} Days <br>
+    ${hours} Hours <br>
+    ${minutes} Minutes <br>
+    ${seconds} Seconds
+  `;
+}
+
+function updateAge() {
+  const now = new Date();
+
+  let years = now.getFullYear() - birthDate.getFullYear();
+  let months = now.getMonth() - birthDate.getMonth();
+  let days = now.getDate() - birthDate.getDate();
+
+  if (days < 0) {
+    months--;
+    const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prevMonth.getDate();
+  }
+
+  if (months < 0) {
+    years--;
+    months += 12;
+  }
+
+  document.getElementById("age").innerHTML = `
+    ${years} Years ${months} Months ${days} Days
+  `;
+}
+
+// Run continuously
+setInterval(() => {
+  updateCountdown();
+  updateAge();
+}, 1000);
+
+// Initial call
+updateCountdown();
+updateAge();
 </script>
   </body>
 </html>
