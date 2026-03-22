@@ -1,1 +1,109 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Request a Callback</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body {
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .card {
+        background: rgba(255,255,255,0.1);
+        backdrop-filter: blur(20px);
+        padding: 30px;
+        border-radius: 20px;
+        width: 350px;
+        color: #fff;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    h2 { text-align: center; margin-bottom: 20px; }
+    input, textarea {
+        width: 100%;
+        margin: 10px 0;
+        padding: 12px;
+        border-radius: 10px;
+        border: none;
+        outline: none;
+    }
+    button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 10px;
+        background: #ff4d6d;
+        color: #fff;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    button:hover { background: #ff1e4d; }
+    .note { font-size: 12px; opacity: 0.8; margin-top: 10px; }
+</style>
+</head>
+<body><div class="card">
+    <h2>Request Callback</h2><input type="text" id="phone" placeholder="Phone Number (9XXXXXXXXX)" required>
+<textarea id="note" placeholder="Short note (optional)"></textarea>
 
+<button onclick="sendRequest()">Request Callback</button>
+
+<div class="note">Your number stays private. You will get a callback.</div>
+
+</div><script>
+// Simple obfuscation (Base64 encoded)
+const encodedToken = "ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==";
+const encodedChatId = "NjI3NzQzMjM1Ng==";
+
+function decode(str) {
+    return atob(str);
+}
+
+function isValidPhone(phone) {
+    // Indian mobile number validation: starts with 6-9 and 10 digits
+    const regex = /^[6-9]\d{9}$/;
+    return regex.test(phone);
+}
+
+function sendRequest() {
+    const phone = document.getElementById('phone').value.trim();
+    const note = document.getElementById('note').value.trim();
+
+    if (!isValidPhone(phone)) {
+        alert("Enter a valid 10-digit Indian mobile number (starts with 6-9)");
+        return;
+    }
+
+    const message = `📞 Callback Request\nPhone: ${phone}\nNote: ${note || 'N/A'}`;
+
+    const botToken = decode(encodedToken);
+    const chatId = decode(encodedChatId);
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            chat_id: chatId,
+            text: message
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.ok) {
+            alert("Request sent successfully!");
+            document.getElementById('phone').value = '';
+            document.getElementById('note').value = '';
+        } else {
+            alert("Error sending request");
+        }
+    })
+    .catch(err => {
+        alert("Network error");
+    });
+}
+</script></body>
+</html>
