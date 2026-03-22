@@ -1,0 +1,79 @@
+<!DOCTYPE html><html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Development Request</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+body{height:100vh;background:linear-gradient(135deg,#0f2027,#2c5364);display:flex;justify-content:center;align-items:center}
+.card{background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);padding:30px;border-radius:20px;width:370px;color:#fff;box-shadow:0 20px 40px rgba(0,0,0,0.4)}
+h2{text-align:center;margin-bottom:15px}
+.subtitle{text-align:center;font-size:13px;opacity:.8;margin-bottom:20px}
+input,select,textarea{width:100%;margin:10px 0;padding:12px;border-radius:10px;border:none;outline:none}
+button{width:100%;padding:12px;border:none;border-radius:10px;background:#00c9a7;color:#fff;font-weight:bold;cursor:pointer;transition:.3s}
+button:hover{background:#00a78e}
+.note{font-size:12px;opacity:.8;margin-top:10px;text-align:center}
+</style>
+</head>
+<body><div class="card">
+<h2>Development Request 💻</h2>
+<div class="subtitle">Request a website/app development project</div><input type="text" id="name" placeholder="Your Name"><select id="type">
+<option value="">Select Project Type</option>
+<option value="Website">Website</option>
+<option value="App">App</option>
+<option value="Website + App">Both (Website + App)</option>
+</select><textarea id="message" placeholder="Describe your project requirements..."></textarea><button onclick="sendDevRequest()">Send Request</button>
+
+<div class="note">Your request will be reviewed and responded.</div>
+</div><script>
+const encodedToken="ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==";
+const encodedChatId="NjI3NzQzMjM1Ng==";
+
+function decode(str){return atob(str)}
+
+function isValidName(name){return name.length>=2}
+
+function sendDevRequest(){
+const name=document.getElementById('name').value.trim();
+const type=document.getElementById('type').value;
+const message=document.getElementById('message').value.trim();
+
+if(!isValidName(name)){
+alert('Enter valid name');
+return;
+}
+
+if(!type){
+alert('Select project type');
+return;
+}
+
+if(message.length<10){
+alert('Please describe your project properly');
+return;
+}
+
+const finalMessage=`🚀 Development Request\nClient: ${name}\nProject Type: ${type}\nDetails: ${message}`;
+
+const botToken=decode(encodedToken);
+const chatId=decode(encodedChatId);
+
+fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({chat_id:chatId,text:finalMessage})
+})
+.then(res=>res.json())
+.then(data=>{
+if(data.ok){
+alert('Request sent successfully!');
+document.getElementById('name').value='';
+document.getElementById('type').value='';
+document.getElementById('message').value='';
+}else{alert('Error sending request')}
+})
+.catch(()=>alert('Network error'));
+}
+</script></body>
+</html>
