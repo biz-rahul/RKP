@@ -31,6 +31,51 @@
     }
 
 
+	/* ── PDF LOADER ── */
+.pdf-loader {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 5, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.3s;
+}
+
+.pdf-loader.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.loader-box {
+  text-align: center;
+  color: var(--gold-light);
+  font-family: 'Abril Fatface', serif;
+}
+
+.progress-bar {
+  width: 260px;
+  height: 6px;
+  border: 1px solid var(--gold);
+  margin: 1rem auto;
+  position: relative;
+}
+
+#progressFill {
+  height: 100%;
+  width: 0%;
+  background: var(--gold);
+  transition: width 0.3s;
+}
+
+#progressText {
+  font-size: 0.8rem;
+  letter-spacing: 0.2em;
+}
+	
 	/* Freeze animations during PDF capture */
 .pdf-mode * {
   animation: none !important;
@@ -722,7 +767,16 @@
 
 </div>
 
-
+<div id="pdfLoader" class="pdf-loader">
+  <div class="loader-box">
+    <p>Preparing your poetry...</p>
+    <div class="progress-bar">
+      <div id="progressFill"></div>
+    </div>
+    <span id="progressText">0%</span>
+  </div>
+</div>
+	  
 <button id="downloadPDF" class="pdf-btn">
   <span>Download all my poetry</span>
 </button>
