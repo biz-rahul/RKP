@@ -31,6 +31,7 @@
       cursor: default;
     }
 
+	
     /* ── NOISE OVERLAY ── */
     body::before {
       content: '';
@@ -42,6 +43,79 @@
       opacity: 0.35;
     }
 
+	/* ── MEDIA CARD (IMAGE + VIDEO) ── */
+.media-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  border: 1px solid rgba(201,168,76,0.15);
+  border-radius: 6px;
+  background: #111;
+  cursor: pointer;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+.media-card img,
+.media-card video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  filter: contrast(1.05) brightness(0.9);
+  transition: transform 0.6s ease, filter 0.4s ease;
+}
+
+/* Hover cinematic effect */
+.media-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 25px 80px rgba(0,0,0,0.6);
+}
+
+.media-card:hover img,
+.media-card:hover video {
+  transform: scale(1.08);
+  filter: brightness(1) contrast(1.1);
+}
+
+/* Golden top glow */
+.media-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+
+.media-card:hover::before {
+  opacity: 1;
+}
+
+/* ── VIDEO PLAY BUTTON ── */
+.video-card .play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(13,11,10,0.6);
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  font-size: 1.5rem;
+  padding: 0.6rem 1rem;
+  border-radius: 50%;
+  backdrop-filter: blur(4px);
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.video-card:hover .play-btn {
+  background: var(--gold);
+  color: var(--ink);
+}
+	
     /* ── HERO ── */
     .hero {
       min-height: 100vh;
@@ -544,7 +618,38 @@
 	  </div>
 
 	  <div class="poetry-grid" id="poetryGrid">
-		
+
+  <!-- IMAGE CARD -->
+  <div class="media-card">
+    <img src="your-image1.jpg" alt="poetry">
+  </div>
+
+  <div class="media-card">
+    <img src="your-image2.jpg" alt="poetry">
+  </div>
+
+  <div class="media-card">
+    <img src="your-image3.jpg" alt="poetry">
+  </div>
+
+  <div class="media-card">
+    <img src="your-image4.jpg" alt="poetry">
+  </div>
+
+  <div class="media-card">
+    <img src="your-image5.jpg" alt="poetry">
+  </div>
+
+  <!-- VIDEO CARD -->
+  <div class="media-card video-card">
+    <video src="your-video1.mp4" preload="none"></video>
+    <div class="play-btn">▶</div>
+  </div>
+
+  <div class="media-card video-card">
+    <video src="your-video2.mp4" preload="none"></video>
+    <div class="play-btn">▶</div>
+  </div>
 
 	  </div>
 	</section>
@@ -611,6 +716,29 @@
         window.instgrm.Embeds.process();
       }
     });
+
+
+	// Manual video play with sound
+document.querySelectorAll('.video-card').forEach(card => {
+  const video = card.querySelector('video');
+
+  card.addEventListener('click', () => {
+    // Pause all other videos
+    document.querySelectorAll('video').forEach(v => {
+      if (v !== video) {
+        v.pause();
+        v.currentTime = 0;
+      }
+    });
+
+    if (video.paused) {
+      video.play();
+      video.controls = true;
+    } else {
+      video.pause();
+    }
+  });
+});
 </script>
   </body>
 </html>
