@@ -718,24 +718,27 @@
     });
 
 
-	// Manual video play with sound
-document.querySelectorAll('.video-card').forEach(card => {
+	document.querySelectorAll('.video-card').forEach(card => {
   const video = card.querySelector('video');
+  const btn = card.querySelector('.play-btn');
 
   card.addEventListener('click', () => {
-    // Pause all other videos
+    // Pause others
     document.querySelectorAll('video').forEach(v => {
       if (v !== video) {
         v.pause();
         v.currentTime = 0;
+        v.parentElement.querySelector('.play-btn').style.display = 'block';
       }
     });
 
     if (video.paused) {
       video.play();
       video.controls = true;
+      btn.style.display = 'none'; // 🔥 hide button
     } else {
       video.pause();
+      btn.style.display = 'block';
     }
   });
 });
