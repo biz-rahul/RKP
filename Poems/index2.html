@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Rahul Kumar Puri — Poetry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif+Devanagari:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+      --ink: #080604;
+      --parchment: #f5f0e8;
+      --gold: #c9a84c;
+      --gold-light: #e8d08a;
+      --gold-dim: rgba(201,168,76,0.15);
+      --rust: #8b3a2a;
+      --mist: #d4cfc6;
+      --deep: #12100e;
+      --accent: #5c3d2e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--ink);
+      color: var(--parchment);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9000;
+      opacity: 0.35;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(8,6,4,0.97) 0%, rgba(8,6,4,0.6) 80%, transparent 100%);
+      backdrop-filter: blur(2px);
+      transition: background 0.4s;
+    }
+
+    nav.scrolled {
+      background: rgba(8,6,4,0.97);
+      border-bottom: 1px solid var(--gold-dim);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      text-decoration: none;
+      position: relative;
+    }
+
+    .nav-logo::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0; right: 0;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .nav-logo:hover::after { transform: scaleX(1); }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--mist);
+      text-decoration: none;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -2px; left: 0; right: 0;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    /* Mobile hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 1px;
+      background: var(--gold);
+      transition: all 0.3s ease;
+    }
+    .nav-hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(4px, 4px); }
+    .nav-hamburger.open span:nth-child(2) { opacity: 0; }
+    .nav-hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(4px, -4px); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(8,6,4,0.98);
+      z-index: 190;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .mobile-menu.open {
+      display: flex;
+      opacity: 1;
+    }
+    .mobile-menu a {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--parchment);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      padding: 4rem 2rem;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 45%, #2e1a08 0%, transparent 65%),
+        radial-gradient(ellipse 100% 100% at 50% 100%, #1a0d04 0%, transparent 60%),
+        var(--ink);
+      overflow: hidden;
+    }
+
+    /* Decorative orbit rings */
+    .hero-ornament {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(700px, 95vw);
+      height: min(700px, 95vw);
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.07);
+      pointer-events: none;
+      animation: slowRotate 60s linear infinite;
+    }
+    .hero-ornament::before {
+      content: '';
+      position: absolute;
+      inset: 50px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.04);
+    }
+    .hero-ornament::after {
+      content: '';
+      position: absolute;
+      inset: 100px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.02);
+    }
+
+    /* Floating dust particles */
+    .hero-particles {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .hero-particles span {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: floatUp var(--dur, 8s) ease-in var(--delay, 0s) infinite;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 200px;
+      background: linear-gradient(to top, var(--ink), transparent);
+      z-index: 1;
+    }
+
+    .hero > * { position: relative; z-index: 2; }
+
+    .hero-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.3s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 11vw, 9rem);
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: -0.02em;
+      color: var(--parchment);
+      opacity: 0;
+      animation: fadeUp 1.4s ease 0.5s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+      display: block;
+    }
+
+    .hero-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 3rem auto;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.8s forwards;
+    }
+    .hero-divider-line {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+    .hero-divider-line:last-child {
+      background: linear-gradient(to left, transparent, var(--gold));
+    }
+    .hero-divider-diamond {
+      color: var(--gold);
+      font-size: 0.5rem;
+    }
+
+    .hero-tagline {
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: clamp(1.05rem, 2.5vw, 1.5rem);
+      font-weight: 300;
+      color: var(--mist);
+      letter-spacing: 0.05em;
+      max-width: 500px;
+      line-height: 2;
+      opacity: 0;
+      animation: fadeUp 1s ease 1s forwards;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--gold);
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.4s forwards;
+      z-index: 3;
+    }
+
+    .hero-scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── QUOTE STRIP ── */
+    .quote-strip {
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 1.8rem 0;
+      border-top: 1px solid rgba(201,168,76,0.08);
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+      background: rgba(201,168,76,0.02);
+    }
+
+    .quote-inner {
+      display: inline-block;
+      animation: marquee 35s linear infinite;
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: 0.9rem;
+      color: rgba(201,168,76,0.35);
+      letter-spacing: 0.15em;
+    }
+
+    /* ── SECTION ── */
+    section {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 7rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 5rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.8rem);
+      font-weight: 400;
+      color: var(--parchment);
+      line-height: 1.1;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    /* ── POETRY GRID ── */
+    .poetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 3rem 2.5rem;
+      justify-items: center;
+    }
+
+    /* ── POETRY BLOCK ── */
+    .poetry-block {
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .poetry-heading {
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: 1.1rem;
+      color: var(--gold-light);
+      margin-bottom: 1rem;
+      letter-spacing: 0.06em;
+      transition: color 0.3s;
+    }
+
+    .poetry-block:hover .poetry-heading { color: var(--gold); }
+
+    /* ── MEDIA CARD (IMAGE + VIDEO) ── */
+    .media-card {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(201,168,76,0.12);
+      border-radius: 4px;
+      background: #0a0806;
+      cursor: pointer;
+      transition: transform 0.5s cubic-bezier(0.22,1,0.36,1), box-shadow 0.5s ease, border-color 0.4s ease;
+      aspect-ratio: 4/5;
+    }
+
+    .media-card img,
+    .media-card video {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      filter: contrast(1.05) brightness(0.88) saturate(0.9);
+      transition: transform 0.7s cubic-bezier(0.22,1,0.36,1), filter 0.5s ease;
+    }
+
+    .media-card:hover {
+      transform: translateY(-8px) scale(1.01);
+      box-shadow: 0 30px 90px rgba(0,0,0,0.7), 0 0 0 1px rgba(201,168,76,0.2);
+      border-color: rgba(201,168,76,0.3);
+    }
+
+    .media-card:hover img,
+    .media-card:hover video {
+      transform: scale(1.07);
+      filter: brightness(1) contrast(1.08) saturate(1);
+    }
+
+    /* Golden top glow */
+    .media-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.4s;
+      z-index: 3;
+    }
+    .media-card:hover::before { opacity: 1; }
+
+    /* Bottom vignette */
+    .media-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(to top, rgba(8,6,4,0.8) 0%, transparent 100%);
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    .media-card:hover::after { opacity: 1; }
+
+    /* ── POETRY TITLE (inside card on hover) ── */
+    .poetry-title {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 1.2rem 1rem;
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: 1rem;
+      letter-spacing: 0.05em;
+      color: var(--parchment);
+      text-align: center;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.4s ease;
+      z-index: 4;
+    }
+    .media-card:hover .poetry-title {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── VIDEO PLAY BUTTON ── */
+    .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(8,6,4,0.65);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-size: 1.4rem;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      backdrop-filter: blur(6px);
+      transition: all 0.35s ease;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .media-card:hover .play-btn {
+      background: var(--gold);
+      color: var(--ink);
+      transform: translate(-50%, -50%) scale(1.1);
+    }
+
+    /* ── DOWNLOAD BUTTON ── */
+    .download-btn {
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.5);
+      color: var(--gold);
+      padding: 1.1rem 3rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+      z-index: 0;
+    }
+    .download-btn:hover::before { transform: scaleX(1); }
+    .download-btn:hover { color: var(--ink); }
+    .download-btn span { position: relative; z-index: 1; }
+
+    /* ── FOLLOW SECTION ── */
+    .follow-section {
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 50%, #1e0e05 0%, transparent 70%),
+        linear-gradient(180deg, #0d0b0a 0%, #080604 100%);
+      border-top: 1px solid rgba(201,168,76,0.08);
+      border-bottom: 1px solid rgba(201,168,76,0.08);
+      text-align: center;
+      padding: 7rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .follow-section::before {
+      content: '❝';
+      position: absolute;
+      font-size: 22rem;
+      color: rgba(201,168,76,0.025);
+      font-family: 'Playfair Display', serif;
+      top: -4rem;
+      left: 50%;
+      transform: translateX(-50%);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .follow-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .follow-hindi {
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      color: var(--parchment);
+      line-height: 2;
+      margin-bottom: 1rem;
+      font-weight: 300;
+    }
+
+    .follow-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--mist);
+      letter-spacing: 0.12em;
+      margin-bottom: 3rem;
+    }
+
+    /* Email subscribe form */
+    .subscribe-form {
+      display: flex;
+      gap: 0;
+      max-width: 460px;
+      margin: 0 auto 1.5rem;
+      border: 1px solid rgba(201,168,76,0.25);
+      border-radius: 2px;
+      overflow: hidden;
+      transition: border-color 0.3s;
+    }
+    .subscribe-form:focus-within {
+      border-color: rgba(201,168,76,0.6);
+    }
+
+    .subscribe-input {
+      flex: 1;
+      background: rgba(255,255,255,0.03);
+      border: none;
+      color: var(--parchment);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      padding: 1rem 1.5rem;
+      outline: none;
+      letter-spacing: 0.05em;
+    }
+
+    .subscribe-input::placeholder { color: rgba(212,207,198,0.35); }
+
+    .subscribe-btn {
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      padding: 1rem 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+    .subscribe-btn:hover { background: var(--gold-light); }
+
+    .subscribe-note {
+      font-size: 0.72rem;
+      color: rgba(212,207,198,0.35);
+      letter-spacing: 0.1em;
+      margin-bottom: 3rem;
+    }
+
+    /* Instagram follow button */
+    .ig-follow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.35);
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .ig-follow-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+      z-index: 0;
+    }
+    .ig-follow-btn:hover::before { transform: translateX(0); }
+    .ig-follow-btn:hover { color: var(--ink); }
+    .ig-follow-btn span, .ig-follow-btn svg { position: relative; z-index: 1; }
+
+    /* ── POPUP ── */
+    .popup {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+      z-index: 9998;
+      backdrop-filter: blur(4px);
+    }
+    .popup.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .popup-content {
+      position: relative;
+      background: var(--deep);
+      border: 1px solid rgba(201,168,76,0.25);
+      padding: 3rem 3.5rem;
+      text-align: center;
+      color: var(--parchment);
+      font-family: 'Noto Serif Devanagari', serif;
+      box-shadow: 0 30px 100px rgba(0,0,0,0.9), inset 0 1px 0 rgba(201,168,76,0.1);
+      max-width: 440px;
+      width: 90%;
+      transform: translateY(20px);
+      transition: transform 0.35s ease;
+    }
+    .popup.show .popup-content {
+      transform: translateY(0);
+    }
+
+    .popup-content::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+
+    .popup-file-name {
+      font-size: 1.3rem;
+      color: var(--gold-light);
+      line-height: 1.8;
+      margin-bottom: 0.5rem;
+    }
+
+    .popup-sub-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      color: rgba(212,207,198,0.4);
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    .popup-close {
+      position: absolute;
+      top: 1rem; right: 1.2rem;
+      cursor: pointer;
+      color: rgba(201,168,76,0.5);
+      font-size: 1rem;
+      transition: color 0.3s;
+      line-height: 1;
+      padding: 4px;
+    }
+    .popup-close:hover { color: var(--gold); }
+
+    .popup-content button {
+      margin-top: 0.5rem;
+      padding: 0.8rem 2.5rem;
+      background: var(--gold);
+      border: none;
+      color: var(--ink);
+      cursor: pointer;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      transition: background 0.3s;
+    }
+    .popup-content button:hover { background: var(--gold-light); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 3.5rem 2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.22em;
+      color: rgba(212,207,198,0.2);
+      text-transform: uppercase;
+      border-top: 1px solid rgba(201,168,76,0.06);
+    }
+    footer a {
+      color: rgba(201,168,76,0.4);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    footer a:hover { color: var(--gold); }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.15em;
+      padding: 0.9rem 2.5rem;
+      border-radius: 2px;
+      transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+      z-index: 9999;
+      white-space: nowrap;
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── VIDEO ── */
+    video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.4; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.3); }
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    @keyframes slowRotate {
+      from { transform: translate(-50%, -50%) rotate(0deg); }
+      to   { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes floatUp {
+      0%   { opacity: 0; transform: translateY(0) translateX(0); }
+      10%  { opacity: 0.8; }
+      90%  { opacity: 0.4; }
+      100% { opacity: 0; transform: translateY(-200px) translateX(var(--drift, 20px)); }
+    }
+
+    /* ── SCROLL REVEAL ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.22,1,0.36,1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.2rem 1.5rem; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      section { padding: 5rem 1.2rem; }
+      .subscribe-form { flex-direction: column; border: none; gap: 1rem; }
+      .subscribe-input { border: 1px solid rgba(201,168,76,0.25); border-radius: 2px; }
+      .subscribe-btn { padding: 0.9rem; border-radius: 2px; }
+      .poetry-grid { grid-template-columns: 1fr; }
+      .popup-content { padding: 2.5rem 2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .hero-title { font-size: clamp(3rem, 14vw, 5rem); }
+    }
+</style>
+  </head>
+  <body>
+
+	<!-- MOBILE MENU -->
+	<div class="mobile-menu" id="mobileMenu">
+	  <a href="#poetry" onclick="closeMobileMenu()">Poetry</a>
+	  <a href="#follow" onclick="closeMobileMenu()">Follow</a>
+	  <a href="https://www.instagram.com/iampoetrahul" target="_blank" onclick="closeMobileMenu()">Instagram</a>
+	</div>
+
+	<!-- NAV -->
+	<nav id="mainNav">
+	  <a href="#" class="nav-logo">Rahul Kumar Puri</a>
+	  <ul class="nav-links">
+		<li><a href="#poetry">Poetry</a></li>
+		<li><a href="#follow">Follow</a></li>
+		<li><a href="https://www.instagram.com/iampoetrahul" target="_blank">Instagram</a></li>
+	  </ul>
+	  <div class="nav-hamburger" id="hamburger" onclick="toggleMobileMenu()">
+		<span></span><span></span><span></span>
+	  </div>
+	</nav>
+
+	<!-- HERO -->
+	<div class="hero">
+	  <div class="hero-ornament"></div>
+	  <div class="hero-particles" id="heroParticles"></div>
+
+	  <p class="hero-label">The World of Words</p>
+	  <h1 class="hero-title">Rahul Kumar<em>Puri</em></h1>
+
+	  <div class="hero-divider">
+		<div class="hero-divider-line"></div>
+		<span class="hero-divider-diamond">✦</span>
+		<div class="hero-divider-line"></div>
+	  </div>
+
+	  <p class="hero-tagline">शब्दों की दुनिया में<br>आपका स्वागत है</p>
+
+	  <div class="hero-scroll">
+		<div class="hero-scroll-line"></div>
+		scroll
+	  </div>
+	</div>
+
+	<!-- MARQUEE STRIP -->
+	<div class="quote-strip">
+	  <div class="quote-inner">
+		✦ शायरी &nbsp;&nbsp;&nbsp; ✦ कविता &nbsp;&nbsp;&nbsp; ✦ Poetry &nbsp;&nbsp;&nbsp; ✦ Nazm &nbsp;&nbsp;&nbsp; ✦ Ghazal &nbsp;&nbsp;&nbsp; ✦ शब्द &nbsp;&nbsp;&nbsp; ✦ जज़्बात &nbsp;&nbsp;&nbsp; ✦ Emotion &nbsp;&nbsp;&nbsp; ✦ शायरी &nbsp;&nbsp;&nbsp; ✦ कविता &nbsp;&nbsp;&nbsp; ✦ Poetry &nbsp;&nbsp;&nbsp; ✦ Nazm &nbsp;&nbsp;&nbsp; ✦ Ghazal &nbsp;&nbsp;&nbsp; ✦ शब्द &nbsp;&nbsp;&nbsp; ✦ जज़्बात &nbsp;&nbsp;&nbsp; ✦ Emotion &nbsp;&nbsp;&nbsp;
+	  </div>
+	</div>
+
+	<!-- POETRY COLLECTION -->
+	<section id="poetry">
+	  <div class="section-header reveal">
+		<p class="section-eyebrow">Instagram से</p>
+		<h2 class="section-title">मेरी <em>कविताएँ</em></h2>
+	  </div>
+
+	  <div class="poetry-grid" id="poetryGrid">
+
+		<div class="poetry-block reveal">
+		  <p class="poetry-heading">खामोशी की आवाज़</p>
+		  <div class="media-card">
+			<img src="1.webp" alt="खामोशी की आवाज़" loading="lazy">
+			<span class="poetry-title">खामोशी की आवाज़</span>
+		  </div>
+		</div>
+
+		<div class="poetry-block reveal">
+		  <p class="poetry-heading">अधूरी मोहब्बत</p>
+		  <div class="media-card">
+			<img src="2.jpg" alt="अधूरी मोहब्बत" loading="lazy">
+			<span class="poetry-title">अधूरी मोहब्बत</span>
+		  </div>
+		</div>
+
+		<div class="poetry-block reveal">
+		  <p class="poetry-heading">रात का सफर</p>
+		  <div class="media-card">
+			<img src="3.webp" alt="रात का सफर" loading="lazy">
+			<span class="poetry-title">रात का सफर</span>
+		  </div>
+		</div>
+
+		<div class="poetry-block reveal">
+		  <p class="poetry-heading">दिल की बातें</p>
+		  <div class="media-card">
+			<img src="4.png" alt="दिल की बातें" loading="lazy">
+			<span class="poetry-title">दिल की बातें</span>
+		  </div>
+		</div>
+
+		<div class="poetry-block reveal">
+		  <p class="poetry-heading">अंतिम ख्वाहिश</p>
+		  <div class="media-card">
+			<img src="5.png" alt="अंतिम ख्वाहिश" loading="lazy">
+			<span class="poetry-title">अंतिम ख्वाहिश</span>
+		  </div>
+		</div>
+
+		<div class="poetry-block reveal">
+		  <p class="poetry-heading">जज़्बात</p>
+		  <div class="media-card video-card" data-src="1.mp4">
+			<video src="1.mp4" preload="metadata"></video>
+			<div class="play-btn">▶</div>
+			<span class="poetry-title">जज़्बात</span>
+		  </div>
+		</div>
+
+		<div class="poetry-block reveal">
+		  <p class="poetry-heading">अनकही कहानी</p>
+		  <div class="media-card video-card" data-src="2.mp4">
+			<video src="2.mp4" preload="metadata"></video>
+			<div class="play-btn">▶</div>
+			<span class="poetry-title">अनकही कहानी</span>
+		  </div>
+		</div>
+
+	  </div>
+
+	  <div style="text-align:center; margin-top:4rem;" class="reveal">
+		<button class="download-btn" onclick="startDownload()"><span>Download all my Poetry</span></button>
+	  </div>
+	</section>
+
+	<!-- FOLLOW SECTION -->
+	<div class="follow-section" id="follow">
+	  <div class="follow-inner">
+		<p class="section-eyebrow" style="margin-bottom:1.5rem;">सबसे पहले पढ़ें</p>
+		<p class="follow-hindi">
+		  नई कविता सबसे पहले आप तक पहुँचे —<br>
+		  इसके लिए अभी follow करें।
+		</p>
+		<p class="follow-sub">Get notified before anyone else</p>
+
+		<!-- BUG FIX: onsubmit on form, not action attribute -->
+		<form class="subscribe-form" onsubmit="handleSubscribe(event)">
+		  <input
+			class="subscribe-input"
+			type="email"
+			placeholder="आपका email address..."
+			id="emailInput"
+			required
+		  />
+		  <button type="submit" class="subscribe-btn">Subscribe</button>
+		</form>
+		<p class="subscribe-note">No spam. Only poetry. Unsubscribe anytime.</p>
+
+		<a href="https://www.instagram.com/iampoetrahul" target="_blank" rel="noopener" class="ig-follow-btn">
+		  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+			<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+			<circle cx="12" cy="12" r="4"/>
+			<circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+		  </svg>
+		  <span>Follow on Instagram</span>
+		</a>
+	  </div>
+	</div>
+
+	<!-- FOOTER -->
+	<footer>
+	  <p>© 2025 <a href="https://www.instagram.com/iampoetrahul" target="_blank" rel="noopener">@iampoetrahul</a> &nbsp;·&nbsp; Rahul Kumar Puri &nbsp;·&nbsp; All Rights Reserved</p>
+	</footer>
+
+	<!-- POPUP -->
+	<div class="popup" id="popup">
+	  <div class="popup-content">
+		<span class="popup-close" onclick="closePopup()" title="Close">✕</span>
+		<p class="popup-file-name" id="popupText"></p>
+		<p class="popup-sub-text" id="popupSubText">Downloading...</p>
+		<button onclick="downloadNext()">Next →</button>
+	  </div>
+	</div>
+
+	<!-- TOAST -->
+	<div class="toast" id="toast">✦ Subscribed! New poetry coming your way.</div>
+
+	<!-- Instagram embed script (FIXED: use https://) -->
+	<script async src="https://www.instagram.com/embed.js"></script>
+
+<script>
+  // ── NAV SCROLL ──
+  const mainNav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    mainNav.classList.toggle('scrolled', window.scrollY > 60);
+  }, { passive: true });
+
+  // ── MOBILE MENU ──
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const burger = document.getElementById('hamburger');
+    menu.classList.toggle('open');
+    burger.classList.toggle('open');
+    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  }
+  function closeMobileMenu() {
+    document.getElementById('mobileMenu').classList.remove('open');
+    document.getElementById('hamburger').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // ── HERO PARTICLES ──
+  (function spawnParticles() {
+    const container = document.getElementById('heroParticles');
+    if (!container) return;
+    for (let i = 0; i < 18; i++) {
+      const s = document.createElement('span');
+      s.style.cssText = `
+        left: ${Math.random() * 100}%;
+        bottom: ${Math.random() * 30}%;
+        --dur: ${6 + Math.random() * 10}s;
+        --delay: ${Math.random() * 10}s;
+        --drift: ${(Math.random() - 0.5) * 60}px;
+        width: ${1 + Math.random() * 2}px;
+        height: ${1 + Math.random() * 2}px;
+      `;
+      container.appendChild(s);
+    }
+  })();
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        // stagger siblings
+        const siblings = [...entry.target.parentElement.querySelectorAll('.reveal')];
+        const idx = siblings.indexOf(entry.target);
+        setTimeout(() => entry.target.classList.add('visible'), idx * 80);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // ── SUBSCRIBE ──
+  function handleSubscribe(e) {
+    e.preventDefault();
+    const input = document.getElementById('emailInput');
+    if (input.value) {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      input.value = '';
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+  }
+
+  // ── VIDEO CARDS ── (BUG FIX: robust selector, no parentElement guess)
+  document.querySelectorAll('.video-card').forEach(card => {
+    const video = card.querySelector('video');
+    const btn = card.querySelector('.play-btn');
+
+    card.addEventListener('click', () => {
+      // Pause all other videos
+      document.querySelectorAll('.video-card').forEach(otherCard => {
+        if (otherCard !== card) {
+          const otherVideo = otherCard.querySelector('video');
+          const otherBtn = otherCard.querySelector('.play-btn');
+          if (otherVideo) {
+            otherVideo.pause();
+            otherVideo.currentTime = 0;
+            otherVideo.controls = false;
+          }
+          if (otherBtn) otherBtn.style.display = '';
+        }
+      });
+
+      if (video.paused) {
+        video.play();
+        video.controls = true;
+        if (btn) btn.style.display = 'none';
+      } else {
+        video.pause();
+        video.controls = false;
+        if (btn) btn.style.display = '';
+      }
+    });
+  });
+
+  // ── DOWNLOAD (BUG FIX: use file.file not file object for href/download) ──
+  const files = [
+    { file: "1.webp", name: "खामोशी की आवाज़" },
+    { file: "2.jpg",  name: "अधूरी मोहब्बत" },
+    { file: "3.webp", name: "रात का सफर" },
+    { file: "4.png",  name: "दिल की बातें" },
+    { file: "5.png",  name: "अंतिम ख्वाहिश" },
+    { file: "1.mp4",  name: "जज़्बात" },
+    { file: "2.mp4",  name: "अनकही कहानी" }
+  ];
+
+  let currentIndex = 0;
+
+  function startDownload() {
+    currentIndex = 0;
+    triggerDownload(files[currentIndex]);
+    showPopup(currentIndex);
+  }
+
+  function downloadNext() {
+    currentIndex++;
+    if (currentIndex < files.length) {
+      triggerDownload(files[currentIndex]);
+      showPopup(currentIndex);
+    } else {
+      document.getElementById('popupText').textContent = "सभी कविताएँ download हो गईं!";
+      document.getElementById('popupSubText').textContent = "Check your downloads folder";
+      document.querySelector('.popup-content button').textContent = "Close ✓";
+      document.querySelector('.popup-content button').onclick = closePopup;
+    }
+  }
+
+  // BUG FIX: use file.file (string) not file (object) for href and download attributes
+  function triggerDownload(fileObj) {
+    const a = document.createElement('a');
+    a.href = fileObj.file;          // ✓ string path
+    a.download = fileObj.name;      // ✓ friendly filename
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  }
+
+  function showPopup(idx) {
+    const popup = document.getElementById('popup');
+    const text = document.getElementById('popupText');
+    const sub = document.getElementById('popupSubText');
+    const btn = document.querySelector('.popup-content button');
+
+    text.textContent = `"${files[idx].name}"`;
+    sub.textContent = `File ${idx + 1} of ${files.length} — downloading...`;
+    btn.textContent = idx < files.length - 1 ? `Next → (${idx + 2}/${files.length})` : 'Done ✓';
+    btn.onclick = downloadNext;
+
+    popup.classList.add('show');
+  }
+
+  function closePopup() {
+    document.getElementById('popup').classList.remove('show');
+  }
+
+  // Close popup on backdrop click
+  document.getElementById('popup').addEventListener('click', function(e) {
+    if (e.target === this) closePopup();
+  });
+
+  // Instagram re-process
+  window.addEventListener('load', () => {
+    if (window.instgrm) window.instgrm.Embeds.process();
+  });
+</script>
+  </body>
+</html>
