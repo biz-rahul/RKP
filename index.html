@@ -35,70 +35,70 @@ Men Activist | Guanxi and Mianzi Enthu |</title>
   }
 
 /* Custom Cursor */
- /* Custom Cursor - Advanced Version */
-.cursor {
-  width: 18px;
-  height: 18px;
+ .cursor {
+  width: 16px;
+  height: 16px;
   position: fixed;
   top: 0;
   left: 0;
   pointer-events: none;
   z-index: 9999;
 
-  /* Core styling */
-  background: radial-gradient(circle, var(--accent) 20%, transparent 70%);
-  border: 2px solid var(--accent);
   border-radius: 50%;
-
-  /* Smooth motion */
-  transform: translate(-50%, -50%) scale(1);
-  transition: 
-    transform 0.15s ease-out,
-    background 0.3s ease,
-    border 0.3s ease,
-    box-shadow 0.3s ease;
-
-  /* Glow effect */
+  background: radial-gradient(circle at center, #fff 0%, var(--accent) 40%, transparent 70%);
+  
+  /* Neon ring */
   box-shadow:
-    0 0 8px var(--accent),
-    0 0 20px var(--accent),
-    0 0 35px rgba(255, 255, 255, 0.2);
+    0 0 10px var(--accent),
+    0 0 25px var(--accent),
+    0 0 40px rgba(255,255,255,0.3);
 
-  /* Blend effect */
-  mix-blend-mode: difference;
-
-  /* Subtle blur for premium feel */
-  backdrop-filter: blur(2px);
-}
-
-
-  /* On clickable elements */
-a:hover ~ .cursor,
-button:hover ~ .cursor {
-  transform: translate(-50%, -50%) scale(1.8);
-  background: transparent;
-  border: 2px solid white;
-  box-shadow: 0 0 25px white;
-}
-
-/* On click */
-body:active .cursor {
-  transform: translate(-50%, -50%) scale(0.8);
-  box-shadow: 0 0 10px var(--accent);
-}
-
-	.cursor::after {
-  content: "";
-  position: absolute;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  border: 1px solid var(--accent);
-  top: 50%;
-  left: 50%;
   transform: translate(-50%, -50%);
-  opacity: 0.4;
-  transition: transform 0.3s ease, opacity 0.3s ease;
+  transition: 
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    filter 0.3s ease;
+
+  mix-blend-mode: difference;
+}
+
+/* ✨ Hover effect WITHOUT size change */
+.cursor.active {
+  background: radial-gradient(circle, #ffffff 0%, transparent 60%);
+  box-shadow:
+    0 0 12px #fff,
+    0 0 30px #fff,
+    0 0 60px var(--accent);
+  
+  filter: hue-rotate(60deg) saturate(1.5);
+}
+
+.star {
+  position: fixed;
+  width: 6px;
+  height: 6px;
+  pointer-events: none;
+  z-index: 9998;
+
+  background: white;
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 6px white,
+    0 0 12px var(--accent);
+
+  animation: starFade 0.8s linear forwards;
+}
+
+@keyframes starFade {
+  0% {
+    opacity: 1;
+    transform: scale(1) translate(0,0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2) translate(var(--x), var(--y));
+  }
 }
 	
   /* Noise overlay */
@@ -1537,6 +1537,68 @@ setInterval(() => {
 // Initial call
 updateCountdown();
 updateAge();
+
+
+
+
+	const cursor = document.querySelector(".cursor");
+
+let mouseX = 0, mouseY = 0;
+let currentX = 0, currentY = 0;
+
+/* Smooth movement (premium feel) */
+function animate() {
+  currentX += (mouseX - currentX) * 0.15;
+  currentY += (mouseY - currentY) * 0.15;
+
+  cursor.style.left = currentX + "px";
+  cursor.style.top = currentY + "px";
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+/* Mouse move */
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+
+  createStar(e.clientX, e.clientY);
+});
+
+/* 🌟 Star generator */
+function createStar(x, y) {
+  const star = document.createElement("div");
+  star.className = "star";
+
+  star.style.left = x + "px";
+  star.style.top = y + "px";
+
+  /* random spread */
+  const offsetX = (Math.random() - 0.5) * 40 + "px";
+  const offsetY = (Math.random() - 0.5) * 40 + "px";
+
+  star.style.setProperty("--x", offsetX);
+  star.style.setProperty("--y", offsetY);
+
+  document.body.appendChild(star);
+
+  setTimeout(() => {
+    star.remove();
+  }, 800);
+}
+
+const interactiveElements = document.querySelectorAll("a, button");
+
+interactiveElements.forEach(el => {
+  el.addEventListener("mouseenter", () => {
+    cursor.classList.add("active");
+  });
+
+  el.addEventListener("mouseleave", () => {
+    cursor.classList.remove("active");
+  });
+});
 </script>
   </body>
 </html>
