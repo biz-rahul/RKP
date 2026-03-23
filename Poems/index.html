@@ -847,13 +847,13 @@
 
 
 const files = [
-  "1.webp",
-  "2.jpg",
-  "3.webp",
-  "4.png",
-  "5.png",
-  "1.mp4",
-  "2.mp4"
+  { file: "1.webp", name: "खामोशी की आवाज़" },
+  { file: "2.jpg", name: "अधूरी मोहब्बत" },
+  { file: "3.webp", name: "रात का सफर" },
+  { file: "4.png", name: "दिल की बातें" },
+  { file: "5.png", name: "अंतिम ख्वाहिश" },
+  { file: "1.mp4", name: "जज़्बात" },
+  { file: "2.mp4", name: "अनकही कहानी" }
 ];
 
 let index = 0;
@@ -887,6 +887,12 @@ function downloadFile(file) {
 
 function showPopup() {
   const popup = document.getElementById('popup');
+  const text = document.getElementById('popupText');
+
+  if (index < files.length) {
+    text.innerText = `Download "${files[index].name}"`;
+  }
+
   popup.classList.add('show');
 }
 </script>
