@@ -44,6 +44,44 @@
     }
 
 
+	.popup {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: 0.3s;
+  z-index: 9999;
+}
+
+.popup.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.popup-content {
+  background: var(--deep);
+  border: 1px solid rgba(201,168,76,0.3);
+  padding: 2rem 3rem;
+  text-align: center;
+  color: var(--parchment);
+  font-family: 'Noto Serif Devanagari', serif;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.8);
+}
+
+.popup-content button {
+  margin-top: 1.5rem;
+  padding: 0.7rem 2rem;
+  background: var(--gold);
+  border: none;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+	
 	/* ── POETRY TITLE ── */
 .poetry-title {
   position: absolute;
@@ -746,6 +784,13 @@
 	  <p>© 2025 <a href="https://www.instagram.com/iampoetrahul" target="_blank">@iampoetrahul</a> &nbsp;·&nbsp; Rahul Kumar Puri &nbsp;·&nbsp; All Rights Reserved</p>
 	</footer>
 
+	  <div class="popup" id="popup">
+  <div class="popup-content">
+    <p id="popupText">Download next poetry?</p>
+    <button onclick="downloadNext()">Download</button>
+  </div>
+	  </div>
+	  
 	<!-- TOAST -->
 	<div class="toast" id="toast">✦ Subscribed! New poetry coming your way.</div>
 
