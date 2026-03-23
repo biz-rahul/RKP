@@ -30,6 +30,57 @@
       cursor: none;
     }
 
+
+	/* Freeze animations during PDF capture */
+.pdf-mode * {
+  animation: none !important;
+  transition: none !important;
+}
+	/* ── PDF BUTTON ── */
+.pdf-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2rem;
+  padding: 1rem 2.8rem;
+  border: 1px solid var(--gold);
+  color: var(--gold-light);
+  background: transparent;
+  font-family: 'Abril Fatface', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  position: relative;
+  overflow: hidden;
+  cursor: none;
+  border-radius: 2px;
+  transition: color 0.4s, box-shadow 0.4s;
+}
+
+.pdf-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+  z-index: 0;
+}
+
+.pdf-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.pdf-btn:hover {
+  color: var(--ink);
+  box-shadow: 0 10px 40px rgba(200,150,42,0.3);
+}
+
+.pdf-btn span {
+  position: relative;
+  z-index: 1;
+}
     /* Custom cursor */
     .cursor {
       width: 12px; height: 12px;
@@ -695,6 +746,9 @@
 	  <p>© 2025 Rahul Kumar Puri &nbsp;·&nbsp; शब्दों की दुनिया &nbsp;·&nbsp; सर्वाधिकार सुरक्षित</p>
 	</footer>
 
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+	  
 <script>
   // Custom cursor
   const cursor = document.getElementById('cursor');
@@ -730,6 +784,58 @@
     });
   }, { threshold: 0.12 });
   cards.forEach(c => observer.observe(c));
+
+
+document.getElementById("downloadPDF").addEventListener("click", async () => {
+
+  const { jsPDF } = window.jspdf;
+
+  // 🔒 Freeze animations for perfect capture
+  document.body.classList.add("pdf-mode");
+
+  // ⏳ Small delay to stabilize layout
+  await new Promise(res => setTimeout(res, 500));
+
+  const element = document.body;
+
+  const canvas = await html2canvas(element, {
+    scale: 3, // High quality
+    useCORS: true,
+    scrollY: -window.scrollY,
+    windowWidth: document.body.scrollWidth,
+    windowHeight: document.body.scrollHeight
+  });
+
+  const imgData = canvas.toDataURL("image/jpeg", 1.0);
+
+  const pdf = new jsPDF("p", "mm", "a4");
+
+  const pageWidth = 210;
+  const pageHeight = 297;
+
+  const imgWidth = pageWidth;
+  const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  // First page
+  pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  // Multi-page handling
+  while (heightLeft > 0) {
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+
+  pdf.save("Rahul-Poetry.pdf");
+
+  // 🔓 Restore animations
+  document.body.classList.remove("pdf-mode");
+});
 
   // Floating particles
   function spawnParticle() {
