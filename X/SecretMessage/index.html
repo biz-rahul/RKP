@@ -420,8 +420,8 @@
   function updateCount(el) {
     const len = el.value.length;
     const counter = document.getElementById('charCount');
-    counter.textContent = `${len} / 500`;
-    counter.classList.toggle('warn', len > 450);
+    counter.textContent = `${len} / 5000`;
+    counter.classList.toggle('warn', len > 4500);
   }
 
   function showToast(msg, type = 'success', emoji = '✅') {
