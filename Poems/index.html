@@ -692,57 +692,56 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 	  
-<script>
-  // Custom cursor
-  const cursor = document.getElementById('cursor');
-  const ring = document.getElementById('cursorRing');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX + 'px';
-    cursor.style.top  = e.clientY + 'px';
-    setTimeout(() => {
-      ring.style.left = e.clientX + 'px';
-      ring.style.top  = e.clientY + 'px';
-    }, 80);
-  });
-  document.querySelectorAll('a, .poetry-card').forEach(el => {
-    el.addEventListener('mouseenter', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
-      ring.style.width = '60px'; ring.style.height = '60px';
-    });
-    el.addEventListener('mouseleave', () => {
-      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
-      ring.style.width = '36px'; ring.style.height = '36px';
-    });
-  });
-
-  // Scroll reveal for cards
-  const cards = document.querySelectorAll('.poetry-card');
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const delay = parseInt(entry.target.dataset.delay) || 0;
-        setTimeout(() => entry.target.classList.add('visible'), delay);
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.12 });
-  cards.forEach(c => observer.observe(c));
-
-    
-  // Floating particles
-  function spawnParticle() {
-    const p = document.createElement('div');
-    p.className = 'particle';
-    p.style.left = Math.random() * 100 + 'vw';
-    const dur = 8 + Math.random() * 14;
-    p.style.animationDuration = dur + 's';
-    p.style.animationDelay = Math.random() * 5 + 's';
-    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
-    document.body.appendChild(p);
-    setTimeout(() => p.remove(), (dur + 5) * 1000);
-  }
-  for (let i = 0; i < 18; i++) setTimeout(spawnParticle, i * 400);
-  setInterval(spawnParticle, 1800);
-</script>
+<script>  
+  // Custom cursor  
+  const cursor = document.getElementById('cursor');  
+  const ring = document.getElementById('cursorRing');  
+  document.addEventListener('mousemove', e => {  
+    cursor.style.left = e.clientX + 'px';  
+    cursor.style.top  = e.clientY + 'px';  
+    setTimeout(() => {  
+      ring.style.left = e.clientX + 'px';  
+      ring.style.top  = e.clientY + 'px';  
+    }, 80);  
+  });  
+  document.querySelectorAll('a, .poetry-card').forEach(el => {  
+    el.addEventListener('mouseenter', () => {  
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';  
+      ring.style.width = '60px'; ring.style.height = '60px';  
+    });  
+    el.addEventListener('mouseleave', () => {  
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';  
+      ring.style.width = '36px'; ring.style.height = '36px';  
+    });  
+  });  
+  
+  // Scroll reveal for cards  
+  const cards = document.querySelectorAll('.poetry-card');  
+  const observer = new IntersectionObserver(entries => {  
+    entries.forEach(entry => {  
+      if (entry.isIntersecting) {  
+        const delay = parseInt(entry.target.dataset.delay) || 0;  
+        setTimeout(() => entry.target.classList.add('visible'), delay);  
+        observer.unobserve(entry.target);  
+      }  
+    });  
+  }, { threshold: 0.12 });  
+  cards.forEach(c => observer.observe(c));  
+  
+  // Floating particles  
+  function spawnParticle() {  
+    const p = document.createElement('div');  
+    p.className = 'particle';  
+    p.style.left = Math.random() * 100 + 'vw';  
+    const dur = 8 + Math.random() * 14;  
+    p.style.animationDuration = dur + 's';  
+    p.style.animationDelay = Math.random() * 5 + 's';  
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';  
+    document.body.appendChild(p);  
+    setTimeout(() => p.remove(), (dur + 5) * 1000);  
+  }  
+  for (let i = 0; i < 18; i++) setTimeout(spawnParticle, i * 400);  
+  setInterval(spawnParticle, 1800);  
+</script>   
   </body>
 </html>
