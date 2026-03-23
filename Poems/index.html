@@ -50,7 +50,19 @@
   max-height: 80vh;
   object-fit: contain;
 	}
-	
+
+	.popup-content {
+  position: relative;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  cursor: pointer;
+  color: var(--gold);
+  font-size: 1.2rem;
+}
 	.popup {
   position: fixed;
   inset: 0;
@@ -805,12 +817,13 @@
 	  <p>© 2025 <a href="https://www.instagram.com/iampoetrahul" target="_blank">@iampoetrahul</a> &nbsp;·&nbsp; Rahul Kumar Puri &nbsp;·&nbsp; All Rights Reserved</p>
 	</footer>
 
-	  <div class="popup" id="popup">
+	<div class="popup" id="popup">
   <div class="popup-content">
-    <p id="popupText">Download next poetry?</p>
+    <span class="popup-close" onclick="closePopup()">✕</span>
+    <p id="popupText"></p>
     <button onclick="downloadNext()">Download</button>
   </div>
-	  </div>
+	</div>
 	  
 	<!-- TOAST -->
 	<div class="toast" id="toast">✦ Subscribed! New poetry coming your way.</div>
@@ -915,6 +928,10 @@ function showPopup() {
   }
 
   popup.classList.add('show');
+}
+
+function closePopup() {
+  document.getElementById('popup').classList.remove('show');
 }
 </script>
   </body>
