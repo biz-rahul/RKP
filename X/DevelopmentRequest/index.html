@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dev Request</title>
+	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #050508;
+    --surface: #0d0d14;
+    --surface2: #13131f;
+    --border: rgba(255,255,255,0.07);
+    --accent: #7c5cfc;
+    --accent2: #fc5c7d;
+    --accent3: #00e5ff;
+    --text: #f0f0f8;
+    --muted: rgba(240,240,248,0.45);
+    --glow: rgba(124,92,252,0.3);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 10%, rgba(124,92,252,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 80% 80%, rgba(252,92,125,0.1) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 60% 30%, rgba(0,229,255,0.06) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Grid lines */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  /* Header badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(124,92,252,0.15);
+    border: 1px solid rgba(124,92,252,0.3);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #a48dfd;
+    margin-bottom: 20px;
+    animation: fadeDown 0.6s ease both;
+  }
+
+  .badge-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #7c5cfc;
+    box-shadow: 0 0 8px #7c5cfc;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 
+      0 0 0 1px rgba(255,255,255,0.03),
+      0 40px 80px rgba(0,0,0,0.6),
+      0 0 60px rgba(124,92,252,0.08);
+    animation: fadeUp 0.7s ease both 0.1s;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    height: 3px;
+    background: var(--surface2);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 33%;
+    transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    box-shadow: 0 0 12px rgba(124,92,252,0.6);
+  }
+
+  /* Step indicators */
+  .steps-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 28px 0;
+  }
+
+  .step-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    opacity: 0.4;
+    border: 1px solid transparent;
+  }
+
+  .step-pill.active {
+    opacity: 1;
+    background: rgba(124,92,252,0.15);
+    border-color: rgba(124,92,252,0.4);
+    color: #a48dfd;
+  }
+
+  .step-pill.done {
+    opacity: 0.7;
+    background: rgba(0,229,255,0.08);
+    border-color: rgba(0,229,255,0.2);
+    color: var(--accent3);
+  }
+
+  .step-num {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    background: currentColor;
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .step-divider {
+    width: 20px;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Main content */
+  .card-body {
+    padding: 28px 28px 32px;
+  }
+
+  .step { display: none; }
+  .step.active {
+    display: block;
+    animation: stepIn 0.4s ease both;
+  }
+
+  @keyframes stepIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .step-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 6px;
+    letter-spacing: -0.02em;
+  }
+
+  .step-title span {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .step-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* Inputs */
+  .field {
+    margin-bottom: 16px;
+  }
+
+  label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: 'Syne', sans-serif;
+  }
+
+  input[type="text"], input[type="tel"], input[type="email"], select, textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    border-color: rgba(124,92,252,0.5);
+    box-shadow: 0 0 0 3px rgba(124,92,252,0.1);
+    background: rgba(13,13,20,0.8);
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: rgba(240,240,248,0.25);
+  }
+
+  select option { background: #13131f; }
+
+  textarea {
+    resize: none;
+    min-height: 110px;
+    line-height: 1.6;
+  }
+
+  /* Project type grid */
+  .type-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .type-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+  }
+
+  .type-card:hover {
+    border-color: rgba(124,92,252,0.3);
+    background: rgba(124,92,252,0.05);
+  }
+
+  .type-card.selected {
+    border-color: var(--accent);
+    background: rgba(124,92,252,0.12);
+    box-shadow: 0 0 20px rgba(124,92,252,0.15);
+  }
+
+  .type-card .icon {
+    font-size: 24px;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .type-card .label {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: 0.03em;
+    display: block;
+  }
+
+  .type-card .sublabel {
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 2px;
+    display: block;
+  }
+
+  .type-card.both-card {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 14px;
+    text-align: left;
+  }
+
+  .type-card.both-card .icon { margin-bottom: 0; font-size: 20px; }
+
+  /* Contact platform grid */
+  .platform-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .platform-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .platform-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .platform-btn:hover { transform: translateY(-2px); }
+
+  .platform-btn.wa { --c: #25d366; }
+  .platform-btn.ig { --c: #e1306c; }
+  .platform-btn.tg { --c: #2aabee; }
+  .platform-btn.ot { --c: #7c5cfc; }
+
+  .platform-btn:hover {
+    border-color: var(--c);
+    box-shadow: 0 0 20px color-mix(in srgb, var(--c) 25%, transparent);
+  }
+
+  .platform-btn .p-icon { font-size: 28px; margin-bottom: 6px; display: block; }
+  .platform-btn .p-name {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    display: block;
+  }
+
+  /* Contact input area */
+  .contact-input-area {
+    display: none;
+    animation: stepIn 0.3s ease both;
+    margin-top: 4px;
+  }
+
+  .contact-input-area.show { display: block; }
+
+  .selected-platform-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    margin-bottom: 10px;
+    border: 1px solid;
+  }
+
+  /* Button */
+  .btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #9b72fc);
+    color: #fff;
+    box-shadow: 0 8px 24px rgba(124,92,252,0.35);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(124,92,252,0.5);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+  }
+
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .btn-secondary:hover {
+    border-color: rgba(255,255,255,0.15);
+    color: var(--text);
+  }
+
+  /* Success */
+  .success-card {
+    text-align: center;
+    padding: 20px 0 10px;
+  }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.3);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    margin: 0 auto 20px;
+    animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .success-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 10px;
+  }
+
+  .success-sub {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    max-width: 280px;
+    margin: 0 auto 24px;
+  }
+
+  .summary-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+  .summary-key { color: var(--muted); font-family: 'Syne', sans-serif; font-weight: 600; letter-spacing: 0.05em; font-size: 10px; text-transform: uppercase; flex-shrink: 0; }
+  .summary-val { color: var(--text); text-align: right; word-break: break-word; }
+
+  /* Error */
+  .error-msg {
+    display: none;
+    color: #fc5c7d;
+    font-size: 11px;
+    margin-top: 6px;
+    padding: 8px 12px;
+    background: rgba(252,92,125,0.08);
+    border-radius: 8px;
+    border: 1px solid rgba(252,92,125,0.2);
+  }
+
+  .error-msg.show { display: block; }
+
+  /* Footer */
+  .card-footer {
+    padding: 0 28px 20px;
+    text-align: center;
+    font-size: 11px;
+    color: rgba(240,240,248,0.25);
+    letter-spacing: 0.03em;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Spinner */
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Responsive */
+  @media (max-width: 400px) {
+    .card-body { padding: 22px 20px 26px; }
+    .step-title { font-size: 19px; }
+    .type-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+  </head>
+  <body>
+
+	<div class="wrapper">
+	  <div class="badge">
+		<span class="badge-dot"></span>
+		Dev Studio · Open for Projects
+	  </div>
+
+	  <div class="card">
+		<!-- Progress bar -->
+		<div class="progress-bar">
+		  <div class="progress-fill" id="progressFill"></div>
+		</div>
+
+		<!-- Step indicators -->
+		<div class="steps-header">
+		  <div class="step-pill active" id="pill1">
+			<div class="step-num">1</div> Info
+		  </div>
+		  <div class="step-divider"></div>
+		  <div class="step-pill" id="pill2">
+			<div class="step-num">2</div> Contact
+		  </div>
+		  <div class="step-divider"></div>
+		  <div class="step-pill" id="pill3">
+			<div class="step-num">3</div> Done
+		  </div>
+		</div>
+
+		<div class="card-body">
+
+		  <!-- STEP 1: Project Info -->
+		  <div class="step active" id="step1">
+			<div class="step-title">Tell us about<br><span>your project</span></div>
+			<div class="step-sub">Share your idea and we'll bring it to life.</div>
+
+			<div class="field">
+			  <label>Your Name</label>
+			  <input type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="off">
+			</div>
+
+			<div class="field">
+			  <label>Project Type</label>
+			  <div class="type-grid">
+				<div class="type-card" data-val="Website" onclick="selectType(this)">
+				  <span class="icon">🌐</span>
+				  <span class="label">Website</span>
+				  <span class="sublabel">Web presence</span>
+				</div>
+				<div class="type-card" data-val="App" onclick="selectType(this)">
+				  <span class="icon">📱</span>
+				  <span class="label">Mobile App</span>
+				  <span class="sublabel">iOS / Android</span>
+				</div>
+				<div class="type-card both-card" data-val="Website + App" onclick="selectType(this)">
+				  <span class="icon">⚡</span>
+				  <span class="label">Website + App</span>
+				  <span class="sublabel">Full package — both platforms</span>
+				</div>
+			  </div>
+			  <input type="hidden" id="projectType">
+			</div>
+
+			<div class="field">
+			  <label>Project Details</label>
+			  <textarea id="message" placeholder="Describe your vision, features, target audience..."></textarea>
+			</div>
+
+			<div class="error-msg" id="err1">⚠️ Please fill all fields correctly.</div>
+
+			<button class="btn btn-primary" onclick="goStep2()">
+			  Continue &nbsp;→
+			</button>
+		  </div>
+
+		  <!-- STEP 2: Contact -->
+		  <div class="step" id="step2">
+			<div class="step-title">How should we<br><span>reach you?</span></div>
+			<div class="step-sub">Choose your preferred platform to stay connected.</div>
+
+			<div class="platform-grid">
+			  <div class="platform-btn wa" onclick="selectPlatform('WhatsApp','📱','#25d366','whatsapp_number','WhatsApp number (e.g. +91 98765 43210)')">
+				<span class="p-icon">💬</span>
+				<span class="p-name">WhatsApp</span>
+			  </div>
+			  <div class="platform-btn ig" onclick="selectPlatform('Instagram','📸','#e1306c','instagram_handle','Instagram username (e.g. @yourname)')">
+				<span class="p-icon">📸</span>
+				<span class="p-name">Instagram</span>
+			  </div>
+			  <div class="platform-btn tg" onclick="selectPlatform('Telegram','✈️','#2aabee','telegram_username','Telegram username (e.g. @yourname)')">
+				<span class="p-icon">✈️</span>
+				<span class="p-name">Telegram</span>
+			  </div>
+			  <div class="platform-btn ot" onclick="selectPlatform('Other','🔗','#7c5cfc','other_contact','Email / Phone / Link etc.')">
+				<span class="p-icon">🔗</span>
+				<span class="p-name">Other</span>
+			  </div>
+			</div>
+
+			<div class="contact-input-area" id="contactInputArea">
+			  <div class="selected-platform-badge" id="platformBadge"></div>
+			  <div class="field">
+				<label id="contactLabel">Contact Info</label>
+				<input type="text" id="contactValue" placeholder="">
+			  </div>
+			</div>
+
+			<div class="error-msg" id="err2">⚠️ Please select a platform and enter your contact info.</div>
+
+			<button class="btn btn-primary" id="sendBtn" onclick="sendRequest()">
+			  Send Request 🚀
+			</button>
+			<button class="btn btn-secondary" onclick="goStep(1)" style="margin-top:10px;">← Back</button>
+		  </div>
+
+		  <!-- STEP 3: Success -->
+		  <div class="step" id="step3">
+			<div class="success-card">
+			  <div class="success-icon">✅</div>
+			  <div class="success-title">Request Sent!</div>
+			  <div class="success-sub">We've received your project request and will get back to you shortly.</div>
+
+			  <div class="summary-box" id="summaryBox"></div>
+
+			  <button class="btn btn-primary" onclick="resetForm()">Submit Another Request</button>
+			</div>
+		  </div>
+
+		</div><!-- /card-body -->
+
+		<div class="card-footer">
+		  Reviewed within 24 hours &nbsp;·&nbsp; All inquiries are confidential
+		</div>
+	  </div>
+	</div>
+
+<script>
+  const encodedToken = "ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==";
+  const encodedChatId = "NjI3NzQzMjM1Ng==";
+  function decode(s) { return atob(s); }
+
+  let selectedType = '';
+  let selectedPlatform = '';
+  let contactPlaceholder = '';
+  let currentStep = 1;
+
+  function selectType(el) {
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedType = el.dataset.val;
+    document.getElementById('projectType').value = selectedType;
+  }
+
+  function selectPlatform(name, icon, color, fieldId, placeholder) {
+    selectedPlatform = name;
+    contactPlaceholder = placeholder;
+
+    const area = document.getElementById('contactInputArea');
+    const badge = document.getElementById('platformBadge');
+    const input = document.getElementById('contactValue');
+    const lbl = document.getElementById('contactLabel');
+
+    badge.textContent = icon + ' ' + name;
+    badge.style.background = color + '18';
+    badge.style.borderColor = color + '55';
+    badge.style.color = color;
+
+    lbl.textContent = name + ' Contact';
+    input.placeholder = placeholder;
+    input.value = '';
+    input.focus();
+
+    area.classList.add('show');
+  }
+
+  function updateProgress() {
+    const fills = { 1: '12%', 2: '66%', 3: '100%' };
+    document.getElementById('progressFill').style.width = fills[currentStep] || '12%';
+
+    document.querySelectorAll('.step-pill').forEach((p, i) => {
+      p.classList.remove('active', 'done');
+      if (i + 1 === currentStep) p.classList.add('active');
+      else if (i + 1 < currentStep) p.classList.add('done');
+    });
+  }
+
+  function goStep(n) {
+    document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+    document.getElementById('step' + n).classList.add('active');
+    currentStep = n;
+    updateProgress();
+  }
+
+  function goStep2() {
+    const name = document.getElementById('name').value.trim();
+    const msg = document.getElementById('message').value.trim();
+    const err = document.getElementById('err1');
+
+    if (name.length < 2 || !selectedType || msg.length < 10) {
+      err.classList.add('show');
+      setTimeout(() => err.classList.remove('show'), 3500);
+      return;
+    }
+    err.classList.remove('show');
+    goStep(2);
+  }
+
+  function sendRequest() {
+    const contactVal = document.getElementById('contactValue').value.trim();
+    const err = document.getElementById('err2');
+    const btn = document.getElementById('sendBtn');
+
+    if (!selectedPlatform || contactVal.length < 2) {
+      err.classList.add('show');
+      setTimeout(() => err.classList.remove('show'), 3500);
+      return;
+    }
+    err.classList.remove('show');
+
+    const name = document.getElementById('name').value.trim();
+    const type = selectedType;
+    const message = document.getElementById('message').value.trim();
+
+    const finalMessage = 
+`🚀 *New Development Request*
+
+👤 *Client:* ${name}
+📦 *Project Type:* ${type}
+📞 *Contact via:* ${selectedPlatform} — ${contactVal}
+
+📋 *Details:*
+${message}`;
+
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Sending...';
+
+    const botToken = decode(encodedToken);
+    const chatId = decode(encodedChatId);
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: finalMessage, parse_mode: 'Markdown' })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) {
+        showSummary(name, type, selectedPlatform, contactVal, message);
+        goStep(3);
+      } else {
+        alert('Error sending request. Please try again.');
+      }
+      btn.disabled = false;
+      btn.innerHTML = 'Send Request 🚀';
+    })
+    .catch(() => {
+      alert('Network error. Please check your connection.');
+      btn.disabled = false;
+      btn.innerHTML = 'Send Request 🚀';
+    });
+  }
+
+  function showSummary(name, type, platform, contact, msg) {
+    const box = document.getElementById('summaryBox');
+    const short = msg.length > 60 ? msg.substring(0, 60) + '…' : msg;
+    box.innerHTML = `
+      <div class="summary-row"><span class="summary-key">Name</span><span class="summary-val">${name}</span></div>
+      <div class="summary-row"><span class="summary-key">Project</span><span class="summary-val">${type}</span></div>
+      <div class="summary-row"><span class="summary-key">Contact</span><span class="summary-val">${platform}: ${contact}</span></div>
+      <div class="summary-row"><span class="summary-key">Details</span><span class="summary-val">${short}</span></div>
+    `;
+  }
+
+  function resetForm() {
+    document.getElementById('name').value = '';
+    document.getElementById('message').value = '';
+    document.getElementById('contactValue').value = '';
+    document.getElementById('contactInputArea').classList.remove('show');
+    document.querySelectorAll('.type-card').forEach(c => c.classList.remove('selected'));
+    selectedType = '';
+    selectedPlatform = '';
+    goStep(1);
+  }
+
+  updateProgress();
+</script>
+  </body>
+</html>
