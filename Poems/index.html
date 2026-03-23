@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Rahul Kumar Puri — Poetry</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Noto+Serif+Devanagari:wght@300;400;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+      --ink: #0d0b0a;
+      --parchment: #f5f0e8;
+      --gold: #c9a84c;
+      --gold-light: #e8d08a;
+      --rust: #8b3a2a;
+      --mist: #d4cfc6;
+      --deep: #1a1410;
+      --accent: #5c3d2e;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--ink);
+      color: var(--parchment);
+      font-family: 'Cormorant Garamond', serif;
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── NOISE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.35;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      position: relative;
+      padding: 4rem 2rem;
+      background: radial-gradient(ellipse 80% 60% at 50% 40%, #2a1a0e 0%, var(--ink) 70%);
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 120px;
+      background: linear-gradient(to top, var(--ink), transparent);
+    }
+
+    /* Decorative lines */
+    .hero-ornament {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 700px;
+      height: 700px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.08);
+      pointer-events: none;
+    }
+    .hero-ornament::before {
+      content: '';
+      position: absolute;
+      inset: 40px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.05);
+    }
+    .hero-ornament::after {
+      content: '';
+      position: absolute;
+      inset: 80px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,168,76,0.03);
+    }
+
+    .hero-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(3.5rem, 10vw, 8rem);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      color: var(--parchment);
+      opacity: 0;
+      animation: fadeUp 1.2s ease 0.4s forwards;
+    }
+
+    .hero-title em {
+      font-style: italic;
+      color: var(--gold);
+    }
+
+    .hero-divider {
+      width: 80px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      margin: 2.5rem auto;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.6s forwards;
+    }
+
+    .hero-tagline {
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: clamp(1rem, 2.5vw, 1.4rem);
+      font-weight: 300;
+      color: var(--mist);
+      letter-spacing: 0.05em;
+      max-width: 500px;
+      line-height: 1.8;
+      opacity: 0;
+      animation: fadeUp 1s ease 0.8s forwards;
+    }
+
+    .hero-scroll {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--gold);
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s ease 1.2s forwards;
+      z-index: 2;
+    }
+
+    .hero-scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 2s ease-in-out infinite;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.5rem 3rem;
+      background: linear-gradient(to bottom, rgba(13,11,10,0.95), transparent);
+    }
+
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      letter-spacing: 0.05em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--mist);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    /* ── SECTION ── */
+    section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 400;
+      color: var(--parchment);
+      line-height: 1.1;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--gold-light);
+    }
+
+    /* ── POETRY GRID ── */
+    .poetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 2.5rem;
+      justify-items: center;
+    }
+
+    /* ── INSTAGRAM EMBED CARD ── */
+    .embed-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeUp 0.8s ease forwards;
+    }
+
+    .embed-card:nth-child(1) { animation-delay: 0.1s; }
+    .embed-card:nth-child(2) { animation-delay: 0.2s; }
+    .embed-card:nth-child(3) { animation-delay: 0.3s; }
+    .embed-card:nth-child(4) { animation-delay: 0.4s; }
+    .embed-card:nth-child(5) { animation-delay: 0.5s; }
+    .embed-card:nth-child(6) { animation-delay: 0.6s; }
+
+    .embed-wrapper {
+      background: #111;
+      border: 1px solid rgba(201,168,76,0.15);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .embed-wrapper:hover {
+      border-color: rgba(201,168,76,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(201,168,76,0.1);
+    }
+
+    .embed-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 1;
+    }
+
+    .embed-wrapper:hover::before { opacity: 1; }
+
+    /* Force Instagram iframe to fill width */
+    .embed-wrapper .instagram-media {
+      width: 100% !important;
+      min-width: unset !important;
+      max-width: 100% !important;
+      margin: 0 !important;
+    }
+
+    /* ── FOLLOW SECTION ── */
+    .follow-section {
+      background: linear-gradient(135deg, #1a0f08 0%, #0d0b0a 50%, #1a0f08 100%);
+      border-top: 1px solid rgba(201,168,76,0.1);
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+      text-align: center;
+      padding: 6rem 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .follow-section::before {
+      content: '❝';
+      position: absolute;
+      font-size: 20rem;
+      color: rgba(201,168,76,0.03);
+      font-family: 'Playfair Display', serif;
+      top: -3rem;
+      left: 50%;
+      transform: translateX(-50%);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .follow-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .follow-hindi {
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: clamp(1.3rem, 3vw, 1.8rem);
+      color: var(--parchment);
+      line-height: 1.9;
+      margin-bottom: 1rem;
+      font-weight: 300;
+    }
+
+    .follow-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      color: var(--mist);
+      letter-spacing: 0.1em;
+      margin-bottom: 3rem;
+    }
+
+    /* Email subscribe form */
+    .subscribe-form {
+      display: flex;
+      gap: 0;
+      max-width: 460px;
+      margin: 0 auto 2.5rem;
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .subscribe-input {
+      flex: 1;
+      background: rgba(255,255,255,0.04);
+      border: none;
+      color: var(--parchment);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      padding: 1rem 1.5rem;
+      outline: none;
+      letter-spacing: 0.05em;
+    }
+
+    .subscribe-input::placeholder { color: rgba(212,207,198,0.4); }
+
+    .subscribe-btn {
+      background: var(--gold);
+      color: var(--ink);
+      border: none;
+      padding: 1rem 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.85rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+
+    .subscribe-btn:hover { background: var(--gold-light); }
+
+    .subscribe-note {
+      font-size: 0.75rem;
+      color: rgba(212,207,198,0.4);
+      letter-spacing: 0.1em;
+      margin-bottom: 3rem;
+    }
+
+    /* Instagram follow button */
+    .ig-follow-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: transparent;
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 1rem 2.5rem;
+      text-decoration: none;
+      border-radius: 2px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ig-follow-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: translateX(-100%);
+      transition: transform 0.4s ease;
+      z-index: 0;
+    }
+
+    .ig-follow-btn:hover::before { transform: translateX(0); }
+    .ig-follow-btn:hover { color: var(--ink); }
+
+    .ig-follow-btn span, .ig-follow-btn svg { position: relative; z-index: 1; }
+
+    /* ── QUOTE STRIP ── */
+    .quote-strip {
+      overflow: hidden;
+      white-space: nowrap;
+      padding: 2rem 0;
+      border-top: 1px solid rgba(201,168,76,0.08);
+    }
+
+    .quote-inner {
+      display: inline-block;
+      animation: marquee 30s linear infinite;
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: 1rem;
+      color: rgba(201,168,76,0.3);
+      letter-spacing: 0.15em;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: rgba(212,207,198,0.25);
+      text-transform: uppercase;
+    }
+
+    footer a {
+      color: rgba(201,168,76,0.5);
+      text-decoration: none;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--gold);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      padding: 0.8rem 2rem;
+      border-radius: 2px;
+      transition: transform 0.4s ease;
+      z-index: 9998;
+    }
+
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes scrollPulse {
+      0%, 100% { opacity: 0.5; transform: scaleY(1); }
+      50% { opacity: 1; transform: scaleY(1.2); }
+    }
+
+    @keyframes marquee {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.5rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.2rem; }
+      .subscribe-form { flex-direction: column; }
+      .subscribe-btn { padding: 0.8rem; }
+    }
+</style>
+  </head>
+  <body>
+
+	<!-- NAV -->
+	<nav>
+	  <a href="#" class="nav-logo">Rahul Kumar Puri</a>
+	  <ul class="nav-links">
+		<li><a href="#poetry">Poetry</a></li>
+		<li><a href="#follow">Follow</a></li>
+		<li><a href="https://www.instagram.com/iampoetrahul" target="_blank">Instagram</a></li>
+	  </ul>
+	</nav>
+
+	<!-- HERO -->
+	<div class="hero">
+	  <div class="hero-ornament"></div>
+	  <p class="hero-label">The World of Words</p>
+	  <h1 class="hero-title">Rahul Kumar<br><em>Puri</em></h1>
+	  <div class="hero-divider"></div>
+	  <p class="hero-tagline">शब्दों की दुनिया में<br>आपका स्वागत है</p>
+	  <div class="hero-scroll">
+		<div class="hero-scroll-line"></div>
+		scroll
+	  </div>
+	</div>
+
+	<!-- MARQUEE STRIP -->
+	<div class="quote-strip">
+	  <div class="quote-inner">
+		✦ शायरी &nbsp;&nbsp;&nbsp; ✦ कविता &nbsp;&nbsp;&nbsp; ✦ Poetry &nbsp;&nbsp;&nbsp; ✦ Nazm &nbsp;&nbsp;&nbsp; ✦ Ghazal &nbsp;&nbsp;&nbsp; ✦ शब्द &nbsp;&nbsp;&nbsp; ✦ जज़्बात &nbsp;&nbsp;&nbsp; ✦ Emotion &nbsp;&nbsp;&nbsp; ✦ शायरी &nbsp;&nbsp;&nbsp; ✦ कविता &nbsp;&nbsp;&nbsp; ✦ Poetry &nbsp;&nbsp;&nbsp; ✦ Nazm &nbsp;&nbsp;&nbsp; ✦ Ghazal &nbsp;&nbsp;&nbsp; ✦ शब्द &nbsp;&nbsp;&nbsp; ✦ जज़्बात &nbsp;&nbsp;&nbsp; ✦ Emotion &nbsp;&nbsp;&nbsp;
+	  </div>
+	</div>
+
+	<!-- POETRY COLLECTION -->
+	<section id="poetry">
+	  <div class="section-header">
+		<p class="section-eyebrow">Instagram से</p>
+		<h2 class="section-title">मेरी <em>कविताएँ</em></h2>
+	  </div>
+
+	  <div class="poetry-grid" id="poetryGrid">
+
+		<!-- ══════════════════════════════════════
+		HOW TO ADD MORE POSTS:
+		Copy one embed-card block below,
+		paste it inside #poetryGrid,
+		and replace the Instagram embed code
+		inside .embed-wrapper with your new code.
+		══════════════════════════════════════ -->
+
+		<!-- POST 1 -->
+		<div class="embed-card">
+		  <div class="embed-wrapper">
+			<blockquote class="instagram-media" data-instgrm-captioned data-instgrm-permalink="https://www.instagram.com/reel/DOIaC0ekfF8/?utm_source=ig_embed&amp;utm_campaign=loading" data-instgrm-version="14" style="background:#FFF;border:0;border-radius:3px;box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15);margin:1px;max-width:540px;min-width:326px;padding:0;width:99.375%;width:-webkit-calc(100% - 2px);width:calc(100% - 2px);"><div style="padding:16px;"> <a href="https://www.instagram.com/reel/DOIaC0ekfF8/?utm_source=ig_embed&amp;utm_campaign=loading" style=" background:#FFFFFF; line-height:0; padding:0 0; text-align:center; text-decoration:none; width:100%;" target="_blank"> <div style=" display: flex; flex-direction: row; align-items: center;"> <div style="background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 40px; margin-right: 14px; width: 40px;"></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 100px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 60px;"></div></div></div><div style="padding: 19% 0;"></div> <div style="display:block; height:50px; margin:0 auto 12px; width:50px;"><svg width="50px" height="50px" viewBox="0 0 60 60" version="1.1" xmlns="https://www.w3.org/2000/svg" xmlns:xlink="https://www.w3.org/1999/xlink"><g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd"><g transform="translate(-511.000000, -20.000000)" fill="#000000"><g><path d="M556.869,30.41 C554.814,30.41 553.148,32.076 553.148,34.131 C553.148,36.186 554.814,37.852 556.869,37.852 C558.924,37.852 560.59,36.186 560.59,34.131 C560.59,32.076 558.924,30.41 556.869,30.41 M541,60.657 C535.114,60.657 530.342,55.887 530.342,50 C530.342,44.114 535.114,39.342 541,39.342 C546.887,39.342 551.658,44.114 551.658,50 C551.658,55.887 546.887,60.657 541,60.657 M541,33.886 C532.1,33.886 524.886,41.1 524.886,50 C524.886,58.899 532.1,66.113 541,66.113 C549.9,66.113 557.115,58.899 557.115,50 C557.115,41.1 549.9,33.886 541,33.886 M565.378,62.101 C565.244,65.022 564.756,66.606 564.346,67.663 C563.803,69.06 563.154,70.057 562.106,71.106 C561.058,72.155 560.06,72.803 558.662,73.347 C557.607,73.757 556.021,74.244 553.102,74.378 C549.944,74.521 548.997,74.552 541,74.552 C533.003,74.552 532.056,74.521 528.898,74.378 C525.979,74.244 524.393,73.757 523.338,73.347 C521.94,72.803 520.942,72.155 519.894,71.106 C518.846,70.057 518.197,69.06 517.654,67.663 C517.244,66.606 516.755,65.022 516.623,62.101 C516.479,58.943 516.448,57.996 516.448,50 C516.448,42.003 516.479,41.056 516.623,37.899 C516.755,34.978 517.244,33.391 517.654,32.338 C518.197,30.938 518.846,29.942 519.894,28.894 C520.942,27.846 521.94,27.196 523.338,26.654 C524.393,26.244 525.979,25.756 528.898,25.623 C532.057,25.479 533.004,25.448 541,25.448 C548.997,25.448 549.943,25.479 553.102,25.623 C556.021,25.756 557.607,26.244 558.662,26.654 C560.06,27.196 561.058,27.846 562.106,28.894 C563.154,29.942 563.803,30.938 564.346,32.338 C564.756,33.391 565.244,34.978 565.378,37.899 C565.522,41.056 565.552,42.003 565.552,50 C565.552,57.996 565.522,58.943 565.378,62.101 M570.82,37.631 C570.674,34.438 570.167,32.258 569.425,30.349 C568.659,28.377 567.633,26.702 565.965,25.035 C564.297,23.368 562.623,22.342 560.652,21.575 C558.743,20.834 556.562,20.326 553.369,20.18 C550.169,20.033 549.148,20 541,20 C532.853,20 531.831,20.033 528.631,20.18 C525.438,20.326 523.257,20.834 521.349,21.575 C519.376,22.342 517.703,23.368 516.035,25.035 C514.368,26.702 513.342,28.377 512.574,30.349 C511.834,32.258 511.326,34.438 511.181,37.631 C511.035,40.831 511,41.851 511,50 C511,58.147 511.035,59.17 511.181,62.369 C511.326,65.562 511.834,67.743 512.574,69.651 C513.342,71.625 514.368,73.296 516.035,74.965 C517.703,76.634 519.376,77.658 521.349,78.425 C523.257,79.167 525.438,79.673 528.631,79.82 C531.831,79.965 532.853,80.001 541,80.001 C549.148,80.001 550.169,79.965 553.369,79.82 C556.562,79.673 558.743,79.167 560.652,78.425 C562.623,77.658 564.297,76.634 565.965,74.965 C567.633,73.296 568.659,71.625 569.425,69.651 C570.167,67.743 570.674,65.562 570.82,62.369 C570.966,59.17 571,58.147 571,50 C571,41.851 570.966,40.831 570.82,37.631"></path></g></g></g></svg></div><div style="padding-top: 8px;"> <div style=" color:#3897f0; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:550; line-height:18px;">View this post on Instagram</div></div><div style="padding: 12.5% 0;"></div> <div style="display: flex; flex-direction: row; margin-bottom: 14px; align-items: center;"><div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(0px) translateY(7px);"></div> <div style="background-color: #F4F4F4; height: 12.5px; transform: rotate(-45deg) translateX(3px) translateY(1px); width: 12.5px; flex-grow: 0; margin-right: 14px; margin-left: 2px;"></div> <div style="background-color: #F4F4F4; border-radius: 50%; height: 12.5px; width: 12.5px; transform: translateX(9px) translateY(-18px);"></div></div><div style="margin-left: 8px;"> <div style=" background-color: #F4F4F4; border-radius: 50%; flex-grow: 0; height: 20px; width: 20px;"></div> <div style=" width: 0; height: 0; border-top: 2px solid transparent; border-left: 6px solid #f4f4f4; border-bottom: 2px solid transparent; transform: translateX(16px) translateY(-4px) rotate(30deg)"></div></div><div style="margin-left: auto;"> <div style=" width: 0px; border-top: 8px solid #F4F4F4; border-right: 8px solid transparent; transform: translateY(16px);"></div> <div style=" background-color: #F4F4F4; flex-grow: 0; height: 12px; width: 16px; transform: translateY(-4px);"></div> <div style=" width: 0; height: 0; border-top: 8px solid #F4F4F4; border-left: 8px solid transparent; transform: translateY(-4px) translateX(8px);"></div></div></div> <div style="display: flex; flex-direction: column; flex-grow: 1; justify-content: center; margin-bottom: 24px;"> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; margin-bottom: 6px; width: 224px;"></div> <div style=" background-color: #F4F4F4; border-radius: 4px; flex-grow: 0; height: 14px; width: 144px;"></div></div></a><p style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; line-height:17px; margin-bottom:0; margin-top:8px; overflow:hidden; padding:8px 0 7px; text-align:center; text-overflow:ellipsis; white-space:nowrap;"><a href="https://www.instagram.com/reel/DOIaC0ekfF8/?utm_source=ig_embed&amp;utm_campaign=loading" style=" color:#c9c8cd; font-family:Arial,sans-serif; font-size:14px; font-style:normal; font-weight:normal; line-height:17px; text-decoration:none;" target="_blank">A post shared by Rahul Kumar Puri (@iampoetrahul)</a></p></div></blockquote>
+		  </div>
+		</div>
+
+		<!--
+        ══════════════════════════════════════
+        POST 2 — Yahan apna next Instagram embed code paste karein:
+        ══════════════════════════════════════
+		-->
+		<!--
+		<div class="embed-card">
+        <div class="embed-wrapper">
+		APNA INSTAGRAM EMBED CODE YAHAN PASTE KAREIN
+        </div>
+		</div>
+		-->
+
+		<!--
+        ══════════════════════════════════════
+        POST 3 — Yahan apna next Instagram embed code paste karein:
+        ══════════════════════════════════════
+		-->
+		<!--
+		<div class="embed-card">
+        <div class="embed-wrapper">
+		APNA INSTAGRAM EMBED CODE YAHAN PASTE KAREIN
+        </div>
+		</div>
+		-->
+
+	  </div>
+	</section>
+
+	<!-- FOLLOW SECTION -->
+	<div class="follow-section" id="follow">
+	  <div class="follow-inner">
+		<p class="section-eyebrow" style="margin-bottom:1.5rem;">सबसे पहले पढ़ें</p>
+		<p class="follow-hindi">
+		  नई कविता सबसे पहले आप तक पहुँचे —<br>
+		  इसके लिए अभी follow करें।
+		</p>
+		<p class="follow-sub">Get notified before anyone else</p>
+
+		<form class="subscribe-form" onsubmit="handleSubscribe(event)">
+		  <input
+			class="subscribe-input"
+			type="email"
+			placeholder="आपका email address..."
+			id="emailInput"
+			required
+		  />
+		  <button type="submit" class="subscribe-btn">Subscribe</button>
+		</form>
+		<p class="subscribe-note">No spam. Only poetry. Unsubscribe anytime.</p>
+
+		<a href="https://www.instagram.com/iampoetrahul" target="_blank" class="ig-follow-btn">
+		  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+			<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+			<circle cx="12" cy="12" r="4"/>
+			<circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/>
+		  </svg>
+		  <span>Follow on Instagram</span>
+		</a>
+	  </div>
+	</div>
+
+	<!-- FOOTER -->
+	<footer>
+	  <p>© 2025 <a href="https://www.instagram.com/iampoetrahul" target="_blank">@iampoetrahul</a> &nbsp;·&nbsp; Rahul Kumar Puri &nbsp;·&nbsp; All Rights Reserved</p>
+	</footer>
+
+	<!-- TOAST -->
+	<div class="toast" id="toast">✦ Subscribed! New poetry coming your way.</div>
+
+	<!-- Instagram embed script -->
+	<script async src="//www.instagram.com/embed.js"></script>
+
+<script>
+    function handleSubscribe(e) {
+      e.preventDefault();
+      const input = document.getElementById('emailInput');
+      if (input.value) {
+        const toast = document.getElementById('toast');
+        toast.classList.add('show');
+        input.value = '';
+        setTimeout(() => toast.classList.remove('show'), 3500);
+      }
+    }
+
+    // Re-process Instagram embeds after page load
+    window.addEventListener('load', () => {
+      if (window.instgrm) {
+        window.instgrm.Embeds.process();
+      }
+    });
+</script>
+  </body>
+</html>
