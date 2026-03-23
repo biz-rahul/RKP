@@ -841,6 +841,54 @@
     }
   });
 });
+
+
+
+
+
+const files = [
+  "1.webp",
+  "2.jpg",
+  "3.webp",
+  "4.png",
+  "5.png",
+  "1.mp4",
+  "2.mp4"
+];
+
+let index = 0;
+
+function startDownload() {
+  index = 0;
+  downloadFile(files[index]);
+  showPopup();
+}
+
+function downloadNext() {
+  index++;
+  
+  if (index < files.length) {
+    downloadFile(files[index]);
+    showPopup();
+  } else {
+    document.getElementById('popupText').innerText =
+      "All poetry are downloaded in your phone, just check it out.";
+  }
+}
+
+function downloadFile(file) {
+  const a = document.createElement('a');
+  a.href = file;
+  a.download = file;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function showPopup() {
+  const popup = document.getElementById('popup');
+  popup.classList.add('show');
+}
 </script>
   </body>
 </html>
