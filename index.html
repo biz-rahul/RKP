@@ -1538,67 +1538,6 @@ setInterval(() => {
 updateCountdown();
 updateAge();
 
-
-
-
-	const cursor = document.querySelector(".cursor");
-
-let mouseX = 0, mouseY = 0;
-let currentX = 0, currentY = 0;
-
-/* Smooth movement (premium feel) */
-function animate() {
-  currentX += (mouseX - currentX) * 0.15;
-  currentY += (mouseY - currentY) * 0.15;
-
-  cursor.style.left = currentX + "px";
-  cursor.style.top = currentY + "px";
-
-  requestAnimationFrame(animate);
-}
-animate();
-
-/* Mouse move */
-document.addEventListener("mousemove", (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-
-  createStar(e.clientX, e.clientY);
-});
-
-/* 🌟 Star generator */
-function createStar(x, y) {
-  const star = document.createElement("div");
-  star.className = "star";
-
-  star.style.left = x + "px";
-  star.style.top = y + "px";
-
-  /* random spread */
-  const offsetX = (Math.random() - 0.5) * 40 + "px";
-  const offsetY = (Math.random() - 0.5) * 40 + "px";
-
-  star.style.setProperty("--x", offsetX);
-  star.style.setProperty("--y", offsetY);
-
-  document.body.appendChild(star);
-
-  setTimeout(() => {
-    star.remove();
-  }, 800);
-}
-
-const interactiveElements = document.querySelectorAll("a, button");
-
-interactiveElements.forEach(el => {
-  el.addEventListener("mouseenter", () => {
-    cursor.classList.add("active");
-  });
-
-  el.addEventListener("mouseleave", () => {
-    cursor.classList.remove("active");
-  });
-});
 </script>
   </body>
 </html>
