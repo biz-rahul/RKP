@@ -848,43 +848,38 @@ document.getElementById("downloadPDF").addEventListener("click", async () => {
 
   loader.classList.add("active");
 
-  function updateProgress(val) {
-    progressFill.style.width = val + "%";
-    progressText.innerText = val + "%";
-  }
-
   const { jsPDF } = window.jspdf;
+
+  function update(p) {
+    progressFill.style.width = p + "%";
+    progressText.innerText = p + "%";
+  }
 
   try {
 
-    // STEP 1 — Fix gradient text issue
-    updateProgress(10);
-    document.querySelectorAll("*").forEach(el => {
-      const style = window.getComputedStyle(el);
-      if (style.webkitTextFillColor === "transparent") {
-        el.dataset.originalColor = style.color;
-        el.style.webkitTextFillColor = style.color;
-        el.style.background = "none";
-      }
+    const element = document.getElementById("captureArea");
+
+    update(10);
+
+    // Reduce complexity
+    document.querySelectorAll('.cursor, .cursor-ring, .particle').forEach(el => {
+      el.style.display = "none";
     });
 
     await new Promise(r => setTimeout(r, 300));
 
-    // STEP 2 — Capture
-    updateProgress(40);
+    update(25);
 
-    const canvas = await html2canvas(document.body, {
-      scale: 2.5,
+    // Capture with safer scale
+    const canvas = await html2canvas(element, {
+      scale: 2, // 🔥 reduced (prevents crash)
       useCORS: true,
-      scrollY: -window.scrollY,
-      windowWidth: document.body.scrollWidth,
-      windowHeight: document.body.scrollHeight
+      backgroundColor: "#1a0a00"
     });
 
-    updateProgress(70);
+    update(55);
 
-    // STEP 3 — Generate PDF
-    const imgData = canvas.toDataURL("image/jpeg", 1.0);
+    const imgData = canvas.toDataURL("image/jpeg", 0.95);
 
     const pdf = new jsPDF("p", "mm", "a4");
 
@@ -897,6 +892,8 @@ document.getElementById("downloadPDF").addEventListener("click", async () => {
     let heightLeft = imgHeight;
     let position = 0;
 
+    update(70);
+
     pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
@@ -907,31 +904,24 @@ document.getElementById("downloadPDF").addEventListener("click", async () => {
       heightLeft -= pageHeight;
     }
 
-    updateProgress(90);
+    update(90);
 
-    // STEP 4 — Download
     pdf.save("Rahul-Poetry.pdf");
 
-    updateProgress(100);
+    update(100);
 
-    // STEP 5 — Restore styles
-    document.querySelectorAll("[data-original-color]").forEach(el => {
-      el.style.webkitTextFillColor = "transparent";
-      el.style.background = "";
-    });
-
-    // STEP 6 — Auto refresh after 1 second
     setTimeout(() => {
       location.reload();
     }, 1000);
 
   } catch (err) {
-    console.error(err);
-    alert("PDF generation failed");
+    console.error("PDF ERROR:", err);
+    alert("PDF failed due to size/complexity. Optimized fallback needed.");
     location.reload();
   }
 });
 
+    
   // Floating particles
   function spawnParticle() {
     const p = document.createElement('div');
