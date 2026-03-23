@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Ask a Question</title>
+	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080b12;
+    --surface: #0f1520;
+    --surface2: #161d2e;
+    --border: rgba(255,255,255,0.07);
+    --accent: #00e5ff;
+    --accent2: #bf5af2;
+    --text: #e8edf5;
+    --muted: #5a6a85;
+    --error: #ff4d6d;
+    --success: #00e5a0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: -20%;
+    width: 60vw;
+    height: 60vw;
+    background: radial-gradient(circle, rgba(0,229,255,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 50vw;
+    height: 50vw;
+    background: radial-gradient(circle, rgba(191,90,242,0.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 480px;
+  }
+
+  /* Header badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(0,229,255,0.08);
+    border: 1px solid rgba(0,229,255,0.2);
+    color: var(--accent);
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+  .badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 6vw, 38px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  h1 span {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 36px;
+    line-height: 1.6;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,229,255,0.4), transparent);
+  }
+
+  /* Steps indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  .step-dot.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(0,229,255,0.5);
+    width: 24px;
+    border-radius: 4px;
+  }
+  .step-dot.done {
+    background: rgba(0,229,255,0.3);
+    border-color: rgba(0,229,255,0.5);
+  }
+
+  /* Field groups */
+  .field {
+    margin-bottom: 20px;
+    display: none;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .field.visible { display: block; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  label {
+    display: block;
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  label .req {
+    color: var(--accent);
+    margin-left: 2px;
+  }
+
+  .input-wrap {
+    position: relative;
+  }
+  .input-icon {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .input-icon.top { top: 18px; transform: none; }
+
+  input, textarea, select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    padding: 14px 16px 14px 44px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  textarea {
+    height: 130px;
+    resize: none;
+    padding-top: 14px;
+    line-height: 1.6;
+  }
+  select {
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235a6a85' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+  select option {
+    background: var(--surface2);
+    color: var(--text);
+  }
+
+  input:focus, textarea:focus, select:focus {
+    border-color: rgba(0,229,255,0.4);
+    box-shadow: 0 0 0 3px rgba(0,229,255,0.08), inset 0 0 0 1px rgba(0,229,255,0.1);
+  }
+  input::placeholder, textarea::placeholder { color: var(--muted); }
+
+  input.error, textarea.error, select.error {
+    border-color: rgba(255,77,109,0.5);
+    box-shadow: 0 0 0 3px rgba(255,77,109,0.08);
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: var(--error);
+    margin-top: 6px;
+    display: none;
+    align-items: center;
+    gap: 5px;
+  }
+  .error-msg.show { display: flex; }
+
+  /* Contact section */
+  .contact-section {
+    display: none;
+    margin-top: 4px;
+    animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .contact-section.visible { display: block; }
+
+  .contact-header {
+    background: linear-gradient(135deg, rgba(0,229,255,0.06), rgba(191,90,242,0.06));
+    border: 1px solid rgba(0,229,255,0.12);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .contact-header .icon-box {
+    width: 36px; height: 36px;
+    background: rgba(0,229,255,0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .contact-header p {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .contact-header p strong {
+    display: block;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 2px;
+  }
+
+  .platform-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .platform-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--muted);
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .platform-btn:hover {
+    border-color: rgba(0,229,255,0.25);
+    color: var(--text);
+  }
+  .platform-btn.selected {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.06);
+    color: var(--accent);
+    box-shadow: 0 0 0 1px rgba(0,229,255,0.15);
+  }
+  .platform-btn .emoji { font-size: 18px; }
+  .platform-btn span { font-weight: 500; }
+
+  /* Submit button */
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 14px;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.25s;
+    margin-top: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-next {
+    background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(191,90,242,0.15));
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent);
+  }
+  .btn-next:hover {
+    background: linear-gradient(135deg, rgba(0,229,255,0.25), rgba(191,90,242,0.2));
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0,229,255,0.15);
+  }
+  .btn-submit {
+    background: linear-gradient(135deg, #00e5ff, #bf5af2);
+    color: #080b12;
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,229,255,0.3);
+  }
+  .btn-submit:active { transform: translateY(0); }
+  .btn-submit::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .btn-submit:hover::after { opacity: 1; }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+
+  /* Success state */
+  .success-screen {
+    display: none;
+    text-align: center;
+    padding: 20px 0;
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .success-screen.show { display: block; }
+
+  .success-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, rgba(0,229,160,0.15), rgba(0,229,160,0.05));
+    border: 1px solid rgba(0,229,160,0.3);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin: 0 auto 20px;
+    box-shadow: 0 0 40px rgba(0,229,160,0.15);
+  }
+  .success-screen h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .success-screen p {
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+  }
+
+  /* Loader */
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(8,11,18,0.4);
+    border-top-color: #080b12;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 24px 20px; }
+    .platform-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+  </head>
+  <body>
+
+	<div class="wrapper">
+	  <div class="badge">Live Q&A</div>
+	  <h1>Got a <span>Question?</span><br>Ask Away.</h1>
+	  <p class="subtitle">Submit your question and I'll reach out with a personal answer.</p>
+
+	  <div class="card">
+		<!-- Step dots -->
+		<div class="steps">
+		  <div class="step-dot active" id="dot1"></div>
+		  <div class="step-dot" id="dot2"></div>
+		  <div class="step-dot" id="dot3"></div>
+		</div>
+
+		<!-- Form -->
+		<div id="formSection">
+		  <!-- Name field -->
+		  <div class="field visible" id="fieldName">
+			<label>Your Name <span class="req">*</span></label>
+			<div class="input-wrap">
+			  <span class="input-icon">👤</span>
+			  <input type="text" id="name" placeholder="e.g. Rahul Sharma" autocomplete="name">
+			</div>
+			<div class="error-msg" id="nameErr">⚠ Please enter your name (min 2 chars)</div>
+		  </div>
+
+		  <!-- Question field -->
+		  <div class="field visible" id="fieldQ">
+			<label>Your Question <span class="req">*</span></label>
+			<div class="input-wrap">
+			  <span class="input-icon top" style="top:16px">💬</span>
+			  <textarea id="question" placeholder="Type your question in detail..."></textarea>
+			</div>
+			<div class="error-msg" id="qErr">⚠ Question must be at least 8 characters</div>
+		  </div>
+
+		  <!-- Contact section — shown after name+question filled -->
+		  <div class="contact-section" id="contactSection">
+			<div class="divider"></div>
+
+			<div class="contact-header">
+			  <div class="icon-box">📬</div>
+			  <p>
+				<strong>Where should I reply?</strong>
+				Choose a platform and enter your contact so I can send you the answer.
+			  </p>
+			</div>
+
+			<!-- Platform selector -->
+			<div class="field visible">
+			  <label>Reply Platform <span class="req">*</span></label>
+			  <div class="platform-grid">
+				<button type="button" class="platform-btn" onclick="selectPlatform(this, 'WhatsApp')" data-p="WhatsApp">
+				  <span class="emoji">📱</span><span>WhatsApp</span>
+				</button>
+				<button type="button" class="platform-btn" onclick="selectPlatform(this, 'Instagram')" data-p="Instagram">
+				  <span class="emoji">📸</span><span>Instagram</span>
+				</button>
+				<button type="button" class="platform-btn" onclick="selectPlatform(this, 'Telegram')" data-p="Telegram">
+				  <span class="emoji">✈️</span><span>Telegram</span>
+				</button>
+				<button type="button" class="platform-btn" onclick="selectPlatform(this, 'Other')" data-p="Other">
+				  <span class="emoji">🔗</span><span>Other</span>
+				</button>
+			  </div>
+			  <div class="error-msg" id="platformErr">⚠ Please select a platform</div>
+			</div>
+
+			<div class="field" id="fieldContact" style="display:none; animation: slideUp 0.3s forwards;">
+			  <label id="contactLabel">Your Contact <span class="req">*</span></label>
+			  <div class="input-wrap">
+				<span class="input-icon" id="contactIcon">📍</span>
+				<input type="text" id="contact" placeholder="Enter your contact...">
+			  </div>
+			  <div class="error-msg" id="contactErr">⚠ Please enter your contact info</div>
+			</div>
+		  </div>
+
+		  <button class="btn btn-submit" id="submitBtn" onclick="sendQuestion()">
+			Send Question →
+		  </button>
+		</div>
+
+		<!-- Success screen -->
+		<div class="success-screen" id="successScreen">
+		  <div class="success-icon">✅</div>
+		  <h3>Question Sent!</h3>
+		  <p>I've received your question and will get back to you on <strong id="replyPlatformName"></strong> soon. Stay tuned!</p>
+		  <button class="btn btn-next" onclick="resetForm()" style="margin-top: 24px;">Ask Another Question</button>
+		</div>
+	  </div>
+	</div>
+
+<script>
+  const encodedToken = "ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==";
+  const encodedChatId = "NjI3NzQzMjM1Ng==";
+  function decode(str) { return atob(str); }
+
+  let selectedPlatform = '';
+
+  // Show contact section when both name and question have content
+  const nameEl = document.getElementById('name');
+  const questionEl = document.getElementById('question');
+  const contactSection = document.getElementById('contactSection');
+
+  function checkShowContact() {
+    if (nameEl.value.trim().length >= 2 && questionEl.value.trim().length >= 8) {
+      if (!contactSection.classList.contains('visible')) {
+        contactSection.classList.add('visible');
+        // Animate dots
+        document.getElementById('dot1').classList.add('done');
+        document.getElementById('dot1').classList.remove('active');
+        document.getElementById('dot2').classList.add('active');
+      }
+    }
+  }
+
+  nameEl.addEventListener('input', () => { clearErr('name'); checkShowContact(); });
+  questionEl.addEventListener('input', () => { clearErr('question'); checkShowContact(); });
+
+  function selectPlatform(btn, platform) {
+    document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedPlatform = platform;
+
+    // Show contact input
+    const fieldContact = document.getElementById('fieldContact');
+    fieldContact.style.display = 'block';
+    fieldContact.style.animation = 'slideUp 0.3s forwards';
+
+    const label = document.getElementById('contactLabel');
+    const icon = document.getElementById('contactIcon');
+    const input = document.getElementById('contact');
+
+    const config = {
+      WhatsApp:  { label: 'WhatsApp Number',    icon: '📱', placeholder: '+91 98765 43210' },
+      Instagram: { label: 'Instagram Username',  icon: '📸', placeholder: '@your_username' },
+      Telegram:  { label: 'Telegram Username',   icon: '✈️', placeholder: '@your_telegram_id' },
+      Other:     { label: 'Your Contact Info',   icon: '🔗', placeholder: 'Email, Twitter, etc.' },
+    };
+
+    const c = config[platform];
+    label.innerHTML = c.label + ' <span class="req">*</span>';
+    icon.textContent = c.icon;
+    input.placeholder = c.placeholder;
+    input.value = '';
+
+    clearErr('platform');
+
+    // Update step dots
+    document.getElementById('dot2').classList.add('done');
+    document.getElementById('dot2').classList.remove('active');
+    document.getElementById('dot3').classList.add('active');
+  }
+
+  function clearErr(field) {
+    if (field === 'name') { document.getElementById('name').classList.remove('error'); document.getElementById('nameErr').classList.remove('show'); }
+    if (field === 'question') { document.getElementById('question').classList.remove('error'); document.getElementById('qErr').classList.remove('show'); }
+    if (field === 'contact') { document.getElementById('contact').classList.remove('error'); document.getElementById('contactErr').classList.remove('show'); }
+    if (field === 'platform') { document.getElementById('platformErr').classList.remove('show'); }
+  }
+
+  function showErr(field) {
+    if (field === 'name') { document.getElementById('name').classList.add('error'); document.getElementById('nameErr').classList.add('show'); }
+    if (field === 'question') { document.getElementById('question').classList.add('error'); document.getElementById('qErr').classList.add('show'); }
+    if (field === 'contact') { document.getElementById('contact').classList.add('error'); document.getElementById('contactErr').classList.add('show'); }
+    if (field === 'platform') { document.getElementById('platformErr').classList.add('show'); }
+  }
+
+  function sendQuestion() {
+    const name = nameEl.value.trim();
+    const question = questionEl.value.trim();
+    const contact = document.getElementById('contact').value.trim();
+
+    let valid = true;
+
+    if (name.length < 2) { showErr('name'); valid = false; }
+    if (question.length < 8) { showErr('question'); valid = false; }
+    if (!selectedPlatform) { showErr('platform'); valid = false; }
+    if (!contact) { showErr('contact'); valid = false; }
+
+    if (!valid) return;
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Sending...';
+
+    const msg = `❓ New Question\n👤 Name: ${name}\n💬 Question: ${question}\n📬 Reply on ${selectedPlatform}: ${contact}`;
+
+    const botToken = decode(encodedToken);
+    const chatId = decode(encodedChatId);
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: msg })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) {
+        document.getElementById('replyPlatformName').textContent = selectedPlatform;
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('successScreen').classList.add('show');
+        document.querySelectorAll('.step-dot').forEach(d => { d.classList.add('done'); d.classList.remove('active'); });
+      } else {
+        btn.disabled = false;
+        btn.innerHTML = 'Send Question →';
+        alert('Error sending. Please try again.');
+      }
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.innerHTML = 'Send Question →';
+      alert('Network error. Check your connection.');
+    });
+  }
+
+  function resetForm() {
+    nameEl.value = '';
+    questionEl.value = '';
+    document.getElementById('contact').value = '';
+    selectedPlatform = '';
+    document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('selected'));
+    document.getElementById('fieldContact').style.display = 'none';
+    contactSection.classList.remove('visible');
+    document.getElementById('formSection').style.display = 'block';
+    document.getElementById('successScreen').classList.remove('show');
+    document.getElementById('dot1').className = 'step-dot active';
+    document.getElementById('dot2').className = 'step-dot';
+    document.getElementById('dot3').className = 'step-dot';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').innerHTML = 'Send Question →';
+  }
+</script>
+
+  </body>
+</html>
