@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>शब्दों की दुनिया — Rahul Kumar Puri</title>
+	<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Hindi:ital@0;1&family=Noto+Serif+Devanagari:wght@300;400;500;600;700&family=Yatra+One&family=Abril+Fatface&display=swap" rel="stylesheet"/>
+<style>
+    :root {
+      --ink: #1a0a00;
+      --paper: #fdf6e3;
+      --gold: #c8962a;
+      --gold-light: #e8b84b;
+      --rust: #8b2500;
+      --cream: #f5ead0;
+      --shadow: #3d1a00;
+      --accent: #6b1a1a;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--ink);
+      color: var(--paper);
+      font-family: 'Noto Serif Devanagari', serif;
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* Custom cursor */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, background 0.3s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--gold-light);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.3s, height 0.3s;
+      opacity: 0.5;
+    }
+
+    /* Noise grain overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.35;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 3rem 1.5rem;
+    }
+
+    /* Radial glow behind hero text */
+    .hero::after {
+      content: '';
+      position: absolute;
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(200,150,42,0.12) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    /* Decorative diagonal lines */
+    .hero-lines {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .hero-lines span {
+      position: absolute;
+      display: block;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(200,150,42,0.18), transparent);
+      animation: lineDrift 8s ease-in-out infinite;
+    }
+    .hero-lines span:nth-child(1) { left: 12%; height: 60%; top: 20%; animation-delay: 0s; }
+    .hero-lines span:nth-child(2) { left: 28%; height: 80%; top: 5%; animation-delay: 1.4s; }
+    .hero-lines span:nth-child(3) { left: 72%; height: 70%; top: 10%; animation-delay: 0.7s; }
+    .hero-lines span:nth-child(4) { left: 88%; height: 55%; top: 25%; animation-delay: 2s; }
+
+    @keyframes lineDrift {
+      0%, 100% { opacity: 0.3; transform: scaleY(1); }
+      50% { opacity: 0.8; transform: scaleY(1.1); }
+    }
+
+    .hero-ornament {
+      font-size: 1.1rem;
+      letter-spacing: 0.6em;
+      color: var(--gold);
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s 0.3s forwards;
+      font-family: 'Abril Fatface', serif;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(2.8rem, 9vw, 7.5rem);
+      line-height: 1.1;
+      text-align: center;
+      background: linear-gradient(135deg, var(--gold-light) 0%, #fff5d6 40%, var(--gold) 70%, var(--rust) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      animation: fadeUp 1.2s 0.6s forwards;
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-subtitle {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: clamp(1.2rem, 3.5vw, 2rem);
+      color: var(--cream);
+      opacity: 0;
+      animation: fadeUp 1.2s 1s forwards;
+      margin-top: 0.5rem;
+      letter-spacing: 0.08em;
+    }
+
+    .hero-divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 2.5rem 0;
+      opacity: 0;
+      animation: fadeUp 1s 1.3s forwards;
+      width: min(400px, 80vw);
+    }
+    .hero-divider::before,
+    .hero-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+    .hero-divider-icon { color: var(--gold); font-size: 1.3rem; }
+
+    .hero-poet {
+      font-family: 'Noto Serif Devanagari', serif;
+      font-size: clamp(0.9rem, 2vw, 1.15rem);
+      color: rgba(245,234,208,0.65);
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: fadeUp 1s 1.5s forwards;
+    }
+    .hero-poet strong {
+      color: var(--gold-light);
+      font-weight: 600;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0;
+      animation: fadeUp 1s 2.2s forwards;
+      color: rgba(200,150,42,0.5);
+      font-size: 0.7rem;
+      letter-spacing: 0.3em;
+    }
+    .scroll-hint .arrow {
+      width: 20px; height: 20px;
+      border-right: 1px solid var(--gold);
+      border-bottom: 1px solid var(--gold);
+      transform: rotate(45deg);
+      animation: bounce 1.8s ease-in-out infinite;
+      opacity: 0.6;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: rotate(45deg) translateY(0); }
+      50% { transform: rotate(45deg) translateY(6px); }
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-label {
+      text-align: center;
+      padding: 5rem 1.5rem 1rem;
+    }
+    .section-label p {
+      font-family: 'Abril Fatface', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.5em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+    }
+    .section-label h2 {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(1.6rem, 4vw, 2.8rem);
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* ── POETRY GRID ── */
+    .poetry-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+      gap: 2.5rem;
+      max-width: 1200px;
+      margin: 3rem auto 0;
+      padding: 0 2rem 6rem;
+    }
+
+    /* ── POETRY CARD ── */
+    .poetry-card {
+      position: relative;
+      background: linear-gradient(145deg, rgba(255,245,210,0.04) 0%, rgba(200,150,42,0.06) 100%);
+      border: 1px solid rgba(200,150,42,0.22);
+      border-radius: 4px;
+      padding: 3rem 2.5rem 2.5rem;
+      overflow: hidden;
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease, border-color 0.4s;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .poetry-card.visible {
+      animation: cardReveal 0.9s cubic-bezier(0.22,1,0.36,1) forwards;
+    }
+    @keyframes cardReveal {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .poetry-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(200,150,42,0.55);
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 40px rgba(200,150,42,0.08);
+    }
+
+    /* Card corner ornaments */
+    .poetry-card::before,
+    .poetry-card::after {
+      content: '';
+      position: absolute;
+      width: 28px; height: 28px;
+      border-color: var(--gold);
+      border-style: solid;
+      opacity: 0.4;
+    }
+    .poetry-card::before {
+      top: 14px; left: 14px;
+      border-width: 1px 0 0 1px;
+    }
+    .poetry-card::after {
+      bottom: 14px; right: 14px;
+      border-width: 0 1px 1px 0;
+    }
+
+    .card-number {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.8rem;
+      font-family: 'Abril Fatface', serif;
+      font-size: 3.5rem;
+      color: rgba(200,150,42,0.07);
+      line-height: 1;
+      user-select: none;
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(200,150,42,0.3);
+      padding: 0.25rem 0.75rem;
+      border-radius: 2px;
+      margin-bottom: 1.4rem;
+      font-family: 'Abril Fatface', serif;
+    }
+
+    .card-title {
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      line-height: 1.3;
+      background: linear-gradient(135deg, #fff5d6, var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.6rem;
+    }
+
+    .card-divider {
+      width: 50px;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      margin-bottom: 1.6rem;
+    }
+
+    .card-poem {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 2.1;
+      color: rgba(245,234,208,0.82);
+      font-weight: 400;
+    }
+    .card-poem .line {
+      display: block;
+      transition: color 0.3s, letter-spacing 0.3s;
+    }
+    .poetry-card:hover .card-poem .line {
+      color: rgba(245,234,208,0.96);
+    }
+    .card-poem .couplet-break {
+      display: block;
+      height: 0.8em;
+    }
+
+    /* Hover shimmer */
+    .poetry-card .shimmer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, transparent 40%, rgba(200,150,42,0.04) 50%, transparent 60%);
+      background-size: 200% 200%;
+      transition: background-position 0.6s;
+      pointer-events: none;
+    }
+    .poetry-card:hover .shimmer {
+      background-position: 100% 100%;
+    }
+
+    /* ── FOLLOW SECTION ── */
+    .follow-section {
+      position: relative;
+      background: linear-gradient(180deg, transparent 0%, rgba(200,150,42,0.06) 50%, transparent 100%);
+      border-top: 1px solid rgba(200,150,42,0.15);
+      border-bottom: 1px solid rgba(200,150,42,0.15);
+      padding: 5rem 2rem;
+      text-align: center;
+      overflow: hidden;
+    }
+    .follow-section::before {
+      content: '✦ ✦ ✦';
+      position: absolute;
+      top: 2rem; left: 50%;
+      transform: translateX(-50%);
+      color: rgba(200,150,42,0.2);
+      font-size: 0.8rem;
+      letter-spacing: 1em;
+    }
+
+    .follow-text {
+      font-family: 'Tiro Devanagari Hindi', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+      color: rgba(245,234,208,0.75);
+      line-height: 1.8;
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+    }
+    .follow-text strong {
+      display: block;
+      font-family: 'Yatra One', cursive;
+      font-size: clamp(1.3rem, 3vw, 1.9rem);
+      background: linear-gradient(135deg, var(--gold-light), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+
+    .insta-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1rem 2.5rem;
+      border: 1px solid var(--gold);
+      color: var(--gold-light);
+      text-decoration: none;
+      font-family: 'Abril Fatface', serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      position: relative;
+      overflow: hidden;
+      transition: color 0.4s, box-shadow 0.4s;
+      border-radius: 2px;
+    }
+    .insta-btn::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
+      z-index: 0;
+    }
+    .insta-btn:hover::before { transform: scaleX(1); }
+    .insta-btn:hover { color: var(--ink); box-shadow: 0 10px 40px rgba(200,150,42,0.3); }
+    .insta-btn span, .insta-btn svg { position: relative; z-index: 1; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2.5rem 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(200,150,42,0.1);
+    }
+    footer p {
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      color: rgba(245,234,208,0.25);
+      font-family: 'Abril Fatface', serif;
+      text-transform: uppercase;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Floating particles */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      width: 2px; height: 2px;
+      background: var(--gold);
+      border-radius: 50%;
+      opacity: 0;
+      animation: particleFloat linear infinite;
+    }
+    @keyframes particleFloat {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      10%  { opacity: 0.6; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+    }
+
+    @media (max-width: 600px) {
+      .poetry-card { padding: 2.5rem 1.8rem 2rem; }
+      .poetry-grid { padding: 0 1rem 4rem; gap: 1.8rem; }
+    }
+</style>
+  </head>
+  <body>
+
+	<!-- Cursor -->
+	<div class="cursor" id="cursor"></div>
+	<div class="cursor-ring" id="cursorRing"></div>
+
+	<!-- ── HERO ── -->
+	<section class="hero">
+	  <div class="hero-lines">
+		<span></span><span></span><span></span><span></span>
+	  </div>
+
+	  <p class="hero-ornament">✦ &nbsp; काव्य संग्रह &nbsp; ✦</p>
+
+	  <h1 class="hero-title">
+		शब्दों की दुनिया में
+	  </h1>
+
+	  <p class="hero-subtitle">आपका स्वागत है</p>
+
+	  <div class="hero-divider">
+		<span class="hero-divider-icon">❧</span>
+	  </div>
+
+	  <p class="hero-poet">कवि — <strong>Rahul Kumar Puri</strong></p>
+
+	  <div class="scroll-hint">
+		<span style="margin-bottom:0.5rem">पढ़ें</span>
+		<div class="arrow"></div>
+	  </div>
+	</section>
+
+	<!-- ── SECTION HEADER ── -->
+	<div class="section-label">
+	  <p>✦ &nbsp; चुनिंदा रचनाएँ &nbsp; ✦</p>
+	  <h2>कविताएँ</h2>
+	</div>
+
+	<!-- ── POETRY GRID ── -->
+	<div class="poetry-grid">
+
+	  <!-- Card 1 -->
+	  <article class="poetry-card" data-delay="0">
+		<div class="shimmer"></div>
+		<span class="card-number">०१</span>
+		<span class="card-tag">प्रेम</span>
+		<h2 class="card-title">तुम बिन</h2>
+		<div class="card-divider"></div>
+		<div class="card-poem">
+		  <span class="line">तुम बिन रातें सूनी लगती हैं,</span>
+		  <span class="line">आँखें नम, पर बातें रुकी लगती हैं।</span>
+		  <span class="couplet-break"></span>
+		  <span class="line">हर साँस में बसी है तेरी ख़ुशबू,</span>
+		  <span class="line">दिल कहता है — आजा, बहुत देर हो गई अब।</span>
+		  <span class="couplet-break"></span>
+		  <span class="line">न चाँद चाहिए, न तारों की रोशनी,</span>
+		  <span class="line">बस तेरी एक झलक — यही है ज़िंदगी।</span>
+		</div>
+	  </article>
+
+	  <!-- Card 2 -->
+	  <article class="poetry-card" data-delay="150">
+		<div class="shimmer"></div>
+		<span class="card-number">०२</span>
+		<span class="card-tag">ज़िंदगी</span>
+		<h2 class="card-title">वक़्त की रेत</h2>
+		<div class="card-divider"></div>
+		<div class="card-poem">
+		  <span class="line">वक़्त की रेत फिसलती जाती है,</span>
+		  <span class="line">हर लम्हा कुछ कह के गुज़र जाता है।</span>
+		  <span class="couplet-break"></span>
+		  <span class="line">जो बीत गया वो याद बन जाता है,</span>
+		  <span class="line">जो आने वाला है — वो उम्मीद बनाता है।</span>
+		  <span class="couplet-break"></span>
+		  <span class="line">न रो उस पर जो अब नहीं रहा,</span>
+		  <span class="line">जी उस पल को जो अभी तेरे पास है।</span>
+		</div>
+	  </article>
+
+	  <!-- Card 3 -->
+	  <article class="poetry-card" data-delay="300">
+		<div class="shimmer"></div>
+		<span class="card-number">०३</span>
+		<span class="card-tag">आत्मा</span>
+		<h2 class="card-title">ख़ामोशी बोलती है</h2>
+		<div class="card-divider"></div>
+		<div class="card-poem">
+		  <span class="line">ख़ामोशी भी बोलती है अपनी ज़ुबान में,</span>
+		  <span class="line">जो नहीं कहा — वो भी है इस दास्तान में।</span>
+		  <span class="couplet-break"></span>
+		  <span class="line">आँखों के पीछे एक समंदर छुपा है,</span>
+		  <span class="line">लफ़्ज़ों से परे — एक दर्द दबा है।</span>
+		  <span class="couplet-break"></span>
+		  <span class="line">जब शोर थम जाता है हर तरफ़ से,</span>
+		  <span class="line">तब दिल की बात सुनाई देती है — बस अपने आप से।</span>
+		</div>
+	  </article>
+
+	</div>
+
+	<!-- ── FOLLOW SECTION ── -->
+	<section class="follow-section">
+	  <div class="follow-text">
+		<strong>नई कविता सबसे पहले आप तक पहुँचे —</strong>
+		इसके लिए अभी follow करें।
+	  </div>
+	  <a href="https://www.instagram.com/iampoetrahul" target="_blank" rel="noopener noreferrer" class="insta-btn">
+		<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24">
+		  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+		</svg>
+		<span>@iampoetrahul</span>
+	  </a>
+	</section>
+
+	<!-- ── FOOTER ── -->
+	<footer>
+	  <p>© 2025 Rahul Kumar Puri &nbsp;·&nbsp; शब्दों की दुनिया &nbsp;·&nbsp; सर्वाधिकार सुरक्षित</p>
+	</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX + 'px';
+    cursor.style.top  = e.clientY + 'px';
+    setTimeout(() => {
+      ring.style.left = e.clientX + 'px';
+      ring.style.top  = e.clientY + 'px';
+    }, 80);
+  });
+  document.querySelectorAll('a, .poetry-card').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';
+      ring.style.width = '60px'; ring.style.height = '60px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+      ring.style.width = '36px'; ring.style.height = '36px';
+    });
+  });
+
+  // Scroll reveal for cards
+  const cards = document.querySelectorAll('.poetry-card');
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const delay = parseInt(entry.target.dataset.delay) || 0;
+        setTimeout(() => entry.target.classList.add('visible'), delay);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  cards.forEach(c => observer.observe(c));
+
+  // Floating particles
+  function spawnParticle() {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + 'vw';
+    const dur = 8 + Math.random() * 14;
+    p.style.animationDuration = dur + 's';
+    p.style.animationDelay = Math.random() * 5 + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    document.body.appendChild(p);
+    setTimeout(() => p.remove(), (dur + 5) * 1000);
+  }
+  for (let i = 0; i < 18; i++) setTimeout(spawnParticle, i * 400);
+  setInterval(spawnParticle, 1800);
+</script>
+  </body>
+</html>
