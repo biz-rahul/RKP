@@ -81,6 +81,17 @@
   cursor: pointer;
 }
 
+.poetry-block {
+  text-align: center;
+}
+
+.poetry-heading {
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 1.3rem;
+  color: var(--gold-light);
+  margin-bottom: 1rem;
+  letter-spacing: 0.08em;
+}
 	
 	/* ── POETRY TITLE ── */
 .poetry-title {
@@ -697,48 +708,51 @@
 		<h2 class="section-title">मेरी <em>कविताएँ</em></h2>
 	  </div>
 
-	  <div class="poetry-grid" id="poetryGrid">
+	  
+		<div class="poetry-grid" id="poetryGrid">
 
-  <!-- IMAGE CARD -->
-  <div class="media-card">
-    <img src="1.webp" alt="poetry">
-	<div class="poetry-title">खामोशी की आवाज़</div>
+  <div class="poetry-block">
+    <p class="poetry-heading">खामोशी की आवाज़</p>
+    <div class="media-card"><img src="1.webp"></div>
   </div>
 
-  <div class="media-card">
-    <img src="2.jpg" alt="poetry">
-	<div class="poetry-title">खामोशी की आवाज़</div>
+  <div class="poetry-block">
+    <p class="poetry-heading">अधूरी मोहब्बत</p>
+    <div class="media-card"><img src="2.jpg"></div>
   </div>
 
-  <div class="media-card">
-    <img src="3.webp" alt="poetry">
-	<div class="poetry-title">खामोशी की आवाज़</div>
+  <div class="poetry-block">
+    <p class="poetry-heading">रात का सफर</p>
+    <div class="media-card"><img src="3.webp"></div>
   </div>
 
-  <div class="media-card">
-    <img src="4.png" alt="poetry">
-	<div class="poetry-title">खामोशी की आवाज़</div>
+  <div class="poetry-block">
+    <p class="poetry-heading">दिल की बातें</p>
+    <div class="media-card"><img src="4.png"></div>
   </div>
 
-  <div class="media-card">
-    <img src="5.png" alt="poetry">
-	<div class="poetry-title">खामोशी की आवाज़</div>
+  <div class="poetry-block">
+    <p class="poetry-heading">अंतिम ख्वाहिश</p>
+    <div class="media-card"><img src="5.png"></div>
   </div>
 
-  <!-- VIDEO CARD -->
-  <div class="media-card video-card">
-    <video src="1.mp4" preload="none"></video>
-	<div class="poetry-title">खामोशी की आवाज़</div>
-    <div class="play-btn">▶</div>
+  <div class="poetry-block">
+    <p class="poetry-heading">जज़्बात</p>
+    <div class="media-card video-card">
+      <video src="1.mp4" preload="metadata"></video>
+      <div class="play-btn">▶</div>
+    </div>
   </div>
 
-  <div class="media-card video-card">
-    <video src="2.mp4" preload="none"></video>
-	<div class="poetry-title">खामोशी की आवाज़</div>
-    <div class="play-btn">▶</div>
+  <div class="poetry-block">
+    <p class="poetry-heading">अनकही कहानी</p>
+    <div class="media-card video-card">
+      <video src="2.mp4" preload="metadata"></video>
+      <div class="play-btn">▶</div>
+    </div>
   </div>
 
-	  </div>
+		</div>
 
 <div style="text-align:center; margin-top:3rem;">
   <button class="download-btn" onclick="startDownload()">Download all my Poetry</button>
