@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Technical Suggestion</title>
+	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --accent: #7c3aed;
+    --accent2: #06b6d4;
+    --glow: rgba(124,58,237,0.35);
+    --glow2: rgba(6,182,212,0.25);
+    --text: #f0eeff;
+    --muted: rgba(240,238,255,0.45);
+    --success: #10b981;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -30%;
+    left: -20%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, rgba(124,58,237,0.18) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(ellipse, rgba(6,182,212,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrapper {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 460px;
+  }
+
+  /* Header badge */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(124,58,237,0.15);
+    border: 1px solid rgba(124,58,237,0.3);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #a78bfa;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: #7c3aed;
+    border-radius: 50%;
+    box-shadow: 0 0 6px #7c3aed;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.4); }
+  }
+
+  .page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(26px, 6vw, 34px);
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 8px;
+    letter-spacing: -0.02em;
+  }
+  .page-title span {
+    background: linear-gradient(135deg, #a78bfa, #06b6d4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .page-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 32px;
+    font-weight: 300;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px var(--border), 0 40px 80px rgba(0,0,0,0.5);
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(124,58,237,0.6), rgba(6,182,212,0.4), transparent);
+  }
+
+  /* Step indicator */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .step {
+    height: 3px;
+    border-radius: 100px;
+    background: var(--surface2);
+    flex: 1;
+    transition: background 0.4s ease;
+    overflow: hidden;
+  }
+  .step.active { background: var(--accent); }
+  .step.done { background: var(--success); }
+  .step-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  /* Field groups */
+  .field {
+    margin-bottom: 18px;
+  }
+  .field label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .field input,
+  .field textarea {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    resize: none;
+    -webkit-appearance: none;
+  }
+  .field input::placeholder,
+  .field textarea::placeholder { color: rgba(240,238,255,0.2); }
+
+  .field input:focus,
+  .field textarea:focus {
+    border-color: rgba(124,58,237,0.6);
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.1);
+  }
+
+  .field textarea { height: 130px; line-height: 1.6; padding-top: 12px; }
+
+  /* Submit button */
+  .btn-submit {
+    width: 100%;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #7c3aed, #4f46e5);
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+    margin-top: 4px;
+  }
+  .btn-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+  }
+  .btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(124,58,237,0.45);
+  }
+  .btn-submit:active { transform: translateY(0); }
+
+  /* ---- STEP 2: Contact Options ---- */
+  .contact-section {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    color: var(--muted);
+    font-size: 12px;
+    letter-spacing: 0.05em;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .contact-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .contact-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 18px;
+    font-weight: 300;
+  }
+  .optional-tag {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(16,185,129,0.12);
+    color: #34d399;
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 100px;
+    padding: 1px 8px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  /* Platform grid */
+  .platform-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+
+  .platform-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+  }
+  .platform-btn:hover { border-color: var(--platform-color); background: rgba(255,255,255,0.04); transform: translateY(-1px); }
+  .platform-btn:hover .platform-icon { filter: drop-shadow(0 0 6px var(--platform-color)); }
+  .platform-btn .platform-icon { font-size: 20px; flex-shrink: 0; }
+  .platform-btn .platform-name { flex: 1; font-weight: 500; }
+  .platform-btn .arrow { font-size: 12px; color: var(--muted); }
+
+  /* Contact input popup */
+  .contact-input-wrap {
+    display: none;
+    margin-top: 14px;
+    animation: fadeUp 0.3s ease;
+  }
+  .contact-input-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .contact-input-header .platform-icon-sm { font-size: 18px; }
+  .contact-input-header span { font-size: 13px; color: var(--muted); }
+
+  .contact-input-row {
+    display: flex;
+    gap: 8px;
+  }
+  .contact-input-row input {
+    flex: 1;
+    background: var(--surface2);
+    border: 1px solid rgba(124,58,237,0.4);
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(124,58,237,0.08);
+    -webkit-appearance: none;
+  }
+  .contact-input-row input::placeholder { color: rgba(240,238,255,0.25); }
+  .contact-input-row input:focus { border-color: rgba(124,58,237,0.7); }
+
+  .btn-save-contact {
+    padding: 12px 18px;
+    background: linear-gradient(135deg, #7c3aed, #06b6d4);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .btn-save-contact:hover { transform: translateY(-1px); box-shadow: 0 8px 20px rgba(124,58,237,0.4); }
+
+  .skip-link {
+    text-align: center;
+    margin-top: 18px;
+  }
+  .skip-link button {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 4px;
+    transition: color 0.2s;
+  }
+  .skip-link button:hover { color: var(--text); }
+
+  /* Success state */
+  .success-card {
+    display: none;
+    text-align: center;
+    padding: 16px 0 8px;
+    animation: fadeUp 0.5s ease;
+  }
+  .success-icon {
+    width: 64px; height: 64px;
+    background: rgba(16,185,129,0.12);
+    border: 1px solid rgba(16,185,129,0.25);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px;
+    margin: 0 auto 18px;
+    box-shadow: 0 0 30px rgba(16,185,129,0.2);
+  }
+  .success-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .success-sub {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .btn-reset {
+    margin-top: 24px;
+    padding: 11px 28px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reset:hover { border-color: rgba(124,58,237,0.4); background: rgba(124,58,237,0.08); }
+
+  /* Error */
+  .error-msg {
+    font-size: 12px;
+    color: #f87171;
+    margin-top: 6px;
+    display: none;
+    padding-left: 2px;
+  }
+
+  /* Char counter */
+  .char-counter {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: right;
+    margin-top: 5px;
+  }
+
+  @media (max-width: 400px) {
+    .card { padding: 24px 18px; }
+    .platform-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+  </head>
+  <body>
+
+	<div class="wrapper">
+	  <div class="badge">Open Feedback</div>
+	  <h1 class="page-title">Share Your<br><span>Technical Vision</span></h1>
+	  <p class="page-sub">Suggest skills, projects, or directions that could push growth further.</p>
+
+	  <div class="card">
+
+		<!-- Step bar -->
+		<div class="steps">
+		  <div class="step active" id="s1"></div>
+		  <div class="step" id="s2"></div>
+		  <div class="step" id="s3"></div>
+		  <span class="step-label" id="stepLabel">Step 1 of 2</span>
+		</div>
+
+		<!-- FORM STEP 1 -->
+		<div id="formStep">
+		  <div class="field">
+			<label>Your Name</label>
+			<input type="text" id="name" placeholder="e.g. Arjun Sharma" maxlength="60" autocomplete="name">
+			<div class="error-msg" id="nameErr">Please enter at least 2 characters.</div>
+		  </div>
+
+		  <div class="field">
+			<label>Suggestion</label>
+			<textarea id="feedback" placeholder="What technical skills, projects, or directions should be explored? Be specific..." maxlength="800"></textarea>
+			<div class="char-counter"><span id="charCount">0</span>/800</div>
+			<div class="error-msg" id="feedbackErr">Please write at least 10 characters.</div>
+		  </div>
+
+		  <button class="btn-submit" onclick="submitForm()">Send Suggestion →</button>
+		</div>
+
+		<!-- STEP 2: Contact Options -->
+		<div class="contact-section" id="contactStep">
+		  <div class="divider">Optional</div>
+		  <div class="contact-title">How can I reach you? <span class="optional-tag">Optional</span></div>
+		  <div class="contact-sub">Leave your contact if you'd like a response — totally up to you.</div>
+
+		  <div class="platform-grid">
+			<button class="platform-btn" style="--platform-color:#25D366" onclick="selectPlatform('whatsapp','WhatsApp Number','📱 WhatsApp number or link')">
+			  <span class="platform-icon">💬</span>
+			  <span class="platform-name">WhatsApp</span>
+			  <span class="arrow">›</span>
+			</button>
+			<button class="platform-btn" style="--platform-color:#E1306C" onclick="selectPlatform('instagram','Instagram Handle','🔗 @yourusername')">
+			  <span class="platform-icon">📸</span>
+			  <span class="platform-name">Instagram</span>
+			  <span class="arrow">›</span>
+			</button>
+			<button class="platform-btn" style="--platform-color:#2CA5E0" onclick="selectPlatform('telegram','Telegram Username','✈️ @username or number')">
+			  <span class="platform-icon">✈️</span>
+			  <span class="platform-name">Telegram</span>
+			  <span class="arrow">›</span>
+			</button>
+			<button class="platform-btn" style="--platform-color:#888" onclick="selectPlatform('other','Other Contact','✏️ Email, Twitter, LinkedIn…')">
+			  <span class="platform-icon">🔗</span>
+			  <span class="platform-name">Other</span>
+			  <span class="arrow">›</span>
+			</button>
+		  </div>
+
+		  <!-- Dynamic contact input -->
+		  <div class="contact-input-wrap" id="contactInputWrap">
+			<div class="contact-input-header">
+			  <span class="platform-icon-sm" id="inputPlatformIcon"></span>
+			  <span id="inputPlatformLabel">Enter your contact</span>
+			</div>
+			<div class="contact-input-row">
+			  <input type="text" id="contactValue" placeholder="">
+			  <button class="btn-save-contact" onclick="finalSend()">Send ✓</button>
+			</div>
+		  </div>
+
+		  <div class="skip-link">
+			<button onclick="finalSend(true)">Skip & submit without contact info</button>
+		  </div>
+		</div>
+
+		<!-- SUCCESS -->
+		<div class="success-card" id="successCard">
+		  <div class="success-icon">✅</div>
+		  <div class="success-title">Suggestion Sent!</div>
+		  <div class="success-sub">Thanks for sharing your thoughts.<br>Your feedback helps shape better direction.</div>
+		  <button class="btn-reset" onclick="resetForm()">Submit Another →</button>
+		</div>
+
+	  </div>
+	</div>
+
+<script>
+  // Obfuscated credentials
+  const encodedToken = "ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==";
+  const encodedChatId = "NjI3NzQzMjM1Ng==";
+
+  function decode(str) { return atob(str); }
+
+  // Char counter
+  const feedbackEl = document.getElementById('feedback');
+  feedbackEl.addEventListener('input', () => {
+    document.getElementById('charCount').textContent = feedbackEl.value.length;
+  });
+
+  let storedName = '', storedFeedback = '', selectedPlatform = '';
+
+  function submitForm() {
+    const name = document.getElementById('name').value.trim();
+    const feedback = feedbackEl.value.trim();
+    let valid = true;
+
+    document.getElementById('nameErr').style.display = 'none';
+    document.getElementById('feedbackErr').style.display = 'none';
+
+    if (name.length < 2) {
+      document.getElementById('nameErr').style.display = 'block';
+      valid = false;
+    }
+    if (feedback.length < 10) {
+      document.getElementById('feedbackErr').style.display = 'block';
+      valid = false;
+    }
+    if (!valid) return;
+
+    storedName = name;
+    storedFeedback = feedback;
+
+    // Move to step 2
+    document.getElementById('formStep').style.display = 'none';
+    document.getElementById('contactStep').style.display = 'block';
+    document.getElementById('s1').classList.add('done');
+    document.getElementById('s2').classList.add('active');
+    document.getElementById('stepLabel').textContent = 'Step 2 of 2';
+  }
+
+  const platformMeta = {
+    whatsapp:  { icon: '💬', label: 'Your WhatsApp number' },
+    instagram: { icon: '📸', label: 'Your Instagram handle' },
+    telegram:  { icon: '✈️', label: 'Your Telegram username' },
+    other:     { icon: '🔗', label: 'Your contact info' }
+  };
+
+  function selectPlatform(platform, label, placeholder) {
+    selectedPlatform = platform;
+    const wrap = document.getElementById('contactInputWrap');
+    wrap.style.display = 'block';
+    document.getElementById('inputPlatformIcon').textContent = platformMeta[platform].icon;
+    document.getElementById('inputPlatformLabel').textContent = label;
+    document.getElementById('contactValue').placeholder = placeholder;
+    document.getElementById('contactValue').focus();
+
+    // Highlight active btn
+    document.querySelectorAll('.platform-btn').forEach(b => b.style.borderColor = '');
+    event.currentTarget.style.borderColor = 'rgba(124,58,237,0.6)';
+  }
+
+  function finalSend(skip = false) {
+    const contactVal = skip ? '' : document.getElementById('contactValue').value.trim();
+    let msg = `🧠 Technical Suggestion\n━━━━━━━━━━━━\nFrom: ${storedName}\nFeedback: ${storedFeedback}`;
+    if (contactVal) {
+      msg += `\n━━━━━━━━━━━━\n📩 Contact [${selectedPlatform || 'other'}]: ${contactVal}`;
+    } else {
+      msg += `\n━━━━━━━━━━━━\n📩 No contact info provided`;
+    }
+
+    const botToken = decode(encodedToken);
+    const chatId = decode(encodedChatId);
+
+    fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chat_id: chatId, text: msg })
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.ok) showSuccess();
+      else alert('Error sending. Please try again.');
+    })
+    .catch(() => alert('Network error. Please check connection.'));
+  }
+
+  function showSuccess() {
+    document.getElementById('contactStep').style.display = 'none';
+    document.getElementById('successCard').style.display = 'block';
+    document.getElementById('s2').classList.add('done');
+    document.getElementById('s3').classList.add('active', 'done');
+    document.getElementById('stepLabel').textContent = 'Done!';
+  }
+
+  function resetForm() {
+    document.getElementById('name').value = '';
+    document.getElementById('feedback').value = '';
+    document.getElementById('charCount').textContent = '0';
+    document.getElementById('contactValue').value = '';
+    document.getElementById('contactInputWrap').style.display = 'none';
+    document.getElementById('formStep').style.display = 'block';
+    document.getElementById('contactStep').style.display = 'none';
+    document.getElementById('successCard').style.display = 'none';
+    ['s1','s2','s3'].forEach(id => {
+      document.getElementById(id).classList.remove('active','done');
+    });
+    document.getElementById('s1').classList.add('active');
+    document.getElementById('stepLabel').textContent = 'Step 1 of 2';
+    selectedPlatform = '';
+    document.querySelectorAll('.platform-btn').forEach(b => b.style.borderColor = '');
+  }
+</script>
+  </body>
+</html>
