@@ -801,7 +801,6 @@
 	</footer>
 	
 </div>
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 	  
 <script>
@@ -841,7 +840,7 @@
   cards.forEach(c => observer.observe(c));
 
 
-document.getElementById("downloadPDF").addEventListener("click", async () => {
+	document.getElementById("downloadPDF").addEventListener("click", async () => {
 
   const loader = document.getElementById("pdfLoader");
   const progressFill = document.getElementById("progressFill");
@@ -849,77 +848,90 @@ document.getElementById("downloadPDF").addEventListener("click", async () => {
 
   loader.classList.add("active");
 
-  const { jsPDF } = window.jspdf;
-
   function update(p) {
     progressFill.style.width = p + "%";
     progressText.innerText = p + "%";
   }
 
-  try {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF("p", "mm", "a4");
 
-    const element = document.getElementById("captureArea");
+  const pageWidth = 210;
+  const margin = 20;
+  let y = 25;
 
-    update(10);
+  const lineHeight = 8;
 
-    // Reduce complexity
-    document.querySelectorAll('.cursor, .cursor-ring, .particle').forEach(el => {
-      el.style.display = "none";
-    });
+  update(10);
 
-    await new Promise(r => setTimeout(r, 300));
+  const cards = document.querySelectorAll(".poetry-card");
+  const total = cards.length;
+  let count = 0;
 
-    update(25);
+  cards.forEach((card, index) => {
 
-    // Capture with safer scale
-    const canvas = await html2canvas(element, {
-      scale: 2, // 🔥 reduced (prevents crash)
-      useCORS: true,
-      backgroundColor: "#1a0a00"
-    });
+    const title = card.querySelector(".card-title")?.innerText || "";
+    const tag = card.querySelector(".card-tag")?.innerText || "";
+    const lines = [...card.querySelectorAll(".line")].map(l => l.innerText);
 
-    update(55);
-
-    const imgData = canvas.toDataURL("image/jpeg", 0.95);
-
-    const pdf = new jsPDF("p", "mm", "a4");
-
-    const pageWidth = 210;
-    const pageHeight = 297;
-
-    const imgWidth = pageWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    let heightLeft = imgHeight;
-    let position = 0;
-
-    update(70);
-
-    pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
+    // New page for each poem
+    if (index !== 0) {
       pdf.addPage();
-      pdf.addImage(imgData, "JPEG", 0, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+      y = 25;
     }
 
-    update(90);
+    // Title
+    pdf.setFont("Times", "Bold");
+    pdf.setFontSize(18);
+    pdf.text(title, margin, y);
+    y += 10;
 
-    pdf.save("Rahul-Poetry.pdf");
+    // Tag
+    pdf.setFont("Times", "Italic");
+    pdf.setFontSize(10);
+    pdf.text(tag, margin, y);
+    y += 10;
 
-    update(100);
+    // Divider
+    pdf.setDrawColor(180);
+    pdf.line(margin, y, pageWidth - margin, y);
+    y += 10;
 
-    setTimeout(() => {
-      location.reload();
-    }, 1000);
+    // Poem
+    pdf.setFont("Times", "Normal");
+    pdf.setFontSize(13);
 
-  } catch (err) {
-    console.error("PDF ERROR:", err);
-    alert("PDF failed due to size/complexity. Optimized fallback needed.");
+    lines.forEach(line => {
+
+      const split = pdf.splitTextToSize(line, pageWidth - margin * 2);
+
+      split.forEach(s => {
+        if (y > 280) {
+          pdf.addPage();
+          y = 25;
+        }
+        pdf.text(s, margin, y);
+        y += lineHeight;
+      });
+
+      y += 2;
+    });
+
+    count++;
+    update(10 + Math.floor((count / total) * 80));
+
+  });
+
+  update(95);
+
+  pdf.save("Rahul-Poetry.pdf");
+
+  update(100);
+
+  setTimeout(() => {
     location.reload();
-  }
+  }, 1000);
+
 });
 
     
