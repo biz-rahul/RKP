@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>404 — Page Not Found | rahulpuri.fun</title>
+	<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #050508;
+      --surface: #0d0d14;
+      --accent: #ff2d55;
+      --accent2: #00f5d4;
+      --accent3: #f5c518;
+      --text: #e8e8f0;
+      --muted: #44445a;
+      --glow: rgba(255, 45, 85, 0.4);
+      --glow2: rgba(0, 245, 212, 0.3);
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      cursor: none;
+    }
+
+    /* === CUSTOM CURSOR === */
+    #cursor {
+      position: fixed; top: 0; left: 0; z-index: 9999;
+      width: 12px; height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, background 0.2s;
+      mix-blend-mode: difference;
+    }
+    #cursor-ring {
+      position: fixed; top: 0; left: 0; z-index: 9998;
+      width: 40px; height: 40px;
+      border: 1.5px solid var(--accent2);
+      border-radius: 50%;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, width 0.2s, height 0.2s, opacity 0.2s;
+      opacity: 0.6;
+    }
+
+    /* === NOISE OVERLAY === */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none; opacity: 0.5;
+    }
+
+    /* === GRID BACKGROUND === */
+    body::after {
+      content: '';
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,45,85,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,45,85,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      animation: gridDrift 20s linear infinite;
+    }
+    @keyframes gridDrift {
+      0% { background-position: 0 0; }
+      100% { background-position: 60px 60px; }
+    }
+
+    /* === CANVAS === */
+    #particleCanvas {
+      position: fixed; inset: 0; z-index: 2;
+      pointer-events: none;
+    }
+
+    /* === GLITCH BLOBS === */
+    .blob {
+      position: fixed; border-radius: 50%;
+      filter: blur(80px); pointer-events: none; z-index: 2;
+      animation: blobFloat 8s ease-in-out infinite;
+    }
+    .blob1 {
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(255,45,85,0.12), transparent 70%);
+      top: -100px; left: -100px;
+      animation-delay: 0s;
+    }
+    .blob2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(0,245,212,0.10), transparent 70%);
+      bottom: -80px; right: -80px;
+      animation-delay: -4s;
+    }
+    .blob3 {
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(245,197,24,0.07), transparent 70%);
+      top: 40%; left: 60%;
+      animation-delay: -2s;
+    }
+    @keyframes blobFloat {
+      0%, 100% { transform: translate(0,0) scale(1); }
+      33% { transform: translate(30px,-20px) scale(1.05); }
+      66% { transform: translate(-20px,15px) scale(0.97); }
+    }
+
+    /* === MAIN WRAPPER === */
+    #scene {
+      position: relative; z-index: 10;
+      width: 100vw; height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0;
+    }
+
+    /* === TOP TICKER === */
+    .ticker-wrap {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      background: var(--accent);
+      height: 32px; overflow: hidden;
+      display: flex; align-items: center;
+    }
+    .ticker-track {
+      display: flex; gap: 0;
+      animation: tickerScroll 18s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-item {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.15em;
+      color: var(--bg);
+      padding: 0 32px;
+    }
+    .ticker-dot {
+      color: rgba(0,0,0,0.35);
+      padding: 0 4px;
+    }
+    @keyframes tickerScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* === CORNER LOGO === */
+    .corner-logo {
+      position: fixed; top: 48px; left: 32px; z-index: 20;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px; letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+      opacity: 0; animation: fadeUp 0.8s ease 0.5s forwards;
+    }
+    .corner-logo span { color: var(--accent2); }
+
+    /* === BIG 404 === */
+    .four-wrap {
+      position: relative;
+      opacity: 0; animation: fadeUp 1s ease 0.2s forwards;
+    }
+    .big-404 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(160px, 25vw, 320px);
+      line-height: 0.85;
+      letter-spacing: -0.02em;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--muted);
+      position: relative;
+      user-select: none;
+    }
+    .big-404 .glitch-layer {
+      position: absolute; inset: 0;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(160px, 25vw, 320px);
+      line-height: 0.85;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--accent);
+      animation: glitchShift 4s steps(1) infinite;
+      clip-path: inset(0 0 0 0);
+    }
+    .big-404 .glitch-layer2 {
+      position: absolute; inset: 0;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(160px, 25vw, 320px);
+      line-height: 0.85;
+      color: transparent;
+      -webkit-text-stroke: 1.5px var(--accent2);
+      animation: glitchShift2 4s steps(1) infinite;
+    }
+
+    @keyframes glitchShift {
+      0%, 94%, 100% { opacity: 0; transform: translate(0,0); clip-path: inset(100% 0 0 0); }
+      95% { opacity: 1; transform: translate(-4px, 2px); clip-path: inset(20% 0 60% 0); }
+      96% { opacity: 1; transform: translate(4px, -1px); clip-path: inset(60% 0 10% 0); }
+      97% { opacity: 0; }
+    }
+    @keyframes glitchShift2 {
+      0%, 96%, 100% { opacity: 0; transform: translate(0,0); clip-path: inset(100% 0 0 0); }
+      97% { opacity: 1; transform: translate(5px, 0); clip-path: inset(40% 0 40% 0); }
+      98% { opacity: 0; }
+    }
+
+    /* === STATUS LINE === */
+    .status-line {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 8px;
+      opacity: 0; animation: fadeUp 0.8s ease 0.4s forwards;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      background: var(--accent); border-radius: 50%;
+      box-shadow: 0 0 12px var(--accent), 0 0 24px var(--glow);
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.6; }
+    }
+    .status-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; letter-spacing: 0.2em;
+      text-transform: uppercase; color: var(--accent);
+    }
+
+    /* === MESSAGE BLOCK === */
+    .message-block {
+      text-align: center; max-width: 540px;
+      margin-top: 24px;
+      opacity: 0; animation: fadeUp 0.8s ease 0.6s forwards;
+    }
+    .message-title {
+      font-family: 'DM Sans', sans-serif;
+      font-size: clamp(20px, 3vw, 28px);
+      font-weight: 300;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+    .message-title strong {
+      font-weight: 500;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .message-sub {
+      margin-top: 10px;
+      font-size: 14px; color: var(--muted);
+      line-height: 1.6; letter-spacing: 0.01em;
+    }
+    .url-pill {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 6px 16px;
+      background: rgba(255,45,85,0.08);
+      border: 1px solid rgba(255,45,85,0.2);
+      border-radius: 100px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px; color: var(--accent);
+      letter-spacing: 0.05em;
+      word-break: break-all;
+    }
+
+    /* === ACTIONS === */
+    .actions {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 36px;
+      opacity: 0; animation: fadeUp 0.8s ease 0.8s forwards;
+    }
+    .btn {
+      position: relative; overflow: hidden;
+      padding: 13px 28px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      border: none; border-radius: 4px;
+      cursor: none; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.08);
+      transform: translateX(-101%);
+      transition: transform 0.3s ease;
+    }
+    .btn:hover::before { transform: translateX(0); }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 20px var(--glow), 0 4px 12px rgba(255,45,85,0.3);
+    }
+    .btn-primary:hover { box-shadow: 0 0 30px var(--glow), 0 8px 24px rgba(255,45,85,0.4); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--muted);
+    }
+    .btn-ghost:hover { border-color: var(--accent2); color: var(--accent2); }
+    .btn-icon { font-size: 15px; }
+
+    /* === BOTTOM SCANLINE === */
+    .scanline {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: 2px; z-index: 20;
+      background: linear-gradient(90deg, transparent, var(--accent2), var(--accent), transparent);
+      animation: scanMove 3s ease-in-out infinite;
+    }
+    @keyframes scanMove {
+      0% { transform: scaleX(0) translateX(-100%); opacity: 0; }
+      20% { opacity: 1; }
+      80% { opacity: 1; }
+      100% { transform: scaleX(1) translateX(0); opacity: 0; }
+    }
+
+    /* === CORNER COORDS === */
+    .coord {
+      position: fixed; z-index: 20;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px; color: var(--muted);
+      letter-spacing: 0.1em;
+      opacity: 0; animation: fadeUp 0.8s ease 1s forwards;
+    }
+    .coord-bl { bottom: 20px; left: 24px; }
+    .coord-br { bottom: 20px; right: 24px; text-align: right; }
+
+    /* === FADE UP === */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* === GLITCH HORIZONTAL LINES === */
+    .glitch-line {
+      position: fixed; left: 0; right: 0; height: 1px;
+      background: var(--accent2); opacity: 0;
+      pointer-events: none; z-index: 15;
+      animation: glitchLine 6s steps(1) infinite;
+    }
+    .glitch-line:nth-child(2) { animation-delay: -2s; }
+    .glitch-line:nth-child(3) { animation-delay: -4s; }
+    @keyframes glitchLine {
+      0%, 85%, 100% { opacity: 0; top: 0; width: 100%; }
+      86% { opacity: 0.6; top: 30%; width: 60%; left: 20%; }
+      87% { opacity: 0; }
+      90% { opacity: 0.3; top: 65%; width: 40%; left: 0; }
+      91% { opacity: 0; }
+    }
+</style>
+  </head>
+  <body>
+
+	<!-- Cursor -->
+	<div id="cursor"></div>
+	<div id="cursor-ring"></div>
+
+	<!-- Particle canvas -->
+	<canvas id="particleCanvas"></canvas>
+
+	<!-- Ambient blobs -->
+	<div class="blob blob1"></div>
+	<div class="blob blob2"></div>
+	<div class="blob blob3"></div>
+
+	<!-- Glitch lines -->
+	<div class="glitch-line"></div>
+	<div class="glitch-line"></div>
+	<div class="glitch-line"></div>
+
+	<!-- Top ticker -->
+	<div class="ticker-wrap">
+	  <div class="ticker-track" id="ticker"></div>
+	</div>
+
+	<!-- Scanline -->
+	<div class="scanline"></div>
+
+	<!-- Corner logo -->
+	<div class="corner-logo">rahulpuri<span>.fun</span></div>
+
+	<!-- Coordinates -->
+	<div class="coord coord-bl" id="coordBL">LAT — — &nbsp; LNG — —</div>
+	<div class="coord coord-br">SYS_ERR: 0x404<br>TIMESTAMP: <span id="ts"></span></div>
+
+	<!-- Main scene -->
+	<div id="scene">
+	  <div class="four-wrap">
+		<div class="big-404">
+		  404
+		  <div class="glitch-layer">404</div>
+		  <div class="glitch-layer2">404</div>
+		</div>
+	  </div>
+
+	  <div class="status-line">
+		<div class="status-dot"></div>
+		<span class="status-text">PAGE NOT FOUND</span>
+	  </div>
+
+	  <div class="message-block">
+		<p class="message-title">This page has <strong>gone offline</strong></p>
+		<p class="message-sub">
+		  The page you're looking for has been deleted, moved, or never existed.<br>
+		  Let's get you back somewhere real.
+		</p>
+		<div class="url-pill" id="badUrl"></div>
+	  </div>
+
+	  <div class="actions">
+		<a href="https://rahulpuri.fun/" class="btn btn-primary">
+		  <span class="btn-icon">⌂</span> Go Home
+		</a>
+		<a href="javascript:history.back()" class="btn btn-ghost">
+		  <span class="btn-icon">←</span> Go Back
+		</a>
+	  </div>
+	</div>
+
+<script>
+    // ── CURSOR ────────────────────────────────────────────────
+    const cursor = document.getElementById('cursor');
+    const ring   = document.getElementById('cursor-ring');
+    let mx = 0, my = 0, rx = 0, ry = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cursor.style.left = mx + 'px';
+      cursor.style.top  = my + 'px';
+    });
+
+    (function animRing() {
+      rx += (mx - rx) * 0.12;
+      ry += (my - ry) *.12;
+      ring.style.left = rx + 'px';
+      ring.style.top  = ry + 'px';
+      requestAnimationFrame(animRing);
+    })();
+
+    document.querySelectorAll('.btn').forEach(b => {
+      b.addEventListener('mouseenter', () => {
+        ring.style.width = '60px'; ring.style.height = '60px';
+        ring.style.borderColor = 'var(--accent)';
+      });
+      b.addEventListener('mouseleave', () => {
+        ring.style.width = '40px'; ring.style.height = '40px';
+        ring.style.borderColor = 'var(--accent2)';
+      });
+    });
+
+    // ── BAD URL ───────────────────────────────────────────────
+    document.getElementById('badUrl').textContent =
+      window.location.href.length > 60
+        ? window.location.href.slice(0, 57) + '…'
+        : window.location.href;
+
+    // ── TIMESTAMP ─────────────────────────────────────────────
+    function updateTS() {
+      const n = new Date();
+      document.getElementById('ts').textContent =
+        n.toISOString().replace('T',' ').slice(0,19);
+    }
+    updateTS(); setInterval(updateTS, 1000);
+
+    // ── TICKER ────────────────────────────────────────────────
+    const msgs = [
+      'ERROR 404', '✦ PAGE NOT FOUND', '✦ rahulpuri.fun', '✦ DEAD LINK DETECTED',
+      '✦ ROUTE MISSING', '✦ NOTHING HERE', '✦ TURN BACK', '✦ CONNECTION LOST',
+      '✦ 404 ZONE', '✦ PAGE OFFLINE', '✦ rahulpuri.fun', '✦ TRY ANOTHER URL'
+    ];
+    const track = document.getElementById('ticker');
+    const full = [...msgs, ...msgs].map(m =>
+      `<span class="ticker-item">${m}</span>`).join('');
+    track.innerHTML = full + full;
+
+    // ── PARTICLES ─────────────────────────────────────────────
+    const canvas = document.getElementById('particleCanvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles = [];
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    const COLORS = ['rgba(255,45,85,', 'rgba(0,245,212,', 'rgba(245,197,24,'];
+
+    class Particle {
+      constructor() { this.reset(); }
+      reset() {
+        this.x  = Math.random() * W;
+        this.y  = Math.random() * H;
+        this.vx = (Math.random() - .5) * .6;
+        this.vy = (Math.random() - .5) * .6;
+        this.r  = Math.random() * 1.5 + .3;
+        this.a  = Math.random() * .6 + .1;
+        this.da = (Math.random() - .5) * .005;
+        this.col = COLORS[Math.floor(Math.random()*3)];
+      }
+      update() {
+        this.x += this.vx; this.y += this.vy;
+        this.a += this.da;
+        if (this.a < 0 || this.a > .7 || this.x<0||this.x>W||this.y<0||this.y>H) this.reset();
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.r, 0, Math.PI*2);
+        ctx.fillStyle = this.col + this.a + ')';
+        ctx.fill();
+      }
+    }
+
+    for (let i=0; i<120; i++) particles.push(new Particle());
+
+    function animParticles() {
+      ctx.clearRect(0,0,W,H);
+      particles.forEach(p => { p.update(); p.draw(); });
+
+      // Draw faint connection lines
+      for (let i=0; i<particles.length; i++) {
+        for (let j=i+1; j<particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const d  = Math.sqrt(dx*dx + dy*dy);
+          if (d < 80) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(255,45,85,${0.04*(1-d/80)})`;
+            ctx.lineWidth = .5;
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animParticles);
+    }
+    animParticles();
+
+    // ── COORDS (mouse position as fake geo) ──────────────────
+    document.addEventListener('mousemove', e => {
+      const lat = ((e.clientY / H) * 180 - 90).toFixed(4);
+      const lng = ((e.clientX / W) * 360 - 180).toFixed(4);
+      document.getElementById('coordBL').textContent =
+        `LAT ${lat > 0 ? '+':''}${lat}  ·  LNG ${lng > 0 ? '+':''}${lng}`;
+    });
+</script>
+  </body>
+</html>
