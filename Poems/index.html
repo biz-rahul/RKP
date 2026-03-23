@@ -30,102 +30,6 @@
       cursor: none;
     }
 
-
-	/* ── PDF LOADER ── */
-.pdf-loader {
-  position: fixed;
-  inset: 0;
-  background: rgba(10, 5, 0, 0.95);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 99999;
-  visibility: hidden;
-  opacity: 0;
-  transition: 0.3s;
-}
-
-.pdf-loader.active {
-  visibility: visible;
-  opacity: 1;
-}
-
-.loader-box {
-  text-align: center;
-  color: var(--gold-light);
-  font-family: 'Abril Fatface', serif;
-}
-
-.progress-bar {
-  width: 260px;
-  height: 6px;
-  border: 1px solid var(--gold);
-  margin: 1rem auto;
-  position: relative;
-}
-
-#progressFill {
-  height: 100%;
-  width: 0%;
-  background: var(--gold);
-  transition: width 0.3s;
-}
-
-#progressText {
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-}
-	
-	/* Freeze animations during PDF capture */
-.pdf-mode * {
-  animation: none !important;
-  transition: none !important;
-}
-	/* ── PDF BUTTON ── */
-.pdf-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 2rem;
-  padding: 1rem 2.8rem;
-  border: 1px solid var(--gold);
-  color: var(--gold-light);
-  background: transparent;
-  font-family: 'Abril Fatface', serif;
-  font-size: 0.85rem;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  position: relative;
-  overflow: hidden;
-  cursor: none;
-  border-radius: 2px;
-  transition: color 0.4s, box-shadow 0.4s;
-}
-
-.pdf-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gold);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
-  z-index: 0;
-}
-
-.pdf-btn:hover::before {
-  transform: scaleX(1);
-}
-
-.pdf-btn:hover {
-  color: var(--ink);
-  box-shadow: 0 10px 40px rgba(200,150,42,0.3);
-}
-
-.pdf-btn span {
-  position: relative;
-  z-index: 1;
-}
     /* Custom cursor */
     .cursor {
       width: 12px; height: 12px;
@@ -568,7 +472,6 @@
 </style>
   </head>
   <body>
-<div id="captureArea">
 	<!-- Cursor -->
 	<div class="cursor" id="cursor"></div>
 	<div class="cursor-ring" id="cursorRing"></div>
@@ -767,20 +670,6 @@
 
 </div>
 
-<div id="pdfLoader" class="pdf-loader">
-  <div class="loader-box">
-    <p>Preparing your poetry...</p>
-    <div class="progress-bar">
-      <div id="progressFill"></div>
-    </div>
-    <span id="progressText">0%</span>
-  </div>
-</div>
-	  
-<button id="downloadPDF" class="pdf-btn">
-  <span>Download all my poetry</span>
-</button>
-
 	<!-- ── FOLLOW SECTION ── -->
 	<section class="follow-section">
 	  <div class="follow-text">
@@ -838,101 +727,6 @@
     });
   }, { threshold: 0.12 });
   cards.forEach(c => observer.observe(c));
-
-
-	document.getElementById("downloadPDF").addEventListener("click", async () => {
-
-  const loader = document.getElementById("pdfLoader");
-  const progressFill = document.getElementById("progressFill");
-  const progressText = document.getElementById("progressText");
-
-  loader.classList.add("active");
-
-  function update(p) {
-    progressFill.style.width = p + "%";
-    progressText.innerText = p + "%";
-  }
-
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF("p", "mm", "a4");
-
-  const pageWidth = 210;
-  const margin = 20;
-  let y = 25;
-
-  const lineHeight = 8;
-
-  update(10);
-
-  const cards = document.querySelectorAll(".poetry-card");
-  const total = cards.length;
-  let count = 0;
-
-  cards.forEach((card, index) => {
-
-    const title = card.querySelector(".card-title")?.innerText || "";
-    const tag = card.querySelector(".card-tag")?.innerText || "";
-    const lines = [...card.querySelectorAll(".line")].map(l => l.innerText);
-
-    // New page for each poem
-    if (index !== 0) {
-      pdf.addPage();
-      y = 25;
-    }
-
-    // Title
-    pdf.setFont("Times", "Bold");
-    pdf.setFontSize(18);
-    pdf.text(title, margin, y);
-    y += 10;
-
-    // Tag
-    pdf.setFont("Times", "Italic");
-    pdf.setFontSize(10);
-    pdf.text(tag, margin, y);
-    y += 10;
-
-    // Divider
-    pdf.setDrawColor(180);
-    pdf.line(margin, y, pageWidth - margin, y);
-    y += 10;
-
-    // Poem
-    pdf.setFont("Times", "Normal");
-    pdf.setFontSize(13);
-
-    lines.forEach(line => {
-
-      const split = pdf.splitTextToSize(line, pageWidth - margin * 2);
-
-      split.forEach(s => {
-        if (y > 280) {
-          pdf.addPage();
-          y = 25;
-        }
-        pdf.text(s, margin, y);
-        y += lineHeight;
-      });
-
-      y += 2;
-    });
-
-    count++;
-    update(10 + Math.floor((count / total) * 80));
-
-  });
-
-  update(95);
-
-  pdf.save("Rahul-Poetry.pdf");
-
-  update(100);
-
-  setTimeout(() => {
-    location.reload();
-  }, 1000);
-
-});
 
     
   // Floating particles
