@@ -43,6 +43,31 @@
       opacity: 0.35;
     }
 
+
+	/* ── POETRY TITLE ── */
+.poetry-title {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1.2rem 1rem;
+  font-family: 'Noto Serif Devanagari', serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.05em;
+  color: var(--parchment);
+  background: linear-gradient(to top, rgba(13,11,10,0.85), transparent);
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s ease;
+}
+
+/* Reveal on hover */
+.media-card:hover .poetry-title {
+  opacity: 1;
+  transform: translateY(0);
+}
+	
 	/* ── MEDIA CARD (IMAGE + VIDEO) ── */
 .media-card {
   position: relative;
@@ -622,32 +647,39 @@
   <!-- IMAGE CARD -->
   <div class="media-card">
     <img src="1.webp" alt="poetry">
+	<div class="poetry-title">खामोशी की आवाज़</div>
   </div>
 
   <div class="media-card">
     <img src="2.jpg" alt="poetry">
+	<div class="poetry-title">खामोशी की आवाज़</div>
   </div>
 
   <div class="media-card">
     <img src="3.webp" alt="poetry">
+	<div class="poetry-title">खामोशी की आवाज़</div>
   </div>
 
   <div class="media-card">
     <img src="4.png" alt="poetry">
+	<div class="poetry-title">खामोशी की आवाज़</div>
   </div>
 
   <div class="media-card">
     <img src="5.png" alt="poetry">
+	<div class="poetry-title">खामोशी की आवाज़</div>
   </div>
 
   <!-- VIDEO CARD -->
   <div class="media-card video-card">
     <video src="1.mp4" preload="none"></video>
+	<div class="poetry-title">खामोशी की आवाज़</div>
     <div class="play-btn">▶</div>
   </div>
 
   <div class="media-card video-card">
     <video src="2.mp4" preload="none"></video>
+	<div class="poetry-title">खामोशी की आवाज़</div>
     <div class="play-btn">▶</div>
   </div>
 
