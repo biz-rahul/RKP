@@ -2,35 +2,25 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pink Spectrum</title>
+    <title>Deep Pink</title>
     <style>
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
+            background-color: #FF1493; /* Deep Pink */
         }
     </style>
 </head>
 <body>
 
 <script>
-    let t = 0;
-
-    function generatePinkColor(time) {
-        // Hue constrained to pink range (300°–360°)
-        let hue = 300 + (time % 60);  
-
-        // Oscillating saturation and lightness for variation
-        let saturation = 60 + 40 * Math.abs(Math.sin(time * 0.2)); 
-        let lightness = 70 + 20 * Math.abs(Math.cos(time * 0.3));
-
-        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-    }
+    // Keeping script tag for future use
+    // Currently enforcing constant deep pink background
 
     setInterval(() => {
-        document.body.style.backgroundColor = generatePinkColor(t);
-        t++;
+        document.body.style.backgroundColor = "#FF1493";
     }, 500);
 </script>
 
