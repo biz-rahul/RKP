@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Color Cycle</title>
+    <title>Pink Spectrum</title>
     <style>
         html, body {
             margin: 0;
@@ -17,17 +17,19 @@
 <script>
     let t = 0;
 
-    function generateColor(time) {
-        // Using sine waves to generate smooth RGB transitions
-        let r = Math.floor(128 + 127 * Math.sin(0.3 * time));
-        let g = Math.floor(128 + 127 * Math.sin(0.3 * time + 2));
-        let b = Math.floor(128 + 127 * Math.sin(0.3 * time + 4));
+    function generatePinkColor(time) {
+        // Hue constrained to pink range (300°–360°)
+        let hue = 300 + (time % 60);  
 
-        return `rgb(${r}, ${g}, ${b})`;
+        // Oscillating saturation and lightness for variation
+        let saturation = 60 + 40 * Math.abs(Math.sin(time * 0.2)); 
+        let lightness = 70 + 20 * Math.abs(Math.cos(time * 0.3));
+
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
     }
 
     setInterval(() => {
-        document.body.style.backgroundColor = generateColor(t);
+        document.body.style.backgroundColor = generatePinkColor(t);
         t++;
     }, 500);
 </script>
