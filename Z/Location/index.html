@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Color Cycle</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    let t = 0;
+
+    function generateColor(time) {
+        // Using sine waves to generate smooth RGB transitions
+        let r = Math.floor(128 + 127 * Math.sin(0.3 * time));
+        let g = Math.floor(128 + 127 * Math.sin(0.3 * time + 2));
+        let b = Math.floor(128 + 127 * Math.sin(0.3 * time + 4));
+
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    setInterval(() => {
+        document.body.style.backgroundColor = generateColor(t);
+        t++;
+    }, 500);
+</script>
+
+</body>
+</html>
