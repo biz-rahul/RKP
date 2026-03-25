@@ -30,7 +30,29 @@
       cursor: none;
     }
 
-    
+    /* Custom cursor */
+    .cursor {
+      width: 12px; height: 12px;
+      background: var(--gold);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9999;
+      transform: translate(-50%, -50%);
+      transition: transform 0.1s ease, background 0.3s;
+      mix-blend-mode: screen;
+    }
+    .cursor-ring {
+      width: 36px; height: 36px;
+      border: 1px solid var(--gold-light);
+      border-radius: 50%;
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      transform: translate(-50%, -50%);
+      transition: transform 0.18s ease, width 0.3s, height 0.3s;
+      opacity: 0.5;
+    }
 
     /* Noise grain overlay */
     body::before {
@@ -669,7 +691,28 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 	  
-<script>   
+<script>  
+  // Custom cursor  
+  const cursor = document.getElementById('cursor');  
+  const ring = document.getElementById('cursorRing');  
+  document.addEventListener('mousemove', e => {  
+    cursor.style.left = e.clientX + 'px';  
+    cursor.style.top  = e.clientY + 'px';  
+    setTimeout(() => {  
+      ring.style.left = e.clientX + 'px';  
+      ring.style.top  = e.clientY + 'px';  
+    }, 80);  
+  });  
+  document.querySelectorAll('a, .poetry-card').forEach(el => {  
+    el.addEventListener('mouseenter', () => {  
+      cursor.style.transform = 'translate(-50%,-50%) scale(2.5)';  
+      ring.style.width = '60px'; ring.style.height = '60px';  
+    });  
+    el.addEventListener('mouseleave', () => {  
+      cursor.style.transform = 'translate(-50%,-50%) scale(1)';  
+      ring.style.width = '36px'; ring.style.height = '36px';  
+    });  
+  });  
   
   // Scroll reveal for cards  
   const cards = document.querySelectorAll('.poetry-card');  
