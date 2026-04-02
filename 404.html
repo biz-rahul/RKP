@@ -2,9 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>404 - Page Not Found</title>
+  <title>Redirecting...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+  <script>
+    // 🔥 Redirect mapping
+    const redirects = {
+      "/old-page.html": "/new-page.html",
+      "/contact-us": "/contact.html",
+      "/blog/old-post": "/blog/new-post.html"
+    };
+
+    const currentPath = window.location.pathname;
+
+    // Check redirect
+    if (redirects[currentPath]) {
+      window.location.replace(redirects[currentPath]);
+    }
+  </script>
+
   <style>
     * {
       margin: 0;
@@ -114,11 +131,27 @@
     <h2>You are LOST...</h2>
     <p>The page you are looking for does not exist or has been moved.</p>
 
-    <a href="https://rahulpuri.fun/">Go Back Home</a>
+    <a id="homeLink" href="https://rahulpuri.fun/">Go Back Home</a>
   </div>
 
   <footer>
     © 2026 Rahul Kumar Puri | rahulpuri.fun
   </footer>
+
+  <script>
+    // 👇 fallback: update button link if redirect exists
+    const redirects = {
+      "/old-page.html": "/new-page.html",
+      "/contact-us": "/contact.html",
+      "/blog/old-post": "/blog/new-post.html"
+    };
+
+    const path = window.location.pathname;
+    const btn = document.getElementById("homeLink");
+
+    if (redirects[path]) {
+      btn.href = redirects[path];
+    }
+  </script>
 </body>
 </html>
