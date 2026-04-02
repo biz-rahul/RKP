@@ -7,18 +7,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
   <script>
-    // 🔥 Redirect mapping
+    // 🔥 SINGLE source of truth (sab redirect yahi likh)
     const redirects = {
-      "/Books": "/#books",
-      "/Contact": "/#contact",
-      "/FAQs": "/#faq"
+      "/books": "/#books",
+      "/contact": "/#contact",
+      "/faqs": "/#faq"
     };
 
-    const currentPath = window.location.pathname;
+    // Normalize path (case + slash fix)
+    let path = window.location.pathname.toLowerCase().replace(/\/$/, "");
 
-    // Check redirect
-    if (redirects[currentPath]) {
-      window.location.replace(redirects[currentPath]);
+    // 🚀 Redirect if match found
+    if (redirects[path]) {
+      window.location.replace(redirects[path]);
     }
   </script>
 
@@ -119,9 +120,9 @@
       font-size: 0.8rem;
       opacity: 0.6;
     }
-
   </style>
 </head>
+
 <body>
   <div class="container">
     <div class="floating"></div>
@@ -139,14 +140,14 @@
   </footer>
 
   <script>
-    // 👇 fallback: update button link if redirect exists
+    // 👇 Button bhi smart banega
     const redirects = {
-      "/old-page.html": "/new-page.html",
-      "/contact-us": "/contact.html",
-      "/blog/old-post": "/blog/new-post.html"
+      "/books": "/#books",
+      "/contact": "/#contact",
+      "/faqs": "/#faq"
     };
 
-    const path = window.location.pathname;
+    let path = window.location.pathname.toLowerCase().replace(/\/$/, "");
     const btn = document.getElementById("homeLink");
 
     if (redirects[path]) {
