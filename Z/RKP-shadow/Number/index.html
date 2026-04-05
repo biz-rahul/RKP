@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>MOB-OSINT // Mobile Intelligence Terminal</title>
+	<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=VT323&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #00ff41;
+    --green-dim: #00cc33;
+    --green-dark: #003a0e;
+    --green-glow: rgba(0,255,65,0.4);
+    --red: #ff003c;
+    --cyan: #00f5ff;
+    --yellow: #ffe600;
+    --bg: #000d02;
+    --panel: rgba(0,255,65,0.04);
+    --border: rgba(0,255,65,0.25);
+    --border-bright: rgba(0,255,65,0.7);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Scanlines overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.15) 2px,
+      rgba(0,0,0,0.15) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  /* CRT flicker */
+  @keyframes flicker {
+    0%,100%{opacity:1} 92%{opacity:1} 93%{opacity:0.8} 94%{opacity:1} 96%{opacity:0.9} 97%{opacity:1}
+  }
+  body { animation: flicker 8s infinite; }
+
+  /* Matrix rain canvas */
+  #matrix-bg {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index: 0;
+    opacity: 0.07;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    text-align: center;
+    padding: 40px 0 30px;
+    position: relative;
+  }
+
+  .skull {
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: 8px;
+    animation: pulse-skull 2s ease-in-out infinite;
+  }
+  @keyframes pulse-skull {
+    0%,100%{text-shadow:0 0 10px var(--green),0 0 20px var(--green)}
+    50%{text-shadow:0 0 20px var(--green),0 0 40px var(--green),0 0 60px var(--green)}
+  }
+
+  .title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(1.4rem, 5vw, 2.6rem);
+    font-weight: 900;
+    letter-spacing: 0.15em;
+    text-shadow: 0 0 20px var(--green), 0 0 40px var(--green-dim);
+    line-height: 1.1;
+  }
+
+  .title span { color: var(--cyan); text-shadow: 0 0 20px var(--cyan); }
+
+  .subtitle {
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    color: var(--green-dim);
+    letter-spacing: 0.3em;
+    margin-top: 8px;
+    opacity: 0.8;
+  }
+
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  .status-bar {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+    font-size: 0.7rem;
+    color: var(--green-dim);
+    letter-spacing: 0.1em;
+    flex-wrap: wrap;
+  }
+  .status-bar span::before { content: '● '; color: var(--green); }
+
+  /* ── DIVIDER ── */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+    position: relative;
+  }
+  .divider::after {
+    content: '◆';
+    position: absolute;
+    left: 50%;
+    top: -9px;
+    transform: translateX(-50%);
+    background: var(--bg);
+    padding: 0 8px;
+    color: var(--green-dim);
+    font-size: 0.7rem;
+  }
+
+  /* ── INPUT SECTION ── */
+  .input-section {
+    background: var(--panel);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 30px var(--green-glow), inset 0 0 30px rgba(0,255,65,0.02);
+  }
+
+  .input-section::before {
+    content: 'TARGET ACQUISITION';
+    position: absolute;
+    top: -1px; left: 24px;
+    background: var(--bg);
+    padding: 0 8px;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    border: 1px solid var(--cyan);
+    border-top: none;
+  }
+
+  .corner { position: absolute; width: 12px; height: 12px; }
+  .corner-tl { top: 0; left: 0; border-top: 2px solid var(--green); border-left: 2px solid var(--green); }
+  .corner-tr { top: 0; right: 0; border-top: 2px solid var(--green); border-right: 2px solid var(--green); }
+  .corner-bl { bottom: 0; left: 0; border-bottom: 2px solid var(--green); border-left: 2px solid var(--green); }
+  .corner-br { bottom: 0; right: 0; border-bottom: 2px solid var(--green); border-right: 2px solid var(--green); }
+
+  .input-label {
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--green-dim);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .phone-input {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--green);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.3rem;
+    padding: 14px 18px;
+    letter-spacing: 0.15em;
+    outline: none;
+    border-radius: 2px;
+    transition: all 0.3s;
+    caret-color: var(--green);
+  }
+
+  .phone-input::placeholder { color: rgba(0,255,65,0.25); }
+
+  .phone-input:focus {
+    border-color: var(--green);
+    box-shadow: 0 0 20px var(--green-glow), inset 0 0 10px rgba(0,255,65,0.05);
+  }
+
+  .scan-btn {
+    background: var(--green);
+    color: #000;
+    border: none;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    padding: 0 24px;
+    cursor: crosshair;
+    border-radius: 2px;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scan-btn:hover {
+    background: var(--cyan);
+    box-shadow: 0 0 20px var(--cyan), 0 0 40px rgba(0,245,255,0.3);
+    transform: translateY(-1px);
+  }
+
+  .scan-btn:active { transform: translateY(1px); }
+
+  .scan-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transform: translateX(-100%);
+    transition: transform 0.4s;
+  }
+  .scan-btn:hover::after { transform: translateX(100%); }
+
+  .warning-text {
+    margin-top: 12px;
+    font-size: 0.65rem;
+    color: var(--red);
+    letter-spacing: 0.1em;
+    opacity: 0.8;
+  }
+
+  /* ── RESULTS ── */
+  #results {
+    display: none;
+    animation: fadeSlideIn 0.5s ease;
+  }
+  @keyframes fadeSlideIn {
+    from { opacity:0; transform: translateY(20px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  .target-banner {
+    background: linear-gradient(135deg, rgba(0,255,65,0.1), rgba(0,245,255,0.05));
+    border: 1px solid var(--green);
+    border-radius: 4px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0;
+    box-shadow: 0 0 20px var(--green-glow);
+  }
+
+  .target-icon { font-size: 2rem; animation: spin-slow 8s linear infinite; }
+  @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+
+  .target-info { flex: 1; }
+  .target-label { font-size: 0.65rem; letter-spacing: 0.3em; color: var(--green-dim); }
+  .target-number {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--cyan);
+    letter-spacing: 0.2em;
+    text-shadow: 0 0 15px var(--cyan);
+    word-break: break-all;
+  }
+
+  .live-tag {
+    background: var(--red);
+    color: #fff;
+    font-size: 0.6rem;
+    padding: 4px 10px;
+    letter-spacing: 0.2em;
+    animation: pulse-red 1.5s ease-in-out infinite;
+    border-radius: 2px;
+  }
+  @keyframes pulse-red {
+    0%,100%{box-shadow:0 0 5px var(--red)} 50%{box-shadow:0 0 20px var(--red)}
+  }
+
+  /* ── SECTION PANELS ── */
+  .section {
+    margin-top: 28px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    background: var(--panel);
+  }
+
+  .section-header {
+    background: rgba(0,255,65,0.08);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-num {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.6rem;
+    color: var(--bg);
+    background: var(--green);
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .section-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    color: var(--cyan);
+    text-shadow: 0 0 10px var(--cyan);
+  }
+
+  .section-body { padding: 20px; }
+
+  /* ── BUTTONS GRID ── */
+  .btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 12px;
+  }
+
+  .osint-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 12px;
+    background: rgba(0,255,65,0.04);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    color: var(--green);
+    text-decoration: none;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    cursor: crosshair;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .osint-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 40%, rgba(0,255,65,0.06));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .osint-btn:hover {
+    border-color: var(--green);
+    color: var(--green);
+    box-shadow: 0 0 15px var(--green-glow), inset 0 0 10px rgba(0,255,65,0.05);
+    transform: translateY(-2px);
+  }
+  .osint-btn:hover::before { opacity: 1; }
+  .osint-btn:active { transform: translateY(0); }
+
+  .osint-btn.cyan-btn {
+    border-color: rgba(0,245,255,0.3);
+    color: var(--cyan);
+  }
+  .osint-btn.cyan-btn:hover {
+    border-color: var(--cyan);
+    box-shadow: 0 0 15px rgba(0,245,255,0.4), inset 0 0 10px rgba(0,245,255,0.05);
+    color: var(--cyan);
+  }
+
+  .osint-btn.yellow-btn {
+    border-color: rgba(255,230,0,0.3);
+    color: var(--yellow);
+  }
+  .osint-btn.yellow-btn:hover {
+    border-color: var(--yellow);
+    box-shadow: 0 0 15px rgba(255,230,0,0.4);
+    color: var(--yellow);
+  }
+
+  .osint-btn.red-btn {
+    border-color: rgba(255,0,60,0.3);
+    color: var(--red);
+  }
+  .osint-btn.red-btn:hover {
+    border-color: var(--red);
+    box-shadow: 0 0 15px rgba(255,0,60,0.4);
+    color: var(--red);
+  }
+
+  .btn-icon { font-size: 1.6rem; }
+  .btn-name { font-weight: bold; }
+  .btn-note {
+    font-size: 0.6rem;
+    color: rgba(0,255,65,0.5);
+    font-style: italic;
+  }
+  .osint-btn.cyan-btn .btn-note { color: rgba(0,245,255,0.5); }
+  .osint-btn.yellow-btn .btn-note { color: rgba(255,230,0,0.5); }
+
+  /* ── DORK SECTION ── */
+  .dork-box {
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 16px;
+    font-size: 0.72rem;
+    line-height: 1.8;
+    color: var(--green-dim);
+    word-break: break-all;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .dork-box::before {
+    content: 'DORK STRING';
+    position: absolute;
+    top: -9px; left: 12px;
+    background: var(--bg);
+    padding: 0 6px;
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    color: var(--yellow);
+  }
+
+  .dork-highlight { color: var(--yellow); }
+
+  .copy-btn {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(255,230,0,0.1);
+    border: 1px solid rgba(255,230,0,0.4);
+    color: var(--yellow);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    padding: 4px 10px;
+    cursor: crosshair;
+    letter-spacing: 0.1em;
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { background: rgba(255,230,0,0.2); }
+
+  /* ── FOOTER ── */
+  footer {
+    text-align: center;
+    padding: 40px 0 20px;
+    font-size: 0.65rem;
+    color: rgba(0,255,65,0.3);
+    letter-spacing: 0.2em;
+    line-height: 2;
+  }
+
+  /* ── LOADING ── */
+  .loading-bar {
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--green), var(--cyan), transparent);
+    animation: loading 1.5s ease-in-out infinite;
+    margin: 16px 0;
+  }
+  @keyframes loading {
+    0%{transform:translateX(-100%)} 100%{transform:translateX(100%)}
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 2px; }
+
+  /* ── MOBILE TWEAKS ── */
+  @media (max-width: 500px) {
+    .input-row { flex-direction: column; }
+    .scan-btn { padding: 14px; font-size: 0.8rem; }
+    .btn-grid { grid-template-columns: repeat(2, 1fr); }
+    .target-number { font-size: 1.1rem; }
+    .title { font-size: 1.2rem; }
+  }
+</style>
+  </head>
+  <body>
+
+	<canvas id="matrix-bg"></canvas>
+
+	<div class="container">
+	  <!-- ── HEADER ── -->
+	  <header>
+		<span class="skull">☠</span>
+		<h1 class="title">MOB-<span>OSINT</span></h1>
+		<p class="subtitle">MOBILE INTELLIGENCE TERMINAL <span class="blink">_</span></p>
+		<div class="status-bar">
+		  <span>SYSTEM ONLINE</span>
+		  <span>ENCRYPTED CHANNEL</span>
+		  <span>PASSIVE MODE</span>
+		</div>
+	  </header>
+
+	  <hr class="divider">
+
+	  <!-- ── INPUT ── -->
+	  <div class="input-section">
+		<div class="corner corner-tl"></div>
+		<div class="corner corner-tr"></div>
+		<div class="corner corner-bl"></div>
+		<div class="corner corner-br"></div>
+		<span class="input-label">▶ ENTER TARGET MOBILE NUMBER (10-DIGIT INDIA)</span>
+		<div class="input-row">
+		  <input class="phone-input" id="phoneInput" type="tel" maxlength="10" placeholder="9876543210" autocomplete="off" spellcheck="false">
+		  <button class="scan-btn" onclick="runScan()">⚡ SCAN</button>
+		</div>
+		<p class="warning-text">⚠ FOR EDUCATIONAL &amp; RESEARCH PURPOSES ONLY. USE RESPONSIBLY.</p>
+	  </div>
+
+	  <!-- ── RESULTS ── -->
+	  <div id="results"></div>
+	</div>
+
+	<footer>
+	  MOB-OSINT TERMINAL v2.0 // ALL DATA IS PUBLICLY ACCESSIBLE<br>
+	  ⚠ UNAUTHORIZED USE IS ILLEGAL. EDUCATIONAL USE ONLY ⚠
+	</footer>
+
+	<!-- ── MATRIX RAIN ── -->
+<script>
+(function(){
+  const c=document.getElementById('matrix-bg');
+  const ctx=c.getContext('2d');
+  function resize(){c.width=window.innerWidth;c.height=window.innerHeight;}
+  resize();
+  window.addEventListener('resize',resize);
+  const chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()アイウエオカキクケコサシスセソ';
+  const cols=Math.floor(c.width/18);
+  const drops=Array(cols).fill(1);
+  function draw(){
+    ctx.fillStyle='rgba(0,13,2,0.05)';
+    ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle='#00ff41';
+    ctx.font='14px Share Tech Mono';
+    drops.forEach((y,i)=>{
+      const ch=chars[Math.floor(Math.random()*chars.length)];
+      ctx.fillText(ch,i*18,y*18);
+      if(y*18>c.height&&Math.random()>0.975)drops[i]=0;
+      drops[i]++;
+    });
+  }
+  setInterval(draw,50);
+})();
+</script>
+
+	<!-- ── MAIN LOGIC ── -->
+<script>
+function formatPhone(raw) {
+  const num = raw.replace(/\D/g,'').slice(-10);
+  return {
+    raw: num,
+    spaced: num.slice(0,5)+' '+num.slice(5),
+    with91: '91'+num,
+    with91sp: '91 '+num.slice(0,5)+' '+num.slice(5),
+    withPlus91: '+91 '+num.slice(0,5)+' '+num.slice(5),
+    wa: '91'+num,
+  };
+}
+
+function openIntent(pkg) {
+  window.location = `intent://#Intent;package=${pkg};end`;
+}
+
+function copyText(text,btn) {
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn.textContent;
+    btn.textContent='✓ COPIED';
+    btn.style.color='#00ff41';
+    setTimeout(()=>{btn.textContent=orig;btn.style.color='';},1500);
+  });
+}
+
+function runScan() {
+  const raw = document.getElementById('phoneInput').value.trim();
+  const num = raw.replace(/\D/,'');
+  if(num.length !== 10) {
+    alert('⚠ Please enter a valid 10-digit mobile number.');
+    return;
+  }
+  const p = formatPhone(num);
+  const dorkStr = `("${p.raw}" OR "${p.spaced}" OR "${p.with91}" OR "${p.with91sp}" OR "${p.withPlus91}")`;
+
+  const dorkBasic = encodeURIComponent(dorkStr);
+  const dorkFile = encodeURIComponent(dorkStr+' (filetype:pdf OR filetype:xls OR filetype:docx)');
+  const dorkContact = encodeURIComponent(dorkStr+' ("contact" OR "phone" OR "owner" OR "resume" OR "UPI" OR "Paytm")');
+  const dorkSocial = encodeURIComponent(dorkStr+' (site:facebook.com OR site:instagram.com OR site:twitter.com OR site:linkedin.com OR site:telegram.me OR site:t.me OR site:olx.in OR site:quikr.com OR site:indiamart.com OR site:justdial.com)');
+
+  const html = `
+  <!-- Target Banner -->
+  <div class="target-banner">
+    <div class="target-icon">🎯</div>
+    <div class="target-info">
+      <div class="target-label">TARGET ACQUIRED</div>
+      <div class="target-number">+91 ${p.spaced}</div>
+    </div>
+    <div class="live-tag">● LIVE SCAN</div>
+  </div>
+  <div class="loading-bar"></div>
+
+  <!-- SECTION 1 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">01</span>
+      <span class="section-title">MOBILE NUMBER OSINT</span>
+    </div>
+    <div class="section-body">
+      <div class="btn-grid">
+        <a class="osint-btn" href="https://wa.me/${p.wa}" target="_blank" rel="noopener">
+          <span class="btn-icon">💬</span>
+          <span class="btn-name">WhatsApp</span>
+          <span class="btn-note">wa.me/${p.wa}</span>
+        </a>
+        <a class="osint-btn cyan-btn" href="https://t.me/s/${p.raw}" target="_blank" rel="noopener">
+          <span class="btn-icon">✈️</span>
+          <span class="btn-name">Telegram</span>
+          <span class="btn-note">t.me/s/${p.raw}</span>
+        </a>
+        <button class="osint-btn yellow-btn" onclick="window.location='snapchat://add/${p.raw}'">
+          <span class="btn-icon">👻</span>
+          <span class="btn-name">Snapchat</span>
+          <span class="btn-note">Save first, sync contacts</span>
+        </button>
+        <a class="osint-btn" href="https://www.truecaller.com/search/in/${p.raw}" target="_blank" rel="noopener">
+          <span class="btn-icon">📋</span>
+          <span class="btn-name">Truecaller Web</span>
+          <span class="btn-note">truecaller.com</span>
+        </a>
+        <a class="osint-btn cyan-btn" href="https://t.me/TrueCalleRobot" target="_blank" rel="noopener">
+          <span class="btn-icon">🤖</span>
+          <span class="btn-name">Truecaller Bot</span>
+          <span class="btn-note">Telegram Bot</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">02</span>
+      <span class="section-title">ADVANCED TOOLS</span>
+    </div>
+    <div class="section-body">
+      <div class="btn-grid">
+        <a class="osint-btn red-btn" href="https://github.com/sundowndev/phoneinfoga" target="_blank" rel="noopener">
+          <span class="btn-icon">🔬</span>
+          <span class="btn-name">PhoneInfoga</span>
+          <span class="btn-note">Advanced Recon</span>
+        </a>
+        <a class="osint-btn yellow-btn" href="https://www.maltego.com/" target="_blank" rel="noopener">
+          <span class="btn-icon">🕸️</span>
+          <span class="btn-name">Maltego</span>
+          <span class="btn-note">Link Analysis</span>
+        </a>
+        <a class="osint-btn cyan-btn" href="https://www.spiderfoot.net/" target="_blank" rel="noopener">
+          <span class="btn-icon">🕷️</span>
+          <span class="btn-name">SpiderFoot</span>
+          <span class="btn-note">Auto-OSINT</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">03</span>
+      <span class="section-title">APPS // ANDROID INTENT LAUNCH</span>
+    </div>
+    <div class="section-body">
+      <div class="btn-grid">
+        <button class="osint-btn" onclick="openIntent('com.eyecon.global')">
+          <span class="btn-icon">👁️</span>
+          <span class="btn-name">Eyecon</span>
+          <span class="btn-note">Caller ID</span>
+        </button>
+        <button class="osint-btn cyan-btn" onclick="openIntent('com.phonepe.app')">
+          <span class="btn-icon">💜</span>
+          <span class="btn-name">PhonePe</span>
+          <span class="btn-note">UPI Lookup</span>
+        </button>
+        <button class="osint-btn yellow-btn" onclick="openIntent('com.google.android.apps.nbu.paisa.user')">
+          <span class="btn-icon">💚</span>
+          <span class="btn-name">Google Pay</span>
+          <span class="btn-note">GPay Profile</span>
+        </button>
+        <button class="osint-btn" onclick="openIntent('net.one97.paytm')">
+          <span class="btn-icon">💙</span>
+          <span class="btn-name">Paytm</span>
+          <span class="btn-note">Wallet Search</span>
+        </button>
+        <button class="osint-btn red-btn" onclick="openIntent('com.truecaller')">
+          <span class="btn-icon">📞</span>
+          <span class="btn-name">Truecaller</span>
+          <span class="btn-note">App Lookup</span>
+        </button>
+        <button class="osint-btn cyan-btn" onclick="openIntent('com.callapp.contacts')">
+          <span class="btn-icon">📱</span>
+          <span class="btn-name">CallApp</span>
+          <span class="btn-note">Caller Info</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-num">04</span>
+      <span class="section-title">GOOGLE DORK GENERATOR</span>
+    </div>
+    <div class="section-body">
+      <div class="dork-box" id="dorkBox" style="padding-right:90px">
+        <button class="copy-btn" onclick="copyText(document.getElementById('dorkStrText').innerText,this)">⎘ COPY</button>
+        <span id="dorkStrText">${dorkStr}</span>
+      </div>
+      <div class="btn-grid">
+        <a class="osint-btn" href="https://www.google.com/search?q=${encodeURIComponent(p.raw)}" target="_blank" rel="noopener">
+          <span class="btn-icon">🔍</span>
+          <span class="btn-name">Basic Search</span>
+          <span class="btn-note">Plain number</span>
+        </a>
+        <a class="osint-btn yellow-btn" href="https://www.google.com/search?q=${dorkFile}" target="_blank" rel="noopener">
+          <span class="btn-icon">📄</span>
+          <span class="btn-name">File Dork</span>
+          <span class="btn-note">PDF / XLS / DOCX</span>
+        </a>
+        <a class="osint-btn cyan-btn" href="https://www.google.com/search?q=${dorkContact}" target="_blank" rel="noopener">
+          <span class="btn-icon">👤</span>
+          <span class="btn-name">Contact Dork</span>
+          <span class="btn-note">Owner / UPI / Resume</span>
+        </a>
+        <a class="osint-btn red-btn" href="https://www.google.com/search?q=${dorkSocial}" target="_blank" rel="noopener">
+          <span class="btn-icon">🌐</span>
+          <span class="btn-name">Social Dork</span>
+          <span class="btn-note">FB / IG / TG / LinkedIn</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  `;
+
+  const res = document.getElementById('results');
+  res.innerHTML = html;
+  res.style.display = 'block';
+  res.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+// Allow Enter key
+document.getElementById('phoneInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter') runScan();
+});
+
+// Only allow digits
+document.getElementById('phoneInput').addEventListener('input', function(){
+  this.value = this.value.replace(/\D/g,'').slice(0,10);
+});
+</script>
+  </body>
+</html>
