@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OSINT App Launcher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    h1 {
+      margin-bottom: 30px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    button {
+      padding: 20px;
+      border: none;
+      border-radius: 15px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #1e293b;
+      color: white;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #334155;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+<body>  <h1>📱 OSINT App Launcher</h1>  <div class="grid">
+    <button onclick="openApp('eyecon://','https://play.google.com/store/apps/details?id=com.eyecon.global')">Eyecon</button>
+    <button onclick="openApp('phonepe://','https://www.phonepe.com/')">PhonePe</button>
+    <button onclick="openApp('tez://','https://pay.google.com/')">Google Pay</button>
+    <button onclick="openApp('paytmmp://','https://paytm.com/')">Paytm</button>
+    <button onclick="openApp('truecaller://','https://www.truecaller.com/')">Truecaller</button>
+    <button onclick="openApp('callapp://','https://play.google.com/store/apps/details?id=com.callapp.contacts')">CallApp</button>
+  </div>  <script>
+    function openApp(deepLink, fallback) {
+      window.location = deepLink;
+      setTimeout(function() {
+        window.location = fallback;
+      }, 800);
+    }
+  </script></body>
+</html>
