@@ -37,19 +37,17 @@
     }
   </style>
 </head>
-<body>  <h1>📱 OSINT App Launcher</h1>  <div class="grid">
-    <button onclick="openApp('eyecon://','https://play.google.com/store/apps/details?id=com.eyecon.global')">Eyecon</button>
-    <button onclick="openApp('phonepe://','https://www.phonepe.com/')">PhonePe</button>
-    <button onclick="openApp('tez://','https://pay.google.com/')">Google Pay</button>
-    <button onclick="openApp('paytmmp://','https://paytm.com/')">Paytm</button>
-    <button onclick="openApp('truecaller://','https://www.truecaller.com/')">Truecaller</button>
-    <button onclick="openApp('callapp://','https://play.google.com/store/apps/details?id=com.callapp.contacts')">CallApp</button>
+<body>  <h1>📱 OSINT App Launcher (Fixed)</h1>  <div class="grid">
+    <button onclick="openIntent('com.eyecon.global')">Eyecon</button>
+    <button onclick="openIntent('com.phonepe.app')">PhonePe</button>
+    <button onclick="openIntent('com.google.android.apps.nbu.paisa.user')">Google Pay</button>
+    <button onclick="openIntent('net.one97.paytm')">Paytm</button>
+    <button onclick="openIntent('com.truecaller')">Truecaller</button>
+    <button onclick="openIntent('com.callapp.contacts')">CallApp</button>
   </div>  <script>
-    function openApp(deepLink, fallback) {
-      window.location = deepLink;
-      setTimeout(function() {
-        window.location = fallback;
-      }, 800);
+    function openIntent(packageName) {
+      const intentUrl = `intent://#Intent;package=${packageName};end`;
+      window.location = intentUrl;
     }
   </script></body>
 </html>
