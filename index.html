@@ -495,6 +495,38 @@
   }
   .book-card:hover .book-link { gap: 14px; }
 
+
+	.book-link2 {
+  display: block;
+  font-size: 16px; /* size bada kiya */
+  color: #d4af37; /* gold tone (classy feel) */
+  margin: 8px 0; /* spacing between items */
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* arrow spacing */
+.book-link2::after {
+  content: " →";
+  margin-left: 6px;
+  transition: transform 0.3s ease;
+}
+
+/* hover effect */
+.book-link2:hover {
+  color: #ffffff;
+  transform: translateX(6px); /* thoda slide effect */
+}
+
+/* arrow move on hover */
+.book-link2:hover::after {
+  transform: translateX(4px);
+}
+
+
+	
   /* POETRY CARD — special wide */
   .books-poetry {
     grid-column: 1 / -1;
@@ -1130,14 +1162,14 @@ Men Activist | Guanxi and Mianzi Enthu |</p>
 			Dive into the complete world of Rahul Kumar Puri's poetry — a journey through emotions, society, love, 
 				struggle, and the beauty of the human spirit. Each verse, a universe in itself.
 		  </div>
-		  <div class="book-link">कुर्बानी →</div>
-			<div class="book-link">एक सुबह मैं वहां मिलूंगी →</div>
-			<div class="book-link">क्यों →</div>
-			<div class="book-link">एक खून का छींटा →</div>
-			<div class="book-link">मैं भी कितना झूठा हूँ →</div>
-			<div class="book-link">समाज →</div>
-			<div class="book-link">धलती हुई उम्र →</div>
-			<div class="book-link">सौदागर →</div>
+		<div class="book-link2">कुर्बानी →</div>
+<div class="book-link2">एक सुबह मैं वहां मिलूंगी →</div>
+<div class="book-link2">क्यों →</div>
+<div class="book-link2">एक खून का छींटा →</div>
+<div class="book-link2">मैं भी कितना झूठा हूँ →</div>
+<div class="book-link2">समाज →</div>
+<div class="book-link2">धलती हुई उम्र →</div>
+<div class="book-link2">सौदागर →</div>
 		</a>
 
 	  </div>
