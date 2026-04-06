@@ -496,30 +496,55 @@
   .book-card:hover .book-link { gap: 14px; }
 
 
-.book-link2 {
-  display: inline-block;
-  padding: 10px 16px;
-  margin: 6px 6px 0 0;
-  font-size: 15px;
-  color: #fff;
-  
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 30px;
-
-  backdrop-filter: blur(6px);
-  
-  transition: all 0.3s ease;
-  cursor: pointer;
+.poetry-links {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
 }
 
-/* hover = sexy effect 😏 */
+/* button style */
+.book-link2 {
+  display: inline-block;
+  padding: 8px 14px;
+  margin: 6px 6px 0 0;
+  font-size: 14px;
+
+  color: #d4af37;
+  background: rgba(212, 175, 55, 0.08);
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  border-radius: 20px;
+
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+
+  transition: all 0.3s ease;
+}
+
+/* subtle underline animation */
+.book-link2::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: #d4af37;
+  transition: width 0.3s ease;
+}
+
+/* hover effect */
 .book-link2:hover {
-  background: linear-gradient(135deg, #d4af37, #f5e6a3);
-  color: #000;
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
-	}
+  color: #fff;
+  background: rgba(212, 175, 55, 0.2);
+  transform: translateY(-2px);
+}
+
+/* underline grow */
+.book-link2:hover::before {
+  width: 100%;
+}
+  
 
 
 	
@@ -1150,23 +1175,30 @@ Men Activist | Guanxi and Mianzi Enthu |</p>
 		</a>
 
 		  	<!-- Poetry -->
-		<a href="https://rahulpuri.fun/Poems/" target="_blank" class="book-card fade-in fade-in-delay-3">
-		  <div class="book-number">08</div>
-		  <div class="book-lang">Complete Collection</div>
-		  <div class="book-title">Read My Poetry</div>
-		  <div class="book-desc">
-			Dive into the complete world of Rahul Kumar Puri's poetry — a journey through emotions, society, love, 
-				struggle, and the beauty of the human spirit. Each verse, a universe in itself.
-		  </div>
-		<div class="book-link2">कुर्बानी →</div>
-<div class="book-link2">एक सुबह मैं वहां मिलूंगी →</div>
-<div class="book-link2">क्यों →</div>
-<div class="book-link2">एक खून का छींटा →</div>
-<div class="book-link2">मैं भी कितना झूठा हूँ →</div>
-<div class="book-link2">समाज →</div>
-<div class="book-link2">धलती हुई उम्र →</div>
-<div class="book-link2">सौदागर →</div>
-		</a>
+<div class="book-card fade-in fade-in-delay-3">
+  
+  <div class="book-number">08</div>
+  <div class="book-lang">Complete Collection</div>
+  <div class="book-title">Read My Poetry</div>
+
+  <div class="book-desc">
+    Dive into the complete world of Rahul Kumar Puri's poetry — a journey through emotions, society, love, 
+    struggle, and the beauty of the human spirit.
+  </div>
+
+  <!-- LINKS -->
+  <div class="poetry-links">
+    <a href="https://rahulpuri.fun/Poems/kurban" class="book-link2">कुर्बानी</a>
+    <a href="https://rahulpuri.fun/Poems/subah" class="book-link2">एक सुबह मैं वहां मिलूंगी</a>
+    <a href="https://rahulpuri.fun/Poems/kyon" class="book-link2">क्यों</a>
+    <a href="https://rahulpuri.fun/Poems/khoon" class="book-link2">एक खून का छींटा</a>
+    <a href="https://rahulpuri.fun/Poems/jhootha" class="book-link2">मैं भी कितना झूठा हूँ</a>
+    <a href="https://rahulpuri.fun/Poems/samaj" class="book-link2">समाज</a>
+    <a href="https://rahulpuri.fun/Poems/umr" class="book-link2">धलती हुई उम्र</a>
+    <a href="https://rahulpuri.fun/Poems/saudagar" class="book-link2">सौदागर</a>
+  </div>
+
+</div>
 
 	  </div>
 	</section>
