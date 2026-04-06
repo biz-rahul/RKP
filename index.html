@@ -496,34 +496,30 @@
   .book-card:hover .book-link { gap: 14px; }
 
 
-	.book-link2 {
-  display: block;
-  font-size: 16px; /* size bada kiya */
-  color: #d4af37; /* gold tone (classy feel) */
-  margin: 8px 0; /* spacing between items */
-  letter-spacing: 0.5px;
-  cursor: pointer;
+.book-link2 {
+  display: inline-block;
+  padding: 10px 16px;
+  margin: 6px 6px 0 0;
+  font-size: 15px;
+  color: #fff;
+  
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 30px;
+
+  backdrop-filter: blur(6px);
+  
   transition: all 0.3s ease;
-  position: relative;
+  cursor: pointer;
 }
 
-/* arrow spacing */
-.book-link2::after {
-  content: " →";
-  margin-left: 6px;
-  transition: transform 0.3s ease;
-}
-
-/* hover effect */
+/* hover = sexy effect 😏 */
 .book-link2:hover {
-  color: #ffffff;
-  transform: translateX(6px); /* thoda slide effect */
-}
-
-/* arrow move on hover */
-.book-link2:hover::after {
-  transform: translateX(4px);
-}
+  background: linear-gradient(135deg, #d4af37, #f5e6a3);
+  color: #000;
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4);
+	}
 
 
 	
