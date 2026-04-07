@@ -1,0 +1,48 @@
+<!DOCTYPE html><html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}#time {
+font-size: 18vw; /* BIG BOY DIGITS */
+font-weight: bold;
+}
+
+#date {
+font-size: 4vw;
+opacity: 0.7;
+}
+
+</style>
+</head><body onclick="goFullScreen()"><div id="time"></div>
+<div id="date"></div><script>
+function updateClock() {
+  var now = new Date();
+
+  var h = String(now.getHours()).padStart(2, '0');
+  var m = String(now.getMinutes()).padStart(2, '0');
+  var s = String(now.getSeconds()).padStart(2, '0');
+
+  document.getElementById("time").innerHTML = h + ":" + m + ":" + s;
+
+  document.getElementById("date").innerHTML = now.toDateString();
+}
+
+setInterval(updateClock, 1000);
+updateClock();
+
+function goFullScreen() {
+  var elem = document.documentElement;
+  if (elem.requestFullscreen) elem.requestFullscreen();
+}
+</script></body>
+</html>
