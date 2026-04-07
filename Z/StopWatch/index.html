@@ -1,0 +1,74 @@
+<!DOCTYPE html><html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body {
+  margin: 0;
+  background: black;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}#stopwatch {
+font-size: 18vw;
+font-weight: bold;
+}
+
+#info {
+font-size: 4vw;
+opacity: 0.7;
+}
+
+button {
+font-size: 5vw;
+margin-top: 20px;
+padding: 10px 20px;
+}
+
+</style>
+</head><body onclick="goFullScreen()"><div id="stopwatch">00:00:00</div>
+<div id="info"></div>
+<button onclick="toggle()">Start</button><script>
+var seconds = 0;
+var running = false;
+var interval;
+
+function updateStopwatch() {
+  seconds++;
+
+  var h = String(Math.floor(seconds / 3600)).padStart(2, '0');
+  var m = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+  var s = String(seconds % 60).padStart(2, '0');
+
+  document.getElementById("stopwatch").innerHTML = h + ":" + m + ":" + s;
+}
+
+function toggle() {
+  if (!running) {
+    interval = setInterval(updateStopwatch, 1000);
+    running = true;
+    event.target.innerHTML = "Pause";
+  } else {
+    clearInterval(interval);
+    running = false;
+    event.target.innerHTML = "Resume";
+  }
+}
+
+function updateInfo() {
+  var now = new Date();
+  document.getElementById("info").innerHTML = now.toLocaleString();
+}
+
+setInterval(updateInfo, 1000);
+updateInfo();
+
+function goFullScreen() {
+  var elem = document.documentElement;
+  if (elem.requestFullscreen) elem.requestFullscreen();
+}
+</script></body>
+</html>
