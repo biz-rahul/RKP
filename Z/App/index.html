@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>APK Installer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background: #22c55e;
+      border: none;
+      padding: 12px 20px;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: #16a34a;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1>Installing Your App...</h1>
+  <p>If download doesn't start, click below</p>
+  <button class="btn" onclick="downloadAPK()">Download APK</button>
+</div>
+
+<script>
+  const apkUrl = "https://github.com/USERNAME/REPO/releases/download/app/app.apk";
+
+  function downloadAPK() {
+    const link = document.createElement("a");
+    link.href = apkUrl;
+    link.download = "app.apk";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  // Auto trigger download
+  window.onload = () => {
+    downloadAPK();
+  };
+</script>
+
+</body>
+</html>
