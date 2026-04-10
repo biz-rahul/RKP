@@ -663,7 +663,7 @@ const baseDurations = {
   'flash': 1,
   'rgb': 3,
   'glitch': 0.4,
-  'multi': 5,
+  'hypno': 3,
 };
 
 function show(id) { document.getElementById(id)?.classList.remove('hidden'); }
@@ -747,7 +747,7 @@ function selectEffect(fx) {
   state.effect = fx;
 
   document.querySelectorAll('.fx-btn').forEach(b => b.classList.remove('active'));
-  const names = ['gradient-glow','white','red','flash','rgb','window','hacker','glitch','multi'];
+  const names = ['gradient-glow','white','red','flash','rgb','window','hacker','glitch','hypno'];
   const idx = names.indexOf(fx);
   if (idx >= 0) document.querySelectorAll('.fx-btn')[idx].classList.add('active');
 
