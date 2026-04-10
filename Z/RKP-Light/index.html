@@ -507,22 +507,32 @@
   .fx-glitch::before { animation: glitch1 var(--spd, 0.4s) infinite steps(1); background: rgba(255,0,0,0.8); }
   .fx-glitch::after  { animation: glitch2 var(--spd, 0.4s) infinite steps(1); }
 
-  /* 9. Multi Color */
-  @keyframes multiColor {
-    0%   { background: #ff0055; }
-    11%  { background: #ff6600; }
-    22%  { background: #ffdd00; }
-    33%  { background: #33ff66; }
-    44%  { background: #00ffdd; }
-    55%  { background: #0099ff; }
-    66%  { background: #6600ff; }
-    77%  { background: #ff00aa; }
-    88%  { background: #ff3300; }
-    100% { background: #ff0055; }
-  }
-  .fx-multi { animation: multiColor var(--spd, 5s) linear infinite; }
+ /* 10. HYPNOTIC CIRCLE */
+@keyframes hypnoSpin {
+  from { transform: rotate(0deg) scale(1); }
+  to   { transform: rotate(360deg) scale(1.05); }
+}
 
-  .hidden { display: none !important; }
+.fx-hypno {
+  background: radial-gradient(circle at center, #000 20%, #fff 21%, #000 22%, #fff 23%, #000 24%);
+  background-size: 20px 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.fx-hypno::before {
+  content: '';
+  position: absolute;
+  inset: -50%;
+  background: repeating-radial-gradient(
+    circle,
+    #000 0px,
+    #000 10px,
+    #fff 10px,
+    #fff 20px
+  );
+  animation: hypnoSpin var(--spd, 3s) linear infinite;
+}
 </style>
 </head>
 <body>
@@ -567,7 +577,7 @@
         <button class="fx-btn" onclick="selectEffect('window')"><span class="fx-icon">▦</span>WINDOW&#10;LIGHT</button>
         <button class="fx-btn" onclick="selectEffect('hacker')"><span class="fx-icon">></span>HACKER&#10;MODE</button>
         <button class="fx-btn" onclick="selectEffect('glitch')"><span class="fx-icon">▓</span>GLITCH&#10;MODE</button>
-        <button class="fx-btn" onclick="selectEffect('multi')"><span class="fx-icon">◑</span>MULTI&#10;COLOR</button>
+       <button class="fx-btn" onclick="selectEffect('hypno')"> <span class="fx-icon">◎</span>HYPNO&#10;CIRCLE</button>
       </div>
     </div>
 
