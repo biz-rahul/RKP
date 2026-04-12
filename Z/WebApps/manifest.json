@@ -5,12 +5,12 @@
   "display": "standalone",
   "icons": [
     {
-      "src": "/PWA/web-app-manifest-192x192.png",
+      "src": "/Z/WebApps/file_0000000089fc720b830dbe6e88eb7d9b.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/PWA/web-app-manifest-512x512.png",
+      "src": "/Z/WebApps/file_0000000089fc720b830dbe6e88eb7d9b.png",
       "sizes": "512x512",
       "type": "image/png"
     }
