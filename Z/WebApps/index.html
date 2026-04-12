@@ -65,6 +65,7 @@
     z-index: 0;
   }
 
+  /* ===== MOBILE LAYOUT (default) ===== */
   .content {
     position: relative;
     z-index: 2;
@@ -72,7 +73,6 @@
     margin: 0 auto;
   }
 
-  /* Header / Clock */
   .header {
     text-align: center;
     margin-bottom: 3.2rem;
@@ -82,7 +82,6 @@
     font-family: 'Syne', sans-serif;
     font-size: clamp(4rem, 15vw, 6.5rem);
     font-weight: 800;
-    color: #fff;
     letter-spacing: -0.04em;
     line-height: 1;
     margin-bottom: 0.4rem;
@@ -100,7 +99,6 @@
     font-weight: 300;
   }
 
-  /* Section label */
   .section-label {
     font-family: 'Syne', sans-serif;
     font-size: 0.62rem;
@@ -120,7 +118,6 @@
     background: rgba(255,255,255,0.08);
   }
 
-  /* App grid */
   .apps-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -128,7 +125,6 @@
     margin-bottom: 2.2rem;
   }
 
-  /* App card */
   .app-card {
     display: flex;
     flex-direction: column;
@@ -158,7 +154,6 @@
     overflow: hidden;
   }
 
-  /* Inner gloss shine */
   .app-icon-shell::before {
     content: '';
     position: absolute;
@@ -204,7 +199,6 @@
     z-index: 1;
   }
 
-  /* Notification dot — decorative */
   .app-badge {
     position: absolute;
     top: 6px;
@@ -228,11 +222,8 @@
     white-space: nowrap;
     transition: color 0.15s;
   }
-  .app-card:hover .app-name {
-    color: rgba(255,255,255,0.9);
-  }
+  .app-card:hover .app-name { color: rgba(255,255,255,0.9); }
 
-  /* Bottom home indicator */
   .home-bar {
     display: flex;
     justify-content: center;
@@ -244,6 +235,138 @@
     border-radius: 4px;
     background: rgba(255,255,255,0.2);
   }
+
+  /* Desktop sidebar — hidden on mobile */
+  .desktop-sidebar { display: none; }
+
+  /* ===== DESKTOP LAYOUT (≥900px) ===== */
+  @media (min-width: 900px) {
+    .launcher-root {
+      display: flex;
+      align-items: stretch;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* Left sidebar: clock + info */
+    .desktop-sidebar {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      width: 320px;
+      flex-shrink: 0;
+      padding: 3rem 2.5rem;
+      border-right: 0.5px solid rgba(255,255,255,0.06);
+      background: rgba(255,255,255,0.018);
+      backdrop-filter: blur(2px);
+      position: relative;
+      z-index: 2;
+    }
+
+    .desktop-sidebar .clock {
+      font-size: 5.5rem;
+      letter-spacing: -0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .desktop-sidebar .date-str {
+      font-size: 0.72rem;
+      margin-bottom: 3rem;
+    }
+
+    .sidebar-divider {
+      width: 40px;
+      height: 0.5px;
+      background: rgba(255,255,255,0.15);
+      margin-bottom: 2rem;
+    }
+
+    .sidebar-tagline {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.55);
+      line-height: 1.5;
+      max-width: 220px;
+    }
+
+    .sidebar-tagline span {
+      color: rgba(255,255,255,0.9);
+    }
+
+    .sidebar-count {
+      margin-top: auto;
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    /* Right main area: scrollable app grid */
+    .content {
+      flex: 1;
+      max-width: none;
+      margin: 0;
+      padding: 3rem 3.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow-y: auto;
+    }
+
+    /* Hide mobile header inside .content on desktop */
+    .content > .header { display: none; }
+
+    .section-label {
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      margin-bottom: 1.4rem;
+    }
+
+    .apps-grid {
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1.6rem 1.2rem;
+      margin-bottom: 3rem;
+    }
+
+    .app-icon-shell {
+      width: 88px;
+      height: 88px;
+      border-radius: 24px;
+    }
+
+    .app-icon-shell img {
+      width: 52px;
+      height: 52px;
+    }
+
+    .fallback-letter {
+      width: 52px;
+      height: 52px;
+      font-size: 1.5rem;
+    }
+
+    .app-name {
+      font-size: 0.72rem;
+      max-width: 92px;
+    }
+
+    .home-bar { display: none; }
+  }
+
+  /* Extra wide screens */
+  @media (min-width: 1400px) {
+    .desktop-sidebar { width: 380px; padding: 4rem 3rem; }
+    .desktop-sidebar .clock { font-size: 6.5rem; }
+    .content { padding: 4rem 5rem; }
+    .apps-grid {
+      grid-template-columns: repeat(7, 1fr);
+      gap: 2rem 1.5rem;
+    }
+    .app-icon-shell { width: 96px; height: 96px; border-radius: 26px; }
+    .app-icon-shell img { width: 58px; height: 58px; }
+  }
 </style>
 </head>
 <body>
@@ -252,6 +375,14 @@
   <div class="orb orb2"></div>
   <div class="orb orb3"></div>
   <div class="grid-texture"></div>
+
+  <aside class="desktop-sidebar">
+    <div class="clock" id="clock-desk">00:00</div>
+    <div class="date-str" id="datestr-desk"></div>
+    <div class="sidebar-divider"></div>
+    <p class="sidebar-tagline">Your <span>apps,</span><br>one place.</p>
+    <p class="sidebar-count" id="app-count-desk"></p>
+  </aside>
 
   <div class="content">
     <div class="header">
@@ -350,17 +481,28 @@ buildGrid('social-grid', APPS.social);
 buildGrid('google-grid', APPS.google);
 buildGrid('others-grid', APPS.others);
 
-// Clock
+// Clock — syncs both mobile and desktop elements
+const totalApps = APPS.social.length + APPS.google.length + APPS.others.length;
+const countEl = document.getElementById('app-count-desk');
+if (countEl) countEl.textContent = totalApps + ' apps linked';
+
 function tick() {
   const now = new Date();
   const h = String(now.getHours()).padStart(2,'0');
   const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('clock').textContent = h + ':' + m;
+  const timeStr = h + ':' + m;
 
   const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-  document.getElementById('datestr').textContent =
-    DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+  const dateStr = DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+
+  document.getElementById('clock').textContent = timeStr;
+  document.getElementById('datestr').textContent = dateStr;
+
+  const cd = document.getElementById('clock-desk');
+  const dd = document.getElementById('datestr-desk');
+  if (cd) cd.textContent = timeStr;
+  if (dd) dd.textContent = dateStr;
 }
 tick();
 setInterval(tick, 10000);
