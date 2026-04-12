@@ -1,6 +1,6 @@
 {
-  "name": "My Apps",
-  "short_name": "Apps",
+  "name": "RKP Apps",
+  "short_name": "RKP",
   "start_url": "/Z/WebApps/",
   "display": "standalone",
   "icons": [
