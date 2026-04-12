@@ -4,565 +4,366 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>My Apps</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  :root {
-    --bg: #0a0a0f;
-    --surface: #12121a;
-    --surface2: #1a1a28;
-    --border: rgba(255,255,255,0.07);
-    --accent: #6c63ff;
-    --accent2: #ff6584;
-    --text: #e8e8f0;
-    --text-muted: #6b6b8a;
-    --glow: rgba(108,99,255,0.25);
-  }
-
-  html, body {
+  body {
+    font-family: 'DM Sans', sans-serif;
     min-height: 100vh;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Outfit', sans-serif;
+    background: #080810;
     overflow-x: hidden;
   }
 
-  /* Background mesh */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background:
-      radial-gradient(ellipse 60% 40% at 20% 20%, rgba(108,99,255,0.12) 0%, transparent 60%),
-      radial-gradient(ellipse 50% 40% at 80% 80%, rgba(255,101,132,0.08) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 40% at 60% 10%, rgba(0,212,255,0.06) 0%, transparent 60%);
-    pointer-events: none;
-    z-index: 0;
-  }
-
-  /* Grain texture */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 0;
-    opacity: 0.4;
-  }
-
-  .page {
-    position: relative;
-    z-index: 1;
+  .launcher-root {
     min-height: 100vh;
-    padding: 48px 24px 80px;
-    max-width: 1100px;
+    padding: 3rem 1.8rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Ambient orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .orb1 {
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
+    top: -180px; left: -130px;
+    animation: drift1 12s ease-in-out infinite alternate;
+  }
+  .orb2 {
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(236,72,153,0.28) 0%, transparent 70%);
+    bottom: -100px; right: -80px;
+    animation: drift2 15s ease-in-out infinite alternate;
+  }
+  .orb3 {
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%);
+    top: 45%; left: 55%;
+    animation: drift3 10s ease-in-out infinite alternate;
+  }
+
+  @keyframes drift1 { from { transform: translate(0,0); } to { transform: translate(40px, 30px); } }
+  @keyframes drift2 { from { transform: translate(0,0); } to { transform: translate(-30px, -20px); } }
+  @keyframes drift3 { from { transform: translate(0,0); } to { transform: translate(20px, -30px); } }
+
+  /* Grid overlay texture */
+  .grid-texture {
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .content {
+    position: relative;
+    z-index: 2;
+    max-width: 420px;
     margin: 0 auto;
   }
 
-  /* Header */
+  /* Header / Clock */
   .header {
     text-align: center;
-    margin-bottom: 56px;
-    animation: fadeDown 0.7s ease both;
+    margin-bottom: 3.2rem;
   }
 
-  .header-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(108,99,255,0.12);
-    border: 1px solid rgba(108,99,255,0.3);
-    border-radius: 100px;
-    padding: 6px 16px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--accent);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 20px;
-  }
-
-  .header-badge::before {
-    content: '';
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--accent);
-    box-shadow: 0 0 8px var(--accent);
-    animation: pulse 2s ease-in-out infinite;
-  }
-
-  .header h1 {
-    font-size: clamp(32px, 6vw, 56px);
-    font-weight: 700;
-    letter-spacing: -0.03em;
-    line-height: 1.1;
-    background: linear-gradient(135deg, #ffffff 0%, #a8a8c8 100%);
+  .clock {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(4rem, 15vw, 6.5rem);
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.6) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    margin-bottom: 12px;
   }
 
-  .header p {
-    color: var(--text-muted);
-    font-size: 15px;
+  .date-str {
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
     font-weight: 300;
   }
 
-  /* Section labels */
-  .section {
-    margin-bottom: 40px;
-    animation: fadeUp 0.6s ease both;
-  }
-
+  /* Section label */
   .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.22);
+    margin-bottom: 1.1rem;
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px;
   }
-
-  .section-label span {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--text-muted);
-  }
-
   .section-label::after {
     content: '';
     flex: 1;
-    height: 1px;
-    background: var(--border);
+    height: 0.5px;
+    background: rgba(255,255,255,0.08);
   }
 
-  /* App Grid */
+  /* App grid */
   .apps-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.1rem 0.9rem;
+    margin-bottom: 2.2rem;
   }
 
-  /* App Card */
+  /* App card */
   .app-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
-    cursor: pointer;
+    gap: 0.55rem;
     text-decoration: none;
-    padding: 16px 8px;
-    border-radius: 20px;
-    border: 1px solid transparent;
-    transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    position: relative;
-    background: transparent;
-    animation: scaleIn 0.5s ease both;
-  }
-
-  .app-card:hover {
-    background: var(--surface2);
-    border-color: var(--border);
-    transform: translateY(-6px) scale(1.04);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05) inset;
-  }
-
-  .app-card:active {
-    transform: translateY(-2px) scale(0.98);
-  }
-
-  /* Icon container */
-  .app-icon-wrap {
-    width: 62px;
-    height: 62px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-    flex-shrink: 0;
-  }
-
-  .app-card:hover .app-icon-wrap {
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5), 0 0 20px var(--glow);
-    border-radius: 18px;
-  }
-
-  .app-icon-wrap img {
-    width: 40px;
-    height: 40px;
-    object-fit: contain;
-    border-radius: 4px;
-  }
-
-  /* Fallback icon */
-  .app-icon-wrap .fallback-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
-    font-weight: 700;
-    color: white;
-    font-family: 'Space Mono', monospace;
-  }
-
-  /* Notification dot on hover */
-  .app-card:hover .app-icon-wrap::after {
-    content: '';
-    position: absolute;
-    top: -3px; right: -3px;
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: var(--accent);
-    border: 2px solid var(--bg);
-    box-shadow: 0 0 8px var(--accent);
-    animation: popIn 0.2s ease;
-  }
-
-  .app-name {
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--text-muted);
-    text-align: center;
-    transition: color 0.2s ease;
-    letter-spacing: 0.01em;
-    line-height: 1.3;
-    max-width: 90px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .app-card:hover .app-name {
-    color: var(--text);
-  }
-
-  /* Specific icon background colors */
-  .icon-pinterest { background: linear-gradient(145deg, #e60023, #ad081b); }
-  .icon-reddit { background: linear-gradient(145deg, #ff4500, #cc3700); }
-  .icon-facebook { background: linear-gradient(145deg, #1877f2, #0d5bba); }
-  .icon-tiktok { background: linear-gradient(145deg, #010101, #1a1a1a); }
-  .icon-douyin { background: linear-gradient(145deg, #161823, #2f3443); }
-  .icon-gemini { background: linear-gradient(145deg, #1a73e8, #4285f4); }
-  .icon-contacts { background: linear-gradient(145deg, #34a853, #1e7e34); }
-  .icon-translate { background: linear-gradient(145deg, #4285f4, #1a73e8); }
-  .icon-gcal { background: linear-gradient(145deg, #4285f4, #ea4335); }
-  .icon-twitter { background: linear-gradient(145deg, #000000, #14171a); }
-  .icon-linkedin { background: linear-gradient(145deg, #0077b5, #005582); }
-  .icon-discord { background: linear-gradient(145deg, #5865f2, #4752c4); }
-  .icon-telegram { background: linear-gradient(145deg, #2aabee, #1e96d1); }
-  .icon-drive { background: linear-gradient(145deg, #fbbc04, #ea4335); }
-  .icon-notion { background: linear-gradient(145deg, #ffffff, #e8e8e8); }
-  .icon-github { background: linear-gradient(145deg, #24292e, #161b22); }
-
-  /* Search bar */
-  .searchbar {
-    position: relative;
-    max-width: 380px;
-    margin: 0 auto 52px;
-    animation: fadeDown 0.7s 0.1s ease both;
-  }
-
-  .searchbar input {
-    width: 100%;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 14px 20px 14px 48px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 14px;
-    color: var(--text);
-    outline: none;
-    transition: all 0.25s ease;
-    caret-color: var(--accent);
-  }
-
-  .searchbar input::placeholder { color: var(--text-muted); }
-  .searchbar input:focus {
-    border-color: rgba(108,99,255,0.5);
-    box-shadow: 0 0 0 3px rgba(108,99,255,0.1);
-    background: var(--surface2);
-  }
-
-  .searchbar svg {
-    position: absolute;
-    left: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--text-muted);
-    pointer-events: none;
-  }
-
-  /* Animations */
-  @keyframes fadeDown {
-    from { opacity: 0; transform: translateY(-16px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  @keyframes scaleIn {
-    from { opacity: 0; transform: scale(0.85); }
-    to   { opacity: 1; transform: scale(1); }
-  }
-
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+    cursor: pointer;
+    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
 
   @keyframes popIn {
-    from { transform: scale(0); }
-    to   { transform: scale(1); }
+    from { opacity: 0; transform: scale(0.65) translateY(14px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
   }
 
-  /* Stagger children */
-  .section:nth-child(1) { animation-delay: 0.1s; }
-  .section:nth-child(2) { animation-delay: 0.2s; }
-  .section:nth-child(3) { animation-delay: 0.3s; }
+  .app-icon-shell {
+    width: 68px;
+    height: 68px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.055);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    position: relative;
+    transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s, border-color 0.2s;
+    overflow: hidden;
+  }
 
-  .apps-grid .app-card:nth-child(1) { animation-delay: 0.05s; }
-  .apps-grid .app-card:nth-child(2) { animation-delay: 0.10s; }
-  .apps-grid .app-card:nth-child(3) { animation-delay: 0.15s; }
-  .apps-grid .app-card:nth-child(4) { animation-delay: 0.20s; }
-  .apps-grid .app-card:nth-child(5) { animation-delay: 0.25s; }
-  .apps-grid .app-card:nth-child(6) { animation-delay: 0.30s; }
-  .apps-grid .app-card:nth-child(7) { animation-delay: 0.35s; }
-  .apps-grid .app-card:nth-child(8) { animation-delay: 0.40s; }
-  .apps-grid .app-card:nth-child(9) { animation-delay: 0.45s; }
+  /* Inner gloss shine */
+  .app-icon-shell::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+    border-radius: 20px 20px 0 0;
+    pointer-events: none;
+  }
 
-  /* Hidden apps for search */
-  .app-card.hidden { display: none; }
+  .app-card:hover .app-icon-shell {
+    transform: scale(1.13) translateY(-4px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 1.5px rgba(255,255,255,0.18);
+    border-color: rgba(255,255,255,0.2);
+  }
+  .app-card:active .app-icon-shell {
+    transform: scale(0.94) translateY(0);
+    transition-duration: 0.08s;
+  }
 
-  /* Footer */
-  .footer {
+  .app-icon-shell img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 8px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .fallback-letter {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.1);
+    color: rgba(255,255,255,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Syne', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Notification dot — decorative */
+  .app-badge {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(10,10,20,0.9);
+    z-index: 2;
+  }
+
+  .app-name {
+    font-size: 0.68rem;
+    color: rgba(255,255,255,0.6);
+    font-weight: 400;
     text-align: center;
-    margin-top: 60px;
-    color: var(--text-muted);
-    font-size: 12px;
-    font-family: 'Space Mono', monospace;
-    opacity: 0.5;
+    letter-spacing: 0.01em;
+    max-width: 72px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.15s;
+  }
+  .app-card:hover .app-name {
+    color: rgba(255,255,255,0.9);
   }
 
-  @media (max-width: 480px) {
-    .apps-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 14px; }
-    .app-icon-wrap { width: 54px; height: 54px; }
-    .header h1 { font-size: 28px; }
+  /* Bottom home indicator */
+  .home-bar {
+    display: flex;
+    justify-content: center;
+    margin-top: 2.5rem;
+  }
+  .home-pill {
+    width: 120px;
+    height: 4px;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.2);
   }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="launcher-root">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+  <div class="grid-texture"></div>
 
-  <!-- Header -->
-  <div class="header">
-    <div class="header-badge">My App Space</div>
-    <h1>All Your Apps</h1>
-    <p>Everything in one beautiful place</p>
-  </div>
-
-  <!-- Search -->
-  <div class="searchbar">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <input type="text" id="searchInput" placeholder="Search apps..." oninput="filterApps(this.value)">
-  </div>
-
-  <!-- Social Media Section -->
-  <div class="section" id="section-social">
-    <div class="section-label"><span>Social Media</span></div>
-    <div class="apps-grid">
-
-      <a class="app-card" href="https://pinterest.com" target="_blank" data-name="pinterest">
-        <div class="app-icon-wrap icon-pinterest">
-          <img src="https://www.google.com/s2/favicons?domain=pinterest.com&sz=64" alt="Pinterest" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">P</div>
-        </div>
-        <span class="app-name">Pinterest</span>
-      </a>
-
-      <a class="app-card" href="https://reddit.com" target="_blank" data-name="reddit">
-        <div class="app-icon-wrap icon-reddit">
-          <img src="https://www.google.com/s2/favicons?domain=reddit.com&sz=64" alt="Reddit" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">R</div>
-        </div>
-        <span class="app-name">Reddit</span>
-      </a>
-
-      <a class="app-card" href="https://facebook.com" target="_blank" data-name="facebook">
-        <div class="app-icon-wrap icon-facebook">
-          <img src="https://www.google.com/s2/favicons?domain=facebook.com&sz=64" alt="Facebook" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">F</div>
-        </div>
-        <span class="app-name">Facebook</span>
-      </a>
-
-      <a class="app-card" href="https://tiktok.com" target="_blank" data-name="tiktok">
-        <div class="app-icon-wrap icon-tiktok">
-          <img src="https://www.google.com/s2/favicons?domain=tiktok.com&sz=64" alt="TikTok" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">T</div>
-        </div>
-        <span class="app-name">TikTok</span>
-      </a>
-
-      <a class="app-card" href="https://douyin.com" target="_blank" data-name="douyin">
-        <div class="app-icon-wrap icon-douyin">
-          <img src="https://www.google.com/s2/favicons?domain=douyin.com&sz=64" alt="Douyin" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">D</div>
-        </div>
-        <span class="app-name">Douyin</span>
-      </a>
-
+  <div class="content">
+    <div class="header">
+      <div class="clock" id="clock">00:00</div>
+      <div class="date-str" id="datestr"></div>
     </div>
+
+    <div class="section-label">Social Media</div>
+    <div class="apps-grid" id="social-grid"></div>
+
+    <div class="section-label">Google Apps</div>
+    <div class="apps-grid" id="google-grid"></div>
+
+    <div class="section-label">Others</div>
+    <div class="apps-grid" id="others-grid"></div>
+
+    <div class="home-bar"><div class="home-pill"></div></div>
   </div>
-
-  <!-- Google Apps Section -->
-  <div class="section" id="section-google">
-    <div class="section-label"><span>Google Apps</span></div>
-    <div class="apps-grid">
-
-      <a class="app-card" href="https://gemini.google.com" target="_blank" data-name="gemini">
-        <div class="app-icon-wrap icon-gemini">
-          <img src="https://www.google.com/s2/favicons?domain=gemini.google.com&sz=64" alt="Gemini" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">G</div>
-        </div>
-        <span class="app-name">Gemini</span>
-      </a>
-
-      <a class="app-card" href="https://contacts.google.com" target="_blank" data-name="google contact">
-        <div class="app-icon-wrap icon-contacts">
-          <img src="https://www.google.com/s2/favicons?domain=contacts.google.com&sz=64" alt="Contacts" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">C</div>
-        </div>
-        <span class="app-name">Contacts</span>
-      </a>
-
-      <a class="app-card" href="https://translate.google.com" target="_blank" data-name="google translate">
-        <div class="app-icon-wrap icon-translate">
-          <img src="https://www.google.com/s2/favicons?domain=translate.google.com&sz=64" alt="Translate" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">T</div>
-        </div>
-        <span class="app-name">Translate</span>
-      </a>
-
-      <a class="app-card" href="https://calendar.google.com" target="_blank" data-name="google calendar">
-        <div class="app-icon-wrap icon-gcal">
-          <img src="https://www.google.com/s2/favicons?domain=calendar.google.com&sz=64" alt="Calendar" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">C</div>
-        </div>
-        <span class="app-name">Calendar</span>
-      </a>
-
-      <a class="app-card" href="https://twitter.com" target="_blank" data-name="twitter x">
-        <div class="app-icon-wrap icon-twitter">
-          <img src="https://www.google.com/s2/favicons?domain=x.com&sz=64" alt="Twitter" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">X</div>
-        </div>
-        <span class="app-name">Twitter / X</span>
-      </a>
-
-      <a class="app-card" href="https://linkedin.com" target="_blank" data-name="linkedin">
-        <div class="app-icon-wrap icon-linkedin">
-          <img src="https://www.google.com/s2/favicons?domain=linkedin.com&sz=64" alt="LinkedIn" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">in</div>
-        </div>
-        <span class="app-name">LinkedIn</span>
-      </a>
-
-      <a class="app-card" href="https://discord.com" target="_blank" data-name="discord">
-        <div class="app-icon-wrap icon-discord">
-          <img src="https://www.google.com/s2/favicons?domain=discord.com&sz=64" alt="Discord" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">D</div>
-        </div>
-        <span class="app-name">Discord</span>
-      </a>
-
-      <a class="app-card" href="https://telegram.org" target="_blank" data-name="telegram">
-        <div class="app-icon-wrap icon-telegram">
-          <img src="https://www.google.com/s2/favicons?domain=telegram.org&sz=64" alt="Telegram" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">T</div>
-        </div>
-        <span class="app-name">Telegram</span>
-      </a>
-
-      <a class="app-card" href="https://drive.google.com" target="_blank" data-name="google drive">
-        <div class="app-icon-wrap icon-drive">
-          <img src="https://www.google.com/s2/favicons?domain=drive.google.com&sz=64" alt="Drive" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">D</div>
-        </div>
-        <span class="app-name">Drive</span>
-      </a>
-
-    </div>
-  </div>
-
-  <!-- Others Section -->
-  <div class="section" id="section-others">
-    <div class="section-label"><span>Others</span></div>
-    <div class="apps-grid">
-
-      <a class="app-card" href="https://notion.so" target="_blank" data-name="notion">
-        <div class="app-icon-wrap icon-notion">
-          <img src="https://www.google.com/s2/favicons?domain=notion.so&sz=64" alt="Notion" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none;color:#000;background:#fff">N</div>
-        </div>
-        <span class="app-name">Notion</span>
-      </a>
-
-      <a class="app-card" href="https://github.com" target="_blank" data-name="github">
-        <div class="app-icon-wrap icon-github">
-          <img src="https://www.google.com/s2/favicons?domain=github.com&sz=64" alt="GitHub" onerror="this.style.display='none';this.parentNode.querySelector('.fallback-icon').style.display='flex'">
-          <div class="fallback-icon" style="display:none">G</div>
-        </div>
-        <span class="app-name">GitHub</span>
-      </a>
-
-    </div>
-  </div>
-
-  <div class="footer">crafted with ♥ — your personal launchpad</div>
 </div>
 
 <script>
-  function filterApps(query) {
-    const q = query.toLowerCase().trim();
-    const cards = document.querySelectorAll('.app-card');
-    const sections = { social: false, google: false, others: false };
+const APPS = {
+  social: [
+    { name: 'Pinterest', url: 'https://pinterest.com',   icon: 'https://www.google.com/s2/favicons?domain=pinterest.com&sz=128' },
+    { name: 'Reddit',    url: 'https://reddit.com',      icon: 'https://www.google.com/s2/favicons?domain=reddit.com&sz=128' },
+    { name: 'Facebook',  url: 'https://facebook.com',    icon: 'https://www.google.com/s2/favicons?domain=facebook.com&sz=128' },
+    { name: 'TikTok',    url: 'https://tiktok.com',      icon: 'https://www.google.com/s2/favicons?domain=tiktok.com&sz=128' },
+    { name: 'Douyin',    url: 'https://www.douyin.com',  icon: 'https://www.google.com/s2/favicons?domain=douyin.com&sz=128' },
+  ],
+  google: [
+    { name: 'Gemini',    url: 'https://gemini.google.com',   icon: 'https://www.google.com/s2/favicons?domain=gemini.google.com&sz=128' },
+    { name: 'Contacts',  url: 'https://contacts.google.com', icon: 'https://www.google.com/s2/favicons?domain=contacts.google.com&sz=128' },
+    { name: 'Translate', url: 'https://translate.google.com',icon: 'https://www.google.com/s2/favicons?domain=translate.google.com&sz=128' },
+    { name: 'Calendar',  url: 'https://calendar.google.com', icon: 'https://www.google.com/s2/favicons?domain=calendar.google.com&sz=128' },
+    { name: 'Drive',     url: 'https://drive.google.com',    icon: 'https://www.google.com/s2/favicons?domain=drive.google.com&sz=128' },
+  ],
+  others: [
+    { name: 'Notion',    url: 'https://notion.so',   icon: 'https://www.google.com/s2/favicons?domain=notion.so&sz=128' },
+    { name: 'GitHub',    url: 'https://github.com',  icon: 'https://www.google.com/s2/favicons?domain=github.com&sz=128' },
+  ]
+};
 
-    cards.forEach(card => {
-      const name = card.getAttribute('data-name').toLowerCase();
-      const matches = !q || name.includes(q);
-      card.classList.toggle('hidden', !matches);
+// Badge colors for a few apps (decorative)
+const BADGE_COLORS = {
+  'Pinterest': '#ef4444',
+  'Facebook': '#3b82f6',
+  'Reddit': '#f97316',
+};
 
-      if (matches) {
-        const section = card.closest('.section');
-        if (section) {
-          const id = section.id;
-          if (id === 'section-social') sections.social = true;
-          if (id === 'section-google') sections.google = true;
-          if (id === 'section-others') sections.others = true;
-        }
-      }
-    });
+function buildGrid(id, list) {
+  const grid = document.getElementById(id);
+  list.forEach((app, i) => {
+    const card = document.createElement('a');
+    card.className = 'app-card';
+    card.href = app.url;
+    card.target = '_blank';
+    card.rel = 'noopener noreferrer';
+    card.style.animationDelay = `${i * 0.075}s`;
 
-    // Hide sections with no visible apps
-    document.getElementById('section-social').style.display = sections.social ? '' : 'none';
-    document.getElementById('section-google').style.display = sections.google ? '' : 'none';
-    document.getElementById('section-others').style.display = sections.others ? '' : 'none';
-  }
+    const shell = document.createElement('div');
+    shell.className = 'app-icon-shell';
+
+    // Favicon img
+    const img = document.createElement('img');
+    img.src = app.icon;
+    img.alt = app.name;
+    img.loading = 'lazy';
+    img.onerror = function() {
+      this.remove();
+      const fb = document.createElement('div');
+      fb.className = 'fallback-letter';
+      fb.textContent = app.name[0].toUpperCase();
+      shell.appendChild(fb);
+    };
+    shell.appendChild(img);
+
+    // Decorative badge for some apps
+    if (BADGE_COLORS[app.name]) {
+      const badge = document.createElement('div');
+      badge.className = 'app-badge';
+      badge.style.background = BADGE_COLORS[app.name];
+      shell.appendChild(badge);
+    }
+
+    const label = document.createElement('span');
+    label.className = 'app-name';
+    label.textContent = app.name;
+
+    card.appendChild(shell);
+    card.appendChild(label);
+    grid.appendChild(card);
+  });
+}
+
+buildGrid('social-grid', APPS.social);
+buildGrid('google-grid', APPS.google);
+buildGrid('others-grid', APPS.others);
+
+// Clock
+function tick() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').textContent = h + ':' + m;
+
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('datestr').textContent =
+    DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+}
+tick();
+setInterval(tick, 10000);
 </script>
 </body>
-  </html>
+</html>
