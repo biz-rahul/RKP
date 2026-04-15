@@ -651,45 +651,7 @@ function renderTool(id) {
       <button class="btn" onclick="calcAge()">CALCULATE AGE</button>
       <div class="result-box" id="age-result"></div>`;
 
-    // ── CURRENCY ──
-    case 'currency': return `
-      <div class="input-group">
-        <label>Amount</label>
-        <input type="number" id="curr-amt" value="1" placeholder="Enter amount">
-      </div>
-      <div class="two-col">
-        <div class="input-group">
-          <label>From</label>
-          <select id="curr-from">${currencyOptions()}</select>
-        </div>
-        <div class="input-group">
-          <label>To</label>
-          <select id="curr-to">${currencyOptions('INR')}</select>
-        </div>
-      </div>
-      <button class="btn" onclick="convertCurrency()">CONVERT</button>
-      <div class="result-box" id="curr-result"></div>
-      <div style="font-size:0.58rem;color:var(--muted);margin-top:0.8rem">* Uses fixed reference rates. For live rates, check a financial service.</div>`;
-
-    // ── COMPASS ──
-    case 'compass': return `
-      <div style="text-align:center;padding:1rem 0">
-        <div class="compass-ring" id="compass-ring">
-          <div style="position:absolute;top:12px;left:50%;transform:translateX(-50%)" class="compass-dir" style="color:var(--accent2)">N</div>
-          <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%)" class="compass-dir">S</div>
-          <div style="position:absolute;right:14px;top:50%;transform:translateY(-50%)" class="compass-dir">E</div>
-          <div style="position:absolute;left:14px;top:50%;transform:translateY(-50%)" class="compass-dir">W</div>
-          <div class="compass-needle compass-needle-n" id="compass-n"></div>
-          <div class="compass-needle-s" id="compass-s"></div>
-          <div style="width:8px;height:8px;border-radius:50%;background:var(--accent);position:absolute"></div>
-        </div>
-        <div style="margin-top:1.5rem">
-          <div class="result-big" id="compass-deg">—°</div>
-          <div class="result-label" id="compass-dir-text">Waiting for sensor…</div>
-        </div>
-        <button class="btn" style="margin-top:1.5rem;max-width:200px" onclick="startCompass()">START COMPASS</button>
-      </div>`;
-
+    
     // ── DATA SIZE ──
     case 'data-size': return `
       <div class="input-group">
@@ -708,43 +670,7 @@ function renderTool(id) {
       </div>
       <div class="result-box" id="ds-result" style="font-size:0.8rem;line-height:2"></div>`;
 
-    // ── QR SCANNER ──
-    case 'qr-scan': return `
-      <p style="font-size:0.72rem;color:var(--muted);margin-bottom:1rem">Grant camera permission to scan QR codes in real time.</p>
-      <video id="qr-video" playsinline autoplay style="width:100%;border:1px solid var(--border);display:none;max-height:300px;object-fit:cover"></video>
-      <canvas id="qr-canvas" style="display:none"></canvas>
-      <button class="btn" id="qr-scan-btn" onclick="startQRScan()">START CAMERA</button>
-      <div class="result-box" id="qr-scan-result" style="display:none"></div>`;
-
-    // ── QR GENERATOR ──
-    case 'qr-gen': return `
-      <div class="input-group">
-        <label>Text / URL</label>
-        <textarea id="qr-text" rows="3" placeholder="Enter text or URL to encode…" style="resize:vertical"></textarea>
-      </div>
-      <div class="two-col">
-        <div class="input-group">
-          <label>Size (px)</label>
-          <select id="qr-size">
-            <option value="128">128</option>
-            <option value="200" selected>200</option>
-            <option value="256">256</option>
-            <option value="300">300</option>
-          </select>
-        </div>
-        <div class="input-group">
-          <label>Error Correction</label>
-          <select id="qr-ec">
-            <option value="L">Low (L)</option>
-            <option value="M" selected>Medium (M)</option>
-            <option value="H">High (H)</option>
-          </select>
-        </div>
-      </div>
-      <button class="btn" onclick="generateQR()">GENERATE QR CODE</button>
-      <div id="qr-output" style="background:white;padding:1rem;display:none;justify-content:center;margin-top:1rem"></div>
-      <button class="btn btn-ghost" id="qr-download" style="display:none;margin-top:0.5rem" onclick="downloadQR()">DOWNLOAD PNG</button>`;
-
+    
     // ── SPINNING WHEEL ──
     case 'spin-wheel': return `
       <div class="wheel-items" id="wheel-items">
@@ -1039,76 +965,6 @@ function calcAge() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// CURRENCY CONVERTER
-// ═══════════════════════════════════════════════════════════
-
-const rates = {
-  USD:1, EUR:0.92, GBP:0.79, INR:83.12, JPY:149.5, CAD:1.36, AUD:1.53,
-  CHF:0.89, CNY:7.24, KRW:1325, BRL:4.97, MXN:17.15, SGD:1.34, HKD:7.82,
-  SEK:10.42, NOK:10.55, DKK:6.89, NZD:1.63, AED:3.67, SAR:3.75,
-  TRY:32.15, ZAR:18.63, THB:35.1, IDR:15650, MYR:4.72, PHP:55.8,
-  PKR:278.5, BDT:110.5, NGN:1590, KES:130.5, EGP:30.9, RUB:92.4
-};
-
-function currencyOptions(selected='USD') {
-  return Object.keys(rates).map(c=>`<option value="${c}" ${c===selected?'selected':''}>${c}</option>`).join('');
-}
-
-function convertCurrency() {
-  const amt = parseFloat(document.getElementById('curr-amt').value)||1;
-  const from = document.getElementById('curr-from').value;
-  const to = document.getElementById('curr-to').value;
-  const usd = amt / rates[from];
-  const result = usd * rates[to];
-  document.getElementById('curr-result').innerHTML = `
-    <div class="result-big">${result.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})} <span style="font-size:1.5rem">${to}</span></div>
-    <div class="result-label">${amt} ${from} = ${result.toFixed(4)} ${to}</div>
-    <div style="margin-top:0.5rem;font-size:0.65rem;color:var(--muted)">1 ${from} = ${(rates[to]/rates[from]).toFixed(4)} ${to}</div>
-  `;
-}
-
-// ═══════════════════════════════════════════════════════════
-// COMPASS
-// ═══════════════════════════════════════════════════════════
-
-function startCompass() {
-  const dirs = ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
-  function setAngle(deg) {
-    const n = document.getElementById('compass-n');
-    const s = document.getElementById('compass-s');
-    const degEl = document.getElementById('compass-deg');
-    const dirEl = document.getElementById('compass-dir-text');
-    if(n) n.style.transform = `translateX(-50%) rotate(${deg}deg)`;
-    if(s) s.style.transform = `translateX(-50%) rotate(${deg}deg)`;
-    if(degEl) degEl.textContent = Math.round(deg) + '°';
-    const idx = Math.round(deg/22.5) % 16;
-    if(dirEl) dirEl.textContent = dirs[(idx+16)%16];
-  }
-
-  if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
-    DeviceOrientationEvent.requestPermission().then(state => {
-      if(state === 'granted') setupOrientation();
-    });
-  } else if ('ondeviceorientationabsolute' in window || 'ondeviceorientation' in window) {
-    setupOrientation();
-  } else {
-    // Simulate for desktop
-    let a = 0;
-    setInterval(()=>{ a = (a+2)%360; setAngle(a); }, 50);
-    document.getElementById('compass-dir-text').textContent = 'Simulated (no sensor)';
-  }
-
-  function setupOrientation() {
-    window.addEventListener('deviceorientationabsolute', e => {
-      if(e.alpha !== null) setAngle(360 - e.alpha);
-    }, true);
-    window.addEventListener('deviceorientation', e => {
-      if(e.alpha !== null) setAngle(360 - e.alpha);
-    }, true);
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
 // DATA SIZE CONVERTER
 // ═══════════════════════════════════════════════════════════
 
@@ -1131,69 +987,6 @@ function convertData() {
 function formatNum(n) {
   if(n >= 1e12 || (n < 0.0001 && n > 0)) return n.toExponential(4);
   return n.toLocaleString(undefined,{maximumFractionDigits:6});
-}
-
-// ═══════════════════════════════════════════════════════════
-// QR SCANNER
-// ═══════════════════════════════════════════════════════════
-
-async function startQRScan() {
-  const video = document.getElementById('qr-video');
-  const btn = document.getElementById('qr-scan-btn');
-  const resultBox = document.getElementById('qr-scan-result');
-  try {
-    const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-    window._qrStream = stream;
-    video.srcObject = stream;
-    video.style.display = 'block';
-    btn.textContent = 'SCANNING…';
-    btn.disabled = true;
-    const canvas = document.getElementById('qr-canvas');
-    const ctx = canvas.getContext('2d');
-    function scan() {
-      if(!video.videoWidth) { requestAnimationFrame(scan); return; }
-      canvas.width = video.videoWidth; canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0);
-      try {
-        const imageData = ctx.getImageData(0,0,canvas.width,canvas.height);
-        // Basic: just show camera is working; real QR decode needs jsQR library
-        resultBox.style.display = 'block';
-        resultBox.innerHTML = '<div style="color:var(--accent)">📷 Camera active — Point at a QR code</div><div style="font-size:0.65rem;color:var(--muted);margin-top:0.5rem">For full decode, jsQR library is needed (CDN blocked in this env). Camera feed is live.</div>';
-      } catch(e) {}
-      requestAnimationFrame(scan);
-    }
-    video.onloadedmetadata = () => scan();
-  } catch(e) {
-    resultBox.style.display = 'block';
-    resultBox.innerHTML = '<span style="color:var(--accent2)">Camera access denied or not available.</span>';
-  }
-}
-
-// ═══════════════════════════════════════════════════════════
-// QR GENERATOR
-// ═══════════════════════════════════════════════════════════
-
-function generateQR() {
-  const text = document.getElementById('qr-text').value.trim();
-  if(!text) return;
-  const size = parseInt(document.getElementById('qr-size').value);
-  const ec = document.getElementById('qr-ec').value;
-  const out = document.getElementById('qr-output');
-  out.innerHTML = '';
-  out.style.display = 'flex';
-  try {
-    new QRCode(out, { text, width:size, height:size, correctLevel: QRCode.CorrectLevel[ec] });
-    document.getElementById('qr-download').style.display = 'block';
-  } catch(e) { out.innerHTML = '<span style="color:var(--accent2)">Error generating QR</span>'; }
-}
-
-function downloadQR() {
-  const canvas = document.querySelector('#qr-output canvas');
-  if(!canvas) return;
-  const a = document.createElement('a');
-  a.download = 'qr-code.png';
-  a.href = canvas.toDataURL();
-  a.click();
 }
 
 // ═══════════════════════════════════════════════════════════
