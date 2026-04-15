@@ -5,12 +5,12 @@
   "display": "standalone",
   "icons": [
     {
-      "src": "/PWA/acd557ff-ab0c-4ba0-b707-20c3268ebceb.png",
+      "src": "/PWA/95174.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/PWA/acd557ff-ab0c-4ba0-b707-20c3268ebceb.png",
+      "src": "/PWA/95174.png",
       "sizes": "512x512",
       "type": "image/png"
     }
