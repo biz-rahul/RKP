@@ -882,7 +882,7 @@ function calcBtn(b) {
   if (b === '=') {
     if (s.op && s.prev !== null) {
       const cur = parseFloat(s.display);
-      const ops = {'÷':'/','×':'*','−':'-','+'};
+      const ops = {'÷':'/','×':'*','−':'-','+':'+'};
       let res;
       if(s.op==='÷') res = s.prev / cur;
       else if(s.op==='×') res = s.prev * cur;
