@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOOLBOX — All-in-One Tools</title>
+    <link rel="manifest" href="/Z/RKP-Tools/manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0f;
+  --surface: #111118;
+  --card: #16161f;
+  --card2: #1c1c28;
+  --border: #2a2a3a;
+  --accent: #c8f135;
+  --accent2: #ff6b35;
+  --accent3: #35c8f1;
+  --text: #e8e8f0;
+  --muted: #6b6b88;
+  --glow: rgba(200,241,53,0.15);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Mono', monospace;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Noise overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.4;
+}
+
+/* ─── HEADER ─── */
+header {
+  padding: 2rem 3rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: rgba(10,10,15,0.92);
+  backdrop-filter: blur(20px);
+  z-index: 100;
+}
+
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-shadow: 0 0 40px var(--glow);
+  line-height: 1;
+}
+
+.logo span { color: var(--text); }
+
+.header-tag {
+  font-size: 0.65rem;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  text-transform: uppercase;
+  border: 1px solid var(--border);
+  padding: 0.3rem 0.8rem;
+  border-radius: 2px;
+}
+
+/* ─── GRID ─── */
+.container { padding: 3rem; max-width: 1600px; margin: 0 auto; }
+
+.section-label {
+  font-size: 0.62rem;
+  letter-spacing: 0.35em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.5px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 3rem;
+}
+
+/* ─── TOOL CARD ─── */
+.tool-card {
+  background: var(--card);
+  padding: 1.8rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.tool-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  transform: scaleX(0);
+  transition: transform 0.4s;
+}
+
+.tool-card:hover::before { transform: scaleX(1); }
+.tool-card:hover { background: var(--card2); }
+
+.tool-number {
+  font-size: 0.58rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  margin-bottom: 1rem;
+}
+
+.tool-icon {
+  font-size: 2rem;
+  margin-bottom: 0.8rem;
+  display: block;
+  filter: grayscale(0.3);
+}
+
+.tool-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.08em;
+  color: var(--text);
+  margin-bottom: 0.3rem;
+}
+
+.tool-desc {
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  line-height: 1.6;
+}
+
+.tool-tag {
+  display: inline-block;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+  margin-top: 1rem;
+  background: rgba(200,241,53,0.08);
+  color: var(--accent);
+  border: 1px solid rgba(200,241,53,0.2);
+}
+
+/* ─── MODAL ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(12px);
+  z-index: 500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  padding: 1.5rem 1.8rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  background: var(--card);
+  z-index: 1;
+}
+
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.08em;
+}
+
+.modal-close {
+  width: 32px; height: 32px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.modal-close:hover { background: var(--accent); color: #000; }
+
+.modal-body { padding: 1.8rem; }
+
+/* ─── INPUTS ─── */
+.input-group { margin-bottom: 1.2rem; }
+
+label {
+  display: block;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+input, select, textarea {
+  width: 100%;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.75rem 1rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.2s;
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(200,241,53,0.08);
+}
+
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.8rem; }
+
+.btn {
+  background: var(--accent);
+  color: #000;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+  margin-top: 0.5rem;
+}
+.btn:hover { background: #d9ff3d; box-shadow: 0 0 30px rgba(200,241,53,0.3); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+}
+.btn-ghost:hover { background: rgba(200,241,53,0.1); }
+
+.result-box {
+  margin-top: 1.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  padding: 1.2rem;
+  font-size: 0.85rem;
+  line-height: 1.8;
+  min-height: 60px;
+}
+
+.result-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 0.3rem;
+}
+
+.result-label {
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+/* ─── LOREM ─── */
+.lorem-output {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 1.2rem;
+  font-family: 'Instrument Serif', serif;
+  font-size: 0.9rem;
+  line-height: 1.9;
+  color: var(--text);
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 1rem;
+  word-break: break-word;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">TOOL<span>BOX</span></div>
+  <div class="header-tag">— 17 Tools · All Frontend</div>
+</header>
+
+<div class="container">
+  <div class="section-label">All Tools</div>
+  <div class="tools-grid" id="tools-grid"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" id="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">Tool</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// TOOL DEFINITIONS
+// ═══════════════════════════════════════════════════════════
+
+const tools = [
+  { id:'lorem', icon:'📝', title:'Lorem Ipsum Generator', desc:'Generate placeholder text', tag:'Generate', tagClass:'tag-gen' },
+];
+
+// Render grid
+const grid = document.getElementById('tools-grid');
+tools.forEach((t, i) => {
+  const card = document.createElement('div');
+  card.className = 'tool-card';
+  card.innerHTML = `
+    <div class="tool-number">// ${String(i+1).padStart(2,'0')}</div>
+    <span class="tool-icon">${t.icon}</span>
+    <div class="tool-title">${t.title}</div>
+    <div class="tool-desc">${t.desc}</div>
+    <span class="tool-tag ${t.tagClass}">${t.tag}</span>
+  `;
+  card.onclick = () => openTool(t.id, t.title);
+  grid.appendChild(card);
+});
+
+// ═══════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════
+
+function openTool(id, title) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').innerHTML = renderTool(id);
+  document.getElementById('modal-overlay').classList.add('active');
+  initTool(id);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('active');
+  // Stop camera if running
+  if (window._qrStream) { window._qrStream.getTracks().forEach(t=>t.stop()); window._qrStream=null; }
+  if (window._compassWatch) { navigator.geolocation && window._compassWatch; }
+}
+
+document.getElementById('modal-overlay').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+
+// ═══════════════════════════════════════════════════════════
+// TOOL RENDERERS
+// ═══════════════════════════════════════════════════════════
+
+function renderTool(id) {
+  switch(id) {
+
+    // ── LOREM IPSUM ──
+    case 'lorem': return `
+      <div class="two-col">
+        <div class="input-group">
+          <label>Number of Words</label>
+          <input type="number" id="lorem-words" value="50" min="1" max="2000">
+        </div>
+        <div class="input-group">
+          <label>Start with "Lorem ipsum"</label>
+          <select id="lorem-start">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn" onclick="generateLorem()">GENERATE</button>
+      <div class="lorem-output" id="lorem-output"></div>
+      <button class="btn btn-ghost" style="margin-top:0.5rem" onclick="copyLorem()">COPY TEXT</button>`;
+
+
+
+    default: return '<p>Tool not found.</p>';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT TOOLS (post-render hooks)
+// ═══════════════════════════════════════════════════════════
+
+function initTool(id) {
+  if (id === 'age-calc') {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('ageon').value = today;
+  }
+  if (id === 'date-diff') {
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('d2').value = today;
+  }
+  if (id === 'spin-wheel') {
+    setTimeout(() => drawWheel(), 50);
+  }
+  if (id === 'simple-calc') { calcState.reset(); }
+  if (id === 'sci-calc') { sciState.reset(); }
+  if (id === 'lorem') { generateLorem(); }
+  if (id === 'data-size') { document.getElementById('ds-val').value = 1; convertData(); }
+  if (id === 'speed-conv') { document.getElementById('spd-val').value = 100; convertSpeed(); }
+}
+
+
+// ═══════════════════════════════════════════════════════════
+// LOREM IPSUM
+// ═══════════════════════════════════════════════════════════
+
+const loremWords = "lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum pellentesque habitant morbi tristique senectus netus malesuada fames turpis egestas volutpat rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin blandit varius ultricies nam libero justo laoreet sit amet cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant morbi tristique".split(' ');
+
+function generateLorem() {
+  const count = parseInt(document.getElementById('lorem-words').value)||50;
+  const startWith = document.getElementById('lorem-start').value === 'yes';
+  let words = [];
+  if(startWith) words = ['Lorem','ipsum'];
+  while(words.length < count) {
+    const w = loremWords[Math.floor(Math.random()*loremWords.length)];
+    words.push(words.length===0 ? w.charAt(0).toUpperCase()+w.slice(1) : w);
+  }
+  words = words.slice(0, count);
+  // Add punctuation
+  let text = '';
+  let sentence = [];
+  words.forEach((w,i) => {
+    sentence.push(w);
+    if(sentence.length >= 8 + Math.floor(Math.random()*8) || i===words.length-1) {
+      const s = sentence.join(' ');
+      text += (text?'. ':'') + s.charAt(0).toUpperCase() + s.slice(1);
+      sentence = [];
+    }
+  });
+  document.getElementById('lorem-output').textContent = text + '.';
+}
+
+function copyLorem() {
+  const text = document.getElementById('lorem-output').textContent;
+  navigator.clipboard.writeText(text).then(()=>{
+    const btn = document.querySelector('.btn-ghost');
+    if(btn) { btn.textContent = 'COPIED!'; setTimeout(()=>btn.textContent='COPY TEXT', 1500); }
+  });
+}
+
+// Init wheel items input listeners
+document.addEventListener('input', e => {
+  if(e.target.closest('.wheel-item-row')) drawWheel();
+});
+</script>
+</body>
+</html>
