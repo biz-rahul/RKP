@@ -413,6 +413,35 @@
     .featured-info { padding: 28px; }
     .movies-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
   }
+
+
+
+	/* 🔥 Stylish Button */
+.watch-btn {
+    background: linear-gradient(135deg, #ff416c, #ff4b2b);
+    color: white;
+    padding: 12px 25px;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: sans-serif;
+    transition: 0.3s;
+    display: inline-block;
+}
+
+.watch-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* ⏳ Loader Text */
+#loader {
+    display: none;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    color: #ff4b2b;
+}
 </style>
   </head>
   <body>
@@ -446,13 +475,15 @@
 		  </p>
 
 			
-<button onclick="playVideo()">Watch Now</button>
+<a href="#" onclick="playVideo()" class="watch-btn">▶ Watch Now</a>
+<div id="loader">⏳ Please Wait...</div>
 <br><br>
 <iframe id="videoFrame"
         width="560"
         height="384"
         frameborder="0"
-        allow="autoplay; fullscreen">
+        allow="autoplay; fullscreen"
+        style="display:none;">
 </iframe>
 
 			
@@ -528,8 +559,14 @@ movies.forEach((movie, i) => {
 
 
 	function playVideo() {
-    document.getElementById("videoFrame").src =
-        "https://archive.org/embed/edward-scissorhands-dvd-2005?autoplay=1";
+    let frame = document.getElementById("videoFrame");
+    let loader = document.getElementById("loader");
+    loader.style.display = "block";
+    frame.src = "https://archive.org/embed/edward-scissorhands-dvd-2005?autoplay=1";
+    frame.onload = function() {
+        loader.style.display = "none";
+        frame.style.display = "block";
+    };
 	}
 </script>
   </body>
