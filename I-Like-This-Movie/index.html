@@ -444,7 +444,18 @@
 		  <p class="featured-desc">
 			This is my favourite movie of all time — a deeply moving and spiritually story about innocence and Kindness.
 		  </p>
-		  <a href="https://youtu.be/GRTdp36Gpig?si=R4j4rW0Nj8rtpAxj" class="watch-btn" target="_blank">Watch Now</a>
+
+			
+<button onclick="playVideo()">Watch Now</button>
+<br><br>
+<iframe id="videoFrame"
+        width="560"
+        height="384"
+        frameborder="0"
+        allow="autoplay; fullscreen">
+</iframe>
+
+			
 		</div>
 	  </div>
 	</section>
@@ -514,6 +525,12 @@ movies.forEach((movie, i) => {
   `;
   grid.appendChild(card);
 });
+
+
+	function playVideo() {
+    document.getElementById("videoFrame").src =
+        "https://archive.org/embed/edward-scissorhands-dvd-2005?autoplay=1";
+	}
 </script>
   </body>
 </html>
