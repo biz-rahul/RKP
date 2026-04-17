@@ -502,38 +502,54 @@
 	</footer>
 
 <script>
-const movies = [
-  { title: "Pirates of the Caribbean: The Curse of the Black Pearl", year: 2003, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Pirates.jpg" },
-  { title: "The Fault in Our Stars", year: 2014, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Fault.jpg" },
-  { title: "Me Before You", year: 2016, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Before.jpeg" },
-  { title: "IT 1 and 2", year: 2017, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/It.jpg" },
-  { title: "The Notebook", year: 2004, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Notebook.jpg" },
-  { title: "Lucy Shimmers And The Prince Of Peace", year: 2020, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/LucyShimmers.jpg" },
-  { title: "Titanic", year: 1997, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Titanic.jpg" },
-  { title: "The Green Mile", year: 1999, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Green.jpg" },
-  { title: "My Girl", year: 1991, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Girl.jpg" },
-  { title: "Inception", year: 2010, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Inception.webp" },
-  { title: "American Psycho", year: 2000, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/American.jpeg" },
-  { title: "Identity", year: 2003, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Identity.jpg" },
-  { title: "Battle Royale", year: 2000, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Battle.jpg" },
-  { title: "Atonement", year: 2007, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Atonement.jpg" },
-  { title: "Aashiqui 2", year: 2013, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Aashiqui.jpg" },
-  { title: "Laila Majnu", year: 2018, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Laila.jpeg" },
-  { title: "Dhurandhar 1 and 2", year: 2022, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Dhurandhar.jpg" },
-  { title: "96", year: 2018, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/96.jpeg" },
-  { title: "Radhe Shyam", year: 2022, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Radhe.jpg" },
-  { title: "Dhadkan", year: 2000, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Dhadkan.jpg" },
-  { title: "Yeh Jawaani Hai Deewani", year: 2013, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Jawani.jpg" },
-  { title: "Rockstar", year: 2011, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Rockstar.jpeg" },
-  { title: "Kabir Singh", year: 2019, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Kabir.jpeg" },
-  { title: "Dev D", year: 2009, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/DevD.jpg" },
-  { title: "The Kashmir Files", year: 2022, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Kashmir.jpg" },
-  { title: "Tamasha", year: 2015, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Tamasha.jpeg" },
-  { title: "Devdas", year: 2002, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Devdas.jpeg" },
-  { title: "Ruposh", year: 2022, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Ruposh.jpg" },
-  { title: "Dilwale", year: 2015, img: "https://rahulpuri.fun/I-Like-This-Movie/Posters/Dilwale.jpeg" }
+const hollywood = [
+  { title: "Pirates of the Caribbean: The Curse of the Black Pearl", year: 2003, img: "/I-Like-This-Movie/Posters/Pirates.jpg" },
+  { title: "The Fault in Our Stars", year: 2014, img: "/I-Like-This-Movie/Posters/Fault.jpg" },
+  { title: "Me Before You", year: 2016, img: "/I-Like-This-Movie/Posters/Before.jpeg" },
+  { title: "IT 1 and 2", year: 2017, img: "/I-Like-This-Movie/Posters/It.jpg" },
+  { title: "The Notebook", year: 2004, img: "/I-Like-This-Movie/Posters/Notebook.jpg" },
+  { title: "Lucy Shimmers And The Prince Of Peace", year: 2020, img: "/I-Like-This-Movie/Posters/LucyShimmers.jpg" },
+  { title: "Titanic", year: 1997, img: "/I-Like-This-Movie/Posters/Titanic.jpg" },
+  { title: "The Green Mile", year: 1999, img: "/I-Like-This-Movie/Posters/Green.jpg" },
+  { title: "My Girl", year: 1991, img: "/I-Like-This-Movie/Posters/Girl.jpg" },
+  { title: "Inception", year: 2010, img: "/I-Like-This-Movie/Posters/Inception.webp" },
+  { title: "American Psycho", year: 2000, img: "/I-Like-This-Movie/Posters/American.jpeg" },
+  { title: "Identity", year: 2003, img: "/I-Like-This-Movie/Posters/Identity.jpg" },
+  { title: "Battle Royale", year: 2000, img: "/I-Like-This-Movie/Posters/Battle.jpg" },
+  { title: "Atonement", year: 2007, img: "/I-Like-This-Movie/Posters/Atonement.jpg" }
 ];
 
+const bollywood = [
+  { title: "Aashiqui 2", year: 2013, img: "/I-Like-This-Movie/Posters/Aashiqui.jpg" },
+  { title: "Laila Majnu", year: 2018, img: "/I-Like-This-Movie/Posters/Laila.jpeg" },
+  { title: "Dhurandhar 1 and 2", year: 2022, img: "/I-Like-This-Movie/Posters/Dhurandhar.jpg" },
+  { title: "96", year: 2018, img: "/I-Like-This-Movie/Posters/96.jpeg" },
+  { title: "Radhe Shyam", year: 2022, img: "/I-Like-This-Movie/Posters/Radhe.jpg" },
+  { title: "Dhadkan", year: 2000, img: "/I-Like-This-Movie/Posters/Dhadkan.jpg" },
+  { title: "Yeh Jawaani Hai Deewani", year: 2013, img: "/I-Like-This-Movie/Posters/Jawani.jpg" },
+  { title: "Rockstar", year: 2011, img: "/I-Like-This-Movie/Posters/Rockstar.jpeg" },
+  { title: "Kabir Singh", year: 2019, img: "/I-Like-This-Movie/Posters/Kabir.jpeg" },
+  { title: "Dev D", year: 2009, img: "/I-Like-This-Movie/Posters/DevD.jpg" },
+  { title: "The Kashmir Files", year: 2022, img: "/I-Like-This-Movie/Posters/Kashmir.jpg" },
+  { title: "Tamasha", year: 2015, img: "/I-Like-This-Movie/Posters/Tamasha.jpeg" },
+  { title: "Devdas", year: 2002, img: "/I-Like-This-Movie/Posters/Devdas.jpeg" },
+  { title: "Ruposh", year: 2022, img: "/I-Like-This-Movie/Posters/Ruposh.jpg" },
+  { title: "Dilwale", year: 2015, img: "/I-Like-This-Movie/Posters/Dilwale.jpeg" }
+];
+
+// 🎬 Interleave logic (Hollywood + Bollywood alternating)
+const movies = [];
+
+const maxLength = Math.max(hollywood.length, bollywood.length);
+
+for (let i = 0; i < maxLength; i++) {
+  if (hollywood[i]) movies.push(hollywood[i]);
+  if (bollywood[i]) movies.push(bollywood[i]);
+}
+
+console.log(movies);
+
+	
 const grid = document.getElementById('moviesGrid');
 
 movies.forEach((movie, i) => {
