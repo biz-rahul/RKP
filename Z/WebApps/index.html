@@ -400,6 +400,15 @@
     <div class="section-label">Others</div>
     <div class="apps-grid" id="others-grid"></div>
 
+ <div class="section-label">Search Engines</div>
+<div class="apps-grid" id="search-grid"></div>
+
+<div class="section-label">AI Tools</div>
+<div class="apps-grid" id="ai-grid"></div>
+
+<div class="section-label">Coding</div>
+<div class="apps-grid" id="coding-grid"></div>
+
     <div class="home-bar"><div class="home-pill"></div></div>
   </div>
 </div>
@@ -513,9 +522,18 @@ function buildGrid(id, list) {
 buildGrid('social-grid', APPS.social);
 buildGrid('google-grid', APPS.google);
 buildGrid('others-grid', APPS.others);
+buildGrid('search-grid', APPS.search);
+buildGrid('ai-grid', APPS.ai);
+buildGrid('coding-grid', APPS.coding);
 
 // Clock — syncs both mobile and desktop elements
-const totalApps = APPS.social.length + APPS.google.length + APPS.others.length;
+const totalApps = 
+  APPS.search.length +
+  APPS.social.length +
+  APPS.ai.length +
+  APPS.google.length +
+  APPS.coding.length +
+  APPS.others.length;
 const countEl = document.getElementById('app-count-desk');
 if (countEl) countEl.textContent = totalApps + ' apps linked';
 
