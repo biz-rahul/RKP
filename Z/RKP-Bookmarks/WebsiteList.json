@@ -112,9 +112,6 @@
       }
     },
 
-
-    {
-
     "GORE": {
       "description": "Extreme and sensitive content websites",
       "sites": [
@@ -141,6 +138,19 @@
       ]
     },
 
+    "ADULT": {
+      "description": "Adult websites",
+      "sites": [
+        {"name": "Candy Doll", "url": "https://candydoll.tv/"},
+        {"name": "91Porn", "url": "https://91porn.com/"},
+        {"name": "Eyny", "url": "http://eyny.com/"},
+        {"name": "JK Forum", "url": "https://jkforum.net/"},
+        {"name": "Stripchat Chinese", "url": "https://stripchatgirls.com/girls/chinese"},
+        {"name": "3xChina", "url": "https://3xchina.net/"},
+        {"name": "Sex141", "url": "http://sex141.com/"}
+      ]
+    }
+    
     "EDITING": {
       "description": "Audio, video, VFX and media editing tools",
       "categories": {
@@ -281,21 +291,3 @@
     }
 
   }
-
-
-  
-    "ADULT": {
-      "description": "Adult websites",
-      "sites": [
-        {"name": "Candy Doll", "url": "https://candydoll.tv/"},
-        {"name": "91Porn", "url": "https://91porn.com/"},
-        {"name": "Eyny", "url": "http://eyny.com/"},
-        {"name": "JK Forum", "url": "https://jkforum.net/"},
-        {"name": "Stripchat Chinese", "url": "https://stripchatgirls.com/girls/chinese"},
-        {"name": "3xChina", "url": "https://3xchina.net/"},
-        {"name": "Sex141", "url": "http://sex141.com/"}
-      ]
-    }
-
-  }
-}
