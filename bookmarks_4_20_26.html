@@ -445,3 +445,60 @@
         <DT><A HREF="https://freetubeapp.io/" ADD_DATE="1774977446" ICON="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACGklEQVR4nJRSTWsUQRCtqp7N7mKWRA+eFFQwGBR0VxQCXoxHz7sBPQQCQfAXePYH5CQoih6CoGxA/Lh6WT0JRkQRvAQVk0DQaDDZdTM902VVz8cOQgIpaPqj6r1+/aoDbjTeAkADNBC/grWXIAjmZX0BmGM5pTSHsmcohuw1edYnktwhKazLeiwtxmJxESpDyZH8Qsj9DYiRDMeIxApWTAZMZs5nYwIg6pAcYC6POZDxFyP7HYMAnDEoRfII4SNK1BjDeonUvZLnzgQ5WFUIwUattj13cXr25oMbI+Sc7R8+XlJcJQydJ1BC5k1YXHyniCAzSDiEN4o/7D9y8P7E1N35ianX3yq1OZjET7BDcOpBsvEKAK1IHdrujY4iz5z8vfr+1JPVh2ceL50rgNQfj1NETkCZWULgCOOo+yeK44hcqXy1Xyp3xp/9eDT24ud5ATmEQUeKClB9972RN7FXx9b1t5gq+6pi6mVjzIm8iWkEaYuSY0ENOSdaXISGiKojZWfDlTiyd7Y21m+vTI+vp57xgEDB2qZEjQu1rWQOgIM1Ad4Ke917X64cW0svwiI4U8A+oTMZONr7tcml6vXh5aWXb2ZPL/uqNhtoCeV/YC+G6/U4/QNJj8PuJH783NEWYbtN0Go6LYMdgjLpOXt5GPXGBWgKuBXvBk4IEJ/7fy3O5Qa1MG7Cwq7AAUG/fw2ceypA8j5Yi7CH+AcAAP//gynK6gAAAAZJREFUAwA07QX/OGRcowAAAABJRU5ErkJggg==">FreeTube - The Private YouTube Client</A>
     </DL><p>
 </DL><p>
+
+     <script> 
+     
+     (function () {
+    // Create button
+    const btn = document.createElement("button");
+    btn.innerText = "Copy All Bookmarks";
+
+    Object.assign(btn.style, {
+        position: "fixed",
+        top: "10px",
+        right: "10px",
+        padding: "10px 15px",
+        background: "#111",
+        color: "#fff",
+        border: "none",
+        borderRadius: "8px",
+        cursor: "pointer",
+        zIndex: "9999"
+    });
+
+    document.body.appendChild(btn);
+
+    btn.addEventListener("click", () => {
+        let output = "";
+
+        // ye special format me <A HREF> hota hai
+        let links = document.querySelectorAll("a[href]");
+
+        links.forEach(link => {
+            let text = link.textContent.trim();
+            let url = link.getAttribute("href"); // important 🔥
+
+            if (url) {
+                output += `${text} - ${url}\n`;
+            }
+        });
+
+        // fallback method bhi daal diya (mobile browsers ke liye)
+        const textarea = document.createElement("textarea");
+        textarea.value = output;
+        document.body.appendChild(textarea);
+        textarea.select();
+
+        try {
+            document.execCommand("copy");
+            alert("Bhai sab bookmarks copy ho gaye 😎🔥");
+        } catch (err) {
+            alert("Copy nahi hua, browser nautanki kar raha hai 😭");
+        }
+
+        document.body.removeChild(textarea);
+    });
+})();
+          
+     </script>
+
