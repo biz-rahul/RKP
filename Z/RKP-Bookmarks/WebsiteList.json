@@ -112,6 +112,178 @@
       }
     },
 
+
+    {
+
+    "GORE": {
+      "description": "Extreme and sensitive content websites",
+      "sites": [
+        {"name": "GoreCenter", "url": "https://www.gorecenter.com/"},
+        {"name": "BestGore", "url": "https://bestgore.fun/"},
+        {"name": "ReelLeak", "url": "https://www.reelleak.com/"},
+        {"name": "BloodReel", "url": "https://www.bloodreel.com/"},
+        {"name": "AliveGore", "url": "https://alivegore.com/"},
+        {"name": "GoreSee", "url": "https://goresee.com/"},
+        {"name": "Xgore", "url": "https://xgore.net/"},
+        {"name": "SeeGore", "url": "https://seegore.com/"},
+        {"name": "DeepGoreTube", "url": "https://deepgoretube.site/home/"}
+      ]
+    },
+
+    "DARK_AI": {
+      "description": "Alternative AI platforms with fewer restrictions",
+      "tools": [
+        {"name": "Venice AI", "url": "https://venice.ai/chat"},
+        {"name": "Uncensored AI", "url": "https://uncensored.com/"},
+        {"name": "FreedomGPT", "url": "https://chat.freedomgpt.com/"},
+        {"name": "NoFilterGPT", "url": "https://nofiltergpt.com/chat"},
+        {"name": "Uncensored Chat", "url": "https://uncensored.chat/"}
+      ]
+    },
+
+    "EDITING": {
+      "description": "Audio, video, VFX and media editing tools",
+      "categories": {
+
+        "sfx_packs": [
+          {"name": "Cinepacks", "url": "https://cinepacks.store/collections/free-packs?srsltid=AfmBOorpEEiMa4ULm7z0uznIyxxGAtnSvqo2SQ2ys1Xcdz13JtWLt6Ib"},
+          {"name": "Pixabay SFX", "url": "https://pixabay.com/sound-effects/search/pack/"},
+          {"name": "Artlist SFX", "url": "https://artlist.io/sfx"},
+          {"name": "BBC Sound Effects", "url": "https://sound-effects.bbcrewind.co.uk/"},
+          {"name": "Zapsplat", "url": "https://www.zapsplat.com/"},
+          {"name": "Myinstants", "url": "https://www.myinstants.com/en/index/us/"}
+        ],
+
+        "audio_enhance": [
+          {"name": "Adobe Enhance Audio", "url": "https://podcast.adobe.com/en/enhance"},
+          {"name": "AudioDenoise", "url": "https://audiodenoise.com/"}
+        ],
+
+        "photo_editing": [
+          {"name": "Face Cutout Online", "url": "https://www.google.com/search?q=face+cutout+online"},
+          {"name": "Palette Colorize", "url": "https://palette.fm/"}
+        ],
+
+        "vfx_video": [
+          {"name": "MyCreativeFX", "url": "https://mycreativefx.com/"},
+          {"name": "MyCreativeFX Instagram", "url": "https://www.instagram.com/mycreativefx_official"},
+          {"name": "FootageCrate", "url": "https://footagecrate.com/"},
+          {"name": "ProductionCrate", "url": "https://www.productioncrate.com/vfx"},
+          {"name": "CG Heaven", "url": "https://cgheven.com/"},
+          {"name": "Blob Tracking Effect", "url": "https://www.google.com/search?q=free+blob+tracking+effect+baby+track"},
+          {"name": "FlagWaver Online", "url": "https://www.google.com/search?q=flagwaver+online&oq=flagwaver"},
+          {"name": "AI Motion Designer Search", "url": "https://www.google.com/search?q=ai+motion+designer+and+ai+animator+platform"},
+          {"name": "Swishy AI", "url": "https://www.swishy.ai/"},
+          {"name": "Film Vibes", "url": "https://filmvibes.io/"}
+        ]
+      }
+    },
+
+    "GETTING_BORED": {
+      "description": "Fun, random and timepass websites",
+      "sites": [
+        {"name": "You're Getting Old", "url": "https://you.regettingold.com/"},
+        {"name": "Click The Red Button", "url": "https://clicktheredbutton.com/"},
+        {"name": "100k Stars", "url": "https://stars.chromeexperiments.com/"},
+        {"name": "The Useless Web", "url": "https://theuselessweb.com/"},
+        {"name": "Invisible Cow", "url": "https://findtheinvisiblecow.com/"},
+        {"name": "Neal.fun", "url": "https://neal.fun/"},
+        {"name": "Driving Simulator", "url": "https://framesynthesis.com/drivingsimulator/maps/"},
+        {"name": "MyRetroTVs", "url": "https://myretrotvs.com/"},
+        {"name": "PlayPhrase", "url": "https://www.playphrase.me/"},
+        {"name": "Office Stare Machine", "url": "http://theofficestaremachine.com/"},
+        {"name": "ClassicReload", "url": "https://classicreload.com/"},
+        {"name": "Amazon Dating", "url": "https://amazondating.co/"},
+        {"name": "Virtual Piano", "url": "https://www.onlinepianist.com/virtual-piano"},
+        {"name": "YouTube Playables", "url": "https://m.youtube.com/playables"},
+        {"name": "Akinator", "url": "https://en.akinator.com/"}
+      ]
+    },
+
+    "PRANK": {
+      "description": "Fun prank and trolling tools",
+      "tools": [
+        {"name": "TrollFace Everywhere", "url": "https://chromewebstore.google.com/detail/trollface-everywhere/afnpaldkfdjklpjphnpaokdafmgpidhn?hl=en"},
+        {"name": "Blocked Page Joke", "url": "https://chromewebstore.google.com/detail/blocked-page-joke/npppakpjicgfkejnblaakmdlehfogamb"},
+        {"name": "Pranx", "url": "https://pranx.com/"},
+        {"name": "Thatcher Effect", "url": "https://optical.toys/thatcher-effect/"},
+        {"name": "Smash The Walls", "url": "https://smashthewalls.com/"},
+        {"name": "Smash The Bugs", "url": "https://pestgame.com/"},
+        {"name": "Matrix Rain", "url": "https://pranx.com/matrix-code-rain/"}
+      ]
+    },
+
+    "SUPERPOWER": {
+      "description": "Account recovery and powerful tools",
+      "categories": {
+
+        "whatsapp": [
+          {"name": "Contact WhatsApp", "url": "https://www.whatsapp.com/contact"}
+        ],
+
+        "facebook": [
+          {"name": "Facebook Hacked", "url": "https://m.facebook.com/hacked"}
+        ],
+
+        "apple": [
+          {"name": "Recover Apple Account", "url": "https://iforgot.apple.com/"}
+        ],
+
+        "microsoft": [
+          {"name": "Recover Microsoft Account", "url": "https://account.live.com/acsr"}
+        ],
+
+        "google": [
+          {"name": "Google Photos Recovery", "url": "https://support.google.com/photos/workflow/16430519"},
+          {"name": "Google Drive Recovery", "url": "https://support.google.com/drive/answer/1716222"},
+          {"name": "Google Account Recovery", "url": "https://accounts.google.com/v3/signin/recoveryidentifier?flowName=GlifWebSignIn"},
+          {"name": "Google Takeout", "url": "https://takeout.google.com/"},
+          {"name": "My Activity", "url": "https://myactivity.google.com/myactivity"},
+          {"name": "Remove Personal Info", "url": "https://support.google.com/websearch/answer/3143948"},
+          {"name": "Legal Report Content", "url": "https://support.google.com/legal/answer/3110420"},
+          {"name": "Digital Legacy", "url": "https://myaccount.google.com/inactive"},
+          {"name": "Results About You", "url": "https://myactivity.google.com/results-about-you/"},
+          {"name": "Advanced Protection", "url": "https://landing.google.com/advancedprotection/"},
+          {"name": "Transparency Report", "url": "https://transparencyreport.google.com/"},
+          {"name": "Gmail Recovery", "url": "https://support.google.com/mail/workflow/9317561"}
+        ],
+
+        "instagram": [
+          {"name": "Instagram Login", "url": "https://www.instagram.com/accounts/login/"},
+          {"name": "Instagram Hacked", "url": "https://www.instagram.com/hacked"},
+          {"name": "Instagram Help", "url": "https://help.instagram.com/345310197245685/"},
+          {"name": "Superpowers for Instagram", "url": "https://chromewebstore.google.com/detail/superpowers-for-instagram/aobbiflfmjgclpgmdffnkljokfjficim"},
+          {"name": "IG Export", "url": "https://chromewebstore.google.com/detail/igexport-ig-follower-expo/kicgclkbiilobmccmmidfghnijgfamdb"}
+        ]
+      }
+    },
+
+    "IMPORTANT": {
+      "description": "Useful tools and services",
+      "tools": [
+        {"name": "Election Results India", "url": "https://results.eci.gov.in/"},
+        {"name": "Run MyAndroid", "url": "https://www.myandroid.org/playonline/androidemulator.php"},
+        {"name": "Run APK File", "url": "https://www.myandroid.org/filemanager_myandroid.php"},
+        {"name": "Wayback Machine", "url": "https://web.archive.org/"},
+        {"name": "Archive.ph", "url": "https://archive.ph/"},
+        {"name": "Keepa", "url": "https://keepa.com/"},
+        {"name": "VirusTotal", "url": "https://www.virustotal.com/gui/home/upload"},
+        {"name": "Speedtest", "url": "https://www.speedtest.net/"},
+        {"name": "Can You Run It", "url": "https://www.systemrequirementslab.com/cyri"},
+        {"name": "Redirect Checker", "url": "https://www.redirect-checker.org/index.php"},
+        {"name": "Ninite", "url": "https://ninite.com/"},
+        {"name": "TOSDR", "url": "https://tosdr.org/en"},
+        {"name": "TikTok Downloader", "url": "https://savetikpro.com/"},
+        {"name": "Unlockt", "url": "https://landing.unlockt.me/"},
+        {"name": "Book Mockup", "url": "https://bookcover4u.com/free-book-cover-3d-mockup"},
+        {"name": "AI Tools List", "url": "https://www.toolify.ai/"}
+      ]
+    }
+
+  }
+
+
+  
     "ADULT": {
       "description": "Adult websites",
       "sites": [
