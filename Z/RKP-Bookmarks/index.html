@@ -432,6 +432,20 @@
         });
     }
 
+
+    function filterCategory(catId) {
+    const sections = document.querySelectorAll('.section:not(#bookmarks-section)');
+    
+    sections.forEach(sec => {
+        if (catId === 'all') {
+            sec.style.display = "block"; // Sab dikhao
+        } else {
+            // Sirf wahi dikhao jiski ID match kare
+            sec.style.display = (sec.id === catId) ? "block" : "none";
+        }
+    });
+}
+    
     // Initialize favicons on load
     window.onload = () => {
         loadFavicons();
