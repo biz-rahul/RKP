@@ -1,133 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Ultimate Toolkit</title>
+<meta charset="UTF-8">
+<title>Ultimate Toolkit</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0f172a;
-      color: white;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0f172a;
+  color: white;
+}
 
-    h1 {
-      text-align: center;
-      padding: 20px;
-      color: #38bdf8;
-    }
+h1 {
+  text-align: center;
+  padding: 20px;
+  color: #38bdf8;
+}
 
-    .section {
-      margin: 20px;
-    }
+.section {
+  margin: 20px;
+}
 
-    .section h2 {
-      color: #facc15;
-      border-bottom: 1px solid #334155;
-      padding-bottom: 5px;
-    }
+.section h2 {
+  color: #facc15;
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 15px;
-      margin-top: 10px;
-    }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 15px;
+}
 
-    .card {
-      background: #1e293b;
-      padding: 15px;
-      border-radius: 10px;
-      transition: 0.3s;
-    }
+.card {
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  transition: 0.3s;
+}
 
-    .card:hover {
-      transform: translateY(-5px);
-      background: #334155;
-    }
+.card:hover {
+  transform: translateY(-5px);
+  background: #334155;
+}
 
-    a {
-      text-decoration: none;
-      color: #38bdf8;
-      font-weight: bold;
-    }
+a {
+  color: #38bdf8;
+  text-decoration: none;
+  font-weight: bold;
+}
+</style>
 
-    .subcategory {
-      margin-top: 10px;
-    }
-
-    .subcategory h3 {
-      color: #a78bfa;
-    }
-
-  </style>
 </head>
-
 <body>
 
-<h1>🔥 Ultimate Toolkit Website</h1>
+<h1>🔥 Ultimate Toolkit</h1>
 
 <div id="container"></div>
 
 <script>
-fetch("WebsiteList.json")
-  .then(res => res.json())
-  .then(data => {
 
-    const container = document.getElementById("container");
+const data = {
+  sections: {
+    CODING_DESIGN_TOOLS: {
+      description: "UI, development, and design related tools",
+      tools: [
+        {name:"Jitter Video",url:"https://jitter.video/files/"},
+        {name:"Figma",url:"https://www.figma.com/files/"},
+        {name:"OneCompiler",url:"https://onecompiler.com/"},
+        {name:"Neumorphism UI Generator",url:"https://neumorphism.io/#e0e0e0"},
+        {name:"Uiverse",url:"https://uiverse.io/"}
+      ]
+    },
 
-    function createCards(items) {
-      let html = '<div class="grid">';
-      items.forEach(item => {
-        html += `
-          <div class="card">
-            <a href="${item.url}" target="_blank">
-              ${item.name}
-            </a>
-          </div>
-        `;
-      });
-      html += '</div>';
-      return html;
+    GETTING_BORED: {
+      description: "Timepass websites",
+      sites: [
+        {name:"The Useless Web",url:"https://theuselessweb.com/"},
+        {name:"Neal.fun",url:"https://neal.fun/"},
+        {name:"Akinator",url:"https://en.akinator.com/"}
+      ]
+    },
+
+    IMPORTANT: {
+      description: "Useful tools",
+      tools: [
+        {name:"Wayback Machine",url:"https://web.archive.org/"},
+        {name:"VirusTotal",url:"https://www.virustotal.com/"},
+        {name:"Speedtest",url:"https://www.speedtest.net/"}
+      ]
     }
+  }
+};
 
-    for (let section in data.sections) {
+const container = document.getElementById("container");
 
-      let sec = data.sections[section];
-
-      let sectionDiv = document.createElement("div");
-      sectionDiv.className = "section";
-
-      let title = `<h2>${section.replaceAll("_", " ")}</h2>`;
-      let desc = `<p>${sec.description}</p>`;
-
-      sectionDiv.innerHTML = title + desc;
-
-      // CASE 1: direct arrays
-      ["tools", "sites", "forums"].forEach(type => {
-        if (sec[type]) {
-          sectionDiv.innerHTML += createCards(sec[type]);
-        }
-      });
-
-      // CASE 2: nested categories
-      if (sec.categories) {
-        for (let cat in sec.categories) {
-          let subDiv = document.createElement("div");
-          subDiv.className = "subcategory";
-
-          subDiv.innerHTML = `<h3>${cat}</h3>`;
-          subDiv.innerHTML += createCards(sec.categories[cat]);
-
-          sectionDiv.appendChild(subDiv);
-        }
-      }
-
-      container.appendChild(sectionDiv);
-    }
-
+function createCards(items) {
+  let html = '<div class="grid">';
+  items.forEach(item => {
+    html += `
+      <div class="card">
+        <a href="${item.url}" target="_blank">${item.name}</a>
+      </div>
+    `;
   });
+  html += '</div>';
+  return html;
+}
+
+for (let section in data.sections) {
+
+  let sec = data.sections[section];
+
+  let div = document.createElement("div");
+  div.className = "section";
+
+  div.innerHTML = `<h2>${section.replaceAll("_"," ")}</h2>
+                   <p>${sec.description}</p>`;
+
+  if (sec.tools) div.innerHTML += createCards(sec.tools);
+  if (sec.sites) div.innerHTML += createCards(sec.sites);
+
+  container.appendChild(div);
+}
+
 </script>
 
 </body>
