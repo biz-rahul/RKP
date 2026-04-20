@@ -2,140 +2,253 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ultimate Web Toolkit 🚀</title>
 
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+
 <style>
-body {
+:root {
+  --bg-color: #05070a;
+  --card-bg: rgba(255, 255, 255, 0.03);
+  --accent-color: #00d2ff;
+  --secondary-accent: #3a7bd5;
+  --text-main: #ffffff;
+  --text-muted: #94a3b8;
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+* {
+  box-sizing: border-box;
   margin: 0;
-  font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background-color: var(--bg-color);
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(58, 123, 213, 0.15) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(0, 210, 255, 0.15) 0%, transparent 40%);
+  color: var(--text-main);
+  line-height: 1.6;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 60px;
 }
 
 h1 {
-  text-align: center;
-  padding: 20px;
-  font-size: 2.5rem;
+  font-size: 3.5rem;
+  font-weight: 800;
+  background: linear-gradient(to right, #00d2ff, #92fe9d);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -1px;
+  margin-bottom: 10px;
 }
 
+header p {
+  color: var(--text-muted);
+  font-size: 1.1rem;
+}
+
+/* Grid Layout */
 .container {
-  padding: 20px;
+  max-width: 1300px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 25px;
 }
 
+/* Glassmorphism Section Card */
 .section {
-  margin-bottom: 30px;
-  padding: 20px;
-  border-radius: 20px;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  padding: 30px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.section:hover {
+  transform: translateY(-10px);
+  border-color: var(--accent-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 }
 
 .section h2 {
-  color: #38bdf8;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: var(--accent-color);
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.section p {
-  color: #cbd5f5;
+.section h2::before {
+  content: '';
+  width: 4px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 10px;
+}
+
+.section p.description {
   font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
 }
 
-.category {
-  margin-top: 15px;
-}
-
-.category h3 {
-  color: #facc15;
+/* Links Styling */
+.links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .link {
-  display: block;
-  padding: 8px 12px;
-  margin: 5px 0;
-  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding: 12px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid transparent;
+  border-radius: 14px;
   text-decoration: none;
-  color: white;
-  background: rgba(255,255,255,0.1);
-  transition: 0.3s;
+  color: var(--text-main);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: 0.2s ease;
 }
 
 .link:hover {
-  background: #38bdf8;
-  color: black;
-  transform: scale(1.05);
+  background: rgba(0, 210, 255, 0.1);
+  border-color: rgba(0, 210, 255, 0.3);
+  padding-left: 25px;
+  color: var(--accent-color);
+}
+
+/* Categories nested styling */
+.category {
+  margin-top: 25px;
+  padding-top: 15px;
+  border-top: 1px solid var(--glass-border);
+}
+
+.category h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #facc15;
+  margin-bottom: 12px;
+}
+
+/* Error Message */
+.error-msg {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 50px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: 20px;
+  color: #ef4444;
+}
+
+@media (max-width: 600px) {
+  h1 { font-size: 2.2rem; }
+  .container { grid-template-columns: 1fr; }
 }
 </style>
-
 </head>
 <body>
 
-<h1>🔥 Ultimate Web Toolkit</h1>
-<div class="container" id="container"></div>
+<header>
+  <h1>Ultimate Web Toolkit</h1>
+  <p>The curated directory for your digital workflow</p>
+</header>
+
+<div class="container" id="container">
+  </div>
 
 <script>
 fetch('WebsiteList.json')
-  .then(res => res.json())
+  .then(res => {
+    if (!res.ok) throw new Error("JSON not found");
+    return res.json();
+  })
   .then(data => {
     const container = document.getElementById("container");
     const sections = data.sections;
 
     for (let key in sections) {
       const section = sections[key];
+      const sectionDiv = document.createElement("div");
+      sectionDiv.className = "section";
 
-      const div = document.createElement("div");
-      div.className = "section";
-
-      div.innerHTML += `<h2>${key.replace(/_/g, ' ')}</h2>`;
+      // Header and Description
+      let content = `<h2>${key.replace(/_/g, ' ')}</h2>`;
       if (section.description) {
-        div.innerHTML += `<p>${section.description}</p>`;
+        content += `<p class="description">${section.description}</p>`;
       }
+      
+      content += `<div class="links-grid" id="grid-${key}"></div>`;
+      sectionDiv.innerHTML = content;
+      container.appendChild(sectionDiv);
+
+      const grid = document.getElementById(`grid-${key}`);
 
       // Simple lists (tools/forums/sites)
       ["tools", "forums", "sites"].forEach(type => {
         if (section[type]) {
           section[type].forEach(item => {
-            div.innerHTML += `<a class="link" href="${item.url}" target="_blank">${item.name}</a>`;
+            grid.innerHTML += `<a class="link" href="${item.url}" target="_blank"><span>${item.name}</span></a>`;
           });
         }
       });
 
-      // Categories (nested)
-      if (section.categories) {
-        for (let cat in section.categories) {
-          const catDiv = document.createElement("div");
-          catDiv.className = "category";
-
-          catDiv.innerHTML = `<h3>${cat.replace(/_/g, ' ')}</h3>`;
-
-          section.categories[cat].forEach(item => {
-            catDiv.innerHTML += `<a class="link" href="${item.url}" target="_blank">${item.name}</a>`;
-          });
-
-          div.appendChild(catDiv);
-        }
-      }
-
-      // Piracy special structure
-      ["games", "movie_apps", "search_methods"].forEach(type => {
-        if (section[type]) {
-          const catDiv = document.createElement("div");
-          catDiv.className = "category";
-
-          catDiv.innerHTML = `<h3>${type.replace(/_/g, ' ')}</h3>`;
-
-          section[type].forEach(item => {
-            catDiv.innerHTML += `<a class="link" href="${item.url}" target="_blank">${item.name}</a>`;
-          });
-
-          div.appendChild(catDiv);
+      // Handle Nested Categories & Piracy Special Structure
+      const specialTypes = ["categories", "games", "movie_apps", "search_methods"];
+      
+      specialTypes.forEach(sType => {
+        if (section[sType]) {
+          if (sType === "categories") {
+             for (let cat in section.categories) {
+               renderSubCategory(section.categories[cat], cat, sectionDiv);
+             }
+          } else {
+             renderSubCategory(section[sType], sType, sectionDiv);
+          }
         }
       });
+    }
 
-      container.appendChild(div);
+    function renderSubCategory(items, title, parent) {
+      const catDiv = document.createElement("div");
+      catDiv.className = "category";
+      catDiv.innerHTML = `<h3>${title.replace(/_/g, ' ')}</h3>`;
+      const catGrid = document.createElement("div");
+      catGrid.className = "links-grid";
+      
+      items.forEach(item => {
+        catGrid.innerHTML += `<a class="link" href="${item.url}" target="_blank">${item.name}</a>`;
+      });
+      
+      catDiv.appendChild(catGrid);
+      parent.appendChild(catDiv);
     }
   })
   .catch(err => {
-    document.body.innerHTML = "<h2 style='text-align:center;color:red'>Error loading JSON 😢</h2>";
+    document.getElementById("container").innerHTML = `
+      <div class="error-msg">
+        <h2>Oops! Something went wrong</h2>
+        <p>Could not load WebsiteList.json. Please ensure the file exists in the same folder.</p>
+      </div>`;
     console.error(err);
   });
 </script>
