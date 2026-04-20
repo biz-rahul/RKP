@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ultimate Web Toolkit 🚀</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+}
+
+h1 {
+  text-align: center;
+  padding: 20px;
+  font-size: 2.5rem;
+}
+
+.container {
+  padding: 20px;
+}
+
+.section {
+  margin-bottom: 30px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.section h2 {
+  color: #38bdf8;
+}
+
+.section p {
+  color: #cbd5f5;
+  font-size: 0.9rem;
+}
+
+.category {
+  margin-top: 15px;
+}
+
+.category h3 {
+  color: #facc15;
+}
+
+.link {
+  display: block;
+  padding: 8px 12px;
+  margin: 5px 0;
+  border-radius: 10px;
+  text-decoration: none;
+  color: white;
+  background: rgba(255,255,255,0.1);
+  transition: 0.3s;
+}
+
+.link:hover {
+  background: #38bdf8;
+  color: black;
+  transform: scale(1.05);
+}
+</style>
+
+</head>
+<body>
+
+<h1>🔥 Ultimate Web Toolkit</h1>
+<div class="container" id="container"></div>
+
+<script>
+fetch('WebsiteList.json')
+  .then(res => res.json())
+  .then(data => {
+    const container = document.getElementById("container");
+    const sections = data.sections;
+
+    for (let key in sections) {
+      const section = sections[key];
+
+      const div = document.createElement("div");
+      div.className = "section";
+
+      div.innerHTML += `<h2>${key.replace(/_/g, ' ')}</h2>`;
+      if (section.description) {
+        div.innerHTML += `<p>${section.description}</p>`;
+      }
+
+      // Simple lists (tools/forums/sites)
+      ["tools", "forums", "sites"].forEach(type => {
+        if (section[type]) {
+          section[type].forEach(item => {
+            div.innerHTML += `<a class="link" href="${item.url}" target="_blank">${item.name}</a>`;
+          });
+        }
+      });
+
+      // Categories (nested)
+      if (section.categories) {
+        for (let cat in section.categories) {
+          const catDiv = document.createElement("div");
+          catDiv.className = "category";
+
+          catDiv.innerHTML = `<h3>${cat.replace(/_/g, ' ')}</h3>`;
+
+          section.categories[cat].forEach(item => {
+            catDiv.innerHTML += `<a class="link" href="${item.url}" target="_blank">${item.name}</a>`;
+          });
+
+          div.appendChild(catDiv);
+        }
+      }
+
+      // Piracy special structure
+      ["games", "movie_apps", "search_methods"].forEach(type => {
+        if (section[type]) {
+          const catDiv = document.createElement("div");
+          catDiv.className = "category";
+
+          catDiv.innerHTML = `<h3>${type.replace(/_/g, ' ')}</h3>`;
+
+          section[type].forEach(item => {
+            catDiv.innerHTML += `<a class="link" href="${item.url}" target="_blank">${item.name}</a>`;
+          });
+
+          div.appendChild(catDiv);
+        }
+      });
+
+      container.appendChild(div);
+    }
+  })
+  .catch(err => {
+    document.body.innerHTML = "<h2 style='text-align:center;color:red'>Error loading JSON 😢</h2>";
+    console.error(err);
+  });
+</script>
+
+</body>
+</html>
