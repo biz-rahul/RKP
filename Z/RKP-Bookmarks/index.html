@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pro Toolkit Dashboard</title>
+    <title>Ultimate Toolkit | Pro Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -11,6 +11,7 @@
             --accent: #38bdf8;
             --card-bg: #1e293b;
             --text: #f8fafc;
+            --yellow: #facc15;
         }
 
         body {
@@ -21,11 +22,10 @@
             scroll-behavior: smooth;
         }
 
-        /* Navbar & Search */
         header {
             position: sticky;
             top: 0;
-            background: rgba(15, 23, 42, 0.9);
+            background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px);
             z-index: 100;
             padding: 20px;
@@ -33,7 +33,7 @@
             text-align: center;
         }
 
-        h1 { font-family: 'Orbitron'; font-size: 1.8rem; margin: 0 0 15px 0; color: var(--accent); }
+        h1 { font-family: 'Orbitron'; font-size: 1.8rem; margin: 0 0 15px 0; color: var(--accent); letter-spacing: 2px; }
 
         #searchBar {
             width: 80%;
@@ -43,9 +43,11 @@
             border: 1px solid var(--accent);
             background: #1e293b;
             color: white;
-            font-size: 1rem;
             outline: none;
+            transition: 0.3s;
         }
+
+        #searchBar:focus { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
 
         .stats { font-size: 0.8rem; margin-top: 10px; color: #94a3b8; }
 
@@ -63,20 +65,29 @@
             background: #1e293b;
             color: white;
             border: 1px solid #334155;
-            padding: 8px 15px;
+            padding: 8px 18px;
             border-radius: 20px;
             cursor: pointer;
             font-size: 0.85rem;
             transition: 0.3s;
         }
 
-        .nav-btn:hover { background: var(--accent); color: black; }
+        .nav-btn:hover { background: var(--accent); color: #000; font-weight: bold; }
 
-        /* Main Content */
+        /* Bookmark Toggle Button Specific */
+        .btn-bookmark-toggle {
+            border-color: var(--yellow);
+            color: var(--yellow);
+        }
+        .btn-bookmark-toggle:hover {
+            background: var(--yellow);
+            color: #000;
+        }
+
         .container { max-width: 1200px; margin: auto; padding: 20px; }
 
         .section { margin-bottom: 40px; }
-        h2 { border-left: 4px solid var(--accent); padding-left: 10px; font-family: 'Orbitron'; font-size: 1.2rem; }
+        h2 { border-left: 4px solid var(--accent); padding-left: 15px; font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 20px; }
 
         .grid {
             display: grid;
@@ -84,47 +95,61 @@
             gap: 15px;
         }
 
-        /* Card Style */
         .card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 15px;
+            padding: 20px;
             position: relative;
-            transition: 0.3s;
-            border: 1px solid transparent;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); background: #26334d; }
 
-        .card a { color: white; text-decoration: none; font-weight: bold; display: block; margin-right: 30px;}
+        .card a { color: white; text-decoration: none; font-weight: 600; display: block; margin-right: 25px;}
 
-        /* Bookmark Button */
-        .bookmark-btn {
+        .bookmark-star {
             position: absolute;
-            right: 10px;
-            top: 15px;
+            right: 15px;
+            top: 18px;
             cursor: pointer;
             color: #475569;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             transition: 0.3s;
+            user-select: none;
         }
 
-        .bookmark-btn.active { color: #facc15; }
+        .bookmark-star.active { color: var(--yellow); text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); }
 
-        /* Bookmark Section Special */
-        #bookmarks-section { background: rgba(250, 204, 21, 0.05); border-radius: 15px; padding: 15px; display: none; }
+        /* Bookmarks Panel Style */
+        #bookmarks-section { 
+            display: none; /* Initially Hidden */
+            background: rgba(250, 204, 21, 0.08); 
+            border: 1px dashed var(--yellow);
+            border-radius: 15px; 
+            padding: 20px; 
+            margin-bottom: 30px;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        footer { text-align: center; padding: 30px; opacity: 0.4; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>🔥 ULTIMATE TOOLKIT</h1>
-    <input type="text" id="searchBar" placeholder="Search apps or categories..." onkeyup="filterContent()">
-    <div class="stats">Total Sites: <span id="totalCount">0</span> | Bookmarked: <span id="favCount">0</span></div>
+    <input type="text" id="searchBar" placeholder="Search apps, tools or categories..." onkeyup="filterContent()">
+    <div class="stats">Total: <span id="totalCount">0</span> | Saved: <span id="favCount">0</span></div>
 </header>
 
 <div class="nav-container">
-    <button class="nav-btn" onclick="scrollToId('bookmarks-section')">⭐ Bookmarks</button>
+    <button class="nav-btn btn-bookmark-toggle" onclick="toggleBookmarkSection()">⭐ Show Bookmarks</button>
     <button class="nav-btn" onclick="scrollToId('coding')">💻 Coding</button>
     <button class="nav-btn" onclick="scrollToId('hacking')">🛡️ Hacking</button>
     <button class="nav-btn" onclick="scrollToId('piracy')">🏴‍☠️ Piracy</button>
@@ -134,104 +159,113 @@
 <div class="container">
     
     <div id="bookmarks-section" class="section">
-        <h2 style="color: #facc15;">⭐ SAVED BOOKMARKS</h2>
-        <div id="bookmarks-grid" class="grid"></div>
+        <h2 style="color: var(--yellow); border-color: var(--yellow);">YOUR FAVORITES</h2>
+        <div id="bookmarks-grid" class="grid">
+            </div>
     </div>
 
     <div class="section" id="coding">
-        <h2>CODING DESIGN</h2>
+        <h2>CODING & DESIGN</h2>
         <div class="grid">
-            <div class="card" data-name="Jitter Video"><a href="https://jitter.video/files/" target="_blank">Jitter Video</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="Figma"><a href="https://www.figma.com/files/" target="_blank">Figma</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="Uiverse"><a href="https://uiverse.io/" target="_blank">Uiverse</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="Spline Design"><a href="https://app.spline.design/" target="_blank">Spline 3D</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
+            <div class="card" data-name="Jitter Video"><a href="https://jitter.video/files/" target="_blank">Jitter Video</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Figma"><a href="https://www.figma.com/files/" target="_blank">Figma</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Uiverse"><a href="https://uiverse.io/" target="_blank">Uiverse</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Neumorphism"><a href="https://neumorphism.io/" target="_blank">Neumorphism</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
         </div>
     </div>
 
     <div class="section" id="hacking">
         <h2>HACKING FORUMS</h2>
         <div class="grid">
-            <div class="card" data-name="Hack Forums"><a href="https://hackforums.net/" target="_blank">Hack Forums</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="Cracking.org"><a href="https://cracking.org/" target="_blank">Cracking.org</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="HacksNation"><a href="https://hacksnation.com/" target="_blank">HacksNation</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
+            <div class="card" data-name="Hack Forums"><a href="https://hackforums.net/" target="_blank">Hack Forums</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Cracking.org"><a href="https://cracking.org/" target="_blank">Cracking.org</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="HacksNation"><a href="https://hacksnation.com/" target="_blank">HacksNation</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
         </div>
     </div>
 
     <div class="section" id="piracy">
-        <h2>PIRACY & MOVIES</h2>
+        <h2>PIRACY (GAMES & MOVIES)</h2>
         <div class="grid">
-            <div class="card" data-name="FitGirl Repacks"><a href="https://fitgirl-repacks.site/" target="_blank">FitGirl Repacks</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="Steamrip"><a href="https://steamrip.com/" target="_blank">STEAMRIP</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="MovieBox"><a href="https://www.moviesbox.com.co/" target="_blank">MovieBox</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
+            <div class="card" data-name="FitGirl Repacks"><a href="https://fitgirl-repacks.site/" target="_blank">FitGirl Repacks</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Steamrip"><a href="https://steamrip.com/" target="_blank">STEAMRIP</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Castle App"><a href="https://castle.net.in/" target="_blank">Castle</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
         </div>
     </div>
 
     <div class="section" id="osint">
         <h2>OSINT TOOLS</h2>
         <div class="grid">
-            <div class="card" data-name="Yandex Images"><a href="https://yandex.com/images/" target="_blank">Yandex Images</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
-            <div class="card" data-name="VirusTotal"><a href="https://www.virustotal.com/" target="_blank">VirusTotal</a><span class="bookmark-btn" onclick="toggleBookmark(this)">★</span></div>
+            <div class="card" data-name="Exif Tools"><a href="https://exif.tools/" target="_blank">Exif Tools</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="VirusTotal"><a href="https://www.virustotal.com/" target="_blank">VirusTotal</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
         </div>
     </div>
 
 </div>
 
+<footer>
+    &copy; 2026 Ultimate Toolkit Pro v2.0
+</footer>
+
 <script>
-    // 1. Total Count Calculation
+    // Set Total Sites Count
     document.getElementById('totalCount').innerText = document.querySelectorAll('.card').length;
 
-    // 2. Search Functionality
+    // 1. Toggle Bookmark Section Visibility
+    function toggleBookmarkSection() {
+        const section = document.getElementById('bookmarks-section');
+        const btn = document.querySelector('.btn-bookmark-toggle');
+        
+        if (section.style.display === "block") {
+            section.style.display = "none";
+            btn.innerText = "⭐ Show Bookmarks";
+        } else {
+            section.style.display = "block";
+            btn.innerText = "✖ Hide Bookmarks";
+            scrollToId('bookmarks-section');
+        }
+    }
+
+    // 2. Star Click Logic
+    function toggleStar(star) {
+        star.classList.toggle('active');
+        refreshBookmarks();
+    }
+
+    // 3. Refresh Bookmarks Grid
+    function refreshBookmarks() {
+        const grid = document.getElementById('bookmarks-grid');
+        grid.innerHTML = "";
+        
+        const activeStars = document.querySelectorAll('.bookmark-star.active');
+        document.getElementById('favCount').innerText = activeStars.length;
+
+        activeStars.forEach(star => {
+            const cardClone = star.parentElement.cloneNode(true);
+            // Clone ke star click event ko handle karna
+            cardClone.querySelector('.bookmark-star').onclick = function() {
+                const originalName = this.parentElement.getAttribute('data-name');
+                const originalCard = document.querySelector(`.section:not(#bookmarks-section) .card[data-name="${originalName}"] .bookmark-star`);
+                originalCard.classList.remove('active');
+                refreshBookmarks();
+            };
+            grid.appendChild(cardClone);
+        });
+    }
+
+    // 4. Search Filter
     function filterContent() {
         let input = document.getElementById('searchBar').value.toLowerCase();
-        let cards = document.querySelectorAll('.card');
-        let sections = document.querySelectorAll('.section');
-
+        let cards = document.querySelectorAll('.section:not(#bookmarks-section) .card');
+        
         cards.forEach(card => {
             let name = card.getAttribute('data-name').toLowerCase();
             card.style.display = name.includes(input) ? "block" : "none";
         });
-
-        // Hide section if no cards visible
-        sections.forEach(sec => {
-            let visibleCards = sec.querySelectorAll('.card[style="display: block;"]');
-            sec.style.display = (visibleCards.length > 0 || input === "") ? "block" : "none";
-        });
     }
 
-    // 3. Smooth Scroll
+    // 5. Scroll Helper
     function scrollToId(id) {
         document.getElementById(id).scrollIntoView({behavior: "smooth"});
-    }
-
-    // 4. Bookmark System
-    function toggleBookmark(btn) {
-        btn.classList.toggle('active');
-        updateBookmarks();
-    }
-
-    function updateBookmarks() {
-        const bookmarkedGrid = document.getElementById('bookmarks-grid');
-        const bookmarkSection = document.getElementById('bookmarks-section');
-        bookmarkedGrid.innerHTML = "";
-        
-        let actives = document.querySelectorAll('.bookmark-btn.active');
-        document.getElementById('favCount').innerText = actives.length;
-
-        if(actives.length > 0) {
-            bookmarkSection.style.display = "block";
-            actives.forEach(btn => {
-                let cardClone = btn.parentElement.cloneNode(true);
-                cardClone.querySelector('.bookmark-btn').onclick = function() {
-                    // Find original and toggle it
-                    let name = this.parentElement.getAttribute('data-name');
-                    document.querySelectorAll(`.card[data-name="${name}"] .bookmark-btn`).forEach(b => b.classList.remove('active'));
-                    updateBookmarks();
-                };
-                bookmarkedGrid.appendChild(cardClone);
-            });
-        } else {
-            bookmarkSection.style.display = "none";
-        }
     }
 </script>
 
