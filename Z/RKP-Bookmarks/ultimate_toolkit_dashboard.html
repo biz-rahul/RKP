@@ -1,0 +1,337 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);background:transparent}
+#app{padding:0 0 2rem}
+
+.top-bar{background:var(--color-background-primary);border-bottom:0.5px solid var(--color-border-tertiary);padding:1.25rem 1rem 1rem;position:sticky;top:0;z-index:100}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.brand-icon{width:32px;height:32px;border-radius:8px;background:var(--color-background-tertiary);border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:16px}
+.brand-name{font-size:16px;font-weight:500;color:var(--color-text-primary)}
+.brand-count{font-size:12px;color:var(--color-text-secondary);margin-left:4px}
+
+.search-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+#searchInput{flex:1;min-width:200px;padding:8px 12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-primary);font-size:14px;outline:none}
+#searchInput:focus{border-color:var(--color-border-primary);box-shadow:0 0 0 2px rgba(0,0,0,0.06)}
+.pill-btn{padding:6px 14px;border-radius:20px;border:0.5px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);font-size:13px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.pill-btn:hover{background:var(--color-background-secondary)}
+.pill-btn.active{background:var(--color-background-tertiary);color:var(--color-text-primary);border-color:var(--color-border-primary);font-weight:500}
+
+.filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:0.5px solid var(--color-border-tertiary)}
+.filter-label{font-size:12px;color:var(--color-text-secondary);align-self:center;white-space:nowrap}
+
+.stats-bar{display:flex;gap:12px;padding:12px 1rem;flex-wrap:wrap;border-bottom:0.5px solid var(--color-border-tertiary)}
+.stat{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--color-text-secondary)}
+.stat-num{font-weight:500;color:var(--color-text-primary)}
+.dot{width:8px;height:8px;border-radius:50%}
+
+.view-toggle{display:flex;gap:4px;margin-left:auto}
+.view-btn{width:30px;height:30px;border-radius:6px;border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--color-text-secondary);font-size:15px}
+.view-btn.active{background:var(--color-background-tertiary);color:var(--color-text-primary)}
+
+.content{padding:1rem}
+
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;margin-top:1.5rem}
+.section-header:first-child{margin-top:0}
+.cat-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.cat-title{font-size:13px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.06em}
+.cat-count{font-size:12px;color:var(--color-text-secondary);background:var(--color-background-tertiary);padding:2px 8px;border-radius:10px}
+.section-line{flex:1;height:0.5px;background:var(--color-border-tertiary)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+.grid.list-mode{grid-template-columns:1fr}
+
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px;cursor:pointer;transition:all 0.15s;position:relative;display:flex;flex-direction:column;gap:8px}
+.card:hover{border-color:var(--color-border-secondary);background:var(--color-background-secondary)}
+.card-top{display:flex;align-items:center;gap:8px}
+.favicon{width:20px;height:20px;border-radius:4px;object-fit:cover;flex-shrink:0;background:var(--color-background-tertiary)}
+.favicon-fallback{width:20px;height:20px;border-radius:4px;background:var(--color-background-tertiary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--color-text-secondary);flex-shrink:0}
+.card-name{font-size:14px;font-weight:500;color:var(--color-text-primary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.card-url{font-size:11px;color:var(--color-text-secondary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bm-btn{width:22px;height:22px;border-radius:5px;border:none;background:transparent;cursor:pointer;color:var(--color-text-secondary);font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0;line-height:1}
+.bm-btn:hover{color:var(--color-text-primary)}
+.bm-btn.saved{color:#e67e22}
+.tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500}
+
+.grid.list-mode .card{flex-direction:row;align-items:center;gap:12px;padding:10px 14px}
+.grid.list-mode .card-top{flex:1;min-width:0}
+.grid.list-mode .card-url{display:block}
+.grid.list-mode .card-name{font-size:14px}
+
+.empty{text-align:center;padding:3rem 1rem;color:var(--color-text-secondary)}
+.empty-icon{font-size:32px;margin-bottom:12px}
+
+.section-wrapper{margin-bottom:1.5rem}
+.hidden{display:none}
+
+.toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 16px;font-size:13px;color:var(--color-text-primary);z-index:999;box-shadow:0 4px 20px rgba(0,0,0,0.12);transform:translateY(0);transition:opacity 0.3s,transform 0.3s;opacity:0;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(-4px)}
+
+#recentBar{padding:10px 1rem 0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.recent-label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+.recent-chip{padding:4px 12px;border-radius:20px;background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);font-size:12px;color:var(--color-text-secondary);cursor:pointer;white-space:nowrap}
+.recent-chip:hover{border-color:var(--color-border-secondary);color:var(--color-text-primary)}
+</style>
+
+<div id="app">
+  <div class="top-bar">
+    <div class="brand">
+      <div class="brand-icon">🔧</div>
+      <span class="brand-name">Ultimate Toolkit</span>
+      <span class="brand-count" id="totalCount"></span>
+    </div>
+    <div class="search-row">
+      <input type="text" id="searchInput" placeholder="Search websites... (try 'figma' or 'hack')" oninput="handleSearch(this.value)">
+      <button class="pill-btn active" onclick="setView('all',this)" id="viewAll">All</button>
+      <button class="pill-btn" onclick="setView('bookmarks',this)" id="viewBm">★ Bookmarks</button>
+      <button class="pill-btn" onclick="setView('recent',this)" id="viewRecent">Recent</button>
+    </div>
+    <div class="filter-row">
+      <span class="filter-label">Category:</span>
+      <div id="catFilters" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+  </div>
+
+  <div id="recentBar" class="hidden"></div>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-num" id="visibleCount">0</span> shown</div>
+    <div class="stat"><span class="dot" style="background:#e67e22"></span><span class="stat-num" id="bmCount">0</span> bookmarked</div>
+    <div class="stat"><span class="stat-num" id="catCountStat">0</span> categories</div>
+    <div class="view-toggle">
+      <button class="view-btn active" id="gridBtn" onclick="toggleLayout('grid')" title="Grid view">⊞</button>
+      <button class="view-btn" id="listBtn" onclick="toggleLayout('list')" title="List view">≡</button>
+    </div>
+  </div>
+
+  <div class="content" id="mainContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const CATEGORIES = [
+  {id:'coding',name:'Coding & Design',color:'#5b8af7',dot:'#5b8af7',sites:[
+    {name:'Jitter Video',url:'https://jitter.video/files/'},
+    {name:'Figma',url:'https://www.figma.com/files/'},
+    {name:'OneCompiler',url:'https://onecompiler.com/'},
+    {name:'Neumorphism UI',url:'https://neumorphism.io/'},
+    {name:'Uiverse',url:'https://uiverse.io/'},
+    {name:'Flaticon',url:'https://www.flaticon.com/'},
+    {name:'Spline 3D',url:'https://app.spline.design/'},
+  ]},
+  {id:'cyber',name:'Cyber Security',color:'#e84393',dot:'#e84393',sites:[
+    {name:'Cracking.org',url:'https://cracking.org/'},
+    {name:'Hack Forums',url:'https://hackforums.net/'},
+    {name:'HacksNation',url:'https://hacksnation.com/'},
+    {name:'xReactor',url:'https://xreactor.org/'},
+    {name:'Cracked.sh',url:'https://cracked.sh/'},
+  ]},
+  {id:'games',name:'Games (Repacks)',color:'#27ae60',dot:'#27ae60',sites:[
+    {name:'STEAMRIP',url:'https://steamrip.com/'},
+    {name:'FitGirl Repacks',url:'https://fitgirl-repacks.site/'},
+    {name:'Dodi Repacks',url:'https://dodi-repacks.site/'},
+  ]},
+  {id:'streaming',name:'Streaming Apps',color:'#9b59b6',dot:'#9b59b6',sites:[
+    {name:'MovieBox',url:'https://www.moviesbox.com.co/'},
+    {name:'Lucifer App',url:'https://new.luciferapp.com/'},
+    {name:'Castle',url:'https://castle.net.in/'},
+  ]},
+  {id:'osint',name:'OSINT & Investigation',color:'#f39c12',dot:'#f39c12',sites:[
+    {name:'Exif Tools',url:'https://exif.tools/'},
+    {name:'Yandex Reverse Search',url:'https://yandex.com/images/'},
+    {name:'Google Lens',url:'https://lens.google/'},
+    {name:'Picarta AI',url:'https://picarta.ai/'},
+  ]},
+  {id:'utils',name:'Important Utils',color:'#1abc9c',dot:'#1abc9c',sites:[
+    {name:'Wayback Machine',url:'https://web.archive.org/'},
+    {name:'VirusTotal',url:'https://www.virustotal.com/'},
+    {name:'Speedtest',url:'https://www.speedtest.net/'},
+    {name:'Neal.fun',url:'https://neal.fun/'},
+  ]},
+];
+
+let bookmarks = JSON.parse(localStorage.getItem('tk_bm')||'[]');
+let recentlyUsed = JSON.parse(localStorage.getItem('tk_recent')||'[]');
+let currentSearch = '';
+let currentCat = 'all';
+let currentView = 'all';
+let layoutMode = 'grid';
+
+function getDomain(url){try{return new URL(url).hostname}catch(e){return url}}
+function getFaviconUrl(url){
+  const domain = getDomain(url);
+  return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+}
+
+function getInitials(name){return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function toggleBookmark(e,url,name){
+  e.stopPropagation();
+  const idx=bookmarks.indexOf(url);
+  if(idx>-1){bookmarks.splice(idx,1);showToast('Removed from bookmarks')}
+  else{bookmarks.push(url);showToast('★ Bookmarked: '+name)}
+  localStorage.setItem('tk_bm',JSON.stringify(bookmarks));
+  render();updateStats();
+}
+
+function openSite(url,name){
+  const maxR=12;
+  recentlyUsed=recentlyUsed.filter(r=>r.url!==url);
+  recentlyUsed.unshift({url,name});
+  if(recentlyUsed.length>maxR)recentlyUsed=recentlyUsed.slice(0,maxR);
+  localStorage.setItem('tk_recent',JSON.stringify(recentlyUsed));
+  window.open(url,'_blank');
+  renderRecentBar();
+}
+
+function setView(view,btn){
+  currentView=view;currentSearch='';currentCat='all';
+  document.getElementById('searchInput').value='';
+  document.querySelectorAll('.pill-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#catFilters .pill-btn').forEach(b=>{if(b.dataset.cat==='all')b.classList.add('active');else b.classList.remove('active')});
+  currentCat='all';
+  render();updateStats();
+}
+
+function handleSearch(val){
+  currentSearch=val.toLowerCase();
+  currentView='all';
+  document.querySelectorAll('.pill-btn:not([data-cat])').forEach(b=>b.classList.remove('active'));
+  document.getElementById('viewAll').classList.add('active');
+  render();updateStats();
+}
+
+function filterByCat(cat,btn){
+  currentCat=cat;
+  document.querySelectorAll('#catFilters .pill-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  render();updateStats();
+}
+
+function toggleLayout(mode){
+  layoutMode=mode;
+  document.getElementById('gridBtn').classList.toggle('active',mode==='grid');
+  document.getElementById('listBtn').classList.toggle('active',mode==='list');
+  render();
+}
+
+function buildCatFilters(){
+  const cont=document.getElementById('catFilters');
+  cont.innerHTML='';
+  const allBtn=document.createElement('button');
+  allBtn.className='pill-btn active';allBtn.textContent='All';allBtn.dataset.cat='all';
+  allBtn.onclick=function(){filterByCat('all',this)};cont.appendChild(allBtn);
+  CATEGORIES.forEach(cat=>{
+    const btn=document.createElement('button');
+    btn.className='pill-btn';btn.textContent=cat.name;btn.dataset.cat=cat.id;
+    btn.onclick=function(){filterByCat(cat.id,this)};cont.appendChild(btn);
+  });
+}
+
+function getSitesToShow(){
+  let cats=CATEGORIES;
+  if(currentCat!=='all')cats=cats.filter(c=>c.id===currentCat);
+  return cats.map(cat=>{
+    let sites=cat.sites;
+    if(currentView==='bookmarks')sites=sites.filter(s=>bookmarks.includes(s.url));
+    if(currentView==='recent'){
+      const urls=recentlyUsed.map(r=>r.url);
+      sites=sites.filter(s=>urls.includes(s.url));
+    }
+    if(currentSearch)sites=sites.filter(s=>s.name.toLowerCase().includes(currentSearch)||getDomain(s.url).includes(currentSearch));
+    return{...cat,sites};
+  }).filter(c=>c.sites.length>0);
+}
+
+function makeCard(site){
+  const isBm=bookmarks.includes(site.url);
+  const domain=getDomain(site.url);
+  const card=document.createElement('div');
+  card.className='card';
+  card.onclick=()=>openSite(site.url,site.name);
+
+  const img=document.createElement('img');
+  img.className='favicon';img.width=20;img.height=20;
+  img.src=getFaviconUrl(site.url);
+  img.onerror=function(){
+    const fb=document.createElement('div');
+    fb.className='favicon-fallback';fb.textContent=getInitials(site.name);
+    this.parentNode.replaceChild(fb,this);
+  };
+
+  const nameEl=document.createElement('div');
+  nameEl.className='card-name';nameEl.textContent=site.name;
+
+  const bmBtn=document.createElement('button');
+  bmBtn.className='bm-btn'+(isBm?' saved':'');
+  bmBtn.textContent=isBm?'★':'☆';
+  bmBtn.title=isBm?'Remove bookmark':'Bookmark';
+  bmBtn.onclick=e=>toggleBookmark(e,site.url,site.name);
+
+  const top=document.createElement('div');
+  top.className='card-top';
+  top.appendChild(img);top.appendChild(nameEl);top.appendChild(bmBtn);
+
+  const urlEl=document.createElement('div');
+  urlEl.className='card-url';urlEl.textContent=domain;
+
+  card.appendChild(top);card.appendChild(urlEl);
+  return card;
+}
+
+function render(){
+  const cont=document.getElementById('mainContent');
+  const cats=getSitesToShow();
+  cont.innerHTML='';
+  if(cats.length===0){
+    cont.innerHTML='<div class="empty"><div class="empty-icon">🔍</div><div>No websites found</div><div style="font-size:12px;margin-top:6px;color:var(--color-text-secondary)">Try a different search or category</div></div>';
+    return;
+  }
+  cats.forEach(cat=>{
+    const sec=document.createElement('div');sec.className='section-wrapper';
+    const header=document.createElement('div');header.className='section-header';
+    header.innerHTML=`<div class="cat-dot" style="background:${cat.color}"></div><span class="cat-title">${cat.name}</span><span class="cat-count">${cat.sites.length}</span><div class="section-line"></div>`;
+    sec.appendChild(header);
+    const grid=document.createElement('div');
+    grid.className='grid'+(layoutMode==='list'?' list-mode':'');
+    cat.sites.forEach(s=>grid.appendChild(makeCard(s)));
+    sec.appendChild(grid);cont.appendChild(sec);
+  });
+  updateStats();
+}
+
+function updateStats(){
+  const allSites=CATEGORIES.flatMap(c=>c.sites);
+  document.getElementById('totalCount').textContent='('+allSites.length+' sites)';
+  const shown=getSitesToShow().reduce((a,c)=>a+c.sites.length,0);
+  document.getElementById('visibleCount').textContent=shown;
+  document.getElementById('bmCount').textContent=bookmarks.length;
+  document.getElementById('catCountStat').textContent=CATEGORIES.length;
+}
+
+function renderRecentBar(){
+  const bar=document.getElementById('recentBar');
+  if(recentlyUsed.length===0){bar.classList.add('hidden');return}
+  bar.classList.remove('hidden');
+  bar.innerHTML='<span class="recent-label">Recent:</span>';
+  recentlyUsed.slice(0,6).forEach(r=>{
+    const chip=document.createElement('span');
+    chip.className='recent-chip';chip.textContent=r.name;
+    chip.onclick=()=>openSite(r.url,r.name);
+    bar.appendChild(chip);
+  });
+}
+
+buildCatFilters();
+render();
+renderRecentBar();
+updateStats();
+</script>
