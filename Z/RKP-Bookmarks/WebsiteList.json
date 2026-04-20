@@ -1,0 +1,129 @@
+{
+  "sections": {
+    
+    "CODING_DESIGN_TOOLS": {
+      "description": "UI, development, and design related tools",
+      "tools": [
+        {"name": "Jitter Video", "url": "https://jitter.video/files/"},
+        {"name": "Figma", "url": "https://www.figma.com/files/"},
+        {"name": "OneCompiler", "url": "https://onecompiler.com/"},
+        {"name": "Neumorphism UI Generator", "url": "https://neumorphism.io/#e0e0e0"},
+        {"name": "Uiverse", "url": "https://uiverse.io/"},
+        {"name": "Flaticon", "url": "https://www.flaticon.com/"},
+        {"name": "Spline Design", "url": "https://app.spline.design/home"}
+      ]
+    },
+
+    "HACKING_FORUMS": {
+      "description": "Discussion forums related to hacking and cracking",
+      "forums": [
+        {"name": "Cracking.org", "url": "https://cracking.org/"},
+        {"name": "Hack Forums", "url": "https://hackforums.net/"},
+        {"name": "HacksNation", "url": "https://hacksnation.com/"},
+        {"name": "xReactor", "url": "https://xreactor.org/"},
+        {"name": "Cracked.sh", "url": "https://cracked.sh/"}
+      ]
+    },
+
+    "PIRACY": {
+      "description": "All piracy related sources (games, movies, search methods)",
+      
+      "games": [
+        {"name": "STEAMRIP", "url": "https://steamrip.com/"},
+        {"name": "FitGirl Repacks", "url": "https://fitgirl-repacks.site/popular-repacks/"},
+        {"name": "Dodi Repacks", "url": "https://dodi-repacks.site/"}
+      ],
+
+      "movie_apps": [
+        {"name": "MovieBox", "url": "https://www.moviesbox.com.co/"},
+        {"name": "Lucifer App", "url": "https://new.luciferapp.com/"},
+        {"name": "Castle", "url": "https://castle.net.in/"}
+      ],
+
+      "search_methods": [
+        {"name": "Google Drive Search", "url": "https://www.google.com/search?q=%22movie+name%22+google+drive"},
+        {"name": "Archive.org Search", "url": "https://www.google.com/search?q=%22movie+name%22+site:archive.org"},
+        {"name": "Telegram Search", "url": "https://www.google.com/search?q=%22movie+name%22+telegram"}
+      ],
+
+      "sites": [
+        {"name": "Moviesflix", "url": "https://www.google.com/search?q=moviesflix"},
+        {"name": "Movies4u", "url": "https://www.google.com/search?q=movies4u"},
+        {"name": "MKVCinema", "url": "https://www.google.com/search?q=mkvcinema"},
+        {"name": "HDHub4u", "url": "https://www.google.com/search?q=hdhub4u"},
+        {"name": "MovieHub", "url": "https://www.google.com/search?q=moviehub"},
+        {"name": "MP4Moviez", "url": "https://www.google.com/search?q=mp4moviez"},
+        {"name": "HDMovieHub", "url": "https://www.google.com/search?q=hdmoviehub"},
+        {"name": "MKVCinemas", "url": "https://www.google.com/search?q=mkvcinemas"}
+      ]
+    },
+
+    "OSINT_TOOLS": {
+      "description": "Open source intelligence tools",
+      "categories": {
+        "metadata": [
+          {"name": "Exif Tools", "url": "https://exif.tools/"},
+          {"name": "ExifTools Viewer", "url": "https://exiftools.com/"}
+        ],
+        "image": [
+          {"name": "Yandex Images", "url": "https://yandex.com/images/"},
+          {"name": "Google Lens", "url": "https://lens.google/"},
+          {"name": "Bing Visual Search", "url": "https://www.microsoft.com/en-us/bing/visual-search/?form=MT016O"},
+          {"name": "Picarta", "url": "https://picarta.ai/"},
+          {"name": "GeoImgr", "url": "https://tool.geoimgr.com/"},
+          {"name": "WhereIsThisPhoto", "url": "https://www.whereisthisphoto.com/"}
+        ],
+        "website": [
+          {"name": "URL Extractor", "url": "https://yourgpt.ai/tools/url-extractor"},
+          {"name": "URLScan", "url": "https://urlscan.io/"}
+        ],
+        "ip": [
+          {"name": "Whois Lookup", "url": "https://www.whois.com/whois/"}
+        ]
+      }
+    },
+
+    "CHINESE_CONTENT": {
+      "description": "Chinese platforms for news, entertainment, and search",
+      "categories": {
+        "news": [
+          {"name": "China Daily", "url": "https://www.chinadaily.com.cn/"},
+          {"name": "CCTV", "url": "https://m.cctv.com/"},
+          {"name": "Xinhua", "url": "https://m.news.cn/"},
+          {"name": "People’s Daily", "url": "http://www.people.com.cn/"}
+        ],
+        "entertainment": [
+          {"name": "Ixigua", "url": "https://m.ixigua.com/"},
+          {"name": "Douyin", "url": "https://www.douyin.com/"},
+          {"name": "Bilibili", "url": "https://m.bilibili.com/"},
+          {"name": "Haokan", "url": "https://haokan.baidu.com/"},
+          {"name": "YOUKU", "url": "https://youku.tv/"},
+          {"name": "Mango TV", "url": "https://m.mgtv.com/home"},
+          {"name": "iQIYI", "url": "https://m.iqiyi.com/"},
+          {"name": "Tencent Video", "url": "https://m.v.qq.com/"}
+        ],
+        "search_engines": [
+          {"name": "Baidu", "url": "https://m.baidu.com/"},
+          {"name": "Baidu Baike", "url": "https://baike.baidu.com/"},
+          {"name": "Sogou", "url": "https://m.sogou.com/"},
+          {"name": "360 Search", "url": "https://m.so.com/"},
+          {"name": "DeepSeek AI", "url": "https://chat.deepseek.com/"}
+        ]
+      }
+    },
+
+    "ADULT": {
+      "description": "Adult websites",
+      "sites": [
+        {"name": "Candy Doll", "url": "https://candydoll.tv/"},
+        {"name": "91Porn", "url": "https://91porn.com/"},
+        {"name": "Eyny", "url": "http://eyny.com/"},
+        {"name": "JK Forum", "url": "https://jkforum.net/"},
+        {"name": "Stripchat Chinese", "url": "https://stripchatgirls.com/girls/chinese"},
+        {"name": "3xChina", "url": "https://3xchina.net/"},
+        {"name": "Sex141", "url": "http://sex141.com/"}
+      ]
+    }
+
+  }
+}
