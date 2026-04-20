@@ -1,16 +1,16 @@
 {
-  "name": "RKP Tools",
-  "short_name": "RKP Tools",
-  "start_url": "/Z/RKP-Tools/",
+  "name": "RKP Bookmarks",
+  "short_name": "RKP Bookmarks",
+  "start_url": "/Z/RKP-Bookmarks/",
   "display": "standalone",
   "icons": [
     {
-      "src": "/Z/RKP-Tools/1a5b14cf-7911-48b6-9555-6da4e2dae9cd.png",
+      "src": "/Z/RKP-Bookmarks/1a5b14cf-7911-48b6-9555-6da4e2dae9cd.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/Z/RKP-Tools/1a5b14cf-7911-48b6-9555-6da4e2dae9cd.png",
+      "src": "/Z/RKP-Bookmarks/1a5b14cf-7911-48b6-9555-6da4e2dae9cd.png",
       "sizes": "512x512",
       "type": "image/png"
     }
