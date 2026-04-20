@@ -100,12 +100,13 @@
 </header>
 
 <div class="nav-container">
-    <button class="nav-btn btn-bookmark-toggle" onclick="toggleBookmarkSection()">⭐ Show Bookmarks</button>
-    <button class="nav-btn" onclick="scrollToId('coding')">💻 Coding</button>
-    <button class="nav-btn" onclick="scrollToId('hacking')">🛡️ Hacking</button>
-    <button class="nav-btn" onclick="scrollToId('piracy')">🏴‍☠️ Piracy</button>
+    <button class="nav-btn btn-bookmark-toggle" onclick="toggleBookmarkSection()">⭐ Bookmarks</button>
+    <button class="nav-btn" onclick="filterCategory('all')">🌐 All</button>
+    <button class="nav-btn" onclick="filterCategory('coding')">💻 Coding</button>
+    <button class="nav-btn" onclick="filterCategory('hacking')">🛡️ Hacking</button>
+    <button class="nav-btn" onclick="filterCategory('piracy')">🏴‍☠️ Piracy</button>
+    <button class="nav-btn" onclick="filterCategory('osint')">🔍 OSINT</button>
 </div>
-
 <div class="container">
     <div id="bookmarks-section" class="section">
         <h2 style="color: var(--yellow); border-color: var(--yellow);">YOUR FAVORITES</h2>
