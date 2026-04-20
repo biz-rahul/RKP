@@ -47,104 +47,55 @@
             transition: 0.3s;
         }
 
-        #searchBar:focus { box-shadow: 0 0 15px rgba(56, 189, 248, 0.4); }
-
         .stats { font-size: 0.8rem; margin-top: 10px; color: #94a3b8; }
 
-        /* Category Nav */
-        .nav-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            flex-wrap: wrap;
-            background: #111827;
-        }
-
-        .nav-btn {
-            background: #1e293b;
-            color: white;
-            border: 1px solid #334155;
-            padding: 8px 18px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: 0.3s;
-        }
-
+        /* Nav Buttons */
+        .nav-container { display: flex; justify-content: center; gap: 10px; padding: 15px; flex-wrap: wrap; background: #111827; }
+        .nav-btn { background: #1e293b; color: white; border: 1px solid #334155; padding: 8px 18px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; }
         .nav-btn:hover { background: var(--accent); color: #000; font-weight: bold; }
-
-        /* Bookmark Toggle Button Specific */
-        .btn-bookmark-toggle {
-            border-color: var(--yellow);
-            color: var(--yellow);
-        }
-        .btn-bookmark-toggle:hover {
-            background: var(--yellow);
-            color: #000;
-        }
+        .btn-bookmark-toggle { border-color: var(--yellow); color: var(--yellow); }
 
         .container { max-width: 1200px; margin: auto; padding: 20px; }
-
         .section { margin-bottom: 40px; }
         h2 { border-left: 4px solid var(--accent); padding-left: 15px; font-family: 'Orbitron'; font-size: 1.2rem; margin-bottom: 20px; }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
-        }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 15px; }
 
+        /* Card with Favicon Support */
         .card {
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 20px;
+            padding: 15px;
             position: relative;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: 0.3s;
             border: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: center;
         }
 
         .card:hover { transform: translateY(-5px); border-color: var(--accent); background: #26334d; }
 
-        .card a { color: white; text-decoration: none; font-weight: 600; display: block; margin-right: 25px;}
-
-        .bookmark-star {
-            position: absolute;
-            right: 15px;
-            top: 18px;
-            cursor: pointer;
-            color: #475569;
-            font-size: 1.3rem;
-            transition: 0.3s;
-            user-select: none;
+        .favicon {
+            width: 20px;
+            height: 20px;
+            margin-right: 12px;
+            border-radius: 4px;
+            background: #334155; /* Fallback color */
         }
 
-        .bookmark-star.active { color: var(--yellow); text-shadow: 0 0 10px rgba(250, 204, 21, 0.5); }
+        .card a { color: white; text-decoration: none; font-weight: 600; flex-grow: 1; font-size: 0.95rem; }
 
-        /* Bookmarks Panel Style */
-        #bookmarks-section { 
-            display: none; /* Initially Hidden */
-            background: rgba(250, 204, 21, 0.08); 
-            border: 1px dashed var(--yellow);
-            border-radius: 15px; 
-            padding: 20px; 
-            margin-bottom: 30px;
-            animation: fadeIn 0.4s ease-in-out;
-        }
+        .bookmark-star { cursor: pointer; color: #475569; font-size: 1.2rem; margin-left: 10px; transition: 0.3s; }
+        .bookmark-star.active { color: var(--yellow); }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        footer { text-align: center; padding: 30px; opacity: 0.4; font-size: 0.8rem; }
+        #bookmarks-section { display: none; background: rgba(250, 204, 21, 0.08); border: 1px dashed var(--yellow); border-radius: 15px; padding: 20px; margin-bottom: 30px; }
     </style>
 </head>
 <body>
 
 <header>
     <h1>🔥 ULTIMATE TOOLKIT</h1>
-    <input type="text" id="searchBar" placeholder="Search apps, tools or categories..." onkeyup="filterContent()">
+    <input type="text" id="searchBar" placeholder="Search apps..." onkeyup="filterContent()">
     <div class="stats">Total: <span id="totalCount">0</span> | Saved: <span id="favCount">0</span></div>
 </header>
 
@@ -153,120 +104,101 @@
     <button class="nav-btn" onclick="scrollToId('coding')">💻 Coding</button>
     <button class="nav-btn" onclick="scrollToId('hacking')">🛡️ Hacking</button>
     <button class="nav-btn" onclick="scrollToId('piracy')">🏴‍☠️ Piracy</button>
-    <button class="nav-btn" onclick="scrollToId('osint')">🔍 OSINT</button>
 </div>
 
 <div class="container">
-    
     <div id="bookmarks-section" class="section">
         <h2 style="color: var(--yellow); border-color: var(--yellow);">YOUR FAVORITES</h2>
-        <div id="bookmarks-grid" class="grid">
-            </div>
+        <div id="bookmarks-grid" class="grid"></div>
     </div>
 
     <div class="section" id="coding">
         <h2>CODING & DESIGN</h2>
         <div class="grid">
-            <div class="card" data-name="Jitter Video"><a href="https://jitter.video/files/" target="_blank">Jitter Video</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-            <div class="card" data-name="Figma"><a href="https://www.figma.com/files/" target="_blank">Figma</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Jitter Video"><a href="https://jitter.video/" target="_blank">Jitter Video</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="Figma"><a href="https://www.figma.com/" target="_blank">Figma</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
             <div class="card" data-name="Uiverse"><a href="https://uiverse.io/" target="_blank">Uiverse</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-            <div class="card" data-name="Neumorphism"><a href="https://neumorphism.io/" target="_blank">Neumorphism</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
+            <div class="card" data-name="OneCompiler"><a href="https://onecompiler.com/" target="_blank">OneCompiler</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
         </div>
     </div>
 
     <div class="section" id="hacking">
-        <h2>HACKING FORUMS</h2>
+        <h2>CYBER SECURITY</h2>
         <div class="grid">
             <div class="card" data-name="Hack Forums"><a href="https://hackforums.net/" target="_blank">Hack Forums</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
             <div class="card" data-name="Cracking.org"><a href="https://cracking.org/" target="_blank">Cracking.org</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-            <div class="card" data-name="HacksNation"><a href="https://hacksnation.com/" target="_blank">HacksNation</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
         </div>
     </div>
-
-    <div class="section" id="piracy">
-        <h2>PIRACY (GAMES & MOVIES)</h2>
-        <div class="grid">
-            <div class="card" data-name="FitGirl Repacks"><a href="https://fitgirl-repacks.site/" target="_blank">FitGirl Repacks</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-            <div class="card" data-name="Steamrip"><a href="https://steamrip.com/" target="_blank">STEAMRIP</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-            <div class="card" data-name="Castle App"><a href="https://castle.net.in/" target="_blank">Castle</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-        </div>
+    
     </div>
-
-    <div class="section" id="osint">
-        <h2>OSINT TOOLS</h2>
-        <div class="grid">
-            <div class="card" data-name="Exif Tools"><a href="https://exif.tools/" target="_blank">Exif Tools</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-            <div class="card" data-name="VirusTotal"><a href="https://www.virustotal.com/" target="_blank">VirusTotal</a><span class="bookmark-star" onclick="toggleStar(this)">★</span></div>
-        </div>
-    </div>
-
-</div>
-
-<footer>
-    &copy; 2026 Ultimate Toolkit Pro v2.0
-</footer>
 
 <script>
-    // Set Total Sites Count
-    document.getElementById('totalCount').innerText = document.querySelectorAll('.card').length;
+    // 1. JS TO ADD FAVICONS AUTOMATICALLY
+    function loadFavicons() {
+        const cards = document.querySelectorAll('.card');
+        cards.forEach(card => {
+            const link = card.querySelector('a').href;
+            const domain = new URL(link).hostname;
+            // Using Google's favicon service
+            const faviconUrl = `https://www.google.com/s2/favicons?sz=64&domain=${domain}`;
+            
+            const img = document.createElement('img');
+            img.src = faviconUrl;
+            img.className = 'favicon';
+            img.alt = 'icon';
+            
+            // Link ke pehle icon insert karein
+            card.prepend(img);
+        });
+    }
 
-    // 1. Toggle Bookmark Section Visibility
+    // Initialize favicons on load
+    window.onload = () => {
+        loadFavicons();
+        document.getElementById('totalCount').innerText = document.querySelectorAll('.section:not(#bookmarks-section) .card').length;
+    };
+
     function toggleBookmarkSection() {
         const section = document.getElementById('bookmarks-section');
         const btn = document.querySelector('.btn-bookmark-toggle');
-        
-        if (section.style.display === "block") {
-            section.style.display = "none";
-            btn.innerText = "⭐ Show Bookmarks";
-        } else {
-            section.style.display = "block";
-            btn.innerText = "✖ Hide Bookmarks";
-            scrollToId('bookmarks-section');
-        }
+        const isHidden = section.style.display === "none" || section.style.display === "";
+        section.style.display = isHidden ? "block" : "none";
+        btn.innerText = isHidden ? "✖ Hide Bookmarks" : "⭐ Show Bookmarks";
+        if(isHidden) scrollToId('bookmarks-section');
     }
 
-    // 2. Star Click Logic
     function toggleStar(star) {
         star.classList.toggle('active');
         refreshBookmarks();
     }
 
-    // 3. Refresh Bookmarks Grid
     function refreshBookmarks() {
         const grid = document.getElementById('bookmarks-grid');
         grid.innerHTML = "";
-        
-        const activeStars = document.querySelectorAll('.bookmark-star.active');
+        const activeStars = document.querySelectorAll('.section:not(#bookmarks-section) .bookmark-star.active');
         document.getElementById('favCount').innerText = activeStars.length;
 
         activeStars.forEach(star => {
             const cardClone = star.parentElement.cloneNode(true);
-            // Clone ke star click event ko handle karna
             cardClone.querySelector('.bookmark-star').onclick = function() {
-                const originalName = this.parentElement.getAttribute('data-name');
-                const originalCard = document.querySelector(`.section:not(#bookmarks-section) .card[data-name="${originalName}"] .bookmark-star`);
-                originalCard.classList.remove('active');
+                const name = this.parentElement.getAttribute('data-name');
+                document.querySelector(`.section:not(#bookmarks-section) .card[data-name="${name}"] .bookmark-star`).classList.remove('active');
                 refreshBookmarks();
             };
             grid.appendChild(cardClone);
         });
     }
 
-    // 4. Search Filter
     function filterContent() {
         let input = document.getElementById('searchBar').value.toLowerCase();
         let cards = document.querySelectorAll('.section:not(#bookmarks-section) .card');
-        
         cards.forEach(card => {
             let name = card.getAttribute('data-name').toLowerCase();
-            card.style.display = name.includes(input) ? "block" : "none";
+            card.style.display = name.includes(input) ? "flex" : "none";
         });
     }
 
-    // 5. Scroll Helper
-    function scrollToId(id) {
-        document.getElementById(id).scrollIntoView({behavior: "smooth"});
-    }
+    function scrollToId(id) { document.getElementById(id).scrollIntoView({behavior: "smooth"}); }
 </script>
 
 </body>
