@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DevTool Pro Max 😏</title>
+<style>
+body{margin:0;font-family:monospace;background:#0d1117;color:#c9d1d9;display:flex;height:100vh}
+.sidebar{width:250px;background:#161b22;padding:10px;overflow:auto}
+.editor{flex:1;display:flex;flex-direction:column}
+.tabs{display:flex;background:#161b22;overflow-x:auto}
+.tab{padding:10px;cursor:pointer;border-right:1px solid #30363d;white-space:nowrap}
+.tab.active{background:#0d1117}
+textarea{flex:1;background:#0d1117;color:#58a6ff;border:none;padding:10px;outline:none}
+.toolbar{padding:10px;background:#161b22}
+button{margin-right:10px;padding:5px 10px;background:#238636;border:none;color:#fff;cursor:pointer}
+.output{background:#010409;padding:10px;height:120px;overflow:auto;color:#ff7b72}
+.highlight{color:#ff7b72}
+iframe{height:200px;border:none}
+.file{cursor:pointer;padding:5px}
+.file:hover{background:#30363d}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+<h3>📁 Files</h3>
+<input type="file" multiple onchange="loadFiles(event)">
+<div id="fileList"></div>
+<button onclick="createFile()">+ New File</button>
+</div>
+
+<div class="editor">
+<div class="tabs" id="tabs"></div>
+<textarea id="code"></textarea>
+
+<div class="toolbar">
+<button onclick="checkJSON()">JSON Check</button>
+<button onclick="fixJSON()">Fix JSON</button>
+<button onclick="beautify()">Beautify</button>
+<button onclick="runHTML()">Run</button>
+<button onclick="clearCache()">Clear Cache</button>
+</div>
+
+<div class="output" id="output"></div>
+<iframe id="frame"></iframe>
+</div>
+
+<script>
+let STORAGE_KEY = "devtool_cache_v1";
+let EXPIRY_DAYS = 90;
+let files = {};
+let currentFile = null;
+
+function saveCache(){
+  let data = {
+    files,
+    lastActive: Date.now()
+  };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function loadCache(){
+  let raw = localStorage.getItem(STORAGE_KEY);
+  if(!raw) return;
+
+  let data = JSON.parse(raw);
+  let now = Date.now();
+  let diffDays = (now - data.lastActive) / (1000*60*60*24);
+
+  if(diffDays > EXPIRY_DAYS){
+    localStorage.removeItem(STORAGE_KEY);
+    return;
+  }
+
+  files = data.files || {};
+  renderFiles();
+}
+
+function clearCache(){
+  localStorage.removeItem(STORAGE_KEY);
+  files = {};
+  currentFile = null;
+  renderFiles();
+  document.getElementById('code').value="";
+}
+
+function createFile(){
+  let name = prompt("File name?");
+  if(!name) return;
+  files[name] = "";
+  saveCache();
+  renderFiles();
+}
+
+function renderFiles(){
+  let list = document.getElementById('fileList');
+  list.innerHTML = "";
+  for(let f in files){
+    let div = document.createElement('div');
+    div.className = "file";
+    div.innerText = f;
+    div.onclick = ()=>openFile(f);
+    list.appendChild(div);
+  }
+  renderTabs();
+}
+
+function openFile(name){
+  currentFile = name;
+  document.getElementById('code').value = files[name];
+  renderTabs();
+}
+
+function renderTabs(){
+  let tabs = document.getElementById('tabs');
+  tabs.innerHTML = "";
+  for(let f in files){
+    let t = document.createElement('div');
+    t.className = "tab" + (f===currentFile?" active":"");
+    t.innerText = f;
+    t.onclick = ()=>openFile(f);
+    tabs.appendChild(t);
+  }
+}
+
+function loadFiles(e){
+  for(let file of e.target.files){
+    let reader = new FileReader();
+    reader.onload = (ev)=>{
+      files[file.name] = ev.target.result;
+      saveCache();
+      renderFiles();
+    }
+    reader.readAsText(file);
+  }
+}
+
+document.getElementById('code').addEventListener('input',()=>{
+  if(currentFile){
+    files[currentFile] = document.getElementById('code').value;
+    saveCache();
+  }
+});
+
+function checkJSON(){
+  try{
+    JSON.parse(document.getElementById('code').value);
+    output("✅ Valid JSON");
+  }catch(e){
+    highlightError(e.message);
+  }
+}
+
+function fixJSON(){
+  try{
+    let obj = JSON.parse(document.getElementById('code').value);
+    document.getElementById('code').value = JSON.stringify(obj,null,2);
+    saveCache();
+    output("Auto formatted");
+  }catch(e){
+    output("❌ Cannot auto fix: "+e.message);
+  }
+}
+
+function beautify(){
+  let code = document.getElementById('code').value;
+  let formatted = code
+  .replace(/;/g,";\n")
+  .replace(/{/g,"{\n")
+  .replace(/}/g,"}\n");
+  document.getElementById('code').value = formatted;
+  saveCache();
+}
+
+function runHTML(){
+  let frame = document.getElementById('frame').contentWindow.document;
+  frame.open();
+  frame.write(document.getElementById('code').value);
+  frame.close();
+}
+
+function output(msg){
+  document.getElementById('output').innerText = msg;
+}
+
+function highlightError(msg){
+  document.getElementById('output').innerHTML = "<span class='highlight'>"+msg+"</span>";
+}
+
+// Drag & Drop
+window.addEventListener('dragover',e=>e.preventDefault());
+window.addEventListener('drop',e=>{
+  e.preventDefault();
+  for(let file of e.dataTransfer.files){
+    let reader = new FileReader();
+    reader.onload = (ev)=>{
+      files[file.name] = ev.target.result;
+      saveCache();
+      renderFiles();
+    }
+    reader.readAsText(file);
+  }
+});
+
+// Track activity for expiry
+window.addEventListener('click',saveCache);
+window.addEventListener('keydown',saveCache);
+
+// Load cache on start
+loadCache();
+</script>
+
+</body>
+</html>
