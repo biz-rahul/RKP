@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RKP Search</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #0f0f0f, #1a1a2e);
+    color: white;
+    text-align: center;
+}
+
+/* TOP NAV */
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    font-size: 18px;
+}
+
+.tabs span {
+    margin-right: 20px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.tabs span.active {
+    border-bottom: 2px solid #00ffe0;
+    opacity: 1;
+}
+
+/* TITLE */
+.title {
+    margin-top: 80px;
+    font-size: 60px;
+    font-weight: bold;
+    color: #00ffe0;
+    text-shadow: 0 0 20px #00ffe0;
+}
+
+/* SEARCH BOX */
+.search-box {
+    margin-top: 30px;
+}
+
+.search-box input {
+    width: 60%;
+    padding: 15px;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+    font-size: 18px;
+}
+
+.search-btn {
+    padding: 15px 20px;
+    margin-left: 10px;
+    border-radius: 30px;
+    border: none;
+    background: #00ffe0;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* PLATFORM BUTTONS */
+.platforms {
+    margin-top: 30px;
+}
+
+.platforms button {
+    margin: 8px;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 20px;
+    background: #222;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.platforms button:hover {
+    background: #00ffe0;
+    color: black;
+}
+
+/* SEARCH ENGINES */
+.engines {
+    margin-top: 40px;
+}
+
+.engines span {
+    margin: 10px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.engines span:hover {
+    color: #00ffe0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+    <div class="tabs">
+        <span class="active">Keyword</span>
+        <span>Image</span>
+    </div>
+</div>
+
+<div class="title">RKP Search</div>
+
+<div class="search-box">
+    <input type="text" id="query" placeholder="Search anything...">
+    <button class="search-btn" onclick="normalSearch()">🔍</button>
+</div>
+
+<!-- PLATFORM BUTTONS -->
+<div class="platforms">
+    <button onclick="searchSite('')">Normal Search</button>
+    <button onclick="searchSite('site:youtube.com')">YouTube</button>
+    <button onclick="searchSite('site:t.me')">Telegram</button>
+    <button onclick="searchSite('site:archive.org')">Archive</button>
+    <button onclick="searchSite('site:drive.google.com')">Drive</button>
+    <button onclick="searchSite('site:dailymotion.com')">Dailymotion</button>
+    <button onclick="searchSite('site:bilibili.com')">Bilibili</button>
+    <button onclick="searchSite('site:youku.com')">Youku</button>
+    <button onclick="searchSite('site:v.qq.com')">Tencent</button>
+</div>
+
+<!-- SEARCH ENGINES -->
+<div class="engines">
+    <p>Search Engines:</p>
+    <span onclick="redirectEngine('https://www.google.com/search?q=')">Google</span>
+    <span onclick="redirectEngine('https://in.search.yahoo.com/search?p=')">Yahoo</span>
+    <span onclick="redirectEngine('https://yandex.com/search/?text=')">Yandex</span>
+    <span onclick="redirectEngine('https://www.baidu.com/s?wd=')">Baidu</span>
+    <span onclick="redirectEngine('https://www.bing.com/search?q=')">Bing</span>
+    <span onclick="redirectEngine('https://duckduckgo.com/?q=')">DuckDuckGo</span>
+    <span onclick="redirectEngine('https://www.naver.com/search.naver?query=')">Naver</span>
+</div>
+
+<script>
+function getQuery() {
+    return document.getElementById("query").value;
+}
+
+function normalSearch() {
+    let q = getQuery();
+    if(q) window.open("https://www.google.com/search?q=" + q, "_blank");
+}
+
+function searchSite(site) {
+    let q = getQuery();
+    if(!q) return;
+
+    let finalQuery = q;
+    if(site !== "") {
+        finalQuery = q + " " + site;
+    }
+
+    window.open("https://www.google.com/search?q=" + finalQuery, "_blank");
+}
+
+function redirectEngine(base) {
+    let q = getQuery();
+    if(q) window.open(base + q, "_blank");
+}
+</script>
+
+</body>
+</html>
