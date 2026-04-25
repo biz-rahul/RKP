@@ -1,0 +1,1756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RKP Search</title>
+<link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@300;400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #05070f;
+    --surface: #0b0f1e;
+    --surface2: #111827;
+    --border: #1e2a45;
+    --border2: #253050;
+    --accent: #00d4ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent-glow: rgba(0,212,255,0.15);
+    --text: #e2e8f0;
+    --text-muted: #64748b;
+    --text-dim: #94a3b8;
+    --danger: #ef4444;
+    --warn: #f59e0b;
+    --font: 'Oxanium', sans-serif;
+    --mono: 'DM Mono', monospace;
+    --radius: 8px;
+    --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.5;
+  }
+
+  /* Grid bg */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Glow orbs */
+  .orb {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(100px);
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.12;
+  }
+  .orb-1 { width: 600px; height: 600px; background: var(--accent); top: -200px; left: -200px; }
+  .orb-2 { width: 500px; height: 500px; background: var(--accent2); bottom: -200px; right: -200px; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 32px 0 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo {
+    font-size: 2.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 20px rgba(0,212,255,0.4));
+    display: inline-block;
+  }
+
+  .logo span { color: #fff; -webkit-text-fill-color: #fff; filter: none; }
+
+  .tagline {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+
+  /* SEARCH ENGINES BAR */
+  .engines-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin: 18px 0 10px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .engines-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .engine-link {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.72rem;
+    font-family: var(--mono);
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+
+  .engine-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+    box-shadow: 0 0 12px rgba(0,212,255,0.15);
+  }
+
+  /* MODE TABS */
+  .mode-tabs {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  .mode-tab {
+    flex: 1;
+    max-width: 280px;
+    padding: 16px 24px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mode-tab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: var(--transition);
+  }
+
+  .mode-tab.normal::before { background: linear-gradient(135deg, rgba(0,212,255,0.08), transparent); }
+  .mode-tab.advanced::before { background: linear-gradient(135deg, rgba(124,58,237,0.08), transparent); }
+
+  .mode-tab:hover::before, .mode-tab.active::before { opacity: 1; }
+
+  .mode-tab.active.normal {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 20px rgba(0,212,255,0.2), inset 0 0 20px rgba(0,212,255,0.05);
+  }
+
+  .mode-tab.active.advanced {
+    border-color: var(--accent2);
+    color: #a78bfa;
+    box-shadow: 0 0 20px rgba(124,58,237,0.2), inset 0 0 20px rgba(124,58,237,0.05);
+  }
+
+  .mode-tab:not(.active):hover { border-color: var(--border2); color: var(--text); }
+
+  .tab-icon { font-size: 1.3rem; display: block; margin-bottom: 4px; }
+
+  /* PANELS */
+  .panel { display: none; }
+  .panel.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* SUB TABS */
+  .sub-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+
+  .sub-tab {
+    padding: 10px 18px;
+    border-radius: 6px 6px 0 0;
+    border: 1px solid transparent;
+    border-bottom: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: var(--font);
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: -1px;
+  }
+
+  .sub-tab.active {
+    background: var(--surface);
+    border-color: var(--border);
+    border-bottom-color: var(--surface);
+    color: var(--accent);
+  }
+
+  .sub-tab:not(.active):hover { color: var(--text); }
+
+  /* SUB PANELS */
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; animation: fadeIn 0.25s ease; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 0.7rem;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.25em;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .card-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* SEARCH INPUT */
+  .search-box {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px 4px 4px 16px;
+    transition: var(--transition);
+    margin-bottom: 14px;
+  }
+
+  .search-box:focus-within {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.1);
+  }
+
+  .search-box input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .search-box .search-icon {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid transparent;
+    font-family: var(--font);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: var(--transition);
+    white-space: nowrap;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+  }
+
+  .btn-primary:hover {
+    background: #33ddff;
+    box-shadow: 0 0 20px rgba(0,212,255,0.4);
+  }
+
+  .btn-ghost {
+    background: var(--surface2);
+    color: var(--text-dim);
+    border-color: var(--border);
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  .btn-purple {
+    background: rgba(124,58,237,0.15);
+    color: #a78bfa;
+    border-color: var(--accent2);
+  }
+
+  .btn-purple:hover {
+    background: rgba(124,58,237,0.3);
+    box-shadow: 0 0 16px rgba(124,58,237,0.3);
+  }
+
+  .btn-green {
+    background: rgba(16,185,129,0.1);
+    color: var(--accent3);
+    border-color: var(--accent3);
+  }
+
+  .btn-green:hover { background: rgba(16,185,129,0.2); box-shadow: 0 0 16px rgba(16,185,129,0.2); }
+
+  .btn-lg {
+    padding: 12px 28px;
+    font-size: 0.88rem;
+  }
+
+  /* PLATFORM GRID */
+  .platform-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .platform-btn {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-dim);
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .platform-btn:hover, .platform-btn.selected {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+  }
+
+  /* LINK GRID */
+  .link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 8px;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    transition: var(--transition);
+    overflow: hidden;
+  }
+
+  .link-card:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-glow);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 16px rgba(0,212,255,0.1);
+  }
+
+  .link-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    box-shadow: 0 0 6px var(--accent);
+  }
+
+  /* FORM ELEMENTS */
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .form-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+  }
+
+  .form-input, .form-select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    padding: 9px 12px;
+    outline: none;
+    transition: var(--transition);
+    width: 100%;
+    -webkit-appearance: none;
+  }
+
+  .form-input:focus, .form-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.08);
+  }
+
+  .form-select { cursor: pointer; }
+
+  .tags-input {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    min-height: 42px;
+    align-items: center;
+    transition: var(--transition);
+  }
+
+  .tags-input:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(0,212,255,0.08); }
+
+  .tags-input input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 0.85rem;
+    min-width: 80px;
+    flex: 1;
+  }
+
+  .tag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: rgba(0,212,255,0.12);
+    border: 1px solid rgba(0,212,255,0.3);
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.72rem;
+    color: var(--accent);
+    font-family: var(--mono);
+  }
+
+  .tag .remove { cursor: pointer; opacity: 0.6; }
+  .tag .remove:hover { opacity: 1; }
+
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    transition: var(--transition);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    font-family: var(--mono);
+    user-select: none;
+  }
+
+  .checkbox-item input { display: none; }
+  .checkbox-item:hover { border-color: var(--border2); color: var(--text); }
+  .checkbox-item.checked { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
+
+  /* DORK PREVIEW */
+  .dork-preview {
+    background: #000;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin: 14px 0;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--accent);
+    word-break: break-all;
+    min-height: 48px;
+    position: relative;
+  }
+
+  .dork-preview::before {
+    content: '> QUERY';
+    position: absolute;
+    top: -9px;
+    left: 12px;
+    font-size: 0.6rem;
+    color: var(--text-muted);
+    background: #000;
+    padding: 0 6px;
+    letter-spacing: 0.15em;
+  }
+
+  /* SECTION HEADER */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .section-icon.blue { background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.2); }
+  .section-icon.purple { background: rgba(124,58,237,0.1); border: 1px solid rgba(124,58,237,0.2); }
+  .section-icon.green { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); }
+  .section-icon.orange { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); }
+
+  .section-info h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .section-info p {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+
+  /* CLOSE BTN */
+  #closeBtn {
+    position: fixed;
+    top: 16px;
+    right: 16px;
+    z-index: 1000;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(239,68,68,0.15);
+    border: 1px solid rgba(239,68,68,0.4);
+    color: var(--danger);
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    box-shadow: 0 0 16px rgba(239,68,68,0.15);
+  }
+
+  #closeBtn:hover {
+    background: rgba(239,68,68,0.3);
+    box-shadow: 0 0 24px rgba(239,68,68,0.3);
+    transform: scale(1.08);
+  }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 30px 0 20px;
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .logo { font-size: 2rem; }
+    .form-row { grid-template-columns: 1fr; }
+    .link-grid { grid-template-columns: 1fr 1fr; }
+    .mode-tabs { flex-direction: column; }
+    .mode-tab { max-width: 100%; }
+  }
+
+  /* Divider */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 16px 0;
+  }
+
+  .flex-end { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+
+  /* Range inputs */
+  input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: var(--border2);
+    border-radius: 2px;
+    outline: none;
+    width: 100%;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px; height: 16px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0,212,255,0.4);
+  }
+
+  .dual-range { display: flex; gap: 10px; align-items: center; }
+  .dual-range input { flex: 1; }
+  .dual-range span { font-family: var(--mono); font-size: 0.72rem; color: var(--accent); min-width: 36px; text-align: center; }
+
+  /* Badge */
+  .badge {
+    font-size: 0.6rem;
+    font-family: var(--mono);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .badge-blue { background: rgba(0,212,255,0.1); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+  .badge-purple { background: rgba(124,58,237,0.1); color: #a78bfa; border: 1px solid rgba(124,58,237,0.2); }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text);
+    z-index: 999;
+    transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- Close Button -->
+<button id="closeBtn" title="Clear Cache & Reset" onclick="clearCacheAndReset()">✕</button>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">RKP<span> </span>Search</div>
+    <div class="tagline">◈ Multi-Intelligence Search Platform ◈</div>
+  </header>
+
+  <!-- SEARCH ENGINES BAR -->
+  <div class="engines-bar">
+    <div class="engines-label">⚡ Quick Engine Launch</div>
+    <a class="engine-link" href="https://www.google.com/" target="_blank">🔍 Google</a>
+    <a class="engine-link" href="https://in.search.yahoo.com/" target="_blank">🟣 Yahoo</a>
+    <a class="engine-link" href="https://yandex.com/" target="_blank">🔴 Yandex</a>
+    <a class="engine-link" href="https://www.baidu.com/" target="_blank">🔵 Baidu</a>
+    <a class="engine-link" href="https://www.bing.com/" target="_blank">🟢 Bing</a>
+    <a class="engine-link" href="https://duckduckgo.com/" target="_blank">🦆 DuckDuckGo</a>
+    <a class="engine-link" href="https://www.naver.com/" target="_blank">🟩 Naver</a>
+  </div>
+
+  <!-- MODE TABS -->
+  <div class="mode-tabs">
+    <button class="mode-tab normal active" onclick="switchMode('normal')">
+      <span class="tab-icon">⚡</span>
+      Normal Search
+      <span class="badge badge-blue" style="margin-left:6px">AUTO DORK</span>
+    </button>
+    <button class="mode-tab advanced" onclick="switchMode('advanced')">
+      <span class="tab-icon">⚙️</span>
+      Advanced Search
+      <span class="badge badge-purple" style="margin-left:6px">FULL CONTROL</span>
+    </button>
+  </div>
+
+  <!-- =================== NORMAL SEARCH PANEL =================== -->
+  <div class="panel active" id="normal-panel">
+
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchSubTab('normal','keyword')">🔤 Keyword Search</button>
+      <button class="sub-tab" onclick="switchSubTab('normal','image')">🖼️ Image Search</button>
+    </div>
+
+    <!-- Keyword Sub Panel -->
+    <div class="sub-panel active" id="normal-keyword">
+
+      <!-- Section A: Platform Search -->
+      <div class="card">
+        <div class="card-title">A · Automated Google Dork Search</div>
+
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="normalQuery" placeholder="Enter keyword, title, or topic..." oninput="updateNormalDork()" onkeydown="if(event.key==='Enter')normalSearch('google')">
+        </div>
+
+        <div class="dork-preview" id="normalDorkPreview">Enter a query above to preview the dork...</div>
+
+        <div class="card-title" style="margin-top:16px">Select Platform to Search On</div>
+        <div class="platform-grid">
+          <button class="platform-btn" onclick="normalSearch('google')">🔍 Normal Search</button>
+          <button class="platform-btn" onclick="normalSearch('youtube')">▶️ YouTube</button>
+          <button class="platform-btn" onclick="normalSearch('telegram')">✈️ Telegram</button>
+          <button class="platform-btn" onclick="normalSearch('archive')">📦 Archive.org</button>
+          <button class="platform-btn" onclick="normalSearch('drive')">💾 Google Drive</button>
+          <button class="platform-btn" onclick="normalSearch('dailymotion')">🎬 Dailymotion</button>
+          <button class="platform-btn" onclick="normalSearch('bilibili')">📺 Bilibili</button>
+          <button class="platform-btn" onclick="normalSearch('youku')">🎥 Youku</button>
+          <button class="platform-btn" onclick="normalSearch('tencent')">📡 Tencent Video</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="card-title">Choose Search Engine</div>
+        <div class="platform-grid">
+          <button class="platform-btn" onclick="engineSearch('google')">🔍 Google</button>
+          <button class="platform-btn" onclick="engineSearch('yahoo')">🟣 Yahoo</button>
+          <button class="platform-btn" onclick="engineSearch('bing')">🟢 Bing</button>
+          <button class="platform-btn" onclick="engineSearch('duckduckgo')">🦆 DuckDuckGo</button>
+          <button class="platform-btn" onclick="engineSearch('yandex')">🔴 Yandex</button>
+          <button class="platform-btn" onclick="engineSearch('baidu')">🔵 Baidu</button>
+        </div>
+      </div>
+
+      <!-- Section B: Movie Sites -->
+      <div class="card">
+        <div class="card-title">B · Direct Movie Site Search</div>
+        <div class="search-box">
+          <span class="search-icon">🎬</span>
+          <input type="text" id="movieQuery" placeholder="Enter movie name..." onkeydown="if(event.key==='Enter')searchMovie()">
+        </div>
+        <div class="link-grid" id="movieLinks">
+          <a class="link-card" href="#" data-site="moviehub" onclick="movieSiteSearch(event,'moviehub')"><div class="link-dot"></div>MovieHub</a>
+          <a class="link-card" href="#" data-site="hdhub4u" onclick="movieSiteSearch(event,'hdhub4u')"><div class="link-dot"></div>HDHub4u</a>
+          <a class="link-card" href="#" data-site="mkvcinema" onclick="movieSiteSearch(event,'mkvcinema')"><div class="link-dot"></div>MkvCinema</a>
+          <a class="link-card" href="#" data-site="movies4u" onclick="movieSiteSearch(event,'movies4u')"><div class="link-dot"></div>Movies4u</a>
+          <a class="link-card" href="#" data-site="moviesflix" onclick="movieSiteSearch(event,'moviesflix')"><div class="link-dot"></div>MoviesFlix</a>
+          <a class="link-card" href="#" data-site="mkvcinemas" onclick="movieSiteSearch(event,'mkvcinemas')"><div class="link-dot"></div>MkvCinemas</a>
+          <a class="link-card" href="#" data-site="hdmoviehub" onclick="movieSiteSearch(event,'hdmoviehub')"><div class="link-dot"></div>HDMovieHub</a>
+          <a class="link-card" href="#" data-site="mp4moviez" onclick="movieSiteSearch(event,'mp4moviez')"><div class="link-dot"></div>Mp4Moviez</a>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Image Sub Panel -->
+    <div class="sub-panel" id="normal-image">
+
+      <!-- A: Reverse Image -->
+      <div class="card">
+        <div class="card-title">A · Find Similar Images (Reverse Search)</div>
+        <div class="link-grid">
+          <a class="link-card" href="https://images.google.com/" target="_blank"><div class="link-dot"></div>Google Images</a>
+          <a class="link-card" href="https://www.microsoft.com/en-us/bing/visual-search/" target="_blank"><div class="link-dot"></div>Bing Visual</a>
+          <a class="link-card" href="https://yandex.com/images/" target="_blank"><div class="link-dot"></div>Yandex Images</a>
+        </div>
+      </div>
+
+      <!-- B: Photo Location -->
+      <div class="card">
+        <div class="card-title">B · Where Is This Photo Taken?</div>
+        <div class="link-grid">
+          <a class="link-card" href="https://www.whereisthisphoto.com/" target="_blank"><div class="link-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>WhereIsThisPhoto</a>
+          <a class="link-card" href="https://picarta.ai/" target="_blank"><div class="link-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>Picarta AI</a>
+        </div>
+      </div>
+
+      <!-- C: Metadata -->
+      <div class="card">
+        <div class="card-title">C · Metadata / EXIF Finder</div>
+        <div class="link-grid">
+          <a class="link-card" href="https://tool.geoimgr.com/" target="_blank"><div class="link-dot" style="background:#10b981;box-shadow:0 0 6px #10b981"></div>GeoImgr</a>
+          <a class="link-card" href="https://exiftools.com/" target="_blank"><div class="link-dot" style="background:#10b981;box-shadow:0 0 6px #10b981"></div>ExifTools</a>
+          <a class="link-card" href="https://exif.tools/" target="_blank"><div class="link-dot" style="background:#10b981;box-shadow:0 0 6px #10b981"></div>EXIF.tools</a>
+        </div>
+      </div>
+
+      <!-- D: Advanced Image Search -->
+      <div class="card">
+        <div class="card-title">D · RKP Advanced Image Search</div>
+        <a class="btn btn-primary btn-lg" href="https://www.google.com/advanced_image_search" target="_blank">🔍 Open Google Advanced Image Search</a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- =================== ADVANCED SEARCH PANEL =================== -->
+  <div class="panel" id="advanced-panel">
+
+    <div class="sub-tabs">
+      <button class="sub-tab active" onclick="switchSubTab('advanced','keyword')">🔑 Keyword</button>
+      <button class="sub-tab" onclick="switchSubTab('advanced','video')">🎥 Video</button>
+      <button class="sub-tab" onclick="switchSubTab('advanced','books')">📚 Books</button>
+      <button class="sub-tab" onclick="switchSubTab('advanced','url')">🔗 URL</button>
+      <button class="sub-tab" onclick="switchSubTab('advanced','mobile')">📱 Mobile</button>
+    </div>
+
+    <!-- ---- ADVANCED KEYWORD ---- -->
+    <div class="sub-panel active" id="advanced-keyword">
+      <div class="card">
+        <div class="section-header">
+          <div class="section-icon blue">🔑</div>
+          <div class="section-info">
+            <h3>RKP Advanced Keyword Search</h3>
+            <p>Full dork builder with all filters</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Main Query</label>
+            <input class="form-input" id="ak-query" placeholder="Primary keyword or phrase..." oninput="buildKeywordDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Exact Match Phrase</label>
+            <input class="form-input" id="ak-exact" placeholder='"exact phrase"' oninput="buildKeywordDork()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">OR Keywords (comma separated)</label>
+            <input class="form-input" id="ak-or" placeholder="word1, word2, word3" oninput="buildKeywordDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Include Sites</label>
+            <div class="tags-input" id="ak-include-tags" onclick="this.querySelector('input').focus()">
+              <input placeholder="site.com + Enter" onkeydown="addTag(event,'ak-include-tags')" oninput="buildKeywordDork()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Exclude Sites</label>
+            <div class="tags-input" id="ak-exclude-tags" onclick="this.querySelector('input').focus()">
+              <input placeholder="site.com + Enter" onkeydown="addTag(event,'ak-exclude-tags')" oninput="buildKeywordDork()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">File Type</label>
+            <select class="form-select" id="ak-filetype" onchange="buildKeywordDork()">
+              <option value="">Any</option>
+              <option>pdf</option><option>xls</option><option>ppt</option><option>doc</option>
+              <option>rtf</option><option>txt</option><option value="custom">Custom...</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Custom File Type</label>
+            <input class="form-input" id="ak-filetype-custom" placeholder="e.g. csv" oninput="buildKeywordDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Price Range (min)</label>
+            <input class="form-input" id="ak-range-min" type="number" placeholder="100" oninput="buildKeywordDork()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Price Range (max)</label>
+            <input class="form-input" id="ak-range-max" type="number" placeholder="1000" oninput="buildKeywordDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Search Scope</label>
+            <select class="form-select" id="ak-scope" onchange="buildKeywordDork()">
+              <option value="">Anywhere</option>
+              <option value="intitle">Title</option>
+              <option value="intext">Text</option>
+              <option value="inurl">URL</option>
+              <option value="inanchor">Links</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Updated</label>
+            <select class="form-select" id="ak-time" onchange="buildKeywordDork()">
+              <option value="">Anytime</option>
+              <option value="d">Last 24 Hours</option>
+              <option value="w">Last Week</option>
+              <option value="m">Last Month</option>
+              <option value="y">Last Year</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Region</label>
+            <select class="form-select" id="ak-region" onchange="buildKeywordDork()">
+              <option value="">All Regions</option>
+              <option value="countryIN">India</option><option value="countryUS">USA</option>
+              <option value="countryGB">UK</option><option value="countryCA">Canada</option>
+              <option value="countryAU">Australia</option><option value="countryDE">Germany</option>
+              <option value="countryFR">France</option><option value="countryJP">Japan</option>
+              <option value="countryBR">Brazil</option><option value="countryCN">China</option>
+              <option value="countryRU">Russia</option><option value="countrySG">Singapore</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Language</label>
+            <select class="form-select" id="ak-lang" onchange="buildKeywordDork()">
+              <option value="lang_en">English</option><option value="lang_hi">Hindi</option>
+              <option value="lang_zh-CN">Chinese</option><option value="lang_es">Spanish</option>
+              <option value="lang_fr">French</option><option value="lang_de">German</option>
+              <option value="lang_ar">Arabic</option><option value="lang_ja">Japanese</option>
+              <option value="lang_ko">Korean</option><option value="lang_pt">Portuguese</option>
+              <option value="lang_ru">Russian</option><option value="">All Languages</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="dork-preview" id="kw-dork-preview">Configure filters above to build your dork query...</div>
+
+        <div class="flex-end">
+          <button class="btn btn-ghost" onclick="resetForm('keyword')">↺ Reset</button>
+          <button class="btn btn-purple" onclick="copyDork('kw-dork-preview')">⧉ Copy Dork</button>
+          <button class="btn btn-primary btn-lg" onclick="launchKeywordSearch()">🚀 Launch Search</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">B · Google Advanced Search</div>
+        <a class="btn btn-ghost" href="https://www.google.com/advanced_search" target="_blank">🔗 Open Google Advanced Search</a>
+      </div>
+    </div>
+
+    <!-- ---- ADVANCED VIDEO ---- -->
+    <div class="sub-panel" id="advanced-video">
+      <div class="card">
+        <div class="section-header">
+          <div class="section-icon purple">🎥</div>
+          <div class="section-info">
+            <h3>RKP Advanced Video Search</h3>
+            <p>Cross-platform video intelligence</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">Main Query</label>
+            <input class="form-input" id="vd-query" placeholder="Video title, topic, or keyword..." oninput="buildVideoDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Exact Match</label>
+            <input class="form-input" id="vd-exact" placeholder='"exact phrase"' oninput="buildVideoDork()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">OR Keywords</label>
+            <input class="form-input" id="vd-or" placeholder="word1, word2" oninput="buildVideoDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Include Channels</label>
+            <div class="tags-input" id="vd-include-tags" onclick="this.querySelector('input').focus()">
+              <input placeholder="@channel + Enter" onkeydown="addTag(event,'vd-include-tags')" oninput="buildVideoDork()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Exclude Channels</label>
+            <div class="tags-input" id="vd-exclude-tags" onclick="this.querySelector('input').focus()">
+              <input placeholder="@channel + Enter" onkeydown="addTag(event,'vd-exclude-tags')" oninput="buildVideoDork()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Video Duration</label>
+            <select class="form-select" id="vd-duration" onchange="buildVideoDork()">
+              <option value="">Any</option>
+              <option value="short">Short (&lt;4 min)</option>
+              <option value="medium">Medium (4–20 min)</option>
+              <option value="long">Long (&gt;20 min)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Video Quality</label>
+            <select class="form-select" id="vd-quality" onchange="buildVideoDork()">
+              <option value="">Any</option>
+              <option value="HD">HD</option>
+              <option value="4K">4K</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Upload Date</label>
+            <select class="form-select" id="vd-time" onchange="buildVideoDork()">
+              <option value="">Anytime</option>
+              <option value="d">Last 24 Hours</option>
+              <option value="w">Last Week</option>
+              <option value="m">Last Month</option>
+              <option value="y">Last Year</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Search Scope</label>
+            <select class="form-select" id="vd-scope" onchange="buildVideoDork()">
+              <option value="">Title</option>
+              <option value="intitle">Title</option>
+              <option value="intext">Description</option>
+              <option value="inurl">Tags/URL</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">Platform</label>
+          <div class="checkbox-group" id="vd-platforms">
+            <label class="checkbox-item" onclick="toggleCheck(this,'vd')"><input type="checkbox" value="youtube.com"> ▶️ YouTube</label>
+            <label class="checkbox-item" onclick="toggleCheck(this,'vd')"><input type="checkbox" value="dailymotion.com"> 🎬 Dailymotion</label>
+            <label class="checkbox-item" onclick="toggleCheck(this,'vd')"><input type="checkbox" value="bilibili.com"> 📺 Bilibili</label>
+            <label class="checkbox-item" onclick="toggleCheck(this,'vd')"><input type="checkbox" value="youku.com"> 🎥 Youku</label>
+            <label class="checkbox-item" onclick="toggleCheck(this,'vd')"><input type="checkbox" value="v.qq.com"> 📡 Tencent</label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Region</label>
+            <select class="form-select" id="vd-region" onchange="buildVideoDork()">
+              <option value="">All</option>
+              <option value="countryIN">India</option><option value="countryUS">USA</option>
+              <option value="countryGB">UK</option><option value="countryJP">Japan</option>
+              <option value="countryKR">Korea</option><option value="countryCN">China</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Language</label>
+            <select class="form-select" id="vd-lang" onchange="buildVideoDork()">
+              <option value="lang_en">English</option><option value="lang_hi">Hindi</option>
+              <option value="lang_zh-CN">Chinese</option><option value="lang_ja">Japanese</option>
+              <option value="lang_ko">Korean</option><option value="">All</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="dork-preview" id="vd-dork-preview">Configure filters above to build your video dork...</div>
+
+        <div class="flex-end">
+          <button class="btn btn-ghost" onclick="resetForm('video')">↺ Reset</button>
+          <button class="btn btn-purple" onclick="copyDork('vd-dork-preview')">⧉ Copy Dork</button>
+          <button class="btn btn-primary btn-lg" onclick="launchVideoSearch()">🚀 Search Videos</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">B · Google Advanced Video Search</div>
+        <a class="btn btn-ghost" href="https://www.google.com/advanced_video_search" target="_blank">🔗 Open Google Advanced Video Search</a>
+      </div>
+    </div>
+
+    <!-- ---- ADVANCED BOOKS ---- -->
+    <div class="sub-panel" id="advanced-books">
+      <div class="card">
+        <div class="section-header">
+          <div class="section-icon green">📚</div>
+          <div class="section-info">
+            <h3>RKP Advanced Books Search</h3>
+            <p>Find books, PDFs, EPUBs across the web</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Book Title / Topic</label>
+            <input class="form-input" id="bk-title" placeholder="Book name or subject..." oninput="buildBookDork()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Author</label>
+            <input class="form-input" id="bk-author" placeholder="Author name..." oninput="buildBookDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Publisher</label>
+            <input class="form-input" id="bk-publisher" placeholder="Publisher name..." oninput="buildBookDork()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ISBN</label>
+            <input class="form-input" id="bk-isbn" placeholder="ISBN number..." oninput="buildBookDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Publication Year (From)</label>
+            <input class="form-input" id="bk-year-from" type="number" placeholder="2000" oninput="buildBookDork()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Publication Year (To)</label>
+            <input class="form-input" id="bk-year-to" type="number" placeholder="2024" oninput="buildBookDork()">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom:12px">
+          <label class="form-label">File Type</label>
+          <div class="checkbox-group" id="bk-filetypes">
+            <label class="checkbox-item" onclick="toggleCheck(this,'bk')"><input type="checkbox" value="pdf"> PDF</label>
+            <label class="checkbox-item" onclick="toggleCheck(this,'bk')"><input type="checkbox" value="epub"> EPUB</label>
+            <label class="checkbox-item" onclick="toggleCheck(this,'bk')"><input type="checkbox" value="mobi"> MOBI</label>
+            <label class="checkbox-item" onclick="toggleCheck(this,'bk')"><input type="checkbox" value="txt"> TXT</label>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Search Scope</label>
+            <select class="form-select" id="bk-scope" onchange="buildBookDork()">
+              <option value="">Anywhere</option>
+              <option value="intitle">Title</option>
+              <option value="inauthor">Author</option>
+              <option value="intext">Content</option>
+              <option value="isbn">ISBN</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Availability</label>
+            <select class="form-select" id="bk-avail" onchange="buildBookDork()">
+              <option value="">All</option>
+              <option value="free">Free</option>
+              <option value="paid">Paid</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Sort By</label>
+            <select class="form-select" id="bk-sort" onchange="buildBookDork()">
+              <option value="">Relevance</option>
+              <option value="date">Publication Date</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Language</label>
+            <select class="form-select" id="bk-lang" onchange="buildBookDork()">
+              <option value="lang_en">English</option><option value="lang_hi">Hindi</option>
+              <option value="lang_es">Spanish</option><option value="lang_fr">French</option>
+              <option value="">All</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="dork-preview" id="bk-dork-preview">Configure filters above to build your books dork...</div>
+
+        <div class="flex-end">
+          <button class="btn btn-ghost" onclick="resetForm('books')">↺ Reset</button>
+          <button class="btn btn-purple" onclick="copyDork('bk-dork-preview')">⧉ Copy Dork</button>
+          <button class="btn btn-primary btn-lg" onclick="launchBooksSearch()">🚀 Search Books</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">B · Google Advanced Books Search</div>
+        <a class="btn btn-ghost" href="https://www.google.com/advanced_book_search" target="_blank">🔗 Open Google Books Search</a>
+      </div>
+    </div>
+
+    <!-- ---- ADVANCED URL ---- -->
+    <div class="sub-panel" id="advanced-url">
+      <div class="card">
+        <div class="section-header">
+          <div class="section-icon orange">🔗</div>
+          <div class="section-info">
+            <h3>RKP Advanced URL Search</h3>
+            <p>URL intelligence & dork builder</p>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group" style="grid-column:1/-1">
+            <label class="form-label">URL Contains Keywords</label>
+            <input class="form-input" id="url-query" placeholder="Keywords in URL path or domain..." oninput="buildURLDork()">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Include Domains</label>
+            <div class="tags-input" id="url-include-tags" onclick="this.querySelector('input').focus()">
+              <input placeholder="site.com + Enter" onkeydown="addTag(event,'url-include-tags')" oninput="buildURLDork()">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Exclude Domains</label>
+            <div class="tags-input" id="url-exclude-tags" onclick="this.querySelector('input').focus()">
+              <input placeholder="site.com + Enter" onkeydown="addTag(event,'url-exclude-tags')" oninput="buildURLDork()">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Protocol</label>
+            <select class="form-select" id="url-protocol" onchange="buildURLDork()">
+              <option value="">Any</option>
+              <option value="https">HTTPS</option>
+              <option value="http">HTTP</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Domain Type</label>
+            <select class="form-select" id="url-domtype" onchange="buildURLDork()">
+              <option value="">Any</option>
+              <option value=".com">.com</option>
+              <option value=".org">.org</option>
+              <option value=".net">.net</option>
+              <option value=".edu">.edu</option>
+              <option value=".gov">.gov</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Search Scope</label>
+            <select class="form-select" id="url-scope" onchange="buildURLDork()">
+              <option value="inurl">Full URL</option>
+              <option value="site">Domain</option>
+              <option value="inurl">Path</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Updated</label>
+            <select class="form-select" id="url-time" onchange="buildURLDork()">
+              <option value="">Anytime</option>
+              <option value="d">Last 24 Hours</option>
+              <option value="w">Last Week</option>
+              <option value="m">Last Month</option>
+              <option value="y">Last Year</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="dork-preview" id="url-dork-preview">Configure filters to build your URL dork...</div>
+
+        <div class="flex-end">
+          <button class="btn btn-ghost" onclick="resetForm('url')">↺ Reset</button>
+          <button class="btn btn-purple" onclick="copyDork('url-dork-preview')">⧉ Copy Dork</button>
+          <button class="btn btn-primary btn-lg" onclick="launchURLSearch()">🚀 Search URLs</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">B · URL Intelligence Tools</div>
+        <div class="link-grid">
+          <a class="link-card" href="https://www.whois.com/whois/" target="_blank"><div class="link-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>WHOIS Lookup</a>
+          <a class="link-card" href="https://urlscan.io/" target="_blank"><div class="link-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>URLScan.io</a>
+          <a class="link-card" href="https://yourgpt.ai/tools/url-extractor" target="_blank"><div class="link-dot" style="background:#f59e0b;box-shadow:0 0 6px #f59e0b"></div>URL Extractor</a>
+          <a class="link-card" href="https://www.virustotal.com/gui/home/url" target="_blank"><div class="link-dot" style="background:#ef4444;box-shadow:0 0 6px #ef4444"></div>VirusTotal</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ---- MOBILE NUMBER ---- -->
+    <div class="sub-panel" id="advanced-mobile">
+      <div class="card" style="text-align:center;padding:40px">
+        <div style="font-size:3rem;margin-bottom:16px">📱</div>
+        <h3 style="font-size:1.2rem;margin-bottom:8px;letter-spacing:0.05em">Mobile Number Search</h3>
+        <p style="color:var(--text-muted);font-family:var(--mono);font-size:0.8rem;margin-bottom:24px">
+          Advanced mobile number intelligence tool powered by RKP Shadow
+        </p>
+        <a class="btn btn-primary btn-lg" href="https://rahulpuri.fun/Z/RKP-shadow/Number/" target="_blank">
+          🚀 Open RKP Number Search
+        </a>
+      </div>
+    </div>
+
+  </div><!-- end advanced panel -->
+
+</div><!-- end container -->
+
+<footer>
+  <div class="container">
+    ◈ RKP Search Platform · Multi-Intelligence Dork Engine ◈
+  </div>
+</footer>
+
+<script>
+// ==================== STATE ====================
+let state = {
+  mode: 'normal',
+  normalSubTab: 'keyword',
+  advancedSubTab: 'keyword',
+  tags: {}
+};
+
+// Load from cache
+function loadCache() {
+  try {
+    const cached = localStorage.getItem('rkp_state');
+    if (cached) {
+      const d = JSON.parse(cached);
+      const age = Date.now() - (d.ts || 0);
+      if (age < 86400000) {
+        // restore query fields
+        if (d.normalQuery) document.getElementById('normalQuery').value = d.normalQuery;
+        if (d.movieQuery) document.getElementById('movieQuery').value = d.movieQuery;
+      }
+    }
+  } catch(e) {}
+}
+
+function saveCache() {
+  try {
+    localStorage.setItem('rkp_state', JSON.stringify({
+      ts: Date.now(),
+      normalQuery: document.getElementById('normalQuery')?.value || '',
+      movieQuery: document.getElementById('movieQuery')?.value || '',
+    }));
+  } catch(e) {}
+}
+
+// ==================== NAVIGATION ====================
+function switchMode(mode) {
+  state.mode = mode;
+  document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.mode-tab.${mode}`).classList.add('active');
+  document.getElementById(`${mode}-panel`).classList.add('active');
+}
+
+function switchSubTab(panel, tab) {
+  const tabs = document.querySelectorAll(`#${panel}-panel .sub-tab`);
+  const panels = document.querySelectorAll(`#${panel}-panel .sub-panel`);
+  tabs.forEach(t => t.classList.remove('active'));
+  panels.forEach(p => p.classList.remove('active'));
+  const idx = ['keyword','image','video','books','url','mobile'].indexOf(tab);
+  if (tabs[idx]) tabs[idx].classList.add('active');
+  const subId = `${panel}-${tab}`;
+  const subEl = document.getElementById(subId);
+  if (subEl) subEl.classList.add('active');
+}
+
+// ==================== TAGS INPUT ====================
+function addTag(e, containerId) {
+  if (e.key === 'Enter' || e.key === ',') {
+    e.preventDefault();
+    const input = e.target;
+    const val = input.value.trim().replace(',','');
+    if (!val) return;
+    const container = document.getElementById(containerId);
+    const tag = document.createElement('span');
+    tag.className = 'tag';
+    tag.innerHTML = `${val} <span class="remove" onclick="removeTag(this)">✕</span>`;
+    tag.dataset.value = val;
+    container.insertBefore(tag, input);
+    input.value = '';
+    buildAllDorks();
+  }
+}
+
+function removeTag(btn) {
+  btn.parentElement.remove();
+  buildAllDorks();
+}
+
+function getTagValues(containerId) {
+  const container = document.getElementById(containerId);
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('.tag')).map(t => t.dataset.value);
+}
+
+// ==================== CHECKBOX TOGGLE ====================
+function toggleCheck(label, prefix) {
+  label.classList.toggle('checked');
+  buildAllDorks();
+}
+
+function getCheckedValues(groupId) {
+  return Array.from(document.querySelectorAll(`#${groupId} .checkbox-item.checked input`)).map(i => i.value);
+}
+
+// ==================== NORMAL SEARCH DORK ====================
+const platformDorks = {
+  google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
+  youtube: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:youtube.com')}`,
+  telegram: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:t.me OR site:telegram.me')}`,
+  archive: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:archive.org')}`,
+  drive: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:drive.google.com')}`,
+  dailymotion: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:dailymotion.com')}`,
+  bilibili: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:bilibili.com')}`,
+  youku: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:youku.com')}`,
+  tencent: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:v.qq.com')}`,
+};
+
+const engineUrls = {
+  google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
+  yahoo: q => `https://in.search.yahoo.com/search?p=${encodeURIComponent(q)}`,
+  bing: q => `https://www.bing.com/search?q=${encodeURIComponent(q)}`,
+  duckduckgo: q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
+  yandex: q => `https://yandex.com/search/?text=${encodeURIComponent(q)}`,
+  baidu: q => `https://www.baidu.com/s?wd=${encodeURIComponent(q)}`,
+};
+
+function updateNormalDork() {
+  const q = document.getElementById('normalQuery').value.trim();
+  const preview = document.getElementById('normalDorkPreview');
+  if (!q) { preview.textContent = 'Enter a query above to preview the dork...'; return; }
+  preview.textContent = `"${q}" → site:youtube.com | site:t.me | site:archive.org | ...`;
+  saveCache();
+}
+
+function normalSearch(platform) {
+  const q = document.getElementById('normalQuery').value.trim();
+  if (!q) { showToast('⚠️ Enter a keyword first!'); return; }
+  window.open(platformDorks[platform](q), '_blank');
+}
+
+function engineSearch(engine) {
+  const q = document.getElementById('normalQuery').value.trim();
+  if (!q) { showToast('⚠️ Enter a keyword first!'); return; }
+  window.open(engineUrls[engine](q), '_blank');
+}
+
+function movieSiteSearch(e, site) {
+  e.preventDefault();
+  const q = document.getElementById('movieQuery').value.trim();
+  const url = q
+    ? `https://www.google.com/search?q=${encodeURIComponent(q + ' ' + site)}`
+    : `https://www.google.com/search?q=${encodeURIComponent(site)}`;
+  window.open(url, '_blank');
+}
+
+function searchMovie() {
+  const q = document.getElementById('movieQuery').value.trim();
+  if (q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
+}
+
+// ==================== KEYWORD DORK BUILDER ====================
+function buildKeywordDork() {
+  let parts = [];
+  const q = document.getElementById('ak-query').value.trim();
+  const exact = document.getElementById('ak-exact').value.trim();
+  const or = document.getElementById('ak-or').value.trim();
+  const scope = document.getElementById('ak-scope').value;
+  const filetype = document.getElementById('ak-filetype').value;
+  const ftCustom = document.getElementById('ak-filetype-custom').value.trim();
+  const rMin = document.getElementById('ak-range-min').value.trim();
+  const rMax = document.getElementById('ak-range-max').value.trim();
+  const time = document.getElementById('ak-time').value;
+  const includes = getTagValues('ak-include-tags');
+  const excludes = getTagValues('ak-exclude-tags');
+
+  if (scope && q) parts.push(`${scope}:${q}`);
+  else if (q) parts.push(q);
+
+  if (exact) parts.push(`"${exact}"`);
+  if (or) { const words = or.split(',').map(w=>w.trim()).filter(Boolean); if(words.length>1) parts.push(`(${words.join(' OR ')})`); else if(words[0]) parts.push(words[0]); }
+  if (includes.length) parts.push(includes.map(s=>`site:${s}`).join(' OR '));
+  if (excludes.length) parts.push(excludes.map(s=>`-site:${s}`).join(' '));
+  if (filetype === 'custom' && ftCustom) parts.push(`filetype:${ftCustom}`);
+  else if (filetype && filetype !== 'custom') parts.push(`filetype:${filetype}`);
+  if (rMin && rMax) parts.push(`${rMin}..${rMax}`);
+
+  const dork = parts.filter(Boolean).join(' ');
+  document.getElementById('kw-dork-preview').textContent = dork || 'Configure filters above to build your dork query...';
+}
+
+function launchKeywordSearch() {
+  const dork = document.getElementById('kw-dork-preview').textContent;
+  if (!dork || dork.includes('Configure')) { showToast('⚠️ Build a dork first!'); return; }
+  let url = `https://www.google.com/search?q=${encodeURIComponent(dork)}`;
+  const time = document.getElementById('ak-time').value;
+  const region = document.getElementById('ak-region').value;
+  const lang = document.getElementById('ak-lang').value;
+  if (time) url += `&tbs=qdr:${time}`;
+  if (region) url += `&cr=${region}`;
+  if (lang) url += `&lr=${lang}`;
+  window.open(url, '_blank');
+}
+
+// ==================== VIDEO DORK BUILDER ====================
+function buildVideoDork() {
+  let parts = [];
+  const q = document.getElementById('vd-query').value.trim();
+  const exact = document.getElementById('vd-exact').value.trim();
+  const or = document.getElementById('vd-or').value.trim();
+  const scope = document.getElementById('vd-scope').value;
+  const quality = document.getElementById('vd-quality').value;
+  const platforms = getCheckedValues('vd-platforms');
+  const includes = getTagValues('vd-include-tags');
+  const excludes = getTagValues('vd-exclude-tags');
+
+  if (scope && q) parts.push(`${scope}:${q}`);
+  else if (q) parts.push(q);
+
+  if (exact) parts.push(`"${exact}"`);
+  if (quality) parts.push(`"${quality}"`);
+  if (or) { const w = or.split(',').map(x=>x.trim()).filter(Boolean); if(w.length>1) parts.push(`(${w.join(' OR ')})`); else if(w[0]) parts.push(w[0]); }
+  if (platforms.length) parts.push(`(${platforms.map(p=>`site:${p}`).join(' OR ')})`);
+  if (includes.length) parts.push(includes.map(c=>`"${c}"`).join(' OR '));
+  if (excludes.length) parts.push(excludes.map(c=>`-"${c}"`).join(' '));
+
+  const dork = parts.filter(Boolean).join(' ');
+  document.getElementById('vd-dork-preview').textContent = dork || 'Configure filters above to build your video dork...';
+}
+
+function launchVideoSearch() {
+  const dork = document.getElementById('vd-dork-preview').textContent;
+  if (!dork || dork.includes('Configure')) { showToast('⚠️ Build a dork first!'); return; }
+  let url = `https://www.google.com/search?q=${encodeURIComponent(dork)}&tbm=vid`;
+  const time = document.getElementById('vd-time').value;
+  const duration = document.getElementById('vd-duration').value;
+  const region = document.getElementById('vd-region').value;
+  const lang = document.getElementById('vd-lang').value;
+  if (time) url += `&tbs=qdr:${time}`;
+  if (region) url += `&cr=${region}`;
+  if (lang) url += `&lr=${lang}`;
+  window.open(url, '_blank');
+}
+
+// ==================== BOOKS DORK BUILDER ====================
+function buildBookDork() {
+  let parts = [];
+  const title = document.getElementById('bk-title').value.trim();
+  const author = document.getElementById('bk-author').value.trim();
+  const publisher = document.getElementById('bk-publisher').value.trim();
+  const isbn = document.getElementById('bk-isbn').value.trim();
+  const yFrom = document.getElementById('bk-year-from').value.trim();
+  const yTo = document.getElementById('bk-year-to').value.trim();
+  const scope = document.getElementById('bk-scope').value;
+  const filetypes = getCheckedValues('bk-filetypes');
+
+  if (scope === 'intitle' && title) parts.push(`intitle:"${title}"`);
+  else if (title) parts.push(`"${title}"`);
+  if (author) parts.push(`"${author}"`);
+  if (publisher) parts.push(`"${publisher}"`);
+  if (isbn) parts.push(`"${isbn}"`);
+  if (yFrom && yTo) parts.push(`"${yFrom}"..${yTo}`);
+  if (filetypes.length) parts.push(`(${filetypes.map(f=>`filetype:${f}`).join(' OR ')})`);
+
+  const dork = parts.filter(Boolean).join(' ');
+  document.getElementById('bk-dork-preview').textContent = dork || 'Configure filters above to build your books dork...';
+}
+
+function launchBooksSearch() {
+  const dork = document.getElementById('bk-dork-preview').textContent;
+  if (!dork || dork.includes('Configure')) { showToast('⚠️ Build a dork first!'); return; }
+  const lang = document.getElementById('bk-lang').value;
+  let url = `https://www.google.com/search?q=${encodeURIComponent(dork)}&tbm=bks`;
+  if (lang) url += `&lr=${lang}`;
+  window.open(url, '_blank');
+}
+
+// ==================== URL DORK BUILDER ====================
+function buildURLDork() {
+  let parts = [];
+  const q = document.getElementById('url-query').value.trim();
+  const scope = document.getElementById('url-scope').value;
+  const domtype = document.getElementById('url-domtype').value;
+  const includes = getTagValues('url-include-tags');
+  const excludes = getTagValues('url-exclude-tags');
+  const protocol = document.getElementById('url-protocol').value;
+
+  if (scope && q) parts.push(`${scope}:${q}`);
+  else if (q) parts.push(`inurl:${q}`);
+  if (protocol) parts.push(`inurl:${protocol}://`);
+  if (domtype) parts.push(`site:*${domtype}`);
+  if (includes.length) parts.push(includes.map(d=>`site:${d}`).join(' OR '));
+  if (excludes.length) parts.push(excludes.map(d=>`-site:${d}`).join(' '));
+
+  const dork = parts.filter(Boolean).join(' ');
+  document.getElementById('url-dork-preview').textContent = dork || 'Configure filters to build your URL dork...';
+}
+
+function launchURLSearch() {
+  const dork = document.getElementById('url-dork-preview').textContent;
+  if (!dork || dork.includes('Configure')) { showToast('⚠️ Build a dork first!'); return; }
+  const time = document.getElementById('url-time').value;
+  let url = `https://www.google.com/search?q=${encodeURIComponent(dork)}`;
+  if (time) url += `&tbs=qdr:${time}`;
+  window.open(url, '_blank');
+}
+
+// ==================== BUILD ALL ====================
+function buildAllDorks() {
+  buildKeywordDork();
+  buildVideoDork();
+  buildBookDork();
+  buildURLDork();
+}
+
+// ==================== UTILITIES ====================
+function copyDork(id) {
+  const text = document.getElementById(id).textContent;
+  if (text.includes('Configure') || text.includes('Enter')) { showToast('⚠️ Nothing to copy yet'); return; }
+  navigator.clipboard.writeText(text).then(() => showToast('✅ Dork copied to clipboard!'));
+}
+
+function resetForm(type) {
+  const maps = {
+    keyword: ['ak-query','ak-exact','ak-or','ak-filetype-custom','ak-range-min','ak-range-max'],
+    video: ['vd-query','vd-exact','vd-or'],
+    books: ['bk-title','bk-author','bk-publisher','bk-isbn','bk-year-from','bk-year-to'],
+    url: ['url-query']
+  };
+  (maps[type] || []).forEach(id => { const el = document.getElementById(id); if(el) el.value=''; });
+  // clear tags
+  ['ak-include-tags','ak-exclude-tags','vd-include-tags','vd-exclude-tags','url-include-tags','url-exclude-tags'].forEach(id => {
+    const c = document.getElementById(id);
+    if(c) c.querySelectorAll('.tag').forEach(t=>t.remove());
+  });
+  // uncheck
+  document.querySelectorAll('.checkbox-item.checked').forEach(el => el.classList.remove('checked'));
+  buildAllDorks();
+  showToast('↺ Form reset');
+}
+
+function clearCacheAndReset() {
+  try { localStorage.removeItem('rkp_state'); } catch(e) {}
+  location.reload();
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Init
+loadCache();
+updateNormalDork();
+</script>
+</body>
+</html>
