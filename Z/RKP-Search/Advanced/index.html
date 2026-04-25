@@ -1365,61 +1365,6 @@ function getCheckedValues(groupId) {
   return Array.from(document.querySelectorAll(`#${groupId} .checkbox-item.checked input`)).map(i => i.value);
 }
 
-// ==================== NORMAL SEARCH DORK ====================
-const platformDorks = {
-  google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
-  youtube: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:youtube.com')}`,
-  telegram: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:t.me OR site:telegram.me')}`,
-  archive: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:archive.org')}`,
-  drive: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:drive.google.com')}`,
-  dailymotion: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:dailymotion.com')}`,
-  bilibili: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:bilibili.com')}`,
-  youku: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:youku.com')}`,
-  tencent: q => `https://www.google.com/search?q=${encodeURIComponent(q + ' site:v.qq.com')}`,
-};
-
-const engineUrls = {
-  google: q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
-  yahoo: q => `https://in.search.yahoo.com/search?p=${encodeURIComponent(q)}`,
-  bing: q => `https://www.bing.com/search?q=${encodeURIComponent(q)}`,
-  duckduckgo: q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
-  yandex: q => `https://yandex.com/search/?text=${encodeURIComponent(q)}`,
-  baidu: q => `https://www.baidu.com/s?wd=${encodeURIComponent(q)}`,
-};
-
-function updateNormalDork() {
-  const q = document.getElementById('normalQuery').value.trim();
-  const preview = document.getElementById('normalDorkPreview');
-  if (!q) { preview.textContent = 'Enter a query above to preview the dork...'; return; }
-  preview.textContent = `"${q}" → site:youtube.com | site:t.me | site:archive.org | ...`;
-  saveCache();
-}
-
-function normalSearch(platform) {
-  const q = document.getElementById('normalQuery').value.trim();
-  if (!q) { showToast('⚠️ Enter a keyword first!'); return; }
-  window.open(platformDorks[platform](q), '_blank');
-}
-
-function engineSearch(engine) {
-  const q = document.getElementById('normalQuery').value.trim();
-  if (!q) { showToast('⚠️ Enter a keyword first!'); return; }
-  window.open(engineUrls[engine](q), '_blank');
-}
-
-function movieSiteSearch(e, site) {
-  e.preventDefault();
-  const q = document.getElementById('movieQuery').value.trim();
-  const url = q
-    ? `https://www.google.com/search?q=${encodeURIComponent(q + ' ' + site)}`
-    : `https://www.google.com/search?q=${encodeURIComponent(site)}`;
-  window.open(url, '_blank');
-}
-
-function searchMovie() {
-  const q = document.getElementById('movieQuery').value.trim();
-  if (q) window.open(`https://www.google.com/search?q=${encodeURIComponent(q)}`, '_blank');
-}
 
 // ==================== KEYWORD DORK BUILDER ====================
 function buildKeywordDork() {
