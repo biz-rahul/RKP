@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💕 My World</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Josefin+Sans:wght@100;300;400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --rose:#ff3d7f;--rose2:#ff6fa3;--gold:#f5c842;--gold2:#ffe08a;
+  --green:#00e5a0;--deep:#06050e;--ink:#0d0b1a;--panel:#100e20;
+  --glass:rgba(255,255,255,0.03);--border-glass:rgba(255,255,255,0.07);
+  --text:#f5f0ff;--muted:#8878aa;--secret:#c4a8f0;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--deep);color:var(--text);font-family:'Josefin Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:9999;opacity:.4;}
+.ambience{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.ambience span{position:absolute;border-radius:50%;filter:blur(120px);animation:drift 12s ease-in-out infinite alternate;}
+.ambience span:nth-child(1){width:700px;height:700px;background:rgba(255,61,127,0.07);top:-200px;left:-200px;animation-duration:14s;}
+.ambience span:nth-child(2){width:600px;height:600px;background:rgba(0,229,160,0.05);bottom:-150px;right:-150px;animation-duration:18s;animation-direction:alternate-reverse;}
+.ambience span:nth-child(3){width:500px;height:500px;background:rgba(245,200,66,0.04);top:40%;left:30%;animation-duration:22s;}
+@keyframes drift{0%{transform:translate(0,0) scale(1);}100%{transform:translate(40px,30px) scale(1.08);}}
+
+/* ════ LOGIN ════ */
+#loginScreen{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at center,#100d22 0%,#06050e 100%);}
+.login-box{width:min(420px,92vw);padding:52px 44px 48px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,61,127,0.2);border-radius:24px;box-shadow:0 0 80px rgba(255,61,127,0.08),0 0 0 1px rgba(255,255,255,0.03) inset;position:relative;overflow:hidden;animation:loginPop .6s cubic-bezier(.34,1.56,.64,1) both;}
+@keyframes loginPop{from{opacity:0;transform:scale(.88) translateY(30px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.login-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--rose),var(--gold),var(--rose),transparent);background-size:200% 100%;animation:shimmerLine 3s linear infinite;}
+@keyframes shimmerLine{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+.login-icon{text-align:center;font-size:2.8rem;margin-bottom:8px;animation:heartbeat 2s ease-in-out infinite;}
+@keyframes heartbeat{0%,100%{transform:scale(1);}14%{transform:scale(1.15);}28%{transform:scale(1);}42%{transform:scale(1.08);}70%{transform:scale(1);}}
+.login-title{text-align:center;font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;background:linear-gradient(135deg,#ff9dc8,var(--rose),#c06fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px;}
+.login-sub{text-align:center;font-size:.65rem;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:36px;}
+.field-wrap{position:relative;margin-bottom:18px;}
+.field-wrap label{display:block;font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;font-weight:600;}
+.field-wrap input{width:100%;padding:14px 18px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;color:var(--text);font-family:'Josefin Sans',sans-serif;font-size:.88rem;letter-spacing:.5px;outline:none;transition:border-color .25s,box-shadow .25s;}
+.field-wrap input:focus{border-color:rgba(255,61,127,0.5);box-shadow:0 0 0 3px rgba(255,61,127,0.08);}
+.field-wrap input::placeholder{color:rgba(255,255,255,0.18);}
+#loginBtn{width:100%;margin-top:10px;padding:15px;background:linear-gradient(135deg,var(--rose),#c84bff);border:none;border-radius:12px;color:#fff;font-family:'Josefin Sans',sans-serif;font-size:.8rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;cursor:pointer;box-shadow:0 8px 30px rgba(255,61,127,0.3);transition:transform .2s,box-shadow .2s,opacity .2s;position:relative;overflow:hidden;}
+#loginBtn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15),transparent);opacity:0;transition:opacity .2s;}
+#loginBtn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(255,61,127,0.45);}
+#loginBtn:hover::after{opacity:1;}
+#loginBtn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+#loginErr{text-align:center;font-size:.72rem;color:#ff6b6b;letter-spacing:.5px;margin-top:14px;min-height:20px;opacity:0;transition:opacity .3s;}
+#loginErr.show{opacity:1;}
+
+/* ════ MAIN ════ */
+#mainSite{display:none;position:relative;z-index:1;}
+
+/* ════ HERO ════ */
+.hero{text-align:center;padding:100px 24px 70px;position:relative;}
+.hero-eyebrow{font-size:.62rem;letter-spacing:5px;text-transform:uppercase;color:var(--rose);font-weight:600;margin-bottom:20px;display:flex;align-items:center;justify-content:center;gap:12px;}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:1;max-width:60px;height:1px;background:linear-gradient(90deg,transparent,var(--rose));}
+.hero-eyebrow::after{transform:scaleX(-1);}
+.hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3.5rem,10vw,8rem);font-weight:700;line-height:.9;letter-spacing:-2px;background:linear-gradient(160deg,#ffe8f0 0%,var(--rose) 35%,var(--gold) 65%,#ff9de2 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:18px;}
+.hero-sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.2rem;color:var(--muted);letter-spacing:1px;margin-bottom:50px;}
+.stat-row{display:flex;justify-content:center;gap:3px;flex-wrap:wrap;}
+.spill{padding:12px 30px;border-radius:60px;font-size:.7rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;display:flex;align-items:center;gap:10px;}
+.spill .n{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:700;line-height:1;}
+.spill.tot{background:rgba(245,200,66,.1);border:1px solid rgba(245,200,66,.25);color:var(--gold);}
+.spill.ex{background:rgba(255,61,127,.09);border:1px solid rgba(255,61,127,.22);color:var(--rose);}
+.spill.cur{background:rgba(0,229,160,.09);border:1px solid rgba(0,229,160,.22);color:var(--green);}
+
+/* ════ SECTION DIVIDER ════ */
+.sec-div{text-align:center;margin:70px 0 50px;position:relative;}
+.sec-div::before{content:'';position:absolute;top:50%;left:50%;width:min(500px,80vw);height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);transform:translate(-50%,-50%);}
+.sec-div-inner{display:inline-flex;align-items:center;gap:16px;padding:10px 28px;border-radius:8px;font-size:.6rem;letter-spacing:4px;text-transform:uppercase;font-weight:700;position:relative;}
+.sec-div-inner.ex{background:rgba(255,61,127,.08);border:1px solid rgba(255,61,127,.25);color:var(--rose);}
+.sec-div-inner.cur{background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.25);color:var(--green);}
+.pulse-dot{width:7px;height:7px;border-radius:50%;animation:pulseGlow 1.8s ease-in-out infinite;}
+.ex .pulse-dot{background:var(--rose);box-shadow:0 0 8px var(--rose);}
+.cur .pulse-dot{background:var(--green);box-shadow:0 0 8px var(--green);}
+@keyframes pulseGlow{0%,100%{transform:scale(1);opacity:1;}50%{transform:scale(.6);opacity:.4;}}
+
+/* ════ GRID ════ */
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:32px;max-width:1300px;margin:0 auto;padding:0 28px 28px;}
+
+/* ════ CARD ════ */
+.card{border-radius:28px;overflow:hidden;position:relative;background:var(--panel);transition:transform .4s cubic-bezier(.34,1.2,.64,1),box-shadow .4s ease;opacity:0;transform:translateY(50px) scale(.95);}
+.card.visible{opacity:1;transform:translateY(0) scale(1);transition:opacity .7s ease,transform .7s cubic-bezier(.34,1.2,.64,1),box-shadow .4s ease;}
+.card:hover{transform:translateY(-10px) scale(1.015)!important;}
+
+/* animated conic border */
+.card::before{content:'';position:absolute;inset:0;border-radius:28px;padding:1.5px;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .4s;z-index:1;pointer-events:none;}
+.ex-card::before{background:conic-gradient(from 0deg,transparent,rgba(255,61,127,.9),rgba(245,200,66,.8),rgba(255,61,127,.9),transparent);animation:spinBorder 4s linear infinite;}
+.cur-card::before{background:conic-gradient(from 0deg,transparent,rgba(0,229,160,.9),rgba(0,180,255,.8),rgba(0,229,160,.9),transparent);animation:spinBorder 4s linear infinite;}
+.secret-card::before{background:conic-gradient(from 0deg,transparent,rgba(168,85,247,.9),rgba(196,160,240,.8),rgba(168,85,247,.9),transparent);animation:spinBorder 4s linear infinite;}
+@keyframes spinBorder{to{--rot:360deg;}}
+.card:hover::before{opacity:1;}
+.ex-card:hover{box-shadow:0 25px 80px rgba(255,61,127,.22),0 0 0 1px rgba(255,61,127,.1);}
+.cur-card:hover{box-shadow:0 25px 80px rgba(0,229,160,.18),0 0 0 1px rgba(0,229,160,.1);}
+.secret-card:hover{box-shadow:0 25px 80px rgba(168,85,247,.22),0 0 0 1px rgba(168,85,247,.1);}
+
+/* ── IMAGE ── */
+.card-img-wrap{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:#1a1530;}
+.card-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .6s cubic-bezier(.34,1,.64,1),filter .4s;}
+.card:hover .card-img-wrap img{transform:scale(1.07);filter:brightness(1.06) saturate(1.12);}
+.img-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(160deg,#1a0d2e,#0d1a2e);}
+.img-placeholder .ico{font-size:5rem;opacity:.4;}
+.img-placeholder span{font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
+.card-img-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(to top,var(--panel) 0%,rgba(16,14,32,.9) 40%,transparent 100%);pointer-events:none;}
+.img-badge{position:absolute;top:18px;right:18px;z-index:2;padding:6px 14px;border-radius:20px;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;backdrop-filter:blur(12px);display:flex;align-items:center;gap:6px;}
+.img-badge.ex{background:rgba(255,61,127,.18);border:1px solid rgba(255,61,127,.4);color:var(--rose);}
+.img-badge.cur{background:rgba(0,229,160,.18);border:1px solid rgba(0,229,160,.4);color:var(--green);}
+.img-badge.secret{background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.4);color:var(--secret);}
+.live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulseGlow 1.5s ease-in-out infinite;}
+.num-badge{position:absolute;top:18px;left:18px;z-index:2;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;backdrop-filter:blur(12px);}
+.ex-card .num-badge{background:rgba(255,61,127,.2);border:1px solid rgba(255,61,127,.3);color:var(--rose);}
+.cur-card .num-badge{background:rgba(0,229,160,.2);border:1px solid rgba(0,229,160,.3);color:var(--green);}
+.secret-card .num-badge{background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.3);color:var(--secret);}
+.img-name-overlay{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:0 24px 22px;}
+.img-name-overlay h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,4vw,2rem);font-weight:700;line-height:1.1;margin-bottom:4px;text-shadow:0 2px 20px rgba(0,0,0,.8);}
+.ex-card .img-name-overlay h2{color:#fff;}
+.cur-card .img-name-overlay h2{background:linear-gradient(90deg,#fff,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.secret-card .img-name-overlay h2{background:linear-gradient(90deg,#fff,var(--secret));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+
+/* ── CARD BODY ── */
+.card-body{padding:24px 24px 28px;position:relative;z-index:2;}
+.info-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
+.info-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;margin-top:1px;}
+.ex-card .info-icon{background:rgba(255,61,127,.08);}
+.cur-card .info-icon{background:rgba(0,229,160,.08);}
+.secret-card .info-icon{background:rgba(168,85,247,.08);}
+.info-lbl{font-size:.55rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:3px;}
+.info-val{font-size:.85rem;color:var(--text);line-height:1.5;word-break:break-word;}
+.info-val.dim{color:var(--muted);font-style:italic;}
+.info-val.secret-v{color:var(--secret);font-style:italic;}
+
+/* ── PHONE BLOCK ── */
+.phone-block{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px 16px;margin-bottom:10px;}
+.phone-top{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
+.phone-tag{font-size:.6rem;letter-spacing:1.5px;text-transform:uppercase;padding:3px 9px;border-radius:5px;font-weight:600;}
+.ex-card .phone-tag{background:rgba(255,61,127,.1);color:var(--rose);}
+.cur-card .phone-tag{background:rgba(0,229,160,.1);color:var(--green);}
+.phone-num{font-size:.9rem;font-weight:600;letter-spacing:.5px;flex:1;}
+.phone-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-call,.btn-copy{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;font-family:'Josefin Sans',sans-serif;font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border:none;text-decoration:none;transition:transform .18s,box-shadow .18s,filter .18s;white-space:nowrap;}
+.btn-call{background:linear-gradient(135deg,#00c47a,#00e5a0);color:#002218;box-shadow:0 4px 20px rgba(0,229,160,.25);}
+.btn-call:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,229,160,.4);filter:brightness(1.1);}
+.btn-copy{background:rgba(255,255,255,.06);color:var(--text);border:1px solid rgba(255,255,255,.1);}
+.btn-copy:hover{background:rgba(255,255,255,.12);transform:translateY(-2px);}
+.btn-copy.copied{background:rgba(0,229,160,.15);color:var(--green);border-color:rgba(0,229,160,.3);}
+
+/* ════ FOOTER ════ */
+footer{text-align:center;padding:100px 24px 80px;position:relative;}
+footer::before{content:'';display:block;width:1px;height:80px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.12),transparent);margin:0 auto 60px;}
+footer .f-icon{font-size:2.5rem;margin-bottom:16px;animation:heartbeat 2s ease-in-out infinite;}
+footer h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,5vw,3.5rem);font-weight:600;background:linear-gradient(135deg,#ffc8de,var(--rose),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:12px;}
+footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--muted);font-size:1.05rem;max-width:380px;margin:0 auto 50px;line-height:1.7;}
+.footer-nums{display:flex;justify-content:center;gap:60px;flex-wrap:wrap;}
+.fn .n{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:700;display:block;line-height:1;}
+.fn:nth-child(1) .n{color:var(--gold);}
+.fn:nth-child(2) .n{color:var(--rose);}
+.fn:nth-child(3) .n{color:var(--green);}
+.fn .l{font-size:.58rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px;display:block;}
+
+/* ════ TOAST ════ */
+#toast{position:fixed;bottom:36px;left:50%;transform:translateX(-50%) translateY(100px);background:linear-gradient(135deg,#00c47a,#00e5a0);color:#001a11;padding:12px 26px;border-radius:40px;font-weight:700;font-size:.78rem;letter-spacing:1.5px;text-transform:uppercase;z-index:9998;transition:transform .35s cubic-bezier(.34,1.56,.64,1),opacity .35s;opacity:0;box-shadow:0 8px 30px rgba(0,229,160,.3);white-space:nowrap;}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:#06050e;}
+::-webkit-scrollbar-thumb{background:rgba(255,61,127,.4);border-radius:10px;}
+@media(max-width:620px){.cards-grid{grid-template-columns:1fr;gap:24px;padding:0 16px 16px;}.phone-actions{flex-direction:column;}.btn-call,.btn-copy{justify-content:center;}}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+</style>
+</head>
+<body>
+<div class="ambience"><span></span><span></span><span></span></div>
+
+<!-- LOGIN -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-icon">🔐</div>
+    <div class="login-title">Private Access</div>
+    <div class="login-sub">Enter credentials to continue</div>
+    <div class="field-wrap">
+      <label>Username</label>
+      <input type="text" id="uInput" placeholder="Your username" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="field-wrap">
+      <label>Password</label>
+      <input type="password" id="pInput" placeholder="••••••••" autocomplete="off">
+    </div>
+    <button id="loginBtn" onclick="doLogin()">Unlock &nbsp;→</button>
+    <div id="loginErr"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="mainSite">
+  <div class="hero">
+    <div class="hero-eyebrow">💕 Private Collection</div>
+    <h1>My<br>Girlfriends</h1>
+    <p class="hero-sub">A Collection of Beautiful Memories</p>
+    <div class="stat-row">
+      <div class="spill tot"><span class="n">10</span> Total</div>
+      <div class="spill ex"><span class="n">8</span> Ex-Girlfriends</div>
+      <div class="spill cur"><span class="n">2</span> Current</div>
+    </div>
+  </div>
+
+  <div class="sec-div"><div class="sec-div-inner ex"><div class="pulse-dot"></div>Ex-Girlfriends<div class="pulse-dot"></div></div></div>
+
+  <div class="cards-grid">
+    <!-- 1 Muskan -->
+    <div class="card ex-card">
+      <div class="card-img-wrap">
+        <img src="1.jpg" alt="Muskan Jaiswal" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">01</div><div class="img-badge ex">💔 Ex</div>
+        <div class="img-name-overlay"><h2>Muskan Jaiswal</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 82357 18119</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+918235718119">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918235718119')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Madhubani Ghat, Motihari, Bihar</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">Her father found out about my love</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">8 Months</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val">27 June 🎉</div></div></div>
+      </div>
+    </div>
+
+    <!-- 2 Secret -->
+    <div class="card ex-card secret-card">
+      <div class="card-img-wrap">
+        <img src="2.jpg" alt="Secret" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">🤫</div><span>Identity Hidden</span></div>
+        <div class="num-badge">02</div><div class="img-badge secret">🤫 Secret</div>
+        <div class="img-name-overlay"><h2>🤫 Secret Girlfriend</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div><div class="info-lbl">Phone Number</div><div class="info-val secret-v">🔒 Secret</div></div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val secret-v">🔒 Secret</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">She married someone else 💍</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">3 Years, 2 Months &amp; 14 Days</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val">29 October 🎃</div></div></div>
+        <div class="info-row"><div class="info-icon">🎨</div><div><div class="info-lbl">Favourite Colour</div><div class="info-val">Pink 🌸</div></div></div>
+      </div>
+    </div>
+
+    <!-- 3 Priti -->
+    <div class="card ex-card">
+      <div class="card-img-wrap">
+        <img src="3.jpg" alt="Priti Giri" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">03</div><div class="img-badge ex">💔 Ex</div>
+        <div class="img-name-overlay"><h2>Priti Giri</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Numbers</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 70700 40108</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+917070040108">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+917070040108')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 97985 92206</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+919798592206">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919798592206')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val dim">Unknown</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">She disagreed to have physical relationship</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">3 Months</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val dim">Unknown</div></div></div>
+      </div>
+    </div>
+
+    <!-- 4 Sneha -->
+    <div class="card ex-card">
+      <div class="card-img-wrap">
+        <img src="4.jpg" alt="Sneha" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">04</div><div class="img-badge ex">💔 Ex</div>
+        <div class="img-name-overlay"><h2>Sneha</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 96932 52364</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+919693252364">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919693252364')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Near Kesariya Baudh Stupa, Bihar</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">She always talked about her ex-boyfriend</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">2.5 Months</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val dim">Unknown</div></div></div>
+      </div>
+    </div>
+
+    <!-- 5 Sapna -->
+    <div class="card ex-card">
+      <div class="card-img-wrap">
+        <img src="5.jpg" alt="Sapna" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">05</div><div class="img-badge ex">💔 Ex</div>
+        <div class="img-name-overlay"><h2>Sapna</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Numbers</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 89170 92383</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918917092383">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918917092383')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 73986 03729</span></div><div class="phone-actions"><a class="btn-call" href="tel:+917398603729">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+917398603729')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 88748 06229</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918874806229">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918874806229')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 88081 85302</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918808185302">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918808185302')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 91254 17213</span></div><div class="phone-actions"><a class="btn-call" href="tel:+919125417213">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919125417213')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Karhan, Mau, UP</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">Losing interest in her</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">3 Years</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val">20 February 🌹</div></div></div>
+      </div>
+    </div>
+
+    <!-- 6 Raushani -->
+    <div class="card ex-card">
+      <div class="card-img-wrap">
+        <img src="6.jpg" alt="Raushani Goswami" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">06</div><div class="img-badge ex">💔 Ex</div>
+        <div class="img-name-overlay"><h2>Raushani Goswami</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 70868 20652</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+917086820652">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+917086820652')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Madhubani Ghat, Motihari, Bihar</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">Her brother found out my love</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">7 Months</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val dim">Unknown</div></div></div>
+      </div>
+    </div>
+
+    <!-- 7 Khusboo -->
+    <div class="card ex-card">
+      <div class="card-img-wrap">
+        <img src="7.jpg" alt="Khusboo Banjare" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">07</div><div class="img-badge ex">💔 Ex</div>
+        <div class="img-name-overlay"><h2>Khusboo Banjare</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 93034 09973</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+919303409973">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919303409973')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Kawardha Kabirdham, Chhattisgarh</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">Lost interest after Secret GF got married</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">4 Months</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val">2 September 🍂</div></div></div>
+      </div>
+    </div>
+
+    <!-- 8 Jyoti -->
+    <div class="card ex-card">
+      <div class="card-img-wrap">
+        <img src="8.jpg" alt="Jyoti Singh" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">08</div><div class="img-badge ex">💔 Ex</div>
+        <div class="img-name-overlay"><h2>Jyoti Singh</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Numbers</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-tag">Papa</span><span class="phone-num">+91 82716 63722</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918271663722">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918271663722')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-tag">Anil Jha</span><span class="phone-num">+91 87574 41532</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918757441532">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918757441532')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-tag">Mammi</span><span class="phone-num">+91 90605 58815</span></div><div class="phone-actions"><a class="btn-call" href="tel:+919060558815">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919060558815')">📋 Copy</button></div></div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-tag">Mammi 2</span><span class="phone-num">+91 77399 41335</span></div><div class="phone-actions"><a class="btn-call" href="tel:+917739941335">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+917739941335')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Pipra, Bihar</div></div></div>
+        <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">Her brother found out my love</div></div></div>
+        <div class="info-row"><div class="info-icon">⏳</div><div><div class="info-lbl">Relationship Span</div><div class="info-val">1 Year</div></div></div>
+        <div class="info-row"><div class="info-icon">📅</div><div><div class="info-lbl">Breakup Date</div><div class="info-val">15 April 2026 💔</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val">13 March 🌸</div></div></div>
+        <div class="info-row"><div class="info-icon">🎨</div><div><div class="info-lbl">Fav Colour / Song</div><div class="info-val">Black 🖤 &nbsp;·&nbsp; Tum Hi Aana 🎵</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-div" style="margin-top:40px"><div class="sec-div-inner cur"><div class="pulse-dot"></div>Current Girlfriends<div class="pulse-dot"></div></div></div>
+
+  <div class="cards-grid">
+    <!-- 9 Anuradha -->
+    <div class="card cur-card">
+      <div class="card-img-wrap">
+        <img src="9.jpg" alt="Anuradha Kannoujiya" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">09</div><div class="img-badge cur"><div class="live-dot"></div>Current</div>
+        <div class="img-name-overlay"><h2>Anuradha Kannoujiya</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 89572 47397</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+918957247397">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918957247397')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Beltikra, Paniyara, Maharajganj</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val">9 April 🌸</div></div></div>
+        <div class="info-row"><div class="info-icon">💚</div><div><div class="info-lbl">Relationship Since</div><div class="info-val">16 November 2025 (Running 💚)</div></div></div>
+        <div class="info-row"><div class="info-icon">📸</div><div><div class="info-lbl">Snapchat</div><div class="info-val">a11124931 / a29495032</div></div></div>
+        <div class="info-row"><div class="info-icon">🏫</div><div><div class="info-lbl">School</div><div class="info-val">Ram Kumar Inter College Paniyara</div></div></div>
+        <div class="info-row"><div class="info-icon">📱</div><div><div class="info-lbl">School Instagram</div><div class="info-val">rkicpaniyara76</div></div></div>
+      </div>
+    </div>
+
+    <!-- 10 Ujala -->
+    <div class="card cur-card">
+      <div class="card-img-wrap">
+        <img src="10.jpg" alt="Ujala Giri" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
+        <div class="num-badge">10</div><div class="img-badge cur"><div class="live-dot"></div>Current</div>
+        <div class="img-name-overlay"><h2>Ujala Giri</h2></div>
+      </div>
+      <div class="card-body">
+        <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
+          <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 98017 19466</span></div>
+          <div class="phone-actions"><a class="btn-call" href="tel:+919801719466">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919801719466')">📋 Copy</button></div></div>
+        </div></div>
+        <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val">Kalyanpur, Bihar</div></div></div>
+        <div class="info-row"><div class="info-icon">🎂</div><div><div class="info-lbl">Birthday</div><div class="info-val dim">Unknown</div></div></div>
+        <div class="info-row"><div class="info-icon">💚</div><div><div class="info-lbl">Relationship Since</div><div class="info-val">Running Now 💚</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="f-icon">💫</div>
+    <h2>Every Story Matters</h2>
+    <p>Cherishing every moment, every laugh, every tear...</p>
+    <div class="footer-nums">
+      <div class="fn"><span class="n">10</span><span class="l">Total</span></div>
+      <div class="fn"><span class="n">8</span><span class="l">Ex</span></div>
+      <div class="fn"><span class="n">2</span><span class="l">Current</span></div>
+    </div>
+  </footer>
+</div>
+
+<div id="toast">✓ Number Copied!</div>
+
+<script>
+async function doLogin(){
+  const btn=document.getElementById('loginBtn');
+  const err=document.getElementById('loginErr');
+  const u=document.getElementById('uInput').value.trim();
+  const p=document.getElementById('pInput').value.trim();
+  if(!u||!p){showErr('Please enter both username and password.');return;}
+  btn.disabled=true;btn.textContent='Verifying...';err.classList.remove('show');
+  try{
+    const [uRes,pRes]=await Promise.all([
+      fetch('https://raw.githubusercontent.com/biz-rahul/RKP/main/UR/GF-Pass/user.txt',{cache:'no-store'}),
+      fetch('https://raw.githubusercontent.com/biz-rahul/RKP/main/UR/GF-Pass/pass.txt',{cache:'no-store'})
+    ]);
+    if(!uRes.ok||!pRes.ok)throw new Error('Network error');
+    const validUser=(await uRes.text()).trim();
+    const validPass=(await pRes.text()).trim();
+    if(u===validUser&&p===validPass){
+      const ls=document.getElementById('loginScreen');
+      ls.style.transition='opacity .5s ease';ls.style.opacity='0';
+      setTimeout(()=>{
+        ls.style.display='none';
+        const ms=document.getElementById('mainSite');ms.style.display='block';
+        // staggered card animation
+        document.querySelectorAll('.card').forEach((c,i)=>{
+          setTimeout(()=>c.classList.add('visible'),i*80);
+        });
+      },500);
+    }else{
+      showErr('❌ Wrong username or password. Try again.');
+      btn.disabled=false;btn.textContent='Unlock  →';
+    }
+  }catch(e){
+    showErr('⚠️ Network error. Please check your connection.');
+    btn.disabled=false;btn.textContent='Unlock  →';
+  }
+}
+function showErr(msg){
+  const err=document.getElementById('loginErr');
+  err.textContent=msg;err.classList.add('show');
+  const box=document.querySelector('.login-box');
+  box.style.animation='none';
+  setTimeout(()=>{box.style.animation='shake .4s ease';},10);
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')doLogin();
+});
+function copyNum(btn,num){
+  navigator.clipboard.writeText(num).then(()=>ok(btn)).catch(()=>{
+    const t=document.createElement('textarea');t.value=num;document.body.appendChild(t);t.select();
+    document.execCommand('copy');document.body.removeChild(t);ok(btn);
+  });
+}
+function ok(btn){
+  btn.textContent='✓ Copied!';btn.classList.add('copied');showToast();
+  setTimeout(()=>{btn.textContent='📋 Copy';btn.classList.remove('copied');},2200);
+}
+function showToast(){
+  const t=document.getElementById('toast');t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+</script>
+</body>
+</html>
