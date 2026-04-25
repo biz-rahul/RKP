@@ -19,13 +19,12 @@ body {
     display: flex;
     justify-content: space-between;
     padding: 15px 30px;
-    font-size: 18px;
 }
 
 .tabs span {
     margin-right: 20px;
     cursor: pointer;
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 .tabs span.active {
@@ -35,18 +34,13 @@ body {
 
 /* TITLE */
 .title {
-    margin-top: 80px;
+    margin-top: 60px;
     font-size: 60px;
-    font-weight: bold;
     color: #00ffe0;
     text-shadow: 0 0 20px #00ffe0;
 }
 
 /* SEARCH BOX */
-.search-box {
-    margin-top: 30px;
-}
-
 .search-box input {
     width: 60%;
     padding: 15px;
@@ -63,33 +57,31 @@ body {
     border: none;
     background: #00ffe0;
     cursor: pointer;
-    font-weight: bold;
 }
 
-/* PLATFORM BUTTONS */
-.platforms {
-    margin-top: 30px;
-}
-
-.platforms button {
-    margin: 8px;
-    padding: 10px 15px;
-    border: none;
+/* BUTTONS */
+button {
+    margin: 6px;
+    padding: 10px 14px;
     border-radius: 20px;
+    border: none;
     background: #222;
     color: white;
     cursor: pointer;
-    transition: 0.3s;
 }
 
-.platforms button:hover {
+button:hover {
     background: #00ffe0;
     color: black;
 }
 
-/* SEARCH ENGINES */
-.engines {
-    margin-top: 40px;
+.section {
+    display: none;
+    margin-top: 30px;
+}
+
+.active-section {
+    display: block;
 }
 
 .engines span {
@@ -108,8 +100,8 @@ body {
 
 <div class="top-bar">
     <div class="tabs">
-        <span class="active">Keyword</span>
-        <span>Image</span>
+        <span id="tabKeyword" class="active" onclick="switchTab('keyword')">Keyword</span>
+        <span id="tabImage" onclick="switchTab('image')">Image</span>
     </div>
 </div>
 
@@ -120,17 +112,54 @@ body {
     <button class="search-btn" onclick="normalSearch()">🔍</button>
 </div>
 
-<!-- PLATFORM BUTTONS -->
-<div class="platforms">
-    <button onclick="searchSite('')">Normal Search</button>
-    <button onclick="searchSite('site:youtube.com')">YouTube</button>
-    <button onclick="searchSite('site:t.me')">Telegram</button>
-    <button onclick="searchSite('site:archive.org')">Archive</button>
-    <button onclick="searchSite('site:drive.google.com')">Drive</button>
-    <button onclick="searchSite('site:dailymotion.com')">Dailymotion</button>
-    <button onclick="searchSite('site:bilibili.com')">Bilibili</button>
-    <button onclick="searchSite('site:youku.com')">Youku</button>
-    <button onclick="searchSite('site:v.qq.com')">Tencent</button>
+<!-- KEYWORD SECTION -->
+<div id="keywordSection" class="section active-section">
+
+<h3>Platforms</h3>
+
+<button onclick="searchSite('')">Normal Search</button>
+<button onclick="searchSite('site:t.me')">Telegram</button>
+<button onclick="searchSite('site:archive.org')">Archive</button>
+<button onclick="searchSite('site:drive.google.com')">Drive</button>
+<button onclick="searchSite('site:dailymotion.com')">Dailymotion</button>
+<button onclick="searchSite('site:youtube.com')">YouTube</button>
+<button onclick="searchSite('site:bilibili.com')">Bilibili</button>
+<button onclick="searchSite('site:youku.com')">Youku</button>
+<button onclick="searchSite('site:v.qq.com')">Tencent</button>
+
+<h3>Movie Sites</h3>
+
+<button onclick="openLink('https://www.google.com/search?q=moviehub')">moviehub</button>
+<button onclick="openLink('https://www.google.com/search?q=hdhub4u')">hdhub4u</button>
+<button onclick="openLink('https://www.google.com/search?q=mkvcinema')">mkvcinema</button>
+<button onclick="openLink('https://www.google.com/search?q=movies4u')">movies4u</button>
+<button onclick="openLink('https://www.google.com/search?q=moviesflix')">moviesflix</button>
+<button onclick="openLink('https://www.google.com/search?q=mkvcinemas')">mkvcinemas</button>
+<button onclick="openLink('https://www.google.com/search?q=hdmoviehub')">hdmoviehub</button>
+<button onclick="openLink('https://www.google.com/search?q=mp4moviez')">mp4moviez</button>
+
+</div>
+
+<!-- IMAGE SECTION -->
+<div id="imageSection" class="section">
+
+<h3>Find Similar Images</h3>
+<button onclick="openLink('https://images.google.com/')">Google Images</button>
+<button onclick="openLink('https://www.microsoft.com/en-us/bing/visual-search/')">Bing Visual</button>
+<button onclick="openLink('https://yandex.com/images/')">Yandex</button>
+
+<h3>Where is this photo taken?</h3>
+<button onclick="openLink('https://www.whereisthisphoto.com/')">WhereIsThisPhoto</button>
+<button onclick="openLink('https://picarta.ai/')">Picarta</button>
+
+<h3>Metadata Finder</h3>
+<button onclick="openLink('https://tool.geoimgr.com/')">GeoImgr</button>
+<button onclick="openLink('https://exiftools.com/')">ExifTools</button>
+<button onclick="openLink('https://exif.tools/')">Exif.tools</button>
+
+<h3>Advanced Image Search</h3>
+<button onclick="openLink('https://www.google.com/advanced_image_search')">Google Advanced</button>
+
 </div>
 
 <!-- SEARCH ENGINES -->
@@ -152,24 +181,39 @@ function getQuery() {
 
 function normalSearch() {
     let q = getQuery();
-    if(q) window.open("https://www.google.com/search?q=" + q, "_blank");
+    if(q) window.open("https://www.google.com/search?q=" + q);
 }
 
 function searchSite(site) {
     let q = getQuery();
     if(!q) return;
 
-    let finalQuery = q;
-    if(site !== "") {
-        finalQuery = q + " " + site;
-    }
-
-    window.open("https://www.google.com/search?q=" + finalQuery, "_blank");
+    let finalQuery = site ? q + " " + site : q;
+    window.open("https://www.google.com/search?q=" + finalQuery);
 }
 
 function redirectEngine(base) {
     let q = getQuery();
-    if(q) window.open(base + q, "_blank");
+    if(q) window.open(base + q);
+}
+
+function openLink(url) {
+    window.open(url);
+}
+
+function switchTab(tab) {
+    document.getElementById("keywordSection").classList.remove("active-section");
+    document.getElementById("imageSection").classList.remove("active-section");
+    document.getElementById("tabKeyword").classList.remove("active");
+    document.getElementById("tabImage").classList.remove("active");
+
+    if(tab === "keyword") {
+        document.getElementById("keywordSection").classList.add("active-section");
+        document.getElementById("tabKeyword").classList.add("active");
+    } else {
+        document.getElementById("imageSection").classList.add("active-section");
+        document.getElementById("tabImage").classList.add("active");
+    }
 }
 </script>
 
