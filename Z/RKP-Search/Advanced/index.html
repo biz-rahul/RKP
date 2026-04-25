@@ -1618,6 +1618,17 @@ function showToast(msg) {
 // Init
 loadCache();
 updateNormalDork();
+
+
+  window.addEventListener("load", function () {
+    // button select kar
+    const btn = document.querySelector(".mode-tab.advanced");
+
+    // agar mil gaya to click kar de
+    if (btn) {
+        btn.click();
+    }
+});
 </script>
 </body>
 </html>
