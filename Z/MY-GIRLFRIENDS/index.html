@@ -190,6 +190,18 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
   50%{transform:translateY(-20px);}
   100%{transform:translateY(0px);}
 }
+
+  .chart-section{
+  width:80%;
+  margin:80px auto;
+  text-align:center;
+}
+
+.chart-title{
+  color:#ff3d7f;
+  font-size:1.8rem;
+  margin-bottom:20px;
+}
 </style>
 </head>
 <body>
@@ -464,6 +476,11 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
   <div class="map-wrapper">
     <img src="your-map-image.png" class="floating-map">
   </div>
+  </div>
+
+  <div class="chart-section">
+  <h2 class="chart-title">📊 Relationship Timeline</h2>
+  <canvas id="loveChart"></canvas>
   </div>
   
   <footer>
