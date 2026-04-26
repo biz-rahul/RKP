@@ -191,16 +191,79 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
   100%{transform:translateY(0px);}
 }
 
-  .chart-section{
-  width:80%;
-  margin:80px auto;
+  .neo-chart-section{
   text-align:center;
+  margin:80px auto;
 }
 
-.chart-title{
+/* CARD (soft UI) */
+.neo-card{
+  width:90%;
+  max-width:600px;
+  margin:30px auto;
+  padding:40px 20px;
+  border-radius:20px;
+  background:#e0e0e0;
+
+  box-shadow:
+    10px 10px 20px #bebebe,
+    -10px -10px 20px #ffffff;
+}
+
+/* BARS */
+.bars{
+  display:flex;
+  justify-content:space-around;
+  align-items:flex-end;
+  height:220px;
+}
+
+.bar{
+  width:40px;
+  border-radius:12px;
+  transition:0.5s;
+
+  box-shadow:
+    inset -5px -5px 10px rgba(0,0,0,0.2),
+    inset 5px 5px 10px rgba(255,255,255,0.5),
+    5px 5px 10px rgba(0,0,0,0.3);
+}
+
+/* COLORS */
+.bar:nth-child(1){background:#ff4d4d;}
+.bar:nth-child(2){background:#ffb84d;}
+.bar:nth-child(3){background:#ffe066;}
+.bar:nth-child(4){background:#66cc66;}
+.bar:nth-child(5){background:#66b3ff;}
+.bar:nth-child(6){background:#cc99ff;}
+.bar:nth-child(7){background:#ff99cc;}
+.bar:nth-child(8){background:#99ffff;}
+
+/* TEXT LIST */
+.timeline-list{
+  margin-top:30px;
+  max-width:600px;
+  margin-left:auto;
+  margin-right:auto;
+  text-align:left;
+}
+
+.timeline-item{
+  padding:12px 16px;
+  margin-bottom:10px;
+  border-radius:12px;
+  background:rgba(255,255,255,0.05);
+  display:flex;
+  justify-content:space-between;
+}
+
+.timeline-name{
+  font-weight:600;
   color:#ff3d7f;
-  font-size:1.8rem;
-  margin-bottom:20px;
+}
+
+.timeline-duration{
+  color:#aaa;
 }
 </style>
 </head>
@@ -478,9 +541,17 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
   </div>
   </div>
 
-  <div class="chart-section">
+  <div class="neo-chart-section">
+
   <h2 class="chart-title">📊 Relationship Timeline</h2>
-  <canvas id="loveChart"></canvas>
+
+  <div class="neo-card">
+    <div class="bars" id="bars"></div>
+  </div>
+
+  <!-- readable data -->
+  <div class="timeline-list" id="timelineList"></div>
+
   </div>
   
   <footer>
