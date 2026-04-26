@@ -191,25 +191,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
   100%{transform:translateY(0px);}
 }
 
-  .pie-section{
-  text-align:center;
-  margin:80px auto;
-}
-
-.pie-card{
-  width:90%;
-  max-width:400px;
-  margin:30px auto;
-  padding:30px;
-  border-radius:20px;
-
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(15px);
-
-  box-shadow:
-    0 0 40px rgba(255,0,100,0.2),
-    inset 0 0 20px rgba(255,255,255,0.05);
-}
+  
 
 
 </style>
@@ -488,15 +470,6 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
   </div>
   </div>
 
-  <div class="pie-section">
-
-  <h2 class="chart-title">📊 Relationship Distribution</h2>
-
-  <div class="pie-card">
-    <canvas id="pieChart"></canvas>
-  </div>
-
-  </div>
   
   <footer>
     <div class="f-icon">💫</div>
@@ -575,72 +548,5 @@ function showToast(){
 
 </script>
 
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script>
-window.onload = function(){
-
-const data = [
-  {name:"Muskan", value:8, label:"8 Months"},
-  {name:"Secret", value:38, label:"3Y 2M 14D"},
-  {name:"Sapna", value:36, label:"3 Years"},
-  {name:"Jyoti", value:12, label:"1 Year"},
-  {name:"Raushani", value:7, label:"7 Months"},
-  {name:"Khusboo", value:4, label:"4 Months"},
-  {name:"Priti", value:3, label:"3 Months"},
-  {name:"Sneha", value:2.5, label:"2.5 Months"}
-];
-
-const ctx = document.getElementById('pieChart');
-
-new Chart(ctx, {
-  type: 'doughnut', // pie but stylish 😏
-  data: {
-    labels: data.map(d => d.name),
-    datasets: [{
-      data: data.map(d => d.value),
-      backgroundColor: [
-        "#ff4d4d",
-        "#ffb84d",
-        "#ffe066",
-        "#66cc66",
-        "#66b3ff",
-        "#cc99ff",
-        "#ff99cc",
-        "#99ffff"
-      ],
-      borderWidth:0,
-      hoverOffset:15
-    }]
-  },
-  options: {
-    responsive:true,
-    cutout:"50%", // donut look 😏
-    plugins:{
-      legend:{
-        labels:{
-          color:"#fff",
-          font:{size:12}
-        }
-      },
-      tooltip:{
-        callbacks:{
-          label: function(context){
-            const d = data[context.dataIndex];
-            return d.name + " : " + d.label;
-          }
-        }
-      }
-    },
-    animation:{
-      animateRotate:true,
-      duration:2000
-    }
-  }
-});
-
-}
-</script>
 </body>
 </html>
