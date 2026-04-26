@@ -78,48 +78,39 @@ body::after{content:'';position:fixed;inset:0;background-image:url("data:image/s
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:32px;max-width:1300px;margin:0 auto;padding:0 28px 28px;}
 
 /* ════ CARD ════ */
-.card{border-radius:28px;overflow:hidden;position:relative;background:var(--panel);transition:transform .4s cubic-bezier(.34,1.2,.64,1),box-shadow .4s ease;opacity:0;transform:translateY(50px) scale(.95);}
-.card.visible{opacity:1;transform:translateY(0) scale(1);transition:opacity .7s ease,transform .7s cubic-bezier(.34,1.2,.64,1),box-shadow .4s ease;}
+.card{border-radius:28px;overflow:hidden;position:relative;background:var(--panel);transition:opacity .7s ease,transform .7s cubic-bezier(.34,1.2,.64,1);opacity:0;transform:translateY(50px) scale(.95);}
+.card.visible{opacity:1;transform:translateY(0) scale(1);}
 
 /* animated conic border */
-.card::before{
-  display:none;
-}
+.card::before{content:'';position:absolute;inset:0;border-radius:28px;padding:1.5px;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:0;transition:opacity .4s;z-index:1;pointer-events:none;}
 .ex-card::before{background:conic-gradient(from 0deg,transparent,rgba(255,61,127,.9),rgba(245,200,66,.8),rgba(255,61,127,.9),transparent);animation:spinBorder 4s linear infinite;}
 .cur-card::before{background:conic-gradient(from 0deg,transparent,rgba(0,229,160,.9),rgba(0,180,255,.8),rgba(0,229,160,.9),transparent);animation:spinBorder 4s linear infinite;}
 .secret-card::before{background:conic-gradient(from 0deg,transparent,rgba(168,85,247,.9),rgba(196,160,240,.8),rgba(168,85,247,.9),transparent);animation:spinBorder 4s linear infinite;}
 @keyframes spinBorder{to{--rot:360deg;}}
-.card:hover::before{opacity:1;}
-.ex-card:hover{box-shadow:0 25px 80px rgba(255,61,127,.22),0 0 0 1px rgba(255,61,127,.1);}
-.cur-card:hover{box-shadow:0 25px 80px rgba(0,229,160,.18),0 0 0 1px rgba(0,229,160,.1);}
-.secret-card:hover{box-shadow:0 25px 80px rgba(168,85,247,.22),0 0 0 1px rgba(168,85,247,.1);}
 
 /* ── IMAGE ── */
-.card-img-wrap{position:relative;width:100%;aspect-ratio:3/4;overflow:hidden;background:#1a1530;}
-.card-img-wrap img{
-  transition:none;
-}
-.img-placeholder{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(160deg,#1a0d2e,#0d1a2e);}
+.card-img-wrap{position:relative;width:100%;background:#0d0b1a;display:flex;align-items:center;justify-content:center;}
+.card-img-wrap img{width:100%;height:auto;display:block;object-fit:contain;}
+.img-placeholder{width:100%;min-height:300px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:linear-gradient(160deg,#1a0d2e,#0d1a2e);}
 .img-placeholder .ico{font-size:5rem;opacity:.4;}
 .img-placeholder span{font-size:.6rem;letter-spacing:3px;text-transform:uppercase;color:var(--muted);}
-.card-img-wrap::after{content:'';position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(to top,var(--panel) 0%,rgba(16,14,32,.9) 40%,transparent 100%);pointer-events:none;}
-.img-badge{position:absolute;top:18px;right:18px;z-index:2;padding:6px 14px;border-radius:20px;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;backdrop-filter:blur(12px);display:flex;align-items:center;gap:6px;}
-.img-badge.ex{background:rgba(255,61,127,.18);border:1px solid rgba(255,61,127,.4);color:var(--rose);}
-.img-badge.cur{background:rgba(0,229,160,.18);border:1px solid rgba(0,229,160,.4);color:var(--green);}
-.img-badge.secret{background:rgba(168,85,247,.18);border:1px solid rgba(168,85,247,.4);color:var(--secret);}
+.img-badge{position:absolute;top:14px;right:14px;z-index:2;padding:6px 14px;border-radius:20px;font-size:.58rem;letter-spacing:2px;text-transform:uppercase;font-weight:700;backdrop-filter:blur(8px);display:flex;align-items:center;gap:6px;}
+.img-badge.ex{background:rgba(255,61,127,.25);border:1px solid rgba(255,61,127,.5);color:#fff;}
+.img-badge.cur{background:rgba(0,229,160,.25);border:1px solid rgba(0,229,160,.5);color:#fff;}
+.img-badge.secret{background:rgba(168,85,247,.25);border:1px solid rgba(168,85,247,.5);color:#fff;}
 .live-dot{width:6px;height:6px;border-radius:50%;background:var(--green);animation:pulseGlow 1.5s ease-in-out infinite;}
-.num-badge{position:absolute;top:18px;left:18px;z-index:2;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;backdrop-filter:blur(12px);}
-.ex-card .num-badge{background:rgba(255,61,127,.2);border:1px solid rgba(255,61,127,.3);color:var(--rose);}
-.cur-card .num-badge{background:rgba(0,229,160,.2);border:1px solid rgba(0,229,160,.3);color:var(--green);}
-.secret-card .num-badge{background:rgba(168,85,247,.2);border:1px solid rgba(168,85,247,.3);color:var(--secret);}
-.img-name-overlay{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:0 24px 22px;}
-.img-name-overlay h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.5rem,4vw,2rem);font-weight:700;line-height:1.1;margin-bottom:4px;text-shadow:0 2px 20px rgba(0,0,0,.8);}
-.ex-card .img-name-overlay h2{color:#fff;}
-.cur-card .img-name-overlay h2{background:linear-gradient(90deg,#fff,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-.secret-card .img-name-overlay h2{background:linear-gradient(90deg,#fff,var(--secret));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.num-badge{position:absolute;top:14px;left:14px;z-index:2;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;backdrop-filter:blur(8px);}
+.ex-card .num-badge{background:rgba(0,0,0,.45);border:1px solid rgba(255,61,127,.4);color:var(--rose);}
+.cur-card .num-badge{background:rgba(0,0,0,.45);border:1px solid rgba(0,229,160,.4);color:var(--green);}
+.secret-card .num-badge{background:rgba(0,0,0,.45);border:1px solid rgba(168,85,247,.4);color:var(--secret);}
+.img-name-overlay{display:none;}
 
 /* ── CARD BODY ── */
-.card-body{padding:24px 24px 28px;position:relative;z-index:2;}
+.card-body{padding:20px 24px 28px;position:relative;z-index:2;}
+.card-name-heading{font-family:'Cormorant Garamond',serif;font-size:1.55rem;font-weight:700;margin-bottom:16px;line-height:1.1;}
+.ex-card .card-name-heading{color:#f5f0ff;}
+.cur-card .card-name-heading{background:linear-gradient(90deg,#f5f0ff,var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.secret-card .card-name-heading{background:linear-gradient(90deg,#f5f0ff,var(--secret));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 .info-row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;}
 .info-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;margin-top:1px;}
 .ex-card .info-icon{background:rgba(255,61,127,.08);}
@@ -215,6 +206,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Muskan Jaiswal</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Muskan Jaiswal</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 82357 18119</span></div>
           <div class="phone-actions"><a class="btn-call" href="tel:+918235718119">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918235718119')">📋 Copy</button></div></div>
@@ -235,6 +227,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>🤫 Secret Girlfriend</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">🤫 Secret Girlfriend</div>
         <div class="info-row"><div class="info-icon">📞</div><div><div class="info-lbl">Phone Number</div><div class="info-val secret-v">🔒 Secret</div></div></div>
         <div class="info-row"><div class="info-icon">🏠</div><div><div class="info-lbl">Address</div><div class="info-val secret-v">🔒 Secret</div></div></div>
         <div class="info-row"><div class="info-icon">💔</div><div><div class="info-lbl">Breakup Reason</div><div class="info-val">She married someone else 💍</div></div></div>
@@ -253,6 +246,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Priti Giri</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Priti Giri</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Numbers</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 70700 40108</span></div>
           <div class="phone-actions"><a class="btn-call" href="tel:+917070040108">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+917070040108')">📋 Copy</button></div></div>
@@ -275,6 +269,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Sneha</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Sneha</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 96932 52364</span></div>
           <div class="phone-actions"><a class="btn-call" href="tel:+919693252364">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919693252364')">📋 Copy</button></div></div>
@@ -295,6 +290,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Sapna</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Sapna</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Numbers</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 89170 92383</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918917092383">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918917092383')">📋 Copy</button></div></div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 73986 03729</span></div><div class="phone-actions"><a class="btn-call" href="tel:+917398603729">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+917398603729')">📋 Copy</button></div></div>
@@ -318,6 +314,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Raushani Goswami</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Raushani Goswami</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 70868 20652</span></div>
           <div class="phone-actions"><a class="btn-call" href="tel:+917086820652">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+917086820652')">📋 Copy</button></div></div>
@@ -332,12 +329,13 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
     <!-- 7 Khusboo -->
     <div class="card ex-card">
       <div class="card-img-wrap">
-        <img src="7.jpg" alt="Khusboo Banjare" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <img src="Photo/7.webp" alt="Khusboo Banjare" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
         <div class="img-placeholder" style="display:none"><div class="ico">👩</div><span>No Photo</span></div>
         <div class="num-badge">07</div><div class="img-badge ex">💔 Ex</div>
         <div class="img-name-overlay"><h2>Khusboo Banjare</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Khusboo Banjare</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 93034 09973</span></div>
           <div class="phone-actions"><a class="btn-call" href="tel:+919303409973">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919303409973')">📋 Copy</button></div></div>
@@ -358,6 +356,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Jyoti Singh</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Jyoti Singh</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Numbers</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-tag">Papa</span><span class="phone-num">+91 82716 63722</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918271663722">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918271663722')">📋 Copy</button></div></div>
           <div class="phone-block"><div class="phone-top"><span class="phone-tag">Anil Jha</span><span class="phone-num">+91 87574 41532</span></div><div class="phone-actions"><a class="btn-call" href="tel:+918757441532">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918757441532')">📋 Copy</button></div></div>
@@ -386,6 +385,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Anuradha Kannoujiya</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Anuradha Kannoujiya</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 89572 47397</span></div>
           <div class="phone-actions"><a class="btn-call" href="tel:+918957247397">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+918957247397')">📋 Copy</button></div></div>
@@ -408,6 +408,7 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
         <div class="img-name-overlay"><h2>Ujala Giri</h2></div>
       </div>
       <div class="card-body">
+        <div class="card-name-heading">Ujala Giri</div>
         <div class="info-row"><div class="info-icon">📞</div><div style="width:100%"><div class="info-lbl">Phone Number</div>
           <div class="phone-block"><div class="phone-top"><span class="phone-num">+91 98017 19466</span></div>
           <div class="phone-actions"><a class="btn-call" href="tel:+919801719466">📞 Call</a><button class="btn-copy" onclick="copyNum(this,'+919801719466')">📋 Copy</button></div></div>
