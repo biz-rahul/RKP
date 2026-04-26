@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>📊 Relationship Statistics</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body{
+  background:#06050e;
+  color:white;
+  font-family:sans-serif;
+  text-align:center;
+}
+
+h1{
+  margin-top:20px;
+  color:#ff3d7f;
+}
+
+/* MAP */
+#mapContainer{
+  width:80%;
+  margin:30px auto;
+}
+
+/* STATES */
+.state{
+  fill:#1a1a1a;
+  stroke:#444;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.state.active{
+  fill:red;
+}
+
+/* NUMBER TAG */
+.label{
+  fill:white;
+  font-size:12px;
+  font-weight:bold;
+  pointer-events:none;
+}
+
+/* CHART */
+#chartContainer{
+  width:80%;
+  margin:40px auto;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 My Love Statistics</h1>
+
+<!-- 🔴 INDIA MAP -->
+<div id="mapContainer">
+
+<svg viewBox="0 0 500 600">
+
+<!-- Example states (simplified) -->
+<!-- Tu full India SVG use karega, ye demo hai -->
+
+<path id="bihar" class="state" d="M250 200 L300 200 L300 250 L250 250 Z"></path>
+<text x="265" y="230" class="label" id="bihar-label"></text>
+
+<path id="up" class="state" d="M200 200 L250 200 L250 250 L200 250 Z"></path>
+<text x="215" y="230" class="label" id="up-label"></text>
+
+<path id="cg" class="state" d="M250 250 L300 250 L300 300 L250 300 Z"></path>
+<text x="265" y="280" class="label" id="cg-label"></text>
+
+</svg>
+
+</div>
+
+<!-- 📊 CHART -->
+<div id="chartContainer">
+<canvas id="myChart"></canvas>
+</div>
+
+<script>
+
+/* =========================
+   🔥 DATA (EDIT THIS ONLY)
+========================= */
+
+const stateData = {
+  bihar: 5,
+  up: 2,
+  cg: 1
+};
+
+const relationshipData = [
+  {name:"Muskan", months:8},
+  {name:"Sapna", months:36},
+  {name:"Secret", months:38},
+  {name:"Priti", months:3},
+  {name:"Sneha", months:2.5},
+  {name:"Raushani", months:7},
+  {name:"Khusboo", months:4},
+  {name:"Jyoti", months:12}
+];
+
+
+/* =========================
+   🗺️ MAP LOGIC
+========================= */
+
+for(let state in stateData){
+
+  const el = document.getElementById(state);
+  const label = document.getElementById(state + "-label");
+
+  if(el){
+    el.classList.add("active"); // red color
+  }
+
+  if(label){
+    label.textContent = stateData[state]; // number tag
+  }
+}
+
+
+/* =========================
+   📊 CHART
+========================= */
+
+const ctx = document.getElementById('myChart');
+
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: relationshipData.map(d => d.name),
+    datasets: [{
+      label: 'Months Spent',
+      data: relationshipData.map(d => d.months)
+    }]
+  },
+  options: {
+    responsive:true,
+    plugins:{
+      legend:{display:false}
+    },
+    scales:{
+      y:{
+        beginAtZero:true
+      }
+    }
+  }
+});
+
+</script>
+
+</body>
+</html>
