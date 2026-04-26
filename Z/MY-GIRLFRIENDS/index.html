@@ -557,6 +557,56 @@ function showToast(){
   const t=document.getElementById('toast');t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'),2400);
 }
+
+
+
+
+
+
+
+  const ctx = document.getElementById('loveChart').getContext('2d');
+
+const gradient = ctx.createLinearGradient(0,0,0,400);
+gradient.addColorStop(0,'#ff3d7f');
+gradient.addColorStop(1,'#ff0033');
+
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [
+      "Muskan","Secret","Sapna","Jyoti",
+      "Raushani","Khusboo","Priti","Sneha"
+    ],
+    datasets: [{
+      label: 'Months Spent 💀',
+      data: [8,38,36,12,7,4,3,2.5],
+      backgroundColor: gradient,
+      borderRadius: 12,
+      barThickness: 35
+    }]
+  },
+  options: {
+    responsive:true,
+    animation:{
+      duration:2000,
+      easing:'easeOutBounce'
+    },
+    plugins:{
+      legend:{display:false}
+    },
+    scales:{
+      x:{
+        ticks:{color:'#fff'}
+      },
+      y:{
+        ticks:{color:'#fff'},
+        grid:{
+          color:'rgba(255,255,255,0.05)'
+        }
+      }
+    }
+  }
+});
 </script>
 </body>
 </html>
