@@ -637,48 +637,46 @@ function showToast(){
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <script>
-  const ctx = document.getElementById('loveChart').getContext('2d');
+  const data = [
+  {name:"Muskan", value:8, label:"8 Months"},
+  {name:"Secret", value:38, label:"3 Years 2 Months 14 Days"},
+  {name:"Sapna", value:36, label:"3 Years"},
+  {name:"Jyoti", value:12, label:"1 Year"},
+  {name:"Raushani", value:7, label:"7 Months"},
+  {name:"Khusboo", value:4, label:"4 Months"},
+  {name:"Priti", value:3, label:"3 Months"},
+  {name:"Sneha", value:2.5, label:"2.5 Months"}
+];
 
-const gradient = ctx.createLinearGradient(0,0,0,400);
-gradient.addColorStop(0,'#ff3d7f');
-gradient.addColorStop(1,'#ff0033');
+// max value find (for scaling)
+const max = Math.max(...data.map(d=>d.value));
 
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: [
-      "Muskan","Secret","Sapna","Jyoti",
-      "Raushani","Khusboo","Priti","Sneha"
-    ],
-    datasets: [{
-      label: 'Months Spent 💀',
-      data: [8,38,36,12,7,4,3,2.5],
-      backgroundColor: gradient,
-      borderRadius: 12,
-      barThickness: 35
-    }]
-  },
-  options: {
-    responsive:true,
-    animation:{
-      duration:2000,
-      easing:'easeOutBounce'
-    },
-    plugins:{
-      legend:{display:false}
-    },
-    scales:{
-      x:{
-        ticks:{color:'#fff'}
-      },
-      y:{
-        ticks:{color:'#fff'},
-        grid:{
-          color:'rgba(255,255,255,0.05)'
-        }
-      }
-    }
-  }
+// BARS
+const barsContainer = document.getElementById("bars");
+
+data.forEach(d=>{
+  const bar = document.createElement("div");
+  bar.className = "bar";
+
+  // height proportional
+  bar.style.height = (d.value / max * 100) + "%";
+
+  barsContainer.appendChild(bar);
+});
+
+// TEXT LIST
+const list = document.getElementById("timelineList");
+
+data.forEach(d=>{
+  const div = document.createElement("div");
+  div.className = "timeline-item";
+
+  div.innerHTML = `
+    <span class="timeline-name">${d.name}</span>
+    <span class="timeline-duration">${d.label}</span>
+  `;
+
+  list.appendChild(div);
 });
 </script>
 </body>
