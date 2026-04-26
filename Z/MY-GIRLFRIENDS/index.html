@@ -157,6 +157,39 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
 ::-webkit-scrollbar-thumb{background:rgba(255,61,127,.4);border-radius:10px;}
 @media(max-width:620px){.cards-grid{grid-template-columns:1fr;gap:24px;padding:0 16px 16px;}.phone-actions{flex-direction:column;}.btn-call,.btn-copy{justify-content:center;}}
 @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+
+  .map-section{
+  text-align:center;
+  margin-top:80px;
+}
+
+.map-title{
+  font-size:1.8rem;
+  margin-bottom:20px;
+  color:#ff3d7f;
+  letter-spacing:2px;
+}
+
+.map-wrapper{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+
+.floating-map{
+  width:70%;
+  max-width:700px;
+  border-radius:20px;
+  box-shadow:0 20px 80px rgba(255,0,0,0.3);
+  animation:floatMap 6s ease-in-out infinite;
+}
+
+/* 🔥 smooth up-down animation */
+@keyframes floatMap{
+  0%{transform:translateY(0px);}
+  50%{transform:translateY(-20px);}
+  100%{transform:translateY(0px);}
+}
 </style>
 </head>
 <body>
@@ -424,6 +457,15 @@ footer p{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--mu
     </div>
   </div>
 
+
+  <div class="map-section">
+  <h2 class="map-title">📍 Relationship Map</h2>
+
+  <div class="map-wrapper">
+    <img src="your-map-image.png" class="floating-map">
+  </div>
+  </div>
+  
   <footer>
     <div class="f-icon">💫</div>
     <h2>Every Story Matters</h2>
